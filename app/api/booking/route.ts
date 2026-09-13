@@ -807,7 +807,24 @@ export async function POST(req: NextRequest) {
     const ownerEmail =
       process.env.EMAIL_TO;
 
-    let emailSent = false;
+    // onboarding@resend.dev is Resend's SANDBOX sender — until a real
+    // domain is verified in the Resend dashboard, it can only deliver to
+    // the email address the Resend account itself was signed up with.
+    // Every other recipient (every real customer, and EMAIL_TO unless it
+    // happens to match that exact signup address) gets silently rejected
+    // by Resend's API. sendEmail() below already logs the real Resend
+    // error, but this makes the single most common root cause of "nobody
+    // got any email" impossible to miss in the logs.
+    if (emailSender.includes('onboarding@resend.dev')) {
+      console.warn(
+        'EMAIL_SENDER is still Resend\'s sandbox address (onboarding@resend.dev). ' +
+        'Resend will silently refuse to deliver to anyone except the email your Resend account was signed up with. ' +
+        'Verify a domain at https://resend.com/domains, then set EMAIL_SENDER to an address on that domain.',
+      );
+    }
+
+    let ownerEmailSent = false;
+    let customerEmailSent = false;
 
     // ----------------------------------------------
     // SEND EMAILS
@@ -827,7 +844,7 @@ export async function POST(req: NextRequest) {
     } else {
       // Owner notification
       if (ownerEmail) {
-        const ownerOk =
+        ownerEmailSent =
           await sendEmail(
             emailApiKey,
             emailSender,
@@ -837,8 +854,10 @@ export async function POST(req: NextRequest) {
             attachment,
           );
 
-        if (ownerOk) {
-          emailSent = true;
+        if (!ownerEmailSent) {
+          console.error(
+            `Owner notification FAILED for booking ${bookingRef} — see "Resend email error" above for the exact reason (check EMAIL_TO="${ownerEmail}" and the sandbox-sender warning above).`,
+          );
         }
       } else {
         console.warn(
@@ -847,7 +866,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Client voucher
-      const clientOk =
+      customerEmailSent =
         await sendEmail(
           emailApiKey,
           emailSender,
@@ -857,8 +876,10 @@ export async function POST(req: NextRequest) {
           attachment,
         );
 
-      if (clientOk) {
-        emailSent = true;
+      if (!customerEmailSent) {
+        console.error(
+          `Customer voucher email FAILED for booking ${bookingRef}, recipient "${email}" — see "Resend email error" above for the exact reason.`,
+        );
       }
 
       // Review request
@@ -888,7 +909,8 @@ export async function POST(req: NextRequest) {
         bookingRef,
         bookingType,
         email,
-        emailSent,
+        customerEmailSent,
+        ownerEmailSent,
       },
     );
 
@@ -896,7 +918,9 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         bookingRef,
-        emailSent,
+        emailSent: customerEmailSent,
+        customerEmailSent,
+        ownerEmailSent,
         bookingType,
       },
       { status: 200 },
