@@ -68,7 +68,7 @@ const travelWithUsLinks = [
         <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
           <div className="flex items-center">
             <Image
-              src="/images/logo/logo-white.png"
+              src="/images/logo/logo-horizontal.png"
               alt="Bahari Asili Safaris"
               width={1752}
               height={798}
