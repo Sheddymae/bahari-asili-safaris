@@ -46,6 +46,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
   const { t, locale } = useLanguage();
   const { user } = useAuth();
   const [status, setStatus] = useState<Status>('idle');
+  const [errorDetail, setErrorDetail] = useState('');
   const [bookingRef, setBookingRef] = useState('');
   const [emailSent, setEmailSent] = useState(false);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
@@ -101,6 +102,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       setStatus('idle');
+      setErrorDetail('');
       setBookingRef('');
       setShowAuthPrompt(false);
       setKidsAgesError(false);
@@ -144,6 +146,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
     }
 
     setStatus('loading');
+    setErrorDetail('');
 
     try {
       const resolvedAges = kidsAges.filter((a): a is number => a !== '');
@@ -224,6 +227,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
       }
     } catch (err) {
       console.error('Booking error:', err);
+      setErrorDetail(err instanceof Error ? err.message : '');
       setStatus('error');
     }
   };
@@ -456,7 +460,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
               {status === 'error' && (
                 <div className="flex items-center gap-2 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-xl px-4 py-3">
                   <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
-                  <p className="font-inter text-sm text-destructive">{t.booking.error}</p>
+                  <p className="font-inter text-sm text-destructive">{errorDetail || t.booking.error}</p>
                 </div>
               )}
 
