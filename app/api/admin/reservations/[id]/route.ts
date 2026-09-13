@@ -174,9 +174,16 @@ export async function PATCH(
         ...updates,
       };
 
+      // Compute each document's eventual public URL before generating the PDF
+      // (getDocumentPublicUrl just builds the URL string — it doesn't require
+      // the file to exist yet) so the QR code embedded in each PDF points at
+      // its own real location instead of being silently skipped.
+      const invoiceQrUrl = getDocumentPublicUrl(admin, `invoices/${merged.booking_ref}.pdf`) || undefined;
+      const voucherQrUrl = getDocumentPublicUrl(admin, `vouchers/${merged.booking_ref}.pdf`) || undefined;
+
       const [invoice, voucher] = await Promise.all([
-        generatePremiumInvoicePDF(merged as any),
-        generateVoucherPDF(merged),
+        generatePremiumInvoicePDF(merged as any, undefined, invoiceQrUrl),
+        generateVoucherPDF(merged, undefined, voucherQrUrl),
       ]);
 
       const [invoiceUrl, voucherUrl] = await Promise.all([
@@ -254,7 +261,7 @@ export async function PATCH(
      */
     if (action === 'resend_invoice') {
       if (!emailApiKey) return NextResponse.json({ success:false, error:'Email sending is not configured on the server.' }, {status:503});
-      const invoice = await generatePremiumInvoicePDF(booking as any);
+      const invoice = await generatePremiumInvoicePDF(booking as any, undefined, booking.invoice_url || undefined);
       const sent = await sendEmail(booking.email, `Invoice ${booking.invoice_number || booking.booking_ref} — Bahari Asili Safaris`, ` <p>Dear ${booking.first_name},</p><p>Please find your invoice attached for booking <strong>${booking.booking_ref}</strong>.</p><p>Bahari Asili Safaris · +254 101 923 355</p>`, [{filename:`Invoice-${booking.booking_ref}.pdf`,content:invoice.base64}]);
       if (!sent) return NextResponse.json({success:false,error:'The invoice email could not be sent.'},{status:502});
       return NextResponse.json({success:true,emailSent:true});
