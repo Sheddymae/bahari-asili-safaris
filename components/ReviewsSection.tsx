@@ -62,7 +62,7 @@ const FALLBACK_TESTIMONIALS: Testimonial[] = [
 
 function TestimonialCard({ item }: { item: Testimonial }) {
   return (
-    <div className="bg-white rounded-2xl border border-border p-5 shadow-card hover:shadow-card-hover transition-shadow flex flex-col">
+    <div className="bg-white rounded-2xl border border-border p-5 shadow-card hover:shadow-card-hover transition-shadow flex flex-col h-full">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-ocean-100 flex items-center justify-center">
@@ -219,7 +219,7 @@ function PlatformCard({ platform, info, icon }: { platform: 'google' | 'tripadvi
   const bgColor = platform === 'google' ? 'hover:border-[#0e7490]/30' : 'hover:border-[#0e7490]/30';
 
   return (
-    <a
+    
       href={info.url}
       target="_blank"
       rel="noopener noreferrer"
@@ -283,6 +283,11 @@ export default function ReviewsSection() {
     };
   }, [emblaApi, onSelect]);
 
+  // Duplicated once so the marquee loop is seamless — at the halfway mark of
+  // the translateX animation, the duplicate set is showing in the exact
+  // position the original set started in.
+  const marqueeTestimonials = [...FALLBACK_TESTIMONIALS, ...FALLBACK_TESTIMONIALS];
+
   return (
     <section className="py-20 lg:py-28 bg-sand-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -322,11 +327,43 @@ export default function ReviewsSection() {
           </div>
         ) : !hasAny ? (
           // Fallback when no live review API keys are configured yet —
-          // shows curated testimonials instead of leaving the section empty.
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FALLBACK_TESTIMONIALS.map((item, i) => (
-              <TestimonialCard key={i} item={item} />
-            ))}
+          // auto-scrolling marquee of curated testimonials, duplicated once
+          // for a seamless loop. Pauses on hover so it's actually readable.
+          <div
+            className="marquee-viewport overflow-hidden relative"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+              maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+            }}
+          >
+            <div className="marquee-track flex gap-5 w-max">
+              {marqueeTestimonials.map((item, i) => (
+                <div key={i} className="w-[320px] sm:w-[360px] flex-shrink-0">
+                  <TestimonialCard item={item} />
+                </div>
+              ))}
+            </div>
+            <style jsx>{`
+              @keyframes marquee {
+                from {
+                  transform: translateX(0);
+                }
+                to {
+                  transform: translateX(-50%);
+                }
+              }
+              .marquee-track {
+                animation: marquee 32s linear infinite;
+              }
+              .marquee-track:hover {
+                animation-play-state: paused;
+              }
+              @media (prefers-reduced-motion: reduce) {
+                .marquee-track {
+                  animation: none;
+                }
+              }
+            `}</style>
           </div>
         ) : (
           <>
