@@ -115,21 +115,31 @@ async function sendEmail(
   html: string,
   attachments?: { filename: string; content: string }[],
 ): Promise<boolean> {
-  const res = await fetch(RESEND_API, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: sender,
-      to: [to],
-      subject,
-      html,
-      ...(attachments?.length ? { attachments } : {}),
-    }),
-  });
-  return res.ok;
+  try {
+    const res = await fetch(RESEND_API, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: sender,
+        to: [to],
+        subject,
+        html,
+        ...(attachments?.length ? { attachments } : {}),
+      }),
+    });
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('Resend email error (quotation-email.ts):', { status: res.status, response: errorText, to, subject });
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Email request failed (quotation-email.ts):', err, { to, subject });
+    return false;
+  }
 }
 
 /**
@@ -144,8 +154,14 @@ async function sendEmail(
  */
 export async function sendQuotationEmail(quotation: Quotation, createdDate: string, quotationPdfBase64?: string): Promise<boolean> {
   const apiKey = process.env.EMAIL_API_KEY;
-  if (!apiKey) return false;
+  if (!apiKey) {
+    console.warn('sendQuotationEmail: EMAIL_API_KEY is not configured — quotation email skipped for', quotation.quotation_ref);
+    return false;
+  }
   const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <onboarding@resend.dev>';
+  if (sender.includes('onboarding@resend.dev')) {
+    console.warn('sendQuotationEmail: EMAIL_SENDER is still Resend\'s sandbox address — it can only deliver to the Resend account\'s own signup email. Verify a domain at https://resend.com/domains and set EMAIL_SENDER to an address on it.');
+  }
   const html = buildQuotationEmailHtml({ ...quotation, createdDate });
   const locale = normalizeLocale(quotation.locale);
   const subjects: Record<string, string> = { en: 'Your Bahari Asili Safari Quotation', it: 'Il vostro preventivo safari Bahari Asili', fr: 'Votre devis safari Bahari Asili', es: 'Su presupuesto de safari Bahari Asili', de: 'Ihr Safari-Angebot von Bahari Asili', ar: 'عرض سفاري Bahari Asili الخاص بكم', zh: 'Bahari Asili Safari 报价', sw: 'Nukuu yako ya Safari ya Bahari Asili' };
@@ -171,16 +187,30 @@ export async function sendAdminTripRequestEmail(quotation: Quotation, createdDat
   try {
     const apiKey = process.env.EMAIL_API_KEY;
     const ownerEmail = process.env.EMAIL_TO;
-    if (!apiKey || !ownerEmail) return false;
+    if (!apiKey) {
+      console.warn('sendAdminTripRequestEmail: EMAIL_API_KEY is not configured — admin notification skipped for', quotation.quotation_ref);
+      return false;
+    }
+    if (!ownerEmail) {
+      console.warn('sendAdminTripRequestEmail: EMAIL_TO is not configured — admin notification skipped for', quotation.quotation_ref);
+      return false;
+    }
     const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <onboarding@resend.dev>';
+    if (sender.includes('onboarding@resend.dev')) {
+      console.warn('sendAdminTripRequestEmail: EMAIL_SENDER is still Resend\'s sandbox address — it can only deliver to the Resend account\'s own signup email. Verify a domain at https://resend.com/domains and set EMAIL_SENDER to an address on it.');
+    }
     const html = buildQuotationEmailHtml({ ...quotation, createdDate });
-    return await sendEmail(
+    const ok = await sendEmail(
       apiKey,
       sender,
       ownerEmail,
       `New Safari Trip Request – ${quotation.quotation_ref}`,
       html,
     );
+    if (!ok) {
+      console.error(`Admin trip-request notification FAILED for ${quotation.quotation_ref}, recipient "${ownerEmail}" — see "Resend email error" above for the exact reason.`);
+    }
+    return ok;
   } catch (err) {
     console.error('Admin trip-request notification failed:', err);
     return false;
