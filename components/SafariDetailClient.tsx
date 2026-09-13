@@ -1,0 +1,319 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import {
+  Star, Clock, MapPin, Building2, Backpack, Sun, Sunset, MoonStar,
+  Check, X, ClipboardList, ArrowLeft, Activity, Sofa, CalendarClock, PawPrint, HelpCircle,
+} from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { type Safari, DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from '@/lib/tours-data';
+import { destinations } from '@/lib/destinations-data';
+
+function LevelScale({ level, label, icon: Icon }: { level: number; label: string; icon: any }) {
+  return (
+    <div className="flex-1 min-w-[160px]">
+      <div className="flex items-center gap-1.5 mb-2">
+        <Icon className="w-4 h-4 text-ocean-700" />
+        <span className="font-inter text-xs font-semibold text-foreground uppercase tracking-wide">{label}</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <div
+            key={n}
+            className={`h-2 flex-1 rounded-full ${n <= level ? 'bg-safari-500' : 'bg-muted'}`}
+          />
+        ))}
+        <span className="font-poppins font-bold text-sm text-foreground ml-1">{level}/5</span>
+      </div>
+    </div>
+  );
+}
+
+export default function SafariDetailClient({ safari: initialSafari, slug }: { safari: Safari | null; slug?: string }) {
+  const { t, locale } = useLanguage();
+  const [safari, setSafari] = useState<Safari | null>(initialSafari);
+  const [tab, setTab] = useState<'itinerary' | 'packing' | 'included'>('itinerary');
+  useEffect(() => { if(!slug) return; let active=true; fetch(`/api/programs/${slug}?locale=${locale}`).then(r=>r.json()).then(d=>{if(active && d.success) setSafari(d.program)}).catch(()=>{}); return ()=>{active=false}; }, [slug, locale]);
+  if (!safari) return <><Navbar/><main className="mx-auto max-w-4xl px-6 py-24 text-center"><h1 className="text-2xl font-bold">{t.tours.notFound}</h1><Link href="/tours" className="mt-4 inline-block text-ocean-700">{t.tours.backToAll}</Link></main><Footer/></>;
+  const tt = t.tours;
+
+  // Cross-reference the destinations this safari actually visits, so "Best
+  // Time to Go", "Wildlife" and FAQ content is sourced from the same central
+  // data used on the destination pages — never invented per-safari.
+  const relatedDestinations = destinations.filter((d) => safari.tabs.includes(d.slug));
+  const wildlifeHighlights = Array.from(
+    new Set(relatedDestinations.flatMap((d) => d.wildlifeHighlights))
+  );
+  const faqs = relatedDestinations.flatMap((d) => d.faqs);
+
+  return (
+    <>
+      <Navbar />
+      <main className="overflow-x-hidden">
+        {/* Hero */}
+        <div className="relative h-[45vh] min-h-[320px]">
+          <Image src={safari.image} alt={safari.name} fill priority className="object-cover" sizes="100vw" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+          <div className="absolute inset-0 flex flex-col justify-end">
+            <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
+              <Link
+                href="/tours"
+                prefetch
+                className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-inter mb-4 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" /> {tt.backToAll}
+              </Link>
+              <div className="flex items-center gap-3 mb-2">
+                {safari.popular && (
+                  <span className="bg-safari-500 rounded-full px-3 py-1 font-inter font-bold text-[10px] tracking-wide uppercase text-white">
+                    {t.excursions.popular}
+                  </span>
+                )}
+                <div className="flex items-center gap-1 bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1">
+                  <Star className="w-3.5 h-3.5 fill-accent text-accent" />
+                  <span className="font-inter font-semibold text-xs text-foreground">{safari.rating} ({safari.reviewCount})</span>
+                </div>
+              </div>
+              <h1 className="font-poppins font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
+                {safari.name}
+              </h1>
+              <p className="font-inter text-white/85 text-base mt-2 max-w-2xl">{safari.tagline}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+          {/* Quick facts */}
+          <div className="flex flex-wrap items-center gap-3 mb-8">
+            <div className="flex items-center gap-1.5 bg-sand-50 rounded-full px-4 py-2">
+              <Clock className="w-4 h-4 text-ocean-700" />
+              <span className="font-inter text-sm text-ocean-700 font-semibold">{safari.days} {tt.days} / {safari.nights} {tt.nights}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 text-safari-500" />
+              <div className="flex flex-wrap gap-1.5">
+                {safari.parks.map((park, i) => (
+                  <span key={i} className="bg-ocean-50 text-ocean-700 font-inter text-xs px-2.5 py-1 rounded-full border border-ocean-100">{park}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Difficulty / comfort ratings */}
+          <div className="bg-white rounded-2xl border border-border shadow-card p-5 mb-8 flex flex-wrap gap-6">
+            <LevelScale level={safari.activityLevel ?? 3} label={tt.activityLevel || 'Activity Level'} icon={Activity} />
+            <LevelScale level={safari.comfortLevel ?? 4} label={tt.comfortLevel || 'Comfort Level'} icon={Sofa} />
+          </div>
+
+          {/* Why This Safari */}
+          <div className="mb-8">
+            <h2 className="font-poppins font-bold text-xl text-foreground mb-3">{tt.whyTitle}</h2>
+            <p className="font-inter text-foreground text-base leading-relaxed">
+              {safari.tagline}
+              {relatedDestinations.length > 0 && (
+                <> {relatedDestinations.map((d) => d.intro.split('.')[0]).join('. ')}.</>
+              )}
+            </p>
+          </div>
+
+          {/* Highlights */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {safari.highlights.map((h, i) => (
+              <span key={i} className="bg-sand-50 text-foreground font-inter text-sm px-3 py-1.5 rounded-full">{h}</span>
+            ))}
+          </div>
+
+          {/* Tabs */}
+          <div className="flex items-center gap-2 mb-6 border-b border-border overflow-x-auto scrollbar-hide">
+            {[
+              { key: 'itinerary' as const, label: tt.itinerary, icon: MoonStar },
+              { key: 'packing' as const, label: tt.packing, icon: Backpack },
+              { key: 'included' as const, label: tt.included, icon: ClipboardList },
+            ].map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`flex items-center gap-1.5 px-4 py-3 font-inter text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                  tab === key ? 'border-safari-500 text-safari-600' : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Icon className="w-4 h-4" /> {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Tab content */}
+          {tab === 'itinerary' && (
+            <div className="space-y-4">
+              {safari.itinerary.map((day, i) => (
+                <div key={i} className="border border-border rounded-xl overflow-hidden">
+                  <div className="bg-ocean-700 px-5 py-3">
+                    <span className="font-poppins font-bold text-white text-sm">{day.day}</span>
+                    <span className="font-inter text-white/80 text-sm ml-2">— {day.title}</span>
+                  </div>
+                  <div className="p-4 space-y-3">
+                    <div className="flex gap-3">
+                      <Sun className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                      <div><div className="font-inter text-xs font-semibold text-muted-foreground mb-0.5">{tt.morning}</div><p className="font-inter text-sm text-foreground leading-relaxed">{day.morning}</p></div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Sunset className="w-4 h-4 text-safari-400 flex-shrink-0 mt-0.5" />
+                      <div><div className="font-inter text-xs font-semibold text-muted-foreground mb-0.5">{tt.afternoon}</div><p className="font-inter text-sm text-foreground leading-relaxed">{day.afternoon}</p></div>
+                    </div>
+                    <div className="flex gap-3">
+                      <MoonStar className="w-4 h-4 text-ocean-400 flex-shrink-0 mt-0.5" />
+                      <div><div className="font-inter text-xs font-semibold text-muted-foreground mb-0.5">{tt.overnight}</div><p className="font-inter text-sm text-foreground">{day.overnight}</p></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === 'packing' && (
+            <div className="bg-sand-50 rounded-xl p-5">
+              <ul className="space-y-2.5">
+                {safari.packingTips.map((tip, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className={`w-5 h-5 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center text-xs font-bold ${tip.includes('NO DRONE') ? 'bg-[#ef4444]/10 text-destructive' : 'bg-safari-100 text-safari-700'}`}>{tip.includes('NO DRONE') ? '✗' : '✓'}</span>
+                    <span className={`font-inter text-sm leading-relaxed ${tip.includes('NO DRONE') ? 'text-destructive font-semibold' : 'text-foreground'}`}>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {tab === 'included' && (
+            <div className="grid sm:grid-cols-2 gap-5 bg-sand-50 rounded-xl p-5">
+              <div>
+                <p className="font-inter text-sm font-semibold text-primary uppercase tracking-wide mb-3">{tt.includedTitle}</p>
+                <ul className="space-y-2">
+                  {(safari.included || DEFAULT_INCLUDED).map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                      <span className="font-inter text-sm text-foreground leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-inter text-sm font-semibold text-destructive uppercase tracking-wide mb-3">{tt.excludedTitle}</p>
+                <ul className="space-y-2">
+                  {(safari.excluded || DEFAULT_EXCLUDED).map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <X className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
+                      <span className="font-inter text-sm text-foreground leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Accommodation */}
+          <div className="mt-10 bg-white rounded-2xl border border-border shadow-card p-5">
+            <div className="flex items-center gap-1.5 mb-3">
+              <Building2 className="w-4 h-4 text-ocean-700" />
+              <h2 className="font-poppins font-bold text-lg text-foreground">{tt.accommodationTitle}</h2>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {safari.lodges.map((lodge, i) => (
+                <span key={i} className="bg-sand-50 text-foreground font-inter text-sm px-3 py-1.5 rounded-lg border border-border">{lodge}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Best Time to Go */}
+          {relatedDestinations.length > 0 && (
+            <div className="mt-6 bg-white rounded-2xl border border-border shadow-card p-5">
+              <div className="flex items-center gap-1.5 mb-3">
+                <CalendarClock className="w-4 h-4 text-ocean-700" />
+                <h2 className="font-poppins font-bold text-lg text-foreground">{tt.bestTimeTitle}</h2>
+              </div>
+              <div className="space-y-3">
+                {relatedDestinations.map((d) => (
+                  <p key={d.slug} className="font-inter text-sm text-foreground leading-relaxed">
+                    {relatedDestinations.length > 1 && <span className="font-semibold">{d.name}: </span>}
+                    {d.bestSeason}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Wildlife Information */}
+          {wildlifeHighlights.length > 0 && (
+            <div className="mt-6 bg-white rounded-2xl border border-border shadow-card p-5">
+              <div className="flex items-center gap-1.5 mb-3">
+                <PawPrint className="w-4 h-4 text-ocean-700" />
+                <h2 className="font-poppins font-bold text-lg text-foreground">{tt.wildlifeTitle}</h2>
+              </div>
+              <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
+                {wildlifeHighlights.map((w, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 bg-safari-500 rounded-full flex-shrink-0 mt-2" />
+                    <span className="font-inter text-sm text-foreground leading-relaxed">{w}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Reviews (aggregate — no invented review text) */}
+          <div className="mt-6 bg-white rounded-2xl border border-border shadow-card p-5">
+            <h2 className="font-poppins font-bold text-lg text-foreground mb-3">{tt.reviewsTitle}</h2>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 bg-sand-50 rounded-full px-3 py-1.5">
+                <Star className="w-4 h-4 fill-accent text-accent" />
+                <span className="font-poppins font-bold text-sm text-foreground">{safari.rating}</span>
+              </div>
+              <span className="font-inter text-sm text-muted-foreground">
+                {safari.reviewCount} reviews · {tt.reviewsNote}
+              </span>
+            </div>
+          </div>
+
+          {/* FAQ — sourced from the matching destination(s), not invented */}
+          {faqs.length > 0 && (
+            <div className="mt-6 bg-white rounded-2xl border border-border shadow-card p-5">
+              <div className="flex items-center gap-1.5 mb-3">
+                <HelpCircle className="w-4 h-4 text-ocean-700" />
+                <h2 className="font-poppins font-bold text-lg text-foreground">{tt.faqTitle}</h2>
+              </div>
+              <div className="divide-y divide-border">
+                {faqs.map((faq, i) => (
+                  <details key={i} className="py-3 group">
+                    <summary className="font-inter font-semibold text-sm text-foreground cursor-pointer list-none flex items-center justify-between gap-2">
+                      {faq.q}
+                      <span className="text-muted-foreground group-open:rotate-45 transition-transform text-lg leading-none">+</span>
+                    </summary>
+                    <p className="font-inter text-sm text-muted-foreground leading-relaxed mt-2">{faq.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Booking CTA */}
+          <div className="mt-10 bg-ocean-700 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p className="font-poppins font-bold text-white text-lg">{tt.readyFor} {safari.name}?</p>
+              <p className="font-inter text-white/70 text-sm mt-1">{tt.noPricesNote}</p>
+            </div>
+            <Link
+              href={`/?book=${safari.id}`}
+              className="flex-shrink-0 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-8 py-3.5 rounded-xl transition-all hover:shadow-md whitespace-nowrap"
+            >
+              {tt.bookNow}
+            </Link>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}

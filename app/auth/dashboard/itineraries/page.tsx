@@ -1,0 +1,1 @@
+'use client'; import AdminShell from '@/components/admin/AdminShell'; import DocumentWorkspace from '@/components/admin/DocumentWorkspace'; export default function Page(){return <AdminShell title="Detailed Itineraries"><DocumentWorkspace kind="itinerary"/></AdminShell>}

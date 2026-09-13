@@ -1,0 +1,1 @@
+'use client'; import AdminShell from '@/components/admin/AdminShell'; import DocumentWorkspace from '@/components/admin/DocumentWorkspace'; export default function Page(){return <AdminShell title="Visa & Travel Documents"><DocumentWorkspace kind="visa"/></AdminShell>}
