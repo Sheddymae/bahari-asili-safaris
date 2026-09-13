@@ -3,6 +3,8 @@ import type { Locale } from './i18n';
 import { invoiceLabels, normalizeLocale, formatLocaleDate } from './locale-content';
 import { registerInvoiceFont } from './invoice-font';
 import { generateQrPngDataUrl } from './qr';
+import { COMPANY, loadBrandLogo, drawBrandLogo } from './pdf-brand';
+import { loadBrandStamp, drawStamp } from './pdf-stamp';
 
 // Quotation-specific labels that don't already exist in invoiceLabels.
 // Everything else (client/travel details, cost-breakdown line items,
@@ -29,6 +31,8 @@ export async function generateQuotationPDF(quotation: Quotation, requestedLocale
   const Q = quotationExtra[locale];
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const font = await registerInvoiceFont(doc, locale);
+  const logo = await loadBrandLogo();
+  const stamp = await loadBrandStamp();
   const W = 210;
   const MARGIN = 14;
   const PRIMARY = [14, 116, 144];
@@ -58,23 +62,28 @@ export async function generateQuotationPDF(quotation: Quotation, requestedLocale
     y += Math.max(5, lines.length * 4);
   };
 
-  // Header
-  doc.setFillColor(...(PRIMARY as [number, number, number])); doc.rect(0, 0, W, 42, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFont(font, 'normal'); doc.setFontSize(23); text('BAHARI ASILI SAFARIS', MARGIN, 17);
-  doc.setFontSize(9); text('Watamu, Kenya  ·  +254 101 923 355  ·  sheddymae02@gmail.com', MARGIN, 25);
-  doc.setFontSize(8); doc.setTextColor(200, 235, 245); text(L.founded, MARGIN, 33);
+  // Header — white band with full-color logo top-left, contact info top-right
+  // (same pattern as the invoice, so the quotation matches the rest of the
+  // customer-facing document set instead of falling back to a text-only banner).
+  doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, 40, 'F');
+  drawBrandLogo(doc, logo, MARGIN, 9, 20);
+  doc.setFont(font, 'normal'); doc.setFontSize(9); doc.setTextColor(...(PRIMARY as [number, number, number]));
+  text(COMPANY.address + '  ·  ' + COMPANY.phone, W - MARGIN, 14, { align: 'right' });
+  text(COMPANY.email, W - MARGIN, 20, { align: 'right' });
+  doc.setFontSize(7.5); doc.setTextColor(...(LIGHT as [number, number, number])); text(L.founded, W - MARGIN, 26, { align: 'right' });
+  doc.setDrawColor(...(PRIMARY as [number, number, number])); doc.setLineWidth(0.5); doc.line(0, 40, W, 40);
 
   // Quotation banner (orange, matching invoice style) with ref + status + valid-until
-  doc.setFillColor(...(ACCENT as [number, number, number])); doc.rect(0, 42, W, 24, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFont(font, 'normal'); doc.setFontSize(8); text(Q.title, MARGIN, 49);
-  doc.setFontSize(8); text(Q.ref, MARGIN, 55);
-  doc.setFontSize(16); text(quotation.quotation_ref || '', MARGIN, 62);
+  doc.setFillColor(...(ACCENT as [number, number, number])); doc.rect(0, 40, W, 24, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFont(font, 'normal'); doc.setFontSize(8); text(Q.title, MARGIN, 47);
+  doc.setFontSize(8); text(Q.ref, MARGIN, 53);
+  doc.setFontSize(16); text(quotation.quotation_ref || '', MARGIN, 60);
   doc.setFontSize(8);
-  text(`${L.status}: ${Q.status[quotation.status] || Q.status.sent}`, W - MARGIN, 55, { align: 'right' });
+  text(`${L.status}: ${Q.status[quotation.status] || Q.status.sent}`, W - MARGIN, 53, { align: 'right' });
   const validUntilDate = quotation.expires_at
     || (quotation.created_at ? new Date(new Date(quotation.created_at).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString() : undefined);
-  if (validUntilDate) text(`${Q.validUntil}: ${formatLocaleDate(validUntilDate, locale)}`, W - MARGIN, 61, { align: 'right' });
-  y = 76;
+  if (validUntilDate) text(`${Q.validUntil}: ${formatLocaleDate(validUntilDate, locale)}`, W - MARGIN, 59, { align: 'right' });
+  y = 74;
 
   section(L.clientDetails);
   row(L.fullName, `${quotation.first_name} ${quotation.last_name}`);
@@ -145,6 +154,11 @@ export async function generateQuotationPDF(quotation: Quotation, requestedLocale
       text('Scan to view PDF', W - MARGIN - qrSize, y + 2 + qrSize + 3, { align: 'left' });
     }
   }
+
+  // Official digital stamp — same bottom-right treatment as the invoice.
+  // Placed near the current y (the quotation has no fixed teal footer band),
+  // so it sits just below the last printed line rather than overlapping text.
+  drawStamp(doc, stamp, locale, { pageWidth: W, footerTopY: Math.min(y + 30, 283), dateFont: font !== 'helvetica' ? font : undefined });
 
   if (isArabic && typeof (doc as any).setR2L === 'function') (doc as any).setR2L(true);
 
