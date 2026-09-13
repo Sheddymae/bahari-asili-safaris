@@ -12,6 +12,8 @@
  * as a fixed 1752x798 PNG, so LOGO_RATIO (width / height) is a constant.
  */
 
+import { LOGO_HORIZONTAL_BASE64 } from './pdf-assets/logo-base64';
+
 export const BRAND_TEAL: [number, number, number] = [16, 115, 144];
 export const BRAND_ORANGE: [number, number, number] = [249, 114, 22];
 export const BRAND_OFFWHITE: [number, number, number] = [245, 241, 232];
@@ -27,7 +29,6 @@ export const COMPANY = {
   founded: 'Founded by Shadrack Safari',
 };
 
-const LOGO_PATH = 'images/logo/logo-horizontal.png';
 const LOGO_RATIO = 1752 / 798;
 
 export interface BrandLogo {
@@ -38,36 +39,29 @@ export interface BrandLogo {
 let cachedLogo: BrandLogo | null | undefined;
 
 /**
- * Loads the official logo as a base64 data URL, for use with
- * jsPDF's doc.addImage(). Works both in the browser (fetch) and on the
- * server (fs.readFile), same dual-environment pattern as
- * registerInvoiceFont() in lib/invoice-font.ts. Returns null (never
- * throws) if the logo can't be loaded, so callers can render a
- * text-only fallback header instead of failing the whole document.
+ * Returns the official logo as a base64 data URL, for use with jsPDF's
+ * doc.addImage(). The PNG bytes are embedded at build time in
+ * lib/pdf-assets/logo-base64.ts (generated from
+ * public/images/logo/logo-horizontal.png) instead of being read from
+ * disk/network at request time — fs.readFile()/fetch() of a public/
+ * asset is not reliably bundled into a Next.js App Router serverless
+ * function (outputFileTracingIncludes does not cover app/ routes on
+ * this Next.js version), which was silently dropping the logo in
+ * production while working fine in `next dev`. Embedding the bytes in
+ * the module graph means the logo travels with the code, in every
+ * runtime, guaranteed. Kept async + cached so call sites don't change.
+ * Never throws — returns null only if the embedded constant is somehow
+ * empty, so callers can render a text-only fallback header instead of
+ * failing the whole document.
  */
 export async function loadBrandLogo(): Promise<BrandLogo | null> {
   if (cachedLogo !== undefined) return cachedLogo;
-  try {
-    let bytes: Uint8Array;
-    if (typeof window !== 'undefined') {
-      const response = await fetch(`/${LOGO_PATH}`);
-      if (!response.ok) throw new Error(`Logo request failed: ${response.status}`);
-      bytes = new Uint8Array(await response.arrayBuffer());
-    } else {
-      const loadFs = Function('return import(\"fs/promises\")') as () => Promise<typeof import('fs/promises')>;
-      const fs = await loadFs();
-      bytes = new Uint8Array(await fs.readFile(`${process.cwd()}/public/${LOGO_PATH}`));
-    }
-    let binary = '';
-    const chunk = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunk) {
-      binary += String.fromCharCode(...bytes.subarray(i, Math.min(i + chunk, bytes.length)));
-    }
-    cachedLogo = { dataUrl: `data:image/png;base64,${btoa(binary)}`, ratio: LOGO_RATIO };
-  } catch (error) {
-    console.warn('Could not load Bahari Asili logo for PDF; using text-only header.', error);
+  if (!LOGO_HORIZONTAL_BASE64) {
+    console.warn('Bahari Asili logo base64 constant is empty; using text-only header.');
     cachedLogo = null;
+    return cachedLogo;
   }
+  cachedLogo = { dataUrl: `data:image/png;base64,${LOGO_HORIZONTAL_BASE64}`, ratio: LOGO_RATIO };
   return cachedLogo;
 }
 
