@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import TrustStrip from '@/components/TrustStrip';
 import AboutSection from '@/components/AboutSection';
+import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { safaris, excursions } from '@/lib/tours-data';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -103,17 +104,50 @@ export default function Home() {
       <main className="overflow-x-hidden">
         <HeroSection onBook={() => openOverlay()} />
         <TrustStrip />
-        <AboutSection />
-        <ToursSection onBook={openBooking} />
-        <HomeDestinationsSection />
-        <BuildSafariPromo />
-        <ExcursionsSection onBook={openBooking} />
-        <WildlifeCalendarSection />
-        <MemoriesSection onBook={() => openBooking()} />
-        <TransfersSection onBook={openBooking} />
-        <GallerySection />
-        <ReviewsSection />
-        <FinalCtaSection onBook={() => openOverlay()} />
+
+        <AnimateOnScroll direction="up">
+          <AboutSection />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <ToursSection onBook={openBooking} />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <HomeDestinationsSection />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <BuildSafariPromo />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <ExcursionsSection onBook={openBooking} />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <WildlifeCalendarSection />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <MemoriesSection onBook={() => openBooking()} />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <TransfersSection onBook={openBooking} />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <GallerySection />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <ReviewsSection />
+        </AnimateOnScroll>
+
+        <AnimateOnScroll direction="up">
+          <FinalCtaSection onBook={() => openOverlay()} />
+        </AnimateOnScroll>
       </main>
       <Footer />
       {isBookingOpen && (
