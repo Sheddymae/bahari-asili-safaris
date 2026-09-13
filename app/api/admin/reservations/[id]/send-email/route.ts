@@ -100,8 +100,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       subject = SUBJECTS.confirmation(booking);
       html = buildConfirmationEmailHtml(booking);
       const [invoice, voucher] = await Promise.all([
-        generatePremiumInvoicePDF(booking as any),
-        generateVoucherPDF(booking),
+        generatePremiumInvoicePDF(booking as any, undefined, booking.invoice_url || undefined),
+        generateVoucherPDF(booking, undefined, booking.voucher_url || undefined),
       ]);
       attachments = [
         { filename: `Invoice-${booking.booking_ref}.pdf`, content: invoice.base64 },
