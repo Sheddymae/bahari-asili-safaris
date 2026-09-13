@@ -71,15 +71,19 @@ export default function Navbar() {
     <>
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 will-change-transform ${
-          isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'
+          isScrolled
+            ? 'bg-white/95 backdrop-blur-md shadow-lg py-3'
+            : 'bg-white/10 backdrop-blur-md border-b border-white/20 py-5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Logo - light bg (scrolled/white nav) uses the full-color lockup; transparent hero nav uses the white variant for contrast */}
+            {/* Logo - always the full-color lockup; the glass background behind it
+                (both scrolled and hero states) keeps it readable without needing
+                a separate white variant that stripped its color on launch. */}
             <Link href="/" prefetch className="flex items-center flex-shrink-0 hover:opacity-80 transition-opacity">
               <Image
-                src={isScrolled ? '/images/logo/logo-horizontal.png' : '/images/logo/logo-white.png'}
+                src="/images/logo/logo-horizontal.png"
                 alt="Bahari Asili Safaris"
                 width={1752}
                 height={798}
