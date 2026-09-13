@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Calendar, MapPin, Star, Clock } from 'lucide-react';
 import PageShell from '@/components/PageShell';
+import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { safaris, excursions } from '@/lib/tours-data';
 import { getGroupTours, type GroupTour } from '@/lib/supabase';
@@ -29,6 +30,11 @@ function formatDepartureDate(iso: string) {
   return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
+// Caps the stagger so long lists don't leave the last card waiting ages.
+function staggerDelay(index: number) {
+  return Math.min(index * 80, 400);
+}
+
 function ToursPageInner() {
   const { t, locale } = useLanguage();
   const [programs, setPrograms] = useState<typeof safaris>(safaris);
@@ -49,14 +55,16 @@ function ToursPageInner() {
     <PageShell>
       <section className="py-16 lg:py-24 bg-sand-50 min-h-screen">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">
-              {t.nav.tours}
-            </span>
-            <h1 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground">
-              {t.tours.title} {t.tours.titleHighlight}
-            </h1>
-          </div>
+          <AnimateOnScroll direction="up">
+            <div className="text-center mb-10">
+              <span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">
+                {t.nav.tours}
+              </span>
+              <h1 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground">
+                {t.tours.title} {t.tours.titleHighlight}
+              </h1>
+            </div>
+          </AnimateOnScroll>
 
           <Tabs defaultValue={initialTab} className="w-full">
             <TabsList className="mx-auto flex w-full max-w-xl bg-white border border-border rounded-full p-1 h-auto mb-10">
@@ -82,25 +90,27 @@ function ToursPageInner() {
                 </div>
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {groupTours.map((gt) => (
-                    <div key={gt.id} className="bg-white rounded-2xl border border-border shadow-card p-6 flex flex-col">
-                      <div className="flex items-center gap-2 text-ocean-700 mb-3">
-                        <Calendar className="w-4 h-4" />
-                        <span className="font-inter text-sm font-semibold">{formatDepartureDate(gt.departure_date)}</span>
+                  {groupTours.map((gt, i) => (
+                    <AnimateOnScroll key={gt.id} direction="up" delay={staggerDelay(i)}>
+                      <div className="bg-white rounded-2xl border border-border shadow-card p-6 flex flex-col h-full">
+                        <div className="flex items-center gap-2 text-ocean-700 mb-3">
+                          <Calendar className="w-4 h-4" />
+                          <span className="font-inter text-sm font-semibold">{formatDepartureDate(gt.departure_date)}</span>
+                        </div>
+                        <h3 className="font-poppins font-bold text-lg text-foreground mb-2">{gt.safari_name}</h3>
+                        <p className="font-inter text-sm text-foreground mb-4 flex-1">
+                          {gt.joined_names.length > 0 && gt.joined_nationality
+                            ? `Join ${gt.joined_names.length} ${gt.joined_nationality} on ${formatDepartureDate(gt.departure_date)} — ${gt.seats_left} seat${gt.seats_left === 1 ? '' : 's'} left`
+                            : `${gt.seats_left} seat${gt.seats_left === 1 ? '' : 's'} left — be the first to join`}
+                        </p>
+                        <button
+                          onClick={() => openBooking(gt.safari_name)}
+                          className="bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
+                        >
+                          {t.inquiryStatus?.requestToJoin || t.tours.bookNow}
+                        </button>
                       </div>
-                      <h3 className="font-poppins font-bold text-lg text-foreground mb-2">{gt.safari_name}</h3>
-                      <p className="font-inter text-sm text-foreground mb-4 flex-1">
-                        {gt.joined_names.length > 0 && gt.joined_nationality
-                          ? `Join ${gt.joined_names.length} ${gt.joined_nationality} on ${formatDepartureDate(gt.departure_date)} — ${gt.seats_left} seat${gt.seats_left === 1 ? '' : 's'} left`
-                          : `${gt.seats_left} seat${gt.seats_left === 1 ? '' : 's'} left — be the first to join`}
-                      </p>
-                      <button
-                        onClick={() => openBooking(gt.safari_name)}
-                        className="bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
-                      >
-                        {t.inquiryStatus?.requestToJoin || t.tours.bookNow}
-                      </button>
-                    </div>
+                    </AnimateOnScroll>
                   ))}
                 </div>
               )}
@@ -109,30 +119,32 @@ function ToursPageInner() {
             {/* Tab 2: Private Safaris — full list from the existing safaris dataset */}
             <TabsContent value="private">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {programs.map((s) => (
-                  <div key={s.id} className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col">
-                    <div className="relative h-40 w-full">
-                      <Image src={s.image} alt={s.name} fill className="object-cover" />
-                    </div>
-                    <div className="p-5 flex flex-col flex-1">
-                      <h3 className="font-poppins font-bold text-base text-foreground mb-1">{s.name}</h3>
-                      <p className="font-inter text-xs text-muted-foreground mb-3 flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5" /> {s.parks.join(', ')}
-                      </p>
-                      <div className="flex items-center gap-1 mb-4">
-                        <Star className="w-3.5 h-3.5 fill-safari-500 text-safari-500" />
-                        <span className="font-inter text-xs text-foreground">{s.rating} ({s.reviewCount})</span>
-                        <span className="font-inter text-xs text-muted-foreground ml-auto">{s.days}D/{s.nights}N</span>
+                {programs.map((s, i) => (
+                  <AnimateOnScroll key={s.id} direction="up" delay={staggerDelay(i)}>
+                    <div className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col h-full">
+                      <div className="relative h-40 w-full">
+                        <Image src={s.image} alt={s.name} fill className="object-cover" />
                       </div>
-                      <Link
-                        href={`/safaris/${s.id}`}
-                        prefetch
-                        className="mt-auto text-center border border-book text-book hover:bg-book/5 font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
-                      >
-                        {t.tours.bookNow}
-                      </Link>
+                      <div className="p-5 flex flex-col flex-1">
+                        <h3 className="font-poppins font-bold text-base text-foreground mb-1">{s.name}</h3>
+                        <p className="font-inter text-xs text-muted-foreground mb-3 flex items-center gap-1">
+                          <MapPin className="w-3.5 h-3.5" /> {s.parks.join(', ')}
+                        </p>
+                        <div className="flex items-center gap-1 mb-4">
+                          <Star className="w-3.5 h-3.5 fill-safari-500 text-safari-500" />
+                          <span className="font-inter text-xs text-foreground">{s.rating} ({s.reviewCount})</span>
+                          <span className="font-inter text-xs text-muted-foreground ml-auto">{s.days}D/{s.nights}N</span>
+                        </div>
+                        <Link
+                          href={`/safaris/${s.id}`}
+                          prefetch
+                          className="mt-auto text-center border border-book text-book hover:bg-book/5 font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
+                        >
+                          {t.tours.bookNow}
+                        </Link>
+                      </div>
                     </div>
-                  </div>
+                  </AnimateOnScroll>
                 ))}
               </div>
             </TabsContent>
@@ -140,24 +152,26 @@ function ToursPageInner() {
             {/* Tab 3: Day Trips — excursions with duration <= 1 day */}
             <TabsContent value="day">
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {dayTrips.map((e) => (
-                  <div key={e.id} className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col">
-                    <div className="relative h-40 w-full">
-                      <Image src={e.image} alt={e.name} fill className="object-cover" />
+                {dayTrips.map((e, i) => (
+                  <AnimateOnScroll key={e.id} direction="up" delay={staggerDelay(i)}>
+                    <div className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col h-full">
+                      <div className="relative h-40 w-full">
+                        <Image src={e.image} alt={e.name} fill className="object-cover" />
+                      </div>
+                      <div className="p-5 flex flex-col flex-1">
+                        <h3 className="font-poppins font-bold text-base text-foreground mb-1">{e.name}</h3>
+                        <p className="font-inter text-xs text-muted-foreground mb-4 flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" /> {e.duration}
+                        </p>
+                        <button
+                          onClick={() => openBooking(e.name)}
+                          className="mt-auto bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
+                        >
+                          {t.common.bookNow}
+                        </button>
+                      </div>
                     </div>
-                    <div className="p-5 flex flex-col flex-1">
-                      <h3 className="font-poppins font-bold text-base text-foreground mb-1">{e.name}</h3>
-                      <p className="font-inter text-xs text-muted-foreground mb-4 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" /> {e.duration}
-                      </p>
-                      <button
-                        onClick={() => openBooking(e.name)}
-                        className="mt-auto bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors"
-                      >
-                        {t.common.bookNow}
-                      </button>
-                    </div>
-                  </div>
+                  </AnimateOnScroll>
                 ))}
               </div>
             </TabsContent>
