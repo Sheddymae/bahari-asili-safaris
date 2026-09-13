@@ -4,6 +4,8 @@ import { normalizeLocale, formatLocaleDate } from './locale-content';
 import { safaris } from './tours-data';
 import { resolveItinerary } from './itinerary-resolve';
 import { generateQrPngDataUrl } from './qr';
+import { loadBrandLogo, drawBrandLogo } from './pdf-brand';
+import { loadBrandStamp, drawStamp } from './pdf-stamp';
 
 const labels: Record<Locale, Record<string,string>> = {
   en:{title:'DETAILED SAFARI ITINERARY',guest:'Guest',booking:'Booking Reference',safari:'Safari',destinations:'Destinations',dates:'Travel Dates',duration:'Duration',notConfirmed:'Detailed itinerary to be confirmed.',notes:'Notes',overnight:'Overnight'},
@@ -29,6 +31,8 @@ export async function generateDetailedItineraryPDF(booking: Booking, requestedLo
   const locale = normalizeLocale(requestedLocale || booking.locale);
   const L = labels[locale];
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const logo = await loadBrandLogo();
+  const stamp = await loadBrandStamp();
   const W = 210, M = 14, BOTTOM = 275; let y = 14;
   const safari = safaris.find((s) => s.name === booking.safari_name);
   const days = resolveItinerary(booking);
@@ -41,10 +45,15 @@ export async function generateDetailedItineraryPDF(booking: Booking, requestedLo
     doc.text(lines, 62, y); y += Math.max(6, lines.length * 4.2);
   };
 
-  doc.setFillColor(14, 116, 144); doc.rect(0, 0, W, 34, 'F');
-  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.text('BAHARI ASILI SAFARIS', M, 15);
-  doc.setFontSize(10); doc.text(L.title, M, 24);
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.text('Watamu, Kenya · +254 101 923 355 · sheddymae02@gmail.com', M, 30);
+  // Header — white band with full-color logo top-left, document title top-right
+  // (same pattern as the voucher/invoice/visa-support letter).
+  doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, 34, 'F');
+  drawBrandLogo(doc, logo, M, 7, 18);
+  doc.setTextColor(14, 116, 144); doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+  doc.text(L.title, W - M, 13, { align: 'right', maxWidth: 110 });
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(100, 116, 139);
+  doc.text('Watamu, Kenya · +254 101 923 355 · sheddymae02@gmail.com', W - M, 19, { align: 'right', maxWidth: 110 });
+  doc.setDrawColor(14, 116, 144); doc.setLineWidth(0.5); doc.line(0, 34, W, 34);
   y = 44;
 
   row(L.guest, `${booking.first_name} ${booking.last_name}`);
@@ -92,6 +101,10 @@ export async function generateDetailedItineraryPDF(booking: Booking, requestedLo
     const qr = await generateQrPngDataUrl(documentUrl);
     if (qr) { const qrSize = 18; ensure(qrSize + 6); doc.addImage(qr, 'PNG', W - M - qrSize, y + 4, qrSize, qrSize); doc.setFontSize(6); doc.text('Scan to view PDF', W - M - qrSize, y + 4 + qrSize + 3, { align: 'left' }); }
   }
+
+  // Official digital stamp, bottom-right, near the last printed line — this
+  // document has no fixed teal footer band, so anchor it just below content.
+  drawStamp(doc, stamp, locale, { pageWidth: W, footerTopY: Math.min(y + 26, 283) });
 
   if (locale === 'ar' && typeof (doc as any).setR2L === 'function') (doc as any).setR2L(true);
   const dataUrl = doc.output('dataurlstring') as string;
