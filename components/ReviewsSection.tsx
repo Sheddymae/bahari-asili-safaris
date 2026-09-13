@@ -20,14 +20,6 @@ interface PlatformInfo {
   url: string;
 }
 
-// ---------- Placeholder testimonials ----------
-// PLACEHOLDER CONTENT — replace these with real quotes from actual guests
-// before shipping. Collect a short WhatsApp message from 3–5 past clients
-// ("how was the trip?"), get their OK to use it with their first name +
-// country, and swap the text/name/flag/safari fields below. Kept separate
-// from the live Google/TripAdvisor tier above (shown only when no API keys
-// are configured and no live reviews come back) so it's never mislabeled as
-// a platform review.
 interface Testimonial {
   name: string;
   flag: string;
@@ -84,16 +76,11 @@ function TestimonialCard({ item }: { item: Testimonial }) {
   );
 }
 
-// ---------- Google Business fetch ----------
-// Uses Google Business Profile API (free tier) when GOOGLE_BUSINESS_API_KEY is set.
-// Falls back gracefully when the key is missing.
 async function fetchGoogleReviews(): Promise<{ reviews: Review[]; info: PlatformInfo | null }> {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BUSINESS_API_KEY;
   if (!apiKey) return { reviews: [], info: null };
 
   try {
-    // Google My Business API — placeId for "Bahari Asili Safaris, Watamu"
-    // This is a public API endpoint; in production you'd use the Place Details API.
     const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || '';
     if (!placeId) return { reviews: [], info: null };
 
@@ -126,8 +113,6 @@ async function fetchGoogleReviews(): Promise<{ reviews: Review[]; info: Platform
   }
 }
 
-// ---------- TripAdvisor fetch ----------
-// Uses TripAdvisor Content API (free tier) when TRIPADVISOR_API_KEY is set.
 async function fetchTripAdvisorReviews(): Promise<{ reviews: Review[]; info: PlatformInfo | null }> {
   const apiKey = process.env.NEXT_PUBLIC_TRIPADVISOR_API_KEY;
   if (!apiKey) return { reviews: [], info: null };
@@ -162,7 +147,6 @@ async function fetchTripAdvisorReviews(): Promise<{ reviews: Review[]; info: Pla
   }
 }
 
-// ---------- Star rating display ----------
 function Stars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
   const starSize = size === 'md' ? 'w-5 h-5' : 'w-3.5 h-3.5';
   return (
@@ -177,7 +161,6 @@ function Stars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) 
   );
 }
 
-// ---------- Review card ----------
 function ReviewCard({ review }: { review: Review }) {
   const sourceColor = review.source === 'google' ? 'bg-[#0e7490]/10 text-primary' : 'bg-[#0e7490]/10 text-primary';
   const sourceLabel = review.source === 'google' ? 'Google' : 'TripAdvisor';
@@ -212,19 +195,13 @@ function ReviewCard({ review }: { review: Review }) {
   );
 }
 
-// ---------- Platform summary card ----------
 function PlatformCard({ platform, info, icon }: { platform: 'google' | 'tripadvisor'; info: PlatformInfo | null; icon: React.ReactNode }) {
   if (!info) return null;
   const label = platform === 'google' ? 'Google' : 'TripAdvisor';
   const bgColor = platform === 'google' ? 'hover:border-[#0e7490]/30' : 'hover:border-[#0e7490]/30';
 
   return (
-    
-      href={info.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex items-center gap-4 bg-white rounded-2xl border border-border px-5 py-4 shadow-card transition-all ${bgColor} hover:shadow-card-hover`}
-    >
+    <a href={info.url} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-4 bg-white rounded-2xl border border-border px-5 py-4 shadow-card transition-all ${bgColor} hover:shadow-card-hover`}>
       <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
         {icon}
       </div>
@@ -243,7 +220,6 @@ function PlatformCard({ platform, info, icon }: { platform: 'google' | 'tripadvi
   );
 }
 
-// ---------- Main component ----------
 export default function ReviewsSection() {
   const { t } = useLanguage();
   const [googleData, setGoogleData] = useState<{ reviews: Review[]; info: PlatformInfo | null }>({ reviews: [], info: null });
@@ -283,15 +259,11 @@ export default function ReviewsSection() {
     };
   }, [emblaApi, onSelect]);
 
-  // Duplicated once so the marquee loop is seamless — at the halfway mark of
-  // the translateX animation, the duplicate set is showing in the exact
-  // position the original set started in.
   const marqueeTestimonials = [...FALLBACK_TESTIMONIALS, ...FALLBACK_TESTIMONIALS];
 
   return (
     <section className="py-20 lg:py-28 bg-sand-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 bg-safari-50 border border-safari-200 rounded-full px-4 py-1.5 mb-4">
             <MessageSquare className="w-3.5 h-3.5 text-safari-600" />
@@ -308,7 +280,6 @@ export default function ReviewsSection() {
         </div>
 
         {loading ? (
-          // Loading skeleton
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="bg-white rounded-2xl border border-border p-5 animate-pulse">
@@ -326,9 +297,6 @@ export default function ReviewsSection() {
             ))}
           </div>
         ) : !hasAny ? (
-          // Fallback when no live review API keys are configured yet —
-          // auto-scrolling marquee of curated testimonials, duplicated once
-          // for a seamless loop. Pauses on hover so it's actually readable.
           <div
             className="marquee-viewport overflow-hidden relative"
             style={{
@@ -367,7 +335,6 @@ export default function ReviewsSection() {
           </div>
         ) : (
           <>
-            {/* Platform summary cards */}
             {(googleData.info || tripData.info) && (
               <div className="grid sm:grid-cols-2 gap-4 mb-8 max-w-2xl mx-auto">
                 <PlatformCard
@@ -396,7 +363,6 @@ export default function ReviewsSection() {
               </div>
             )}
 
-            {/* Review cards — swipeable carousel */}
             {allReviews.length > 0 && (
               <div className="relative">
                 <div className="overflow-hidden" ref={emblaRef}>
