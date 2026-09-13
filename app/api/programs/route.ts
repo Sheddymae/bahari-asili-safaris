@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { unstable_cache } from 'next/cache';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
-import { safaris } from '@/lib/tours-data';
+import { safaris } from '@/lib/safari-catalogue';
 import { normalizeLocale } from '@/lib/locale-content';
 import { rowToSafari } from '@/lib/program-utils';
 

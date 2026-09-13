@@ -9,7 +9,7 @@ import { Calendar, MapPin, Star, Clock } from 'lucide-react';
 import PageShell from '@/components/PageShell';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { safaris, excursions } from '@/lib/tours-data';
+import { safaris, excursions } from '@/lib/safari-catalogue';
 import { getGroupTours, type GroupTour } from '@/lib/supabase';
 import { useLanguage } from '@/contexts/LanguageContext';
 

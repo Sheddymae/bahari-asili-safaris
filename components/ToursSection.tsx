@@ -7,7 +7,8 @@ import { Star, Clock, ChevronDown, ChevronUp, MapPin, Building2, Backpack, Sun, 
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { safaris, type Safari, type SafariTab, DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from '@/lib/tours-data';
+import { safaris } from '@/lib/safari-catalogue';
+import { type Safari, type SafariTab, DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from '@/lib/tours-data';
 import { prefersReducedMotion } from '@/lib/video-config';
 
 gsap.registerPlugin(ScrollTrigger);
