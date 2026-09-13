@@ -29,8 +29,7 @@
  */
 
 import type { Locale } from './i18n';
-
-const STAMP_PATH = 'images/bahari-asili-stamp.png';
+import { STAMP_BASE64 } from './pdf-assets/stamp-base64';
 
 // Native asset dimensions (public/images/bahari-asili-stamp.png is 216x168 px).
 const STAMP_NATIVE_WIDTH = 216;
@@ -52,33 +51,26 @@ export interface BrandStamp {
 let cachedStamp: BrandStamp | null | undefined;
 
 /**
- * Loads the official stamp asset as a base64 data URL for jsPDF's
- * doc.addImage(). Never throws — returns null on failure so callers can
- * skip the stamp rather than fail the whole document.
+ * Returns the official stamp asset as a base64 data URL for jsPDF's
+ * doc.addImage(). The PNG bytes are embedded at build time in
+ * lib/pdf-assets/stamp-base64.ts (generated from
+ * public/images/bahari-asili-stamp.png) instead of being read from
+ * disk/network at request time — see the matching note on
+ * loadBrandLogo() in lib/pdf-brand.ts for why (outputFileTracingIncludes
+ * doesn't cover app/ routes on this Next.js version, so fs.readFile()
+ * of a public/ asset was silently failing in the deployed serverless
+ * functions). Kept async + cached so call sites don't change. Never
+ * throws — returns null only if the embedded constant is somehow
+ * empty, so callers can skip the stamp rather than fail the document.
  */
 export async function loadBrandStamp(): Promise<BrandStamp | null> {
   if (cachedStamp !== undefined) return cachedStamp;
-  try {
-    let bytes: Uint8Array;
-    if (typeof window !== 'undefined') {
-      const response = await fetch(`/${STAMP_PATH}`);
-      if (!response.ok) throw new Error(`Stamp request failed: ${response.status}`);
-      bytes = new Uint8Array(await response.arrayBuffer());
-    } else {
-      const loadFs = Function('return import("fs/promises")') as () => Promise<typeof import('fs/promises')>;
-      const fs = await loadFs();
-      bytes = new Uint8Array(await fs.readFile(`${process.cwd()}/public/${STAMP_PATH}`));
-    }
-    let binary = '';
-    const chunk = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunk) {
-      binary += String.fromCharCode(...bytes.subarray(i, Math.min(i + chunk, bytes.length)));
-    }
-    cachedStamp = { dataUrl: `data:image/png;base64,${btoa(binary)}`, ratio: STAMP_RATIO };
-  } catch (error) {
-    console.warn('Could not load Bahari Asili stamp for PDF; document will render without it.', error);
+  if (!STAMP_BASE64) {
+    console.warn('Bahari Asili stamp base64 constant is empty; document will render without it.');
     cachedStamp = null;
+    return cachedStamp;
   }
+  cachedStamp = { dataUrl: `data:image/png;base64,${STAMP_BASE64}`, ratio: STAMP_RATIO };
   return cachedStamp;
 }
 
