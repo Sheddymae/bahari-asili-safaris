@@ -1,0 +1,83 @@
+name: Apply Safari Catalogue Expansion
+
+on:
+  push:
+    branches:
+      - catalogue-expansion-2026-09
+    paths:
+      - '.github/workflows/apply-safari-catalogue-expansion.yml'
+      - 'lib/safari-catalogue.ts'
+      - 'lib/safari-catalogue-additions.ts'
+
+permissions:
+  contents: write
+
+jobs:
+  wire-catalogue:
+    if: ${{ !contains(github.event.head_commit.message, '[catalogue-wired]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Wire expanded catalogue into public/admin consumers
+        shell: python
+        run: |
+          from pathlib import Path
+
+          replacements = {
+              'components/ToursSection.tsx': [
+                  ("import { safaris, type Safari, type SafariTab, DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from '@/lib/tours-data';",
+                   "import { safaris } from '@/lib/safari-catalogue';\nimport { type Safari, type SafariTab, DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from '@/lib/tours-data';")
+              ],
+              'app/tours/ToursPageClient.tsx': [
+                  ("import { safaris, excursions } from '@/lib/tours-data';",
+                   "import { safaris, excursions } from '@/lib/safari-catalogue';")
+              ],
+              'app/safaris/[slug]/page.tsx': [
+                  ("import { safaris } from '@/lib/tours-data';",
+                   "import { safaris } from '@/lib/safari-catalogue';")
+              ],
+              'app/api/programs/route.ts': [
+                  ("import { safaris } from '@/lib/tours-data';",
+                   "import { safaris } from '@/lib/safari-catalogue';")
+              ],
+              'app/api/programs/[slug]/route.ts': [
+                  ("import { safaris } from '@/lib/tours-data';",
+                   "import { safaris } from '@/lib/safari-catalogue';")
+              ],
+              'app/api/admin/programs/route.ts': [
+                  ("import { safaris } from '@/lib/tours-data';",
+                   "import { safaris } from '@/lib/safari-catalogue';")
+              ],
+          }
+
+          for filename, pairs in replacements.items():
+              p = Path(filename)
+              text = p.read_text(encoding='utf-8')
+              original = text
+              for old, new in pairs:
+                  if old not in text:
+                      raise SystemExit(f'Missing expected import in {filename}: {old}')
+                  text = text.replace(old, new, 1)
+              p.write_text(text, encoding='utf-8')
+              print(f'Updated {filename}: {len(original)} -> {len(text)} chars')
+
+      - name: Validate TypeScript imports
+        run: |
+          test -f lib/safari-catalogue.ts
+          test -f lib/safari-catalogue-additions.ts
+          grep -q "@/lib/safari-catalogue" components/ToursSection.tsx
+          grep -q "@/lib/safari-catalogue" app/tours/ToursPageClient.tsx
+          grep -q "@/lib/safari-catalogue" app/safaris/\[slug\]/page.tsx
+          grep -q "@/lib/safari-catalogue" app/api/programs/route.ts
+          grep -q "@/lib/safari-catalogue" app/api/programs/\[slug\]/route.ts
+          grep -q "@/lib/safari-catalogue" app/api/admin/programs/route.ts
+
+      - name: Commit wiring changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add components/ToursSection.tsx app/tours/ToursPageClient.tsx app/safaris/[slug]/page.tsx app/api/programs/route.ts app/api/programs/[slug]/route.ts app/api/admin/programs/route.ts
+          git diff --cached --quiet || git commit -m "Wire expanded safari catalogue [catalogue-wired]"
+          git push

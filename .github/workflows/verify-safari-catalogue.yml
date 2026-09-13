@@ -1,0 +1,27 @@
+name: Verify Safari Catalogue
+on:
+  push:
+    branches: [catalogue-expansion-2026-09]
+    paths:
+      - 'lib/safari-catalogue.ts'
+      - 'lib/safari-catalogue-additions.ts'
+      - 'components/ToursSection.tsx'
+      - 'app/tours/**'
+      - 'app/safaris/**'
+      - 'app/api/programs/**'
+      - 'app/api/admin/programs/**'
+      - '.github/workflows/verify-safari-catalogue.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint

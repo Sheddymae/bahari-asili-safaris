@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { safaris } from '@/lib/tours-data';
+import { safaris } from '@/lib/safari-catalogue';
 import SafariDetailClient from '@/components/SafariDetailClient';
 
 export function generateStaticParams() {
