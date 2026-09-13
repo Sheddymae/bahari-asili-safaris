@@ -28,8 +28,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
     const [invoice, voucher] = await Promise.all([
-      generatePremiumInvoicePDF(booking as any),
-      generateVoucherPDF(booking),
+      generatePremiumInvoicePDF(booking as any, undefined, booking.invoice_url || undefined),
+      generateVoucherPDF(booking, undefined, booking.voucher_url || undefined),
     ]);
 
     const emailSent = await sendEmail(
