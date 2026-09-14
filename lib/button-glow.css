@@ -1,0 +1,34 @@
+/* Premium CTA glow. The animation stays subtle at rest and intensifies on hover/focus. */
+.glow-button {
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 8px 24px rgba(249, 115, 22, 0.22);
+  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+  animation: glow-button-pulse 2.8s ease-in-out infinite;
+}
+
+.glow-button:hover,
+.glow-button:focus-visible {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.24), 0 0 22px rgba(249, 115, 22, 0.65), 0 10px 30px rgba(249, 115, 22, 0.34);
+  filter: brightness(1.06);
+  animation: none;
+}
+
+.glow-button:active {
+  transform: scale(0.97);
+}
+
+@keyframes glow-button-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 8px 24px rgba(249, 115, 22, 0.20);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 0 20px rgba(249, 115, 22, 0.48), 0 10px 28px rgba(249, 115, 22, 0.28);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-button {
+    animation: none;
+  }
+}
