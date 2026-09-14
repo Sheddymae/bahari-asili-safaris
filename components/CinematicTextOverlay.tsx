@@ -4,21 +4,8 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations, type Locale } from "@/lib/i18n";
 
-/**
- * CinematicTextOverlay
- *
- * The hero uses the same locale and translated hero copy as the rest of the
- * customer-facing site. The selected locale is shown first, then the hero
- * rotates through the canonical eight supported site locales.
- *
- * IMPORTANT: Do not add a second translated tagline/subtext source here.
- * `lib/i18n.ts` is the source of truth for hero title/subtitle content.
- */
-
 const HERO_LOCALES: Locale[] = ["en", "it", "fr", "es", "de", "ar", "zh", "sw"];
 
-// Greeting labels are intentionally kept small and are derived from the
-// canonical locale list. The actual hero title/subtitle always come from i18n.
 const GREETINGS: Record<Locale, string> = {
   en: "Hello",
   it: "Ciao",
@@ -42,19 +29,28 @@ export default function CinematicTextOverlay() {
   const { locale, isRTL } = useLanguage();
   const [index, setIndex] = useState(() => localeIndex(locale));
   const [visible, setVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  // If the visitor changes the site's language, immediately show that locale
-  // instead of waiting for the existing rotation to reach it.
   useEffect(() => {
     setIndex(localeIndex(locale));
     setVisible(true);
   }, [locale]);
 
-  // One self-contained cycle at a time. This avoids overlapping intervals and
-  // makes cleanup deterministic when the component or locale changes.
   useEffect(() => {
-    let swapTimeout: ReturnType<typeof setTimeout> | undefined;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReducedMotion(mediaQuery.matches);
+    updatePreference();
+    mediaQuery.addEventListener?.("change", updatePreference);
+    return () => mediaQuery.removeEventListener?.("change", updatePreference);
+  }, []);
 
+  useEffect(() => {
+    if (reducedMotion) {
+      setVisible(true);
+      return;
+    }
+
+    let swapTimeout: ReturnType<typeof setTimeout> | undefined;
     const holdTimeout = setTimeout(() => {
       setVisible(false);
       swapTimeout = setTimeout(() => {
@@ -67,16 +63,15 @@ export default function CinematicTextOverlay() {
       clearTimeout(holdTimeout);
       if (swapTimeout) clearTimeout(swapTimeout);
     };
-  }, [index, locale]);
+  }, [index, locale, reducedMotion]);
 
   const activeLocale = HERO_LOCALES[index] ?? "en";
   const activeTranslation = translations[activeLocale];
   const fallbackTranslation = translations.en;
   const hero = activeTranslation.hero ?? fallbackTranslation.hero;
-
   const fadeStyle = {
     opacity: visible ? 1 : 0,
-    transition: `opacity ${CROSSFADE_MS}ms ease-in-out`,
+    transition: reducedMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out`,
   };
 
   return (
