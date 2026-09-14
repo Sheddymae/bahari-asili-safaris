@@ -16,13 +16,21 @@ export default function TrustStrip() {
   ];
 
   return (
-    <section className="relative -mt-px bg-white border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 py-6">
-          {points.map(({ icon: Icon, label }, i) => (
-            <div key={i} className="flex items-center gap-2.5">
-              <Icon className="w-4 h-4 text-safari-500 flex-shrink-0" />
-              <span className="font-inter text-sm font-medium text-foreground whitespace-nowrap">{label}</span>
+    <section className="relative -mt-px overflow-hidden border-b border-border bg-white" aria-label="Why travel with Bahari Asili Safaris">
+      <div className="trust-marquee-mask">
+        <div className="trust-marquee-track" tabIndex={0} aria-label="Safari service highlights">
+          {[0, 1].map((copy) => (
+            <div
+              key={copy}
+              className="trust-marquee-group flex shrink-0 items-center justify-center gap-x-10 px-5 py-6 sm:gap-x-14 sm:px-7 lg:gap-x-16 lg:px-8"
+              aria-hidden={copy === 1}
+            >
+              {points.map(({ icon: Icon, label }, i) => (
+                <div key={`${copy}-${i}`} className="flex shrink-0 items-center gap-2.5">
+                  <Icon className="h-4 w-4 shrink-0 text-safari-500 sm:h-[18px] sm:w-[18px]" />
+                  <span className="whitespace-nowrap font-inter text-sm font-medium text-foreground sm:text-[15px]">{label}</span>
+                </div>
+              ))}
             </div>
           ))}
         </div>
