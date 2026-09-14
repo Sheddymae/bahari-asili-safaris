@@ -40,7 +40,10 @@ function localeIndex(locale: Locale) {
 
 export default function CinematicTextOverlay() {
   const { locale, isRTL } = useLanguage();
-  const [index, setIndex] = useState(() => localeIndex(locale));
+  // Keep the selected context locale as the first-render source of truth.
+  // Rotation state is activated after mount, avoiding any browser-only
+  // initialization during hydration and avoiding an English flash.
+  const [rotationIndex, setRotationIndex] = useState<number | null>(null);
   const [visible, setVisible] = useState(true);
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -54,12 +57,12 @@ export default function CinematicTextOverlay() {
   }, []);
 
   useEffect(() => {
-    setIndex(localeIndex(locale));
+    setRotationIndex(localeIndex(locale));
     setVisible(true);
   }, [locale]);
 
   useEffect(() => {
-    if (reduceMotion) {
+    if (rotationIndex === null || reduceMotion) {
       setVisible(true);
       return;
     }
@@ -69,7 +72,9 @@ export default function CinematicTextOverlay() {
     const holdTimeout = setTimeout(() => {
       setVisible(false);
       swapTimeout = setTimeout(() => {
-        setIndex((previous) => (previous + 1) % HERO_LOCALES.length);
+        setRotationIndex((previous) =>
+          previous === null ? localeIndex(locale) : (previous + 1) % HERO_LOCALES.length,
+        );
         setVisible(true);
       }, CROSSFADE_MS);
     }, HOLD_MS);
@@ -78,9 +83,11 @@ export default function CinematicTextOverlay() {
       clearTimeout(holdTimeout);
       if (swapTimeout) clearTimeout(swapTimeout);
     };
-  }, [index, locale, reduceMotion]);
+  }, [rotationIndex, locale, reduceMotion]);
 
-  const activeLocale = HERO_LOCALES[index] ?? "en";
+  // During the first render, use the already-resolved server/client locale.
+  // After mount, rotationIndex controls the normal cinematic rotation.
+  const activeLocale = rotationIndex === null ? locale : (HERO_LOCALES[rotationIndex] ?? locale);
   const activeTranslation = translations[activeLocale];
   const fallbackTranslation = translations.en;
   const hero = activeTranslation.hero ?? fallbackTranslation.hero;
