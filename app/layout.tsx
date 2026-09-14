@@ -1,11 +1,18 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { Manrope } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { translations, type Locale } from '@/lib/i18n';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { Toaster } from '@/components/ui/toaster';
 import LanguageFloatingSelector from '@/components/LanguageFloatingSelector';
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
 
@@ -42,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const cookieLocale = cookies().get('bahari-locale')?.value as Locale | undefined;
   const initialLocale = cookieLocale && Object.prototype.hasOwnProperty.call(translations, cookieLocale) ? cookieLocale : 'en';
   return (
-    <html lang={initialLocale} className="scroll-smooth bg-sand-50">
+    <html lang={initialLocale} className={`scroll-smooth bg-sand-50 ${manrope.variable}`}>
       <body className="bg-sand-50">
         <AuthProvider>
           <LanguageProvider initialLocale={initialLocale}>
