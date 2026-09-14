@@ -77,6 +77,41 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Global interaction transitions: keep the site feeling fluid without
+   animating layout-heavy properties such as width, height or position. */
+a,
+button,
+input,
+select,
+textarea,
+[role='button'] {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Make primary interactive buttons feel alive across the site. Buttons can
+   opt out with data-no-glow when a utility/icon control should stay quiet. */
+button:not([data-no-glow]),
+a[role='button']:not([data-no-glow]) {
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 4px 16px rgba(14, 116, 144, 0.10);
+}
+
+button:not([data-no-glow]):hover,
+button:not([data-no-glow]):focus-visible,
+a[role='button']:not([data-no-glow]):hover,
+a[role='button']:not([data-no-glow]):focus-visible {
+  box-shadow: 0 0 18px rgba(14, 116, 144, 0.32), 0 8px 24px rgba(14, 116, 144, 0.16);
+  transform: translateY(-1px);
+}
+
+button:not([data-no-glow]):active,
+a[role='button']:not([data-no-glow]):active {
+  transform: translateY(0) scale(0.98);
+}
+
 /* Seamless, responsive infinite service-highlight marquee */
 .trust-marquee-mask {
   width: 100%;
@@ -112,15 +147,18 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .animate-tide,
   .trust-marquee-track,
-  .glow-button {
+  .glow-button,
+  button:not([data-no-glow]),
+  a[role='button']:not([data-no-glow]) {
     animation: none !important;
+    transition-duration: 0.01ms !important;
   }
   html {
     scroll-behavior: auto;
   }
 }
 
-/* Premium CTA glow: subtle breathing light at rest, stronger on interaction. */
+/* Premium CTA glow: stronger orange breathing light for the main booking CTA. */
 .glow-button {
   position: relative;
   isolation: isolate;
@@ -149,18 +187,6 @@ html {
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-::-webkit-scrollbar-thumb {
-  background: #0e7490;
-  border-radius: 3px;
-}
-
 /* Tour card hover */
 .tour-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -182,4 +208,16 @@ html {
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #0e7490;
+  border-radius: 3px;
 }
