@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { MapPin, Users, CalendarDays, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CinematicHeroVideo from './CinematicHeroVideo';
 import CinematicTextOverlay from './CinematicTextOverlay';
 import { prefersReducedMotion } from '@/lib/video-config';
+import type { HeroBookingSelection } from './HeroBookingModal';
 
 const locations = [
   'Tsavo East, Kenya',
@@ -19,112 +21,148 @@ const locations = [
 ];
 
 /**
- * HeroSection Component (Premium Autoplay Experience)
+ * HeroSection Component
  *
- * Combines CinematicHeroVideo with booking form and text overlays
- * - Video autoplays immediately on load, no scroll or mouse interaction required
- * - Text overlays fade in on mount
- * - Premium booking form appears shortly after load
+ * The destination menu is rendered through a portal so the hero's
+ * overflow-hidden video container cannot clip the menu. The selected
+ * destination, guest count and date are passed into the real booking flow.
  */
-export default function HeroSection({ onBook }: { onBook: () => void }) {
+export default function HeroSection({ onBook }: { onBook: (selection: HeroBookingSelection) => void }) {
   const { t } = useLanguage();
   const [location, setLocation] = useState('');
   const [people, setPeople] = useState('2');
   const [date, setDate] = useState('');
   const [isLocOpen, setIsLocOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 });
   const bookingFormRef = useRef<HTMLDivElement>(null);
+  const locationButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Animate in booking form shortly after the hero loads
   useEffect(() => {
     const id = setTimeout(() => setMounted(true), 400);
     return () => clearTimeout(id);
   }, []);
+
+  const updateMenuPosition = useCallback(() => {
+    const button = locationButtonRef.current;
+    if (!button) return;
+    const rect = button.getBoundingClientRect();
+    setMenuPosition({
+      top: rect.bottom + 6,
+      left: rect.left,
+      width: rect.width,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isLocOpen) return;
+    updateMenuPosition();
+    const handlePosition = () => updateMenuPosition();
+    window.addEventListener('resize', handlePosition);
+    window.addEventListener('scroll', handlePosition, true);
+    return () => {
+      window.removeEventListener('resize', handlePosition);
+      window.removeEventListener('scroll', handlePosition, true);
+    };
+  }, [isLocOpen, updateMenuPosition]);
+
+  useEffect(() => {
+    if (!isLocOpen) return;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsLocOpen(false);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isLocOpen]);
 
   const handleScrollClick = useCallback((e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  const handleBookClick = useCallback(() => {
+    onBook({
+      destination: location,
+      adults: Math.min(30, Math.max(1, parseInt(people, 10) || 1)),
+      arrivalDate: date,
+    });
+  }, [date, location, onBook, people]);
+
   const showBookingForm = mounted;
+  const dropdown = isLocOpen && typeof document !== 'undefined'
+    ? createPortal(
+        <div
+          className="fixed z-[10000] max-h-72 overflow-y-auto rounded-xl border border-border bg-white shadow-2xl"
+          style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }}
+          role="listbox"
+          aria-label="Choose destination"
+        >
+          {locations.map((loc) => (
+            <button
+              key={loc}
+              type="button"
+              role="option"
+              aria-selected={location === loc}
+              onClick={() => {
+                setLocation(loc);
+                setIsLocOpen(false);
+              }}
+              className="block w-full border-b border-sand-100 px-4 py-3 text-left font-inter text-sm text-foreground transition-colors last:border-0 hover:bg-sand-50 hover:text-ocean-700"
+            >
+              {loc}
+            </button>
+          ))}
+        </div>,
+        document.body,
+      )
+    : null;
 
   return (
     <>
-      {/* Cinematic Video Hero — overlay text AND the booking bar are rendered
-          INSIDE this section (as children) so both are bounded by the
-          section's own box and scroll away with it, instead of floating
-          over the rest of the page. */}
       <CinematicHeroVideo>
         <CinematicTextOverlay />
 
-        {/* Premium Booking Bar - anchored to the bottom of the Hero section.
-            Positioned `absolute` (not `fixed`) so it is bounded by, and
-            scrolls away with, the Hero's own `relative overflow-hidden` box —
-            it must never remain visible once the Hero has scrolled out of
-            view. */}
         {!prefersReducedMotion() && (
           <div
             ref={bookingFormRef}
-            className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-30 px-4 sm:px-6 w-full pointer-events-none transition-all duration-500 ${
-              showBookingForm
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-8'
+            className={`absolute bottom-8 left-1/2 z-30 w-full -translate-x-1/2 px-4 transition-all duration-500 sm:px-6 ${
+              showBookingForm ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
             }`}
-            style={{
-              pointerEvents: showBookingForm ? 'auto' : 'none',
-            }}
+            style={{ pointerEvents: showBookingForm ? 'auto' : 'none' }}
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 max-w-5xl mx-auto">
-              {/* Location selector */}
-              <div className="relative flex-1 min-w-0">
+            <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-2 rounded-2xl bg-white/95 p-3 shadow-2xl backdrop-blur-md sm:flex-row sm:items-center sm:p-4">
+              <div className="relative min-w-0 flex-1">
                 <button
-                  onClick={() => setIsLocOpen(!isLocOpen)}
-                  className="w-full flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-sand-50 transition-colors"
+                  ref={locationButtonRef}
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded={isLocOpen}
+                  onClick={() => {
+                    if (!isLocOpen) updateMenuPosition();
+                    setIsLocOpen((open) => !open);
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-sand-50"
                 >
-                  <MapPin className="w-4 h-4 text-safari-500 flex-shrink-0" />
-                  <div className="text-left flex-1 min-w-0">
-                    <div className="font-inter text-xs text-muted-foreground font-medium">
+                  <MapPin className="h-4 w-4 flex-shrink-0 text-safari-500" />
+                  <div className="min-w-0 flex-1 text-left">
+                    <div className="font-inter text-xs font-medium text-muted-foreground">
                       {t.hero?.location || 'Location'}
                     </div>
-                    <div
-                      className={`font-inter text-sm truncate ${
-                        location ? 'text-foreground font-medium' : 'text-muted-foreground'
-                      }`}
-                    >
+                    <div className={`truncate font-inter text-sm ${location ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
                       {location || 'Where to?'}
                     </div>
                   </div>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 text-muted-foreground flex-shrink-0 transition-transform ${
-                      isLocOpen ? 'rotate-180' : ''
-                    }`}
-                  />
+                  <ChevronDown className={`h-3.5 w-3.5 flex-shrink-0 text-muted-foreground transition-transform ${isLocOpen ? 'rotate-180' : ''}`} />
                 </button>
-                {isLocOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-card-hover border border-border z-50 overflow-hidden max-h-60 overflow-y-auto animate-fade-in">
-                    {locations.map((loc) => (
-                      <button
-                        key={loc}
-                        onClick={() => {
-                          setLocation(loc);
-                          setIsLocOpen(false);
-                        }}
-                        className="w-full text-left px-4 py-2.5 font-inter text-sm text-foreground hover:bg-sand-50 hover:text-ocean-700 transition-colors"
-                      >
-                        {loc}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
 
-              {/* People input */}
-              <div className="hidden sm:block w-px bg-muted h-10 self-center" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-sand-50 transition-colors">
-                  <Users className="w-4 h-4 text-safari-500 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-inter text-xs text-muted-foreground font-medium">
+              <div className="hidden h-10 w-px self-center bg-muted sm:block" />
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-sand-50">
+                  <Users className="h-4 w-4 flex-shrink-0 text-safari-500" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-inter text-xs font-medium text-muted-foreground">
                       {t.hero?.people || 'Guests'}
                     </div>
                     <input
@@ -133,35 +171,35 @@ export default function HeroSection({ onBook }: { onBook: () => void }) {
                       max="30"
                       value={people}
                       onChange={(e) => setPeople(e.target.value)}
-                      className="w-full font-inter text-sm text-foreground font-medium bg-transparent border-none outline-none"
+                      className="w-full border-none bg-transparent font-inter text-sm font-medium text-foreground outline-none"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Date input */}
-              <div className="hidden sm:block w-px bg-muted h-10 self-center" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl hover:bg-sand-50 transition-colors">
-                  <CalendarDays className="w-4 h-4 text-safari-500 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-inter text-xs text-muted-foreground font-medium">
+              <div className="hidden h-10 w-px self-center bg-muted sm:block" />
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-sand-50">
+                  <CalendarDays className="h-4 w-4 flex-shrink-0 text-safari-500" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-inter text-xs font-medium text-muted-foreground">
                       {t.hero?.date || 'When'}
                     </div>
                     <input
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full font-inter text-sm text-foreground bg-transparent border-none outline-none cursor-pointer"
+                      className="w-full cursor-pointer border-none bg-transparent font-inter text-sm text-foreground outline-none"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Check availability — primary solid CTA (unified book-orange) */}
               <button
-                onClick={onBook}
-                className="bg-book hover:bg-book-600 text-white font-poppins font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 whitespace-nowrap"
+                type="button"
+                onClick={handleBookClick}
+                className="whitespace-nowrap rounded-xl bg-book px-8 py-3.5 font-poppins font-semibold text-white transition-all duration-200 hover:bg-book-600 hover:shadow-lg active:scale-95"
               >
                 {t.hero?.bookNow || 'Check Availability'} →
               </button>
@@ -169,6 +207,7 @@ export default function HeroSection({ onBook }: { onBook: () => void }) {
           </div>
         )}
       </CinematicHeroVideo>
+      {dropdown}
     </>
   );
 }

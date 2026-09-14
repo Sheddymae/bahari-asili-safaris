@@ -27,12 +27,25 @@ function localeIndex(locale: Locale) {
 
 export default function CinematicTextOverlay() {
   const { locale, isRTL } = useLanguage();
-  const [index, setIndex] = useState(() => localeIndex(locale));
+  // Keep the selected context locale as the first-render source of truth.
+  // Rotation state is activated after mount, avoiding browser-only
+  // initialization during hydration and avoiding an English flash.
+  const [rotationIndex, setRotationIndex] = useState<number | null>(null);
   const [visible, setVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
-    setIndex(localeIndex(locale));
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReduceMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+    return () => mediaQuery.removeEventListener("change", updatePreference);
+  }, []);
+
+  useEffect(() => {
+    setRotationIndex(localeIndex(locale));
     setVisible(true);
   }, [locale]);
 
@@ -49,12 +62,20 @@ export default function CinematicTextOverlay() {
       setVisible(true);
       return;
     }
+    if (rotationIndex === null || reduceMotion) {
+      setVisible(true);
+      return;
+    }
+
+    let swapTimeout: ReturnType<typeof setTimeout> | undefined;
 
     let swapTimeout: ReturnType<typeof setTimeout> | undefined;
     const holdTimeout = setTimeout(() => {
       setVisible(false);
       swapTimeout = setTimeout(() => {
-        setIndex((previous) => (previous + 1) % HERO_LOCALES.length);
+        setRotationIndex((previous) =>
+          previous === null ? localeIndex(locale) : (previous + 1) % HERO_LOCALES.length,
+        );
         setVisible(true);
       }, CROSSFADE_MS);
     }, HOLD_MS);
@@ -64,19 +85,23 @@ export default function CinematicTextOverlay() {
       if (swapTimeout) clearTimeout(swapTimeout);
     };
   }, [index, locale, reducedMotion]);
+=======
+  }, [rotationIndex, locale, reduceMotion]);
 
-  const activeLocale = HERO_LOCALES[index] ?? "en";
+  const activeLocale = rotationIndex === null ? locale : (HERO_LOCALES[rotationIndex] ?? locale);
   const activeTranslation = translations[activeLocale];
   const fallbackTranslation = translations.en;
   const hero = activeTranslation.hero ?? fallbackTranslation.hero;
   const fadeStyle = {
     opacity: visible ? 1 : 0,
     transition: reducedMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out`,
+=======
+    transition: reduceMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out`,
   };
 
   return (
     <div
-      className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center"
+      className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center font-manrope"
       dir={isRTL && activeLocale === "ar" ? "rtl" : "ltr"}
       style={{ fontFamily: 'var(--font-manrope), "Noto Sans", "Segoe UI", Arial, sans-serif' }}
     >
