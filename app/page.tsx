@@ -8,7 +8,6 @@ import TrustStrip from '@/components/TrustStrip';
 import AboutSection from '@/components/AboutSection';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { safaris, excursions } from '@/lib/tours-data';
-import { useLanguage } from '@/contexts/LanguageContext';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
 
 // Heavy sections -> lazy load only when user scrolls to them
@@ -50,12 +49,10 @@ const HeroBookingModal = dynamic(() => import('@/components/HeroBookingModal'), 
 const WhatsAppButton = dynamic(() => import('@/components/WhatsAppButton'), { ssr: false });
 
 export default function Home() {
-  const { t } = useLanguage();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isHeroBookingOpen, setIsHeroBookingOpen] = useState(false);
   const [selectedTour, setSelectedTour] = useState<string>('');
   const [heroBookingSelection, setHeroBookingSelection] = useState<HeroBookingSelection>({});
-  const [bookingSuccess, setBookingSuccess] = useState(false);
 
   const openBooking = useCallback((tourName?: string) => {
     setSelectedTour(tourName || '');
@@ -161,11 +158,6 @@ export default function Home() {
         initialSelection={heroBookingSelection}
       />
 
-      {bookingSuccess && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-lg bg-primary px-6 py-4 font-inter text-white shadow-lg">
-          {t.inquiryStatus.receivedDesc}
-        </div>
-      )}
       <WhatsAppButton />
     </>
   );
