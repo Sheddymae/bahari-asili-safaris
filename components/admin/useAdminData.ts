@@ -26,20 +26,38 @@ export function useAdminData() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const reload = useCallback(async (params?: URLSearchParams) => {
-    setLoading(true); setError('');
+  const reload = useCallback(async (params?: URLSearchParams, options?: { silent?: boolean }) => {
+    if (!options?.silent) setLoading(true);
+    setError('');
     try {
-      const query = params || new URLSearchParams();
+      const query = params ? new URLSearchParams(params.toString()) : new URLSearchParams();
       query.set('page', '1'); query.set('page_size', '100');
-      const response = await fetch(`/api/admin/reservations?${query.toString()}`);
+      const response = await fetch(`/api/admin/reservations?${query.toString()}`, {
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache' },
+      });
       if (response.status === 401) { router.push('/auth/login'); return; }
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.error || 'Failed to load reservations');
-      setReservations(Array.isArray(data.reservations) ? data.reservations : []); setStats(data.stats || null);
-    } catch (e) { setError(e instanceof Error ? e.message : 'Failed to load reservations'); }
-    finally { setLoading(false); }
+      setReservations(Array.isArray(data.reservations) ? data.reservations : []);
+      setStats(data.stats || null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load reservations');
+    } finally {
+      if (!options?.silent) setLoading(false);
+    }
   }, [router]);
 
-  useEffect(() => { reload(); }, [reload]);
+  useEffect(() => {
+    reload();
+    const interval = window.setInterval(() => reload(undefined, { silent: true }), 15000);
+    const handleFocus = () => reload(undefined, { silent: true });
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [reload]);
+
   return { reservations, stats, loading, error, reload, setReservations };
 }
