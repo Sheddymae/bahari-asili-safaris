@@ -42,6 +42,18 @@ export default function CinematicTextOverlay() {
   const { locale, isRTL } = useLanguage();
   const [index, setIndex] = useState(() => localeIndex(locale));
   const [visible, setVisible] = useState(true);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  // Respect the visitor's OS/browser reduced-motion preference. The media
+  // query is read only after hydration, so browser APIs never run during SSR.
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReduceMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+    return () => mediaQuery.removeEventListener("change", updatePreference);
+  }, []);
 
   // If the visitor changes the site's language, immediately show that locale
   // instead of waiting for the existing rotation to reach it.
@@ -50,9 +62,14 @@ export default function CinematicTextOverlay() {
     setVisible(true);
   }, [locale]);
 
-  // One self-contained cycle at a time. This avoids overlapping intervals and
-  // makes cleanup deterministic when the component or locale changes.
+  // One self-contained cycle at a time. Rotation is disabled when the visitor
+  // requests reduced motion; the selected locale remains visible.
   useEffect(() => {
+    if (reduceMotion) {
+      setVisible(true);
+      return;
+    }
+
     let swapTimeout: ReturnType<typeof setTimeout> | undefined;
 
     const holdTimeout = setTimeout(() => {
@@ -67,7 +84,7 @@ export default function CinematicTextOverlay() {
       clearTimeout(holdTimeout);
       if (swapTimeout) clearTimeout(swapTimeout);
     };
-  }, [index, locale]);
+  }, [index, locale, reduceMotion]);
 
   const activeLocale = HERO_LOCALES[index] ?? "en";
   const activeTranslation = translations[activeLocale];
@@ -76,7 +93,7 @@ export default function CinematicTextOverlay() {
 
   const fadeStyle = {
     opacity: visible ? 1 : 0,
-    transition: `opacity ${CROSSFADE_MS}ms ease-in-out`,
+    transition: reduceMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out`,
   };
 
   return (
