@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AlertCircle, CheckCircle, Loader2, MessageCircle, X } from 'lucide-react';
+import { AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import InquiryStatusDisplay from '@/components/InquiryStatusDisplay';
-
-const WHATSAPP_NUMBER = '254101923355';
 
 export interface HeroBookingSelection {
   destination?: string;
@@ -104,7 +102,7 @@ export default function HeroBookingModal({
       const messageParts = [
         form.message.trim(),
         form.departureDate ? `Departure date: ${form.departureDate}` : '',
-        `Homepage booking request from the hero booking bar.`,
+        'Homepage booking request from the hero booking bar.',
       ].filter(Boolean);
 
       const response = await fetch('/api/booking', {
@@ -169,31 +167,15 @@ export default function HeroBookingModal({
               {t.booking?.subtitle || 'Tell us about your trip and our team will confirm availability.'}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close booking form"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-muted transition-colors hover:bg-sand-100"
-          >
+          <button type="button" onClick={onClose} aria-label="Close booking form" className="flex h-10 w-10 items-center justify-center rounded-full bg-muted transition-colors hover:bg-sand-100">
             <X className="h-5 w-5 text-foreground" />
           </button>
         </div>
 
         {status === 'success' ? (
           <div className="p-6 sm:p-8">
-            <InquiryStatusDisplay
-              bookingRef={bookingRef}
-              firstName={form.firstName}
-              email={form.email}
-              whatsapp={form.whatsapp}
-              emailSent={emailSent}
-              status="pending"
-            />
-            <button
-              type="button"
-              onClick={onClose}
-              className="mt-6 w-full rounded-xl bg-ocean-700 px-5 py-3.5 font-poppins font-semibold text-white transition-colors hover:bg-ocean-800"
-            >
+            <InquiryStatusDisplay bookingRef={bookingRef} firstName={form.firstName} email={form.email} whatsapp={form.whatsapp} emailSent={emailSent} status="pending" />
+            <button type="button" onClick={onClose} className="mt-6 w-full rounded-xl bg-ocean-700 px-5 py-3.5 font-poppins font-semibold text-white transition-colors hover:bg-ocean-800">
               Continue
             </button>
           </div>
@@ -210,151 +192,71 @@ export default function HeroBookingModal({
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="font-inter text-sm font-medium text-foreground">
                 {t.booking?.firstName || 'First name'} *
-                <input
-                  required
-                  value={form.firstName}
-                  onChange={(event) => update('firstName', event.target.value)}
-                  placeholder={t.booking?.firstNamePlaceholder || 'First name'}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input required value={form.firstName} onChange={(event) => update('firstName', event.target.value)} placeholder={t.booking?.firstNamePlaceholder || 'First name'} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
               <label className="font-inter text-sm font-medium text-foreground">
                 {t.booking?.lastName || 'Last name'} *
-                <input
-                  required
-                  value={form.lastName}
-                  onChange={(event) => update('lastName', event.target.value)}
-                  placeholder={t.booking?.lastNamePlaceholder || 'Last name'}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input required value={form.lastName} onChange={(event) => update('lastName', event.target.value)} placeholder={t.booking?.lastNamePlaceholder || 'Last name'} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="font-inter text-sm font-medium text-foreground">
                 {t.booking?.email || 'Email'} *
-                <input
-                  required
-                  type="email"
-                  value={form.email}
-                  onChange={(event) => update('email', event.target.value)}
-                  placeholder={t.booking?.emailPlaceholder || 'you@example.com'}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input required type="email" value={form.email} onChange={(event) => update('email', event.target.value)} placeholder={t.booking?.emailPlaceholder || 'you@example.com'} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
               <label className="font-inter text-sm font-medium text-foreground">
-                {t.booking?.whatsapp || 'WhatsApp'}
-                <input
-                  value={form.whatsapp}
-                  onChange={(event) => update('whatsapp', event.target.value)}
-                  placeholder="+254..."
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                WhatsApp
+                <input value={form.whatsapp} onChange={(event) => update('whatsapp', event.target.value)} placeholder="+254..." className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
               <label className="font-inter text-sm font-medium text-foreground">
                 Destination *
-                <input
-                  required
-                  value={form.destination}
-                  onChange={(event) => update('destination', event.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input required value={form.destination} onChange={(event) => update('destination', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
               <label className="font-inter text-sm font-medium text-foreground">
                 Guests *
-                <input
-                  required
-                  type="number"
-                  min="1"
-                  max="30"
-                  value={form.adults}
-                  onChange={(event) => update('adults', event.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input required type="number" min="1" max="30" value={form.adults} onChange={(event) => update('adults', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
               <label className="font-inter text-sm font-medium text-foreground">
                 Children
-                <input
-                  type="number"
-                  min="0"
-                  max="10"
-                  value={form.children}
-                  onChange={(event) => update('children', event.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input type="number" min="0" max="10" value={form.children} onChange={(event) => update('children', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="font-inter text-sm font-medium text-foreground">
                 Arrival date *
-                <input
-                  required
-                  type="date"
-                  value={form.arrivalDate}
-                  onChange={(event) => update('arrivalDate', event.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input required type="date" value={form.arrivalDate} onChange={(event) => update('arrivalDate', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
               <label className="font-inter text-sm font-medium text-foreground">
                 Departure date
-                <input
-                  type="date"
-                  min={form.arrivalDate || undefined}
-                  value={form.departureDate}
-                  onChange={(event) => update('departureDate', event.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <input type="date" min={form.arrivalDate || undefined} value={form.departureDate} onChange={(event) => update('departureDate', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
               </label>
             </div>
 
             <label className="block font-inter text-sm font-medium text-foreground">
-              {t.booking?.nationality || 'Nationality'}
-              <input
-                value={form.nationality}
-                onChange={(event) => update('nationality', event.target.value)}
-                placeholder="Nationality"
-                className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-              />
+              Nationality
+              <input value={form.nationality} onChange={(event) => update('nationality', event.target.value)} placeholder="Nationality" className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
             </label>
 
             <label className="block font-inter text-sm font-medium text-foreground">
               Message / special requests
-              <textarea
-                rows={4}
-                value={form.message}
-                onChange={(event) => update('message', event.target.value)}
-                placeholder="Tell us anything important about your trip..."
-                className="mt-1.5 w-full resize-none rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-              />
+              <textarea rows={4} value={form.message} onChange={(event) => update('message', event.target.value)} placeholder="Tell us anything important about your trip..." className="mt-1.5 w-full resize-none rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
             </label>
 
             {status === 'error' && (
               <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
                 <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold">Booking could not be submitted.</p>
-                  <p className="mt-1">{errorDetail}</p>
-                </div>
+                <div><p className="font-semibold">Booking could not be submitted.</p><p className="mt-1">{errorDetail}</p></div>
               </div>
             )}
 
             <div className="flex flex-col-reverse gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 rounded-xl bg-sand-100 px-5 py-3.5 font-poppins font-semibold text-foreground transition-colors hover:bg-sand-200"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={status === 'loading'}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-book px-5 py-3.5 font-poppins font-semibold text-white transition hover:bg-book-600 disabled:cursor-not-allowed disabled:opacity-70"
-              >
+              <button type="button" onClick={onClose} className="flex-1 rounded-xl bg-sand-100 px-5 py-3.5 font-poppins font-semibold text-foreground transition-colors hover:bg-sand-200">Cancel</button>
+              <button type="submit" disabled={status === 'loading'} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-book px-5 py-3.5 font-poppins font-semibold text-white transition hover:bg-book-600 disabled:cursor-not-allowed disabled:opacity-70">
                 {status === 'loading' ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle className="h-5 w-5" />}
                 {status === 'loading' ? 'Submitting booking...' : 'Submit booking'}
               </button>
