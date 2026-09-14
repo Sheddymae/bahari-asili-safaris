@@ -9,6 +9,7 @@ import AboutSection from '@/components/AboutSection';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { safaris, excursions } from '@/lib/tours-data';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { HeroBookingSelection } from '@/components/HeroBookingModal';
 
 // Heavy sections -> lazy load only when user scrolls to them
 const ToursSection = dynamic(() => import('@/components/ToursSection'), {
@@ -43,16 +44,17 @@ const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), {
 });
 const Footer = dynamic(() => import('@/components/Footer'));
 
-// Modals - no SSR, load only on click
+// Booking dialogs are client-only because they use browser APIs and form state.
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
-const BookingOverlay = dynamic(() => import('@/components/BookingOverlay'), { ssr: false });
+const HeroBookingModal = dynamic(() => import('@/components/HeroBookingModal'), { ssr: false });
 const WhatsAppButton = dynamic(() => import('@/components/WhatsAppButton'), { ssr: false });
 
 export default function Home() {
   const { t } = useLanguage();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [isHeroBookingOpen, setIsHeroBookingOpen] = useState(false);
   const [selectedTour, setSelectedTour] = useState<string>('');
+  const [heroBookingSelection, setHeroBookingSelection] = useState<HeroBookingSelection>({});
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
   const openBooking = useCallback((tourName?: string) => {
@@ -64,19 +66,13 @@ export default function Home() {
     setIsBookingOpen(false);
   }, []);
 
-  const openOverlay = useCallback(() => {
-    setIsOverlayOpen(true);
+  const openHeroBooking = useCallback((selection: HeroBookingSelection = {}) => {
+    setHeroBookingSelection(selection);
+    setIsHeroBookingOpen(true);
   }, []);
 
-  const closeOverlay = useCallback(() => {
-    setIsOverlayOpen(false);
-  }, []);
-
-  const handleOverlayBook = useCallback((data: any) => {
-    // In production, this would send the booking data to your backend
-    console.log('Booking submitted:', data);
-    setBookingSuccess(true);
-    setTimeout(() => setBookingSuccess(false), 5000);
+  const closeHeroBooking = useCallback(() => {
+    setIsHeroBookingOpen(false);
   }, []);
 
   // If arriving from a /safaris/[slug] or /excursions/[slug] detail page's
@@ -102,7 +98,7 @@ export default function Home() {
     <>
       <Navbar />
       <main className="overflow-x-hidden">
-        <HeroSection onBook={() => openOverlay()} />
+        <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
 
         <AnimateOnScroll direction="up">
@@ -146,10 +142,11 @@ export default function Home() {
         </AnimateOnScroll>
 
         <AnimateOnScroll direction="up">
-          <FinalCtaSection onBook={() => openOverlay()} />
+          <FinalCtaSection onBook={() => openHeroBooking()} />
         </AnimateOnScroll>
       </main>
       <Footer />
+
       {isBookingOpen && (
         <BookingModal
           isOpen={isBookingOpen}
@@ -157,13 +154,15 @@ export default function Home() {
           selectedTour={selectedTour}
         />
       )}
-      <BookingOverlay
-        isOpen={isOverlayOpen}
-        onClose={closeOverlay}
-        onBook={handleOverlayBook}
+
+      <HeroBookingModal
+        isOpen={isHeroBookingOpen}
+        onClose={closeHeroBooking}
+        initialSelection={heroBookingSelection}
       />
+
       {bookingSuccess && (
-        <div className="fixed bottom-6 right-6 z-50 bg-primary text-white px-6 py-4 rounded-lg shadow-lg font-inter">
+        <div className="fixed bottom-6 right-6 z-50 rounded-lg bg-primary px-6 py-4 font-inter text-white shadow-lg">
           {t.inquiryStatus.receivedDesc}
         </div>
       )}
