@@ -1,0 +1,12 @@
+'use client';
+
+import Link from 'next/link';
+import Image from 'next/image';
+import PageShell from '@/components/PageShell';
+import { BookOpen, ArrowRight } from 'lucide-react';
+
+type Post = { slug: string; title: string; excerpt?: string | null; image?: string | null; category?: string | null; author?: string | null; published_at?: string | null };
+
+export default function BlogContentClient({ posts }: { posts: Post[] }) {
+  return <PageShell><section className="min-h-screen bg-sand-50 py-16 lg:py-24"><div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"><div className="mb-12 text-center"><div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-ocean-50"><BookOpen className="h-8 w-8 text-ocean-700" /></div><p className="mb-2 text-sm font-semibold uppercase tracking-widest text-safari-500">Bahari Asili Safaris</p><h1 className="font-poppins text-3xl font-bold text-foreground sm:text-4xl">Travel stories, guides & news</h1><p className="mx-auto mt-3 max-w-2xl text-muted-foreground">Practical Kenya travel advice, destination guides, safari stories and company news.</p></div>{posts.length === 0 ? <div className="mx-auto max-w-xl rounded-2xl border bg-white p-10 text-center text-muted-foreground">No published articles yet. New stories will appear here as the Bahari Asili team publishes them.</div> : <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">{posts.map(post => <Link key={post.slug} href={`/blog/${post.slug}`} className="group overflow-hidden rounded-2xl bg-white shadow-card transition-shadow hover:shadow-card-hover">{post.image ? <div className="relative h-52"><Image src={post.image} alt={post.title} fill sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" /></div> : <div className="flex h-52 items-center justify-center bg-ocean-50"><BookOpen className="h-10 w-10 text-ocean-700" /></div>}<div className="p-6"><p className="text-xs font-bold uppercase tracking-widest text-safari-500">{post.category || 'Travel'}</p><h2 className="mt-2 font-poppins text-xl font-bold text-foreground">{post.title}</h2><p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{post.excerpt || ''}</p><p className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-ocean-700">Read article <ArrowRight className="h-4 w-4" /></p></div></Link>)}</div>}</div></section></PageShell>;
+}
