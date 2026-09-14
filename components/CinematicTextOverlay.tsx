@@ -44,8 +44,6 @@ export default function CinematicTextOverlay() {
   const [visible, setVisible] = useState(true);
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  // Respect the visitor's OS/browser reduced-motion preference. The media
-  // query is read only after hydration, so browser APIs never run during SSR.
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updatePreference = () => setReduceMotion(mediaQuery.matches);
@@ -55,15 +53,11 @@ export default function CinematicTextOverlay() {
     return () => mediaQuery.removeEventListener("change", updatePreference);
   }, []);
 
-  // If the visitor changes the site's language, immediately show that locale
-  // instead of waiting for the existing rotation to reach it.
   useEffect(() => {
     setIndex(localeIndex(locale));
     setVisible(true);
   }, [locale]);
 
-  // One self-contained cycle at a time. Rotation is disabled when the visitor
-  // requests reduced motion; the selected locale remains visible.
   useEffect(() => {
     if (reduceMotion) {
       setVisible(true);
@@ -98,7 +92,7 @@ export default function CinematicTextOverlay() {
 
   return (
     <div
-      className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center"
+      className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center font-manrope"
       dir={isRTL && activeLocale === "ar" ? "rtl" : "ltr"}
     >
       <h2
