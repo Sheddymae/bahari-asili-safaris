@@ -78,6 +78,7 @@ export default function CinematicTextOverlay() {
     <div
       className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center"
       dir={isRTL && activeLocale === "ar" ? "rtl" : "ltr"}
+      style={{ fontFamily: 'var(--font-manrope), "Noto Sans", "Segoe UI", Arial, sans-serif' }}
     >
       <h2
         className="select-none font-bold text-white drop-shadow-lg"
@@ -92,7 +93,10 @@ export default function CinematicTextOverlay() {
 
       <h1
         className="mt-4 max-w-full font-extrabold leading-tight text-white drop-shadow-xl"
-        style={{ fontSize: "clamp(2.35rem, 7.5vw, 6.25rem)" }}
+        style={{
+          fontSize: "clamp(2.35rem, 7.5vw, 6.25rem)",
+          letterSpacing: "-0.045em",
+        }}
       >
         BAHARI ASILI SAFARIS
       </h1>
