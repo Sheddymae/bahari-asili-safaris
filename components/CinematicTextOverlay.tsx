@@ -1,148 +1,126 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations, type Locale } from "@/lib/i18n";
 
 /**
  * CinematicTextOverlay
  *
- * Sits over the hero video. A rotating, slow-crossfading greeting +
- * tagline (synced together, one language at a time) plays above the
- * "BAHARI ASILI SAFARIS" heading.
+ * The hero uses the same locale and translated hero copy as the rest of the
+ * customer-facing site. The selected locale is shown first, then the hero
+ * rotates through the canonical eight supported site locales.
  *
- * Layout order: greeting -> H1 -> tagline -> subtext
- * Swap CONTENT for your actual site-language list/order/copy.
+ * IMPORTANT: Do not add a second translated tagline/subtext source here.
+ * `lib/i18n.ts` is the source of truth for hero title/subtitle content.
  */
 
-const CONTENT = [
-  {
-    greeting: "Hello",
-    tagline: "Experience Kenya Beyond the Ordinary.",
-    subtext:
-      "Discover wild landscapes, remarkable wildlife, and authentic African experiences.",
-  },
-  {
-    greeting: "Ciao",
-    tagline: "Vivi il Kenya Oltre l'Ordinario.",
-    subtext:
-      "Scopri paesaggi selvaggi, fauna straordinaria ed esperienze africane autentiche.",
-  },
-  {
-    greeting: "Bonjour",
-    tagline: "Découvrez le Kenya Au-delà de l'Ordinaire.",
-    subtext:
-      "Explorez des paysages sauvages, une faune remarquable et des expériences africaines authentiques.",
-  },
-  {
-    greeting: "Hallo",
-    tagline: "Erleben Sie Kenia Jenseits des Gewöhnlichen.",
-    subtext:
-      "Entdecken Sie wilde Landschaften, außergewöhnliche Tierwelt und authentische afrikanische Erlebnisse.",
-  },
-  {
-    greeting: "Hola",
-    tagline: "Vive Kenia Más Allá de lo Ordinario.",
-    subtext:
-      "Descubre paisajes salvajes, fauna extraordinaria y experiencias africanas auténticas.",
-  },
-  {
-    greeting: "Olá",
-    tagline: "Viva o Quénia Além do Comum.",
-    subtext:
-      "Descubra paisagens selvagens, vida selvagem notável e experiências africanas autênticas.",
-  },
-  {
-    greeting: "Hallo", // Dutch — same spelling as German, adjust if unwanted
-    tagline: "Beleef Kenia Voorbij het Gewone.",
-    subtext:
-      "Ontdek ongerepte landschappen, opmerkelijke dieren in het wild en authentieke Afrikaanse ervaringen.",
-  },
-  {
-    greeting: "Habari",
-    tagline: "Furahia Kenya Zaidi ya Kawaida.",
-    subtext:
-      "Gundua mandhari ya porini, wanyamapori wa ajabu, na uzoefu halisi wa Kiafrika.",
-  },
-];
+const HERO_LOCALES: Locale[] = ["en", "it", "fr", "es", "de", "ar", "zh", "sw"];
 
-const CROSSFADE_MS = 1500; // slow fade duration
-const HOLD_MS = 5000; // how long each language stays fully on screen (5s)
+// Greeting labels are intentionally kept small and are derived from the
+// canonical locale list. The actual hero title/subtitle always come from i18n.
+const GREETINGS: Record<Locale, string> = {
+  en: "Hello",
+  it: "Ciao",
+  fr: "Bonjour",
+  es: "Hola",
+  de: "Hallo",
+  ar: "مرحباً",
+  zh: "你好",
+  sw: "Habari",
+};
+
+const CROSSFADE_MS = 1500;
+const HOLD_MS = 5000;
+
+function localeIndex(locale: Locale) {
+  const index = HERO_LOCALES.indexOf(locale);
+  return index >= 0 ? index : 0;
+}
 
 export default function CinematicTextOverlay() {
-  const [index, setIndex] = useState(0);
+  const { locale, isRTL } = useLanguage();
+  const [index, setIndex] = useState(() => localeIndex(locale));
   const [visible, setVisible] = useState(true);
 
+  // If the visitor changes the site's language, immediately show that locale
+  // instead of waiting for the existing rotation to reach it.
   useEffect(() => {
-    let fadeTimeout: ReturnType<typeof setTimeout>;
+    setIndex(localeIndex(locale));
+    setVisible(true);
+  }, [locale]);
 
-    const holdInterval = setInterval(() => {
-      // start fade out (greeting + tagline + subtext together)
+  // One self-contained cycle at a time. This avoids overlapping intervals and
+  // makes cleanup deterministic when the component or locale changes.
+  useEffect(() => {
+    let swapTimeout: ReturnType<typeof setTimeout> | undefined;
+
+    const holdTimeout = setTimeout(() => {
       setVisible(false);
-
-      // after fade completes, swap language and fade back in
-      fadeTimeout = setTimeout(() => {
-        setIndex((prev) => (prev + 1) % CONTENT.length);
+      swapTimeout = setTimeout(() => {
+        setIndex((previous) => (previous + 1) % HERO_LOCALES.length);
         setVisible(true);
       }, CROSSFADE_MS);
-    }, HOLD_MS + CROSSFADE_MS);
+    }, HOLD_MS);
 
     return () => {
-      clearInterval(holdInterval);
-      clearTimeout(fadeTimeout);
+      clearTimeout(holdTimeout);
+      if (swapTimeout) clearTimeout(swapTimeout);
     };
-  }, []);
+  }, [index, locale]);
 
-  const current = CONTENT[index];
+  const activeLocale = HERO_LOCALES[index] ?? "en";
+  const activeTranslation = translations[activeLocale];
+  const fallbackTranslation = translations.en;
+  const hero = activeTranslation.hero ?? fallbackTranslation.hero;
+
   const fadeStyle = {
     opacity: visible ? 1 : 0,
     transition: `opacity ${CROSSFADE_MS}ms ease-in-out`,
   };
 
   return (
-    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 pb-28">
-      {/* Rotating greeting */}
+    <div
+      className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center"
+      dir={isRTL && activeLocale === "ar" ? "rtl" : "ltr"}
+    >
       <h2
-        className="font-bold text-white drop-shadow-lg select-none"
+        className="select-none font-bold text-white drop-shadow-lg"
         style={{
           fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
-          letterSpacing: "0.02em",
+          letterSpacing: activeLocale === "ar" ? "normal" : "0.02em",
           ...fadeStyle,
         }}
-        aria-live="polite"
       >
-        {current.greeting}
+        {GREETINGS[activeLocale]}
       </h2>
 
-      {/* Main heading — single line, larger to anchor the hero */}
       <h1
-        className="mt-4 font-extrabold text-white leading-tight drop-shadow-xl whitespace-nowrap"
-        style={{ fontSize: "clamp(2.75rem, 7.5vw, 6.25rem)" }}
+        className="mt-4 max-w-full font-extrabold leading-tight text-white drop-shadow-xl"
+        style={{ fontSize: "clamp(2.35rem, 7.5vw, 6.25rem)" }}
       >
         BAHARI ASILI SAFARIS
       </h1>
 
-      {/* Rotating tagline — synced with greeting */}
       <p
-        className="mt-6 font-bold text-white drop-shadow-md max-w-3xl"
+        className="mt-6 max-w-3xl font-bold text-white drop-shadow-md"
         style={{
-          fontSize: "clamp(1.35rem, 2.6vw, 1.85rem)",
+          fontSize: "clamp(1.25rem, 2.6vw, 1.85rem)",
           ...fadeStyle,
         }}
       >
-        {current.tagline}
+        {hero.title}
       </p>
 
-      {/* Rotating subtext — synced with greeting */}
       <p
-        className="mt-3 text-white/90 max-w-2xl"
+        className="mt-3 max-w-2xl text-white/90 drop-shadow-md"
         style={{
           fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
           ...fadeStyle,
         }}
       >
-        {current.subtext}
+        {hero.subtitle}
       </p>
-
-      {/* ...rest of your existing hero copy / search bar goes below, untouched */}
     </div>
   );
 }
