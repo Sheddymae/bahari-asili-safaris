@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { FileText, Image as ImageIcon, Pencil, Plus, Save, Search, Archive, X } from 'lucide-react';
+import { FileText, Image as ImageIcon, Pencil, Plus, Search, Save, Archive, X } from 'lucide-react';
 import AdminShell from '@/components/admin/AdminShell';
 import { useAdminData } from '@/components/admin/useAdminData';
 
 type ContentType = 'excursion' | 'safari_blu' | 'blog' | 'article' | 'news';
-type Item = { id?: string; content_type: ContentType; slug: string; locale: string; title: string; excerpt?: string | null; body?: string | null; image?: string | null; category?: string | null; duration?: string | null; location?: string | null; price?: number | null; currency?: string | null; highlights?: string[]; included?: string[]; excluded?: string[]; status: 'draft' | 'published' | 'archived'; featured?: boolean; author?: string | null; tags?: string[]; seo_title?: string | null; seo_description?: string | null; extra?: Record<string, any> };
+type Item = { id?: string; content_type: ContentType; slug: string; locale: string; title: string; excerpt?: string | null; body?: string | null; image?: string | null; category?: string | null; duration?: string | null; location?: string | null; price?: number | null; currency?: string | null; highlights?: string[]; included?: string[]; excluded?: string[]; status: 'draft' | 'published' | 'archived'; featured?: boolean; author?: string | null; tags?: string[]; seo_title?: string | null; seo_description?: string | null; published_at?: string | null; extra?: Record<string, any> };
 
 const labels: Record<ContentType, string> = { excursion: 'Excursions', safari_blu: 'Safari Blu', blog: 'Blog', article: 'Articles', news: 'News' };
 const blank = (type: ContentType): Item => ({ content_type: type, slug: '', locale: 'en', title: '', excerpt: '', body: '', image: '', category: '', duration: '', location: 'Watamu, Kenya', price: null, currency: 'KES', highlights: [], included: [], excluded: [], status: 'draft', featured: false, author: '', tags: [], seo_title: '', seo_description: '', extra: {} });
@@ -25,8 +25,7 @@ export default function ContentManager({ type }: { type: ContentType }) {
   const load = async () => {
     const response = await fetch(`/api/admin/content?type=${type}&locale=${locale}`, { cache: 'no-store' });
     const data = await response.json();
-    if (data.success) setItems(data.items || []);
-    else setMessage(data.error || 'Unable to load content.');
+    if (data.success) setItems(data.items || []); else setMessage(data.error || 'Unable to load content.');
   };
   useEffect(() => { load(); }, [type, locale]);
 
@@ -40,11 +39,8 @@ export default function ContentManager({ type }: { type: ContentType }) {
       const response = await fetch('/api/admin/content', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...selected, locale }) });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.error || 'Save failed');
-      setMessage(`${labels[type]} saved successfully.`);
-      await load();
-      setSelected(null);
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'Save failed'); }
-    finally { setBusy(false); }
+      setMessage(`${labels[type]} saved successfully.`); await load(); setSelected(null);
+    } catch (error) { setMessage(error instanceof Error ? error.message : 'Save failed'); } finally { setBusy(false); }
   }
 
   async function archive() {
@@ -52,11 +48,9 @@ export default function ContentManager({ type }: { type: ContentType }) {
     setBusy(true);
     try {
       const response = await fetch('/api/admin/content', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content_type: selected.content_type, slug: selected.slug, locale }) });
-      const data = await response.json();
-      if (!response.ok || !data.success) throw new Error(data.error || 'Archive failed');
+      const data = await response.json(); if (!response.ok || !data.success) throw new Error(data.error || 'Archive failed');
       await load(); setSelected(null); setMessage('Content archived.');
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'Archive failed'); }
-    finally { setBusy(false); }
+    } catch (error) { setMessage(error instanceof Error ? error.message : 'Archive failed'); } finally { setBusy(false); }
   }
 
   return <AdminShell title={`${labels[type]} Content`} badge={stats?.pending}>
@@ -66,7 +60,7 @@ export default function ContentManager({ type }: { type: ContentType }) {
         <div className="flex gap-2"><select value={locale} onChange={e => setLocale(e.target.value)} className="rounded-xl border bg-white px-3 py-2.5 text-sm"><option value="en">English</option><option value="it">Italiano</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="sw">Kiswahili</option></select><button onClick={() => setSelected(blank(type))} className="rounded-xl bg-cyan-700 px-4 py-2.5 text-sm font-semibold text-white"><Plus className="mr-2 inline h-4 w-4" />New {type === 'safari_blu' ? 'Safari Blu' : type}</button></div>
       </div>
       <div className="flex gap-3"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input value={q} onChange={e => setQ(e.target.value)} placeholder={`Search ${labels[type].toLowerCase()}...`} className="w-full rounded-xl border bg-white py-3 pl-9 pr-3 text-sm" /></div>{message && <div className="rounded-xl bg-slate-900 px-4 py-3 text-xs text-white">{message}</div>}</div>
-      <div className="overflow-hidden rounded-2xl border bg-white shadow-sm"><div className="overflow-x-auto"><table className="min-w-full text-sm"><thead className="bg-slate-50 text-left text-[11px] uppercase tracking-wider text-slate-500"><tr><th className="px-4 py-3">Content</th><th className="px-4 py-3">Category</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Updated</th><th className="px-4 py-3 text-right">Action</th></tr></thead><tbody className="divide-y">{visible.map(item => <tr key={`${item.content_type}-${item.locale}-${item.slug}`} className="hover:bg-slate-50"><td className="px-4 py-4"><div className="flex items-center gap-3">{item.image ? <img src={item.image} alt="" className="h-12 w-16 rounded-lg object-cover" /> : <div className="flex h-12 w-16 items-center justify-center rounded-lg bg-slate-100"><ImageIcon className="h-5 w-5 text-slate-400" /></div>}<div><p className="font-semibold">{item.title || 'Untitled'}</p><p className="text-xs text-slate-400">/{item.slug}</p></div></div></td><td className="px-4 py-4 text-slate-600">{item.category || '—'}</td><td className="px-4 py-4"><span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${item.status === 'published' ? 'bg-cyan-50 text-cyan-700' : item.status === 'archived' ? 'bg-slate-100 text-slate-500' : 'bg-orange-50 text-orange-700'}`}>{item.status}</span></td><td className="px-4 py-4 text-xs text-slate-500">{item.published_at ? new Date(item.published_at).toLocaleDateString() : '—'}</td><td className="px-4 py-4 text-right"><button onClick={() => setSelected({ ...item })} className="rounded-lg border px-3 py-2 text-xs font-semibold hover:bg-slate-50"><Pencil className="mr-1 inline h-3.5 w-3.5" />Edit</button></td></tr>)}</tbody></table></div>{visible.length === 0 && <div className="p-12 text-center text-sm text-slate-500"><FileText className="mx-auto mb-3 h-8 w-8 text-slate-300" />No {labels[type].toLowerCase()} found.</div>}</div>
+      <div className="overflow-hidden rounded-2xl border bg-white shadow-sm"><div className="overflow-x-auto"><table className="min-w-full text-sm"><thead className="bg-slate-50 text-left text-[11px] uppercase tracking-wider text-slate-500"><tr><th className="px-4 py-3">Content</th><th className="px-4 py-3">Category</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Published</th><th className="px-4 py-3 text-right">Action</th></tr></thead><tbody className="divide-y">{visible.map(item => <tr key={`${item.content_type}-${item.locale}-${item.slug}`} className="hover:bg-slate-50"><td className="px-4 py-4"><div className="flex items-center gap-3">{item.image ? <img src={item.image} alt="" className="h-12 w-16 rounded-lg object-cover" /> : <div className="flex h-12 w-16 items-center justify-center rounded-lg bg-slate-100"><ImageIcon className="h-5 w-5 text-slate-400" /></div>}<div><p className="font-semibold">{item.title || 'Untitled'}</p><p className="text-xs text-slate-400">/{item.slug}</p></div></div></td><td className="px-4 py-4 text-slate-600">{item.category || '—'}</td><td className="px-4 py-4"><span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${item.status === 'published' ? 'bg-cyan-50 text-cyan-700' : item.status === 'archived' ? 'bg-slate-100 text-slate-500' : 'bg-orange-50 text-orange-700'}`}>{item.status}</span></td><td className="px-4 py-4 text-xs text-slate-500">{item.published_at ? new Date(item.published_at).toLocaleDateString() : '—'}</td><td className="px-4 py-4 text-right"><button onClick={() => setSelected({ ...item })} className="rounded-lg border px-3 py-2 text-xs font-semibold hover:bg-slate-50"><Pencil className="mr-1 inline h-3.5 w-3.5" />Edit</button></td></tr>)}</tbody></table></div>{visible.length === 0 && <div className="p-12 text-center text-sm text-slate-500"><FileText className="mx-auto mb-3 h-8 w-8 text-slate-300" />No {labels[type].toLowerCase()} found.</div>}</div>
     </div>
     {selected && <div className="fixed inset-0 z-[70] bg-slate-950/50 p-3 sm:p-6"><div className="mx-auto flex h-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"><div className="flex items-center justify-between border-b p-5"><div><p className="text-xs uppercase tracking-wider text-cyan-700">{locale} editor</p><h3 className="text-xl font-bold">{selected.title || `New ${labels[type]}`}</h3></div><button onClick={() => setSelected(null)}><X /></button></div><div className="flex-1 overflow-y-auto p-5"><div className="grid gap-4 md:grid-cols-2">
       <label className="text-xs font-semibold md:col-span-2">Title<input value={selected.title} onChange={e => update('title', e.target.value)} className="mt-1 w-full rounded-lg border p-2.5 text-sm" /></label>
