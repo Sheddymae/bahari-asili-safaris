@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AlertCircle, CheckCircle, ChevronDown, Loader2, Search, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import InquiryStatusDisplay from '@/components/InquiryStatusDisplay';
+import { COUNTRIES, isCountry } from '@/lib/countries';
 
 export interface HeroBookingSelection {
   destination?: string;
@@ -58,6 +59,14 @@ export default function HeroBookingModal({
   const [errorDetail, setErrorDetail] = useState('');
   const [bookingRef, setBookingRef] = useState('');
   const [emailSent, setEmailSent] = useState(false);
+  const [nationalityOpen, setNationalityOpen] = useState(false);
+  const nationalityRef = useRef<HTMLDivElement>(null);
+
+  const filteredCountries = useMemo(() => {
+    const query = form.nationality.trim().toLocaleLowerCase();
+    if (!query) return COUNTRIES;
+    return COUNTRIES.filter((country) => country.toLocaleLowerCase().startsWith(query));
+  }, [form.nationality]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -71,6 +80,7 @@ export default function HeroBookingModal({
     setErrorDetail('');
     setBookingRef('');
     setEmailSent(false);
+    setNationalityOpen(false);
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
@@ -80,20 +90,56 @@ export default function HeroBookingModal({
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') {
+        setNationalityOpen(false);
+        onClose();
+      }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!nationalityOpen) return;
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (!nationalityRef.current?.contains(event.target as Node)) {
+        setNationalityOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [nationalityOpen]);
+
   const update = (name: keyof FormState, value: string) => {
     setForm((previous) => ({ ...previous, [name]: value }));
   };
 
+  const selectNationality = (country: string) => {
+    update('nationality', country);
+    setNationalityOpen(false);
+    setErrorDetail('');
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setStatus('loading');
     setErrorDetail('');
+
+    const nationality = form.nationality.trim();
+    if (!nationality) {
+      setStatus('error');
+      setErrorDetail('Nationality is required. Please select your country of nationality.');
+      setNationalityOpen(true);
+      return;
+    }
+
+    if (!isCountry(nationality)) {
+      setStatus('error');
+      setErrorDetail('Please select a nationality from the country list. Start typing to search by country name.');
+      setNationalityOpen(true);
+      return;
+    }
+
+    setStatus('loading');
 
     const children = Math.max(0, parseInt(form.children, 10) || 0);
     const adults = Math.min(30, Math.max(1, parseInt(form.adults, 10) || 1));
@@ -113,7 +159,7 @@ export default function HeroBookingModal({
           lastName: form.lastName.trim(),
           email: form.email.trim(),
           whatsapp: form.whatsapp.trim(),
-          nationality: form.nationality.trim(),
+          nationality,
           adults,
           children,
           kidsAges: [],
@@ -237,10 +283,63 @@ export default function HeroBookingModal({
               </label>
             </div>
 
-            <label className="block font-inter text-sm font-medium text-foreground">
-              Nationality
-              <input value={form.nationality} onChange={(event) => update('nationality', event.target.value)} placeholder="Nationality" className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" />
-            </label>
+            <div ref={nationalityRef} className="relative">
+              <label htmlFor="booking-nationality" className="block font-inter text-sm font-medium text-foreground">
+                Nationality <span className="text-red-600">*</span>
+              </label>
+              <div className="relative mt-1.5">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  id="booking-nationality"
+                  required
+                  autoComplete="off"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-expanded={nationalityOpen}
+                  aria-controls="booking-nationality-options"
+                  value={form.nationality}
+                  onFocus={() => setNationalityOpen(true)}
+                  onChange={(event) => {
+                    update('nationality', event.target.value);
+                    setNationalityOpen(true);
+                  }}
+                  placeholder="Type to search your country"
+                  className={`w-full rounded-xl border bg-muted py-3 pl-11 pr-11 text-sm outline-none transition focus:ring-2 ${
+                    status === 'error' && (!form.nationality || !isCountry(form.nationality.trim()))
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-100'
+                      : 'border-border focus:border-ocean-600 focus:ring-ocean-100'
+                  }`}
+                />
+                <ChevronDown className={`pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-transform ${nationalityOpen ? 'rotate-180' : ''}`} />
+              </div>
+
+              {nationalityOpen && (
+                <div
+                  id="booking-nationality-options"
+                  role="listbox"
+                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto rounded-xl border border-border bg-white p-1 shadow-2xl"
+                >
+                  {filteredCountries.length > 0 ? (
+                    filteredCountries.map((country) => (
+                      <button
+                        key={country}
+                        type="button"
+                        role="option"
+                        aria-selected={form.nationality === country}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => selectNationality(country)}
+                        className="w-full rounded-lg px-4 py-2.5 text-left font-inter text-sm text-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700"
+                      >
+                        {country}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-3 font-inter text-sm text-muted-foreground">No country starts with “{form.nationality}”.</div>
+                  )}
+                </div>
+              )}
+              <p className="mt-1.5 font-inter text-xs text-muted-foreground">Start typing and select your country from the list.</p>
+            </div>
 
             <label className="block font-inter text-sm font-medium text-foreground">
               Message / special requests
