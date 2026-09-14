@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 import { cookies } from 'next/headers';
+import { Manrope } from 'next/font/google';
 import { translations, type Locale } from '@/lib/i18n';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';

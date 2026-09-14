@@ -4,21 +4,8 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations, type Locale } from "@/lib/i18n";
 
-/**
- * CinematicTextOverlay
- *
- * The hero uses the same locale and translated hero copy as the rest of the
- * customer-facing site. The selected locale is shown first, then the hero
- * rotates through the canonical eight supported site locales.
- *
- * IMPORTANT: Do not add a second translated tagline/subtext source here.
- * `lib/i18n.ts` is the source of truth for hero title/subtitle content.
- */
-
 const HERO_LOCALES: Locale[] = ["en", "it", "fr", "es", "de", "ar", "zh", "sw"];
 
-// Greeting labels are intentionally kept small and are derived from the
-// canonical locale list. The actual hero title/subtitle always come from i18n.
 const GREETINGS: Record<Locale, string> = {
   en: "Hello",
   it: "Ciao",
@@ -45,6 +32,7 @@ export default function CinematicTextOverlay() {
   // initialization during hydration and avoiding an English flash.
   const [rotationIndex, setRotationIndex] = useState<number | null>(null);
   const [visible, setVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
@@ -62,6 +50,18 @@ export default function CinematicTextOverlay() {
   }, [locale]);
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReducedMotion(mediaQuery.matches);
+    updatePreference();
+    mediaQuery.addEventListener?.("change", updatePreference);
+    return () => mediaQuery.removeEventListener?.("change", updatePreference);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setVisible(true);
+      return;
+    }
     if (rotationIndex === null || reduceMotion) {
       setVisible(true);
       return;
@@ -69,6 +69,7 @@ export default function CinematicTextOverlay() {
 
     let swapTimeout: ReturnType<typeof setTimeout> | undefined;
 
+    let swapTimeout: ReturnType<typeof setTimeout> | undefined;
     const holdTimeout = setTimeout(() => {
       setVisible(false);
       swapTimeout = setTimeout(() => {
@@ -83,15 +84,18 @@ export default function CinematicTextOverlay() {
       clearTimeout(holdTimeout);
       if (swapTimeout) clearTimeout(swapTimeout);
     };
+  }, [index, locale, reducedMotion]);
+=======
   }, [rotationIndex, locale, reduceMotion]);
 
   const activeLocale = rotationIndex === null ? locale : (HERO_LOCALES[rotationIndex] ?? locale);
   const activeTranslation = translations[activeLocale];
   const fallbackTranslation = translations.en;
   const hero = activeTranslation.hero ?? fallbackTranslation.hero;
-
   const fadeStyle = {
     opacity: visible ? 1 : 0,
+    transition: reducedMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out`,
+=======
     transition: reduceMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out`,
   };
 
@@ -99,6 +103,7 @@ export default function CinematicTextOverlay() {
     <div
       className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center font-manrope"
       dir={isRTL && activeLocale === "ar" ? "rtl" : "ltr"}
+      style={{ fontFamily: 'var(--font-manrope), "Noto Sans", "Segoe UI", Arial, sans-serif' }}
     >
       <h2
         className="select-none font-bold text-white drop-shadow-lg"
@@ -113,7 +118,10 @@ export default function CinematicTextOverlay() {
 
       <h1
         className="mt-4 max-w-full font-extrabold leading-tight text-white drop-shadow-xl"
-        style={{ fontSize: "clamp(2.35rem, 7.5vw, 6.25rem)" }}
+        style={{
+          fontSize: "clamp(2.35rem, 7.5vw, 6.25rem)",
+          letterSpacing: "-0.045em",
+        }}
       >
         BAHARI ASILI SAFARIS
       </h1>
