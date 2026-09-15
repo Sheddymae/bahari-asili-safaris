@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight, Backpack, CalendarDays, CreditCard, FileCheck2, HeartPulse, MapPinned } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { travelerEssentialsTranslations } from '@/lib/traveler-essentials-i18n';
@@ -280,36 +280,35 @@ export default function TravelerEssentials() {
             const width = index === displayedIndex ? 40 : 12;
 
             return (
-              <AnimateOnScroll key={`${locale}-${index}-${title}`} direction="up" delay={index * 45}>
-                <Link
-                  href={href}
-                  aria-label={title}
-                  aria-current={isActive ? 'true' : undefined}
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onFocus={() => setHoveredIndex(index)}
-                  onClick={() => setActiveIndex(index)}
-                  className={`travel-smart-card group block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-400 focus-visible:ring-offset-4 ${isActive ? 'is-active' : ''}`}
-                  style={{ '--travel-card-width': `${width}%` } as React.CSSProperties}
-                >
-                  <div className="travel-smart-card-inner">
-                    <div className="travel-smart-card-icon" aria-hidden="true">
-                      <Icon className="h-5 w-5" />
-                    </div>
-
-                    <div className="travel-smart-card-copy">
-                      <h3 className="travel-smart-card-title font-poppins">{title}</h3>
-                      <p className="travel-smart-card-description font-inter">{text}</p>
-                    </div>
-
-                    <span className="travel-smart-card-link font-inter">
-                      {content.learnMore}
-                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </span>
+              <Link
+                key={`${locale}-${index}-${title}`}
+                href={href}
+                aria-label={title}
+                aria-current={isActive ? 'true' : undefined}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onFocus={() => setHoveredIndex(index)}
+                onClick={() => setActiveIndex(index)}
+                className={`travel-smart-card group block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-400 focus-visible:ring-offset-4 ${isActive ? 'is-active' : ''}`}
+                style={{ '--travel-card-width': `${width}%` } as CSSProperties}
+              >
+                <div className="travel-smart-card-inner">
+                  <div className="travel-smart-card-icon" aria-hidden="true">
+                    <Icon className="h-5 w-5" />
                   </div>
 
-                  <span className="travel-smart-tab-hint" aria-hidden="true">{title}</span>
-                </Link>
-              </AnimateOnScroll>
+                  <div className="travel-smart-card-copy">
+                    <h3 className="travel-smart-card-title font-poppins">{title}</h3>
+                    <p className="travel-smart-card-description font-inter">{text}</p>
+                  </div>
+
+                  <span className="travel-smart-card-link font-inter">
+                    {content.learnMore}
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                </div>
+
+                <span className="travel-smart-tab-hint" aria-hidden="true">{title}</span>
+              </Link>
             );
           })}
         </div>
