@@ -25,10 +25,32 @@ function effectiveRate(rate: ManagedDestinationRate, field: RateField): number {
   return Math.max(0, rate.competitorReference * (1 + markup / 100));
 }
 
+/**
+ * Convert the server-authoritative KES calculation into the currency selected
+ * by the customer. Currency rates are stored as KES per one unit of currency,
+ * so KES / kesPerUnit gives USD or EUR. The returned currency is deliberately
+ * the selected currency; callers must never have to infer it from the source
+ * calculation.
+ */
 function convertBreakdown(kes: PricingBreakdown, currency: BookingCurrency, currencies: Record<BookingCurrency, CurrencyRate>): PricingBreakdown {
-  const kesPerUnit = currencies[currency]?.kesPerUnit || 1;
-  const convert = (value: number) => Math.round((value / kesPerUnit) * 100) / 100;
-  return { accommodation_cost: convert(kes.accommodation_cost), park_fees: convert(kes.park_fees), guide_cost: convert(kes.guide_cost), transport_cost: convert(kes.transport_cost), meals_cost: convert(kes.meals_cost), other_costs: convert(kes.other_costs), discount: convert(kes.discount), tax: convert(kes.tax), total_cost: convert(kes.total_cost), currency: 'KES' };
+  const rate = currencies[currency];
+  const kesPerUnit = currency === 'KES' ? 1 : Number(rate?.kesPerUnit) || 0;
+  if (currency !== 'KES' && kesPerUnit <= 0) {
+    throw new Error(`No valid KES exchange rate is configured for ${currency}.`);
+  }
+  const convert = (value: number) => currency === 'KES' ? Math.round(value) : Math.round((value / kesPerUnit) * 100) / 100;
+  return {
+    accommodation_cost: convert(kes.accommodation_cost),
+    park_fees: convert(kes.park_fees),
+    guide_cost: convert(kes.guide_cost),
+    transport_cost: convert(kes.transport_cost),
+    meals_cost: convert(kes.meals_cost),
+    other_costs: convert(kes.other_costs),
+    discount: convert(kes.discount),
+    tax: convert(kes.tax),
+    total_cost: convert(kes.total_cost),
+    currency,
+  };
 }
 
 function splitNights(totalNights: number, slugs: string[]) {
@@ -48,9 +70,6 @@ function buildGenericItinerary(input: SafariBuilderInput, split: { slug: string;
     for (let i = 1; i < nights; i++) {
       days.push({ day: day++, title: `${name} — full day`, location: name, description: `Morning and afternoon activities in ${name}, focused on ${dest?.wildlifeHighlights[0]?.toLowerCase() || 'wildlife and local experiences'}.`, overnight: name });
     }
-    // The itinerary type uses the shared StartEndLocation union. A resolved
-    // destination name is still valid display data, so narrow it at this
-    // boundary rather than weakening the ItineraryDay type globally.
     previous = name as typeof input.startLocation;
   });
   days.push({ day: day++, title: `${previous} → ${input.endLocation}`, location: input.endLocation, description: `Final morning experience followed by transfer to ${input.endLocation}.`, overnight: input.endLocation });
