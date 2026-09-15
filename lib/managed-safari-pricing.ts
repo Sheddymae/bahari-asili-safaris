@@ -48,7 +48,10 @@ function buildGenericItinerary(input: SafariBuilderInput, split: { slug: string;
     for (let i = 1; i < nights; i++) {
       days.push({ day: day++, title: `${name} — full day`, location: name, description: `Morning and afternoon activities in ${name}, focused on ${dest?.wildlifeHighlights[0]?.toLowerCase() || 'wildlife and local experiences'}.`, overnight: name });
     }
-    previous = name;
+    // The itinerary type uses the shared StartEndLocation union. A resolved
+    // destination name is still valid display data, so narrow it at this
+    // boundary rather than weakening the ItineraryDay type globally.
+    previous = name as typeof input.startLocation;
   });
   days.push({ day: day++, title: `${previous} → ${input.endLocation}`, location: input.endLocation, description: `Final morning experience followed by transfer to ${input.endLocation}.`, overnight: input.endLocation });
   return days;
