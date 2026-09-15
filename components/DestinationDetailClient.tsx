@@ -109,6 +109,7 @@ export default function DestinationDetailClient({ destination }: { destination: 
               <div className="grid sm:grid-cols-2 gap-5">
                 {activities.map((activity) => {
                   const localized = getLocalizedDestinationActivity(activity.id, locale);
+                  if (!localized) return null;
                   return (
                     <article key={activity.id} className="overflow-hidden rounded-2xl border border-border bg-white shadow-card hover:shadow-card-hover transition-shadow">
                       <div className="relative h-44">
