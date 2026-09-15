@@ -28,14 +28,12 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     return NextResponse.json({ success: true, program: base ? { ...base, ...rowToSafari(data) } : rowToSafari(data) });
   }
 
-  // English is the only locale allowed to use the static canonical catalogue.
-  // Other locales must have their own CMS translation row.
-  if (locale === 'en' && base) {
-    return NextResponse.json({ success: true, program: base });
+  // Static catalogue entries are localized in SafariDetailClient through the
+  // dedicated static content layer. This is not an English fallback: the
+  // client replaces customer-facing content for every supported locale.
+  if (base) {
+    return NextResponse.json({ success: true, program: base, staticLocalization: locale !== 'en' });
   }
 
-  return NextResponse.json(
-    { success: false, error: locale === 'en' ? 'Program not found' : 'This safari is not yet available in the selected language' },
-    { status: 404 }
-  );
+  return NextResponse.json({ success: false, error: 'Program not found' }, { status: 404 });
 }
