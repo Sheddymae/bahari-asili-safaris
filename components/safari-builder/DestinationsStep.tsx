@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { Check, MapPin } from 'lucide-react';
 import { destinations } from '@/lib/destinations-data';
+import { DESTINATION_RATES } from '@/lib/quotation-pricing';
 import { type SafariTab } from '@/lib/tours-data';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -15,6 +16,16 @@ interface DestinationsStepProps {
 export default function DestinationsStep({ value, onChange, errors }: DestinationsStepProps) {
   const { t } = useLanguage();
   const ds = t.safariBuilder.destinationsStep;
+
+  // The public destination catalogue is intentionally larger than the
+  // server-side Safari Builder pricing model. Only destinations with an
+  // authoritative builder rate can be selected here, keeping the UI and
+  // request payload aligned with SafariTab and the pricing engine.
+  const builderDestinations = destinations.filter(
+    (dest): dest is (typeof destinations)[number] & { slug: SafariTab } =>
+      Object.prototype.hasOwnProperty.call(DESTINATION_RATES, dest.slug),
+  );
+
   const toggle = (slug: SafariTab) => {
     onChange(value.includes(slug) ? value.filter((s) => s !== slug) : [...value, slug]);
   };
@@ -27,7 +38,7 @@ export default function DestinationsStep({ value, onChange, errors }: Destinatio
       </div>
 
       <div className="grid sm:grid-cols-2 gap-5" role="group" aria-label="Destinations">
-        {destinations.map((dest) => {
+        {builderDestinations.map((dest) => {
           const selected = value.includes(dest.slug);
           return (
             <button
