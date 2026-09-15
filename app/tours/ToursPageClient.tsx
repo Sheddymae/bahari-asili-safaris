@@ -111,9 +111,9 @@ function ToursPageInner() {
 
             <TabsContent value="private">
               {programsLoading ? (
-                <div className="text-center py-16 font-inter text-muted-foreground">{t.common.loading}</div>
+                <div className="text-center py-16 font-inter text-muted-foreground">{t.tours.loadingDepartures}</div>
               ) : programs.length === 0 ? (
-                <div className="text-center py-16 font-inter text-muted-foreground">{t.tours.noSafaris}</div>
+                <div className="text-center py-16 font-inter text-muted-foreground">{t.tours.noOpenDepartures}</div>
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {programs.map((s, i) => (
