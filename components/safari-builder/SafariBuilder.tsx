@@ -8,18 +8,13 @@ import TravellersStep, { type TravellersValue } from './TravellersStep';
 import InterestsStep from './InterestsStep';
 import DestinationsStep from './DestinationsStep';
 import ResultStep from './ResultStep';
-import { translations, type Locale } from '@/lib/i18n';
+import { translations } from '@/lib/i18n';
 import { type SafariBuilderResult } from '@/lib/quotation-pricing';
 import { type BookingCurrency } from '@/lib/managed-safari-pricing';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SafariBuilder() {
-  const { t, locale } = useLanguage();
-
-  // Keep this route resilient if a cached/older translation bundle is missing
-  // the safariBuilder namespace. All eight supported locales currently define
-  // it, but the structural guard prevents a blank client-side exception during
-  // a deployment while preserving the selected locale whenever its copy exists.
+  const { t } = useLanguage();
   const safariBuilder = t.safariBuilder ?? (translations.en as typeof t).safariBuilder;
   const STEP_LABELS = [
     safariBuilder.stepper.trip,
@@ -65,15 +60,35 @@ export default function SafariBuilder() {
   useEffect(() => {
     if (step !== 4) return;
     let cancelled = false;
-    setPlanLoading(true); setPlanError(null);
-    fetch('/api/safari-builder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'estimate', ...requestPayload }) }).then(async (res) => {
-      const data = await res.json();
-      if (cancelled) return;
-      if (!res.ok || !data.success) { setPlanError(data.error || safariBuilder.result.errorTitle); setPlan(null); return; }
-      setPlan(data as SafariBuilderResult);
-    }).catch(() => { if (!cancelled) setPlanError(safariBuilder.result.errorTitle); }).finally(() => { if (!cancelled) setPlanLoading(false); });
+    setPlanLoading(true);
+    setPlanError(null);
+    fetch('/api/safari-builder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'estimate', ...requestPayload }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (cancelled) return;
+        if (!res.ok || !data.success) {
+          setPlanError(data.error || safariBuilder.result.errorTitle);
+          setPlan(null);
+          return;
+        }
+        setPlan(data as SafariBuilderResult);
+      })
+      .catch(() => {
+        if (!cancelled) setPlanError(safariBuilder.result.errorTitle);
+      })
+      .finally(() => {
+        if (!cancelled) setPlanLoading(false);
+      });
     return () => { cancelled = true; };
-  }, [step, currency, safariBuilder, requestPayload]);
+    // The request payload is intentionally captured when the result step is
+    // entered. Currency is a dependency because changing it requires a new
+    // server-authoritative estimate.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, currency, safariBuilder]);
 
   return (
     <section className="py-14 lg:py-20 bg-sand-50 min-h-screen">
