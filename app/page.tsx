@@ -50,7 +50,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="overflow-x-clip">
+      <main className="homepage-main min-w-0 overflow-x-clip">
         <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
         <AnimateOnScroll direction="up"><AboutSection /></AnimateOnScroll>
