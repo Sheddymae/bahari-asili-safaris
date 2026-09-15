@@ -8,6 +8,8 @@ import PageShell from '@/components/PageShell';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { destinations } from '@/lib/destinations-data';
 import { getLocalizedDestination } from '@/lib/destination-translations';
+import { getExpandedLocalizedDestination } from '@/lib/expanded-destination-translations';
+import { destinationPageLabels } from '@/lib/destination-page-i18n';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 function staggerDelay(index: number) {
@@ -16,6 +18,7 @@ function staggerDelay(index: number) {
 
 export default function DestinationsPage() {
   const { t, locale } = useLanguage();
+  const pageLabels = destinationPageLabels[locale];
 
   return (
     <PageShell>
@@ -31,22 +34,18 @@ export default function DestinationsPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
             {destinations.map((d, i) => {
-              const content = getLocalizedDestination(d, locale);
+              const content = getExpandedLocalizedDestination(getLocalizedDestination(d, locale), locale);
               return (
                 <AnimateOnScroll key={d.slug} direction="up" delay={staggerDelay(i)}>
-                  <Link
-                    href={`/destinations/${d.slug}`}
-                    prefetch
-                    className="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 bg-white block hover:-translate-y-1"
-                  >
+                  <Link href={`/destinations/${d.slug}`} prefetch className="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 bg-white block hover:-translate-y-1">
                     <div className="relative h-64 sm:h-72 w-full overflow-hidden">
                       <Image src={d.heroImage} alt={`${content.name} ${t.destinationsPage.safariDestination}${d.country ? `, ${d.country}` : ''}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
                       <div className="absolute top-4 left-4 rounded-full border border-white/25 bg-black/20 px-3 py-1 backdrop-blur-md">
-                        <span className="font-inter text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-white/90">{d.country || 'East Africa'}</span>
+                        <span className="font-inter text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-white/90">{d.country || pageLabels.regionFallback}</span>
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-5">
-                        <div className="flex items-center gap-1.5 text-white/80 text-xs font-inter font-medium mb-1.5"><MapPin className="w-3.5 h-3.5" />{d.region || d.country || t.destinationsPage.kenya}</div>
+                        <div className="flex items-center gap-1.5 text-white/80 text-xs font-inter font-medium mb-1.5"><MapPin className="w-3.5 h-3.5" />{d.region || d.country || pageLabels.regionFallback}</div>
                         <h2 className="font-poppins font-bold text-2xl text-white leading-tight">{content.name}</h2>
                       </div>
                     </div>
