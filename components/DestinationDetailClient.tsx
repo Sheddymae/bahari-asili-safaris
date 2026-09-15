@@ -9,13 +9,26 @@ import Footer from '@/components/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { type Destination, getSafarisForDestination } from '@/lib/destinations-data';
 import { getLocalizedDestination } from '@/lib/destination-translations';
+import { regionalSafaris } from '@/lib/regional-safaris';
+import { getActivitiesForDestination } from '@/lib/destination-activities';
 
 export default function DestinationDetailClient({ destination }: { destination: Destination }) {
   const { t, locale } = useLanguage();
   const content = getLocalizedDestination(destination, locale);
   const tt = t.tours;
   const ee = t.homeExtras;
-  const relatedSafaris = getSafarisForDestination(destination.slug);
+  const baseSafaris = getSafarisForDestination(destination.slug);
+  const regionalForDestination = regionalSafaris.filter((safari) =>
+    safari.parks.some((park) => {
+      const p = park.toLowerCase();
+      const d = destination.name.toLowerCase();
+      return p.includes(d) || p.includes(destination.slug.replaceAll('-', ' '));
+    })
+  );
+  const relatedSafaris = [...baseSafaris, ...regionalForDestination].filter(
+    (safari, index, all) => all.findIndex((item) => item.id === safari.id) === index
+  );
+  const activities = getActivitiesForDestination(destination.slug);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -85,6 +98,34 @@ export default function DestinationDetailClient({ destination }: { destination: 
               <p className="font-inter text-sm text-foreground leading-relaxed">{content.bestSeason}</p>
             </div>
           </div>
+
+          {activities.length > 0 && (
+            <section className="mb-12">
+              <div className="flex items-end justify-between gap-4 mb-5">
+                <div>
+                  <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">Things to do</p>
+                  <h2 className="font-poppins font-bold text-2xl text-foreground mt-1">Activities in {content.name}</h2>
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-5">
+                {activities.map((activity) => (
+                  <article key={activity.id} className="overflow-hidden rounded-2xl border border-border bg-white shadow-card hover:shadow-card-hover transition-shadow">
+                    <div className="relative h-44">
+                      <Image src={activity.image} alt={activity.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
+                      <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-inter font-semibold text-white backdrop-blur-sm">{activity.level}</span>
+                    </div>
+                    <div className="p-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="font-poppins font-bold text-base text-foreground">{activity.name}</h3>
+                        <span className="shrink-0 font-inter text-xs text-muted-foreground">{activity.duration}</span>
+                      </div>
+                      <p className="font-inter text-sm text-foreground/75 leading-relaxed mt-2">{activity.description}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
 
           {relatedSafaris.length > 0 && (
             <div className="mb-12">
