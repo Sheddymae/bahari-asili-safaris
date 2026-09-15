@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { safaris, excursions } from '@/lib/safari-catalogue';
 import { getGroupTours, type GroupTour } from '@/lib/supabase';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { groupDepartureLabels } from '@/lib/group-departure-i18n';
 
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
 
@@ -34,6 +35,7 @@ function staggerDelay(index: number) {
 
 function ToursPageInner() {
   const { t, locale } = useLanguage();
+  const groupLabels = groupDepartureLabels[locale];
   const [programs, setPrograms] = useState<typeof safaris>(safaris);
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'day' ? 'day' : searchParams.get('tab') === 'group' ? 'group' : 'private';
@@ -72,20 +74,23 @@ function ToursPageInner() {
                 <div className="text-center py-16"><Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" /><p className="font-inter text-muted-foreground">{t.tours.noOpenDepartures}</p></div>
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {groupTours.map((gt, i) => (
-                    <AnimateOnScroll key={gt.id} direction="up" delay={staggerDelay(i)}>
-                      <div className="bg-white rounded-2xl border border-border shadow-card p-6 flex flex-col h-full">
-                        <div className="flex items-center gap-2 text-ocean-700 mb-3"><Calendar className="w-4 h-4" /><span className="font-inter text-sm font-semibold">{formatDepartureDate(gt.departure_date, locale)}</span></div>
-                        <h3 className="font-poppins font-bold text-lg text-foreground mb-2">{gt.safari_name}</h3>
-                        <p className="font-inter text-sm text-foreground mb-4 flex-1">
-                          {gt.joined_names.length > 0 && gt.joined_nationality
-                            ? t.tours.groupDepartureSummary.replace('{count}', String(gt.joined_names.length)).replace('{nationality}', gt.joined_nationality).replace('{date}', formatDepartureDate(gt.departure_date, locale)).replace('{seats}', String(gt.seats_left)).replace('{seatWord}', gt.seats_left === 1 ? t.tours.seat : t.tours.seats)
-                            : t.tours.seatsLeftSummary.replace('{seats}', String(gt.seats_left))}
-                        </p>
-                        <button onClick={() => openBooking(gt.safari_name)} className="bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors">{t.inquiryStatus.requestToJoin}</button>
-                      </div>
-                    </AnimateOnScroll>
-                  ))}
+                  {groupTours.map((gt, i) => {
+                    const date = formatDepartureDate(gt.departure_date, locale);
+                    const seats = gt.seats_left;
+                    const summary = gt.joined_names.length > 0 && gt.joined_nationality
+                      ? groupLabels.joining.replace('{count}', String(gt.joined_names.length)).replace('{nationality}', gt.joined_nationality).replace('{date}', date).replace('{seats}', String(seats)).replace('{seatWord}', seats === 1 ? groupLabels.seat : groupLabels.seats)
+                      : `${groupLabels.seatsLeft.replace('{seats}', String(seats))} — ${groupLabels.firstToJoin}`;
+                    return (
+                      <AnimateOnScroll key={gt.id} direction="up" delay={staggerDelay(i)}>
+                        <div className="bg-white rounded-2xl border border-border shadow-card p-6 flex flex-col h-full">
+                          <div className="flex items-center gap-2 text-ocean-700 mb-3"><Calendar className="w-4 h-4" /><span className="font-inter text-sm font-semibold">{date}</span></div>
+                          <h3 className="font-poppins font-bold text-lg text-foreground mb-2">{gt.safari_name}</h3>
+                          <p className="font-inter text-sm text-foreground mb-4 flex-1">{summary}</p>
+                          <button onClick={() => openBooking(gt.safari_name)} className="bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors">{t.inquiryStatus.requestToJoin}</button>
+                        </div>
+                      </AnimateOnScroll>
+                    );
+                  })}
                 </div>
               )}
             </TabsContent>
