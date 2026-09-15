@@ -3,19 +3,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Star, Clock, ChevronDown, ChevronUp, Sparkles, CalendarDays, ArrowLeft, Landmark } from 'lucide-react';
+import { MapPin, Star, Clock, ChevronDown, ChevronUp, Sparkles, CalendarDays, ArrowLeft, Landmark, Compass } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { type Destination, getSafarisForDestination } from '@/lib/destinations-data';
+import { type Destination } from '@/lib/destinations-data';
+import { safaris } from '@/lib/safari-catalogue';
 import { getLocalizedDestination } from '@/lib/destination-translations';
+import { getDestinationExperience } from '@/lib/destination-experiences';
+import { destinationExperienceTranslations } from '@/lib/destination-experience-i18n';
 
 export default function DestinationDetailClient({ destination }: { destination: Destination }) {
   const { t, locale } = useLanguage();
   const content = getLocalizedDestination(destination, locale);
   const tt = t.tours;
   const ee = t.homeExtras;
-  const relatedSafaris = getSafarisForDestination(destination.slug);
+  const experience = getDestinationExperience(destination.slug);
+  const activityCopy = destinationExperienceTranslations[locale];
+  const relatedSafaris = experience.safariIds
+    .map((id) => safaris.find((safari) => safari.id === id))
+    .filter((safari): safari is (typeof safaris)[number] => Boolean(safari));
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -54,8 +61,8 @@ export default function DestinationDetailClient({ destination }: { destination: 
                   <Landmark className="w-5 h-5" />
                 </span>
                 <div>
-                  <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">Destination story</p>
-                  <h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground">A short history of {content.name}</h2>
+                  <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">{activityCopy.activitiesTitle}</p>
+                  <h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground">{locale === 'en' ? `A short history of ${content.name}` : `${content.name} — ${destinationExperienceTranslations[locale].activityLabel}`}</h2>
                 </div>
               </div>
               <p className="font-inter text-foreground/80 leading-relaxed max-w-4xl">{destination.history}</p>
@@ -86,14 +93,43 @@ export default function DestinationDetailClient({ destination }: { destination: 
             </div>
           </div>
 
+          <section className="mb-12">
+            <div className="flex items-end justify-between gap-4 mb-5">
+              <div>
+                <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">{activityCopy.activityLabel}</p>
+                <h2 className="font-poppins font-bold text-2xl text-foreground">{activityCopy.activitiesTitle}</h2>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {experience.activityKeys.map((key) => {
+                const activity = activityCopy.activities[key];
+                return (
+                  <article key={key} className="group rounded-2xl border border-border bg-white p-5 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover hover:border-safari-200">
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-safari-50 text-safari-500 transition-colors group-hover:bg-safari-500 group-hover:text-white">
+                      <Compass className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-poppins font-bold text-base text-foreground">{activity.title}</h3>
+                    <p className="mt-2 font-inter text-sm leading-relaxed text-muted-foreground">{activity.description}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+
           {relatedSafaris.length > 0 && (
             <div className="mb-12">
-              <h2 className="font-poppins font-bold text-2xl text-foreground mb-5">{ee.safarisToPrefix} {content.name}</h2>
+              <div className="flex items-end justify-between gap-4 mb-5">
+                <div>
+                  <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">{tt.label}</p>
+                  <h2 className="font-poppins font-bold text-2xl text-foreground">{activityCopy.safarisTitle} {content.name}</h2>
+                </div>
+                <Link href="/tours" className="hidden sm:inline-flex text-sm font-inter font-semibold text-ocean-700 hover:text-ocean-900">{tt.backToAll}</Link>
+              </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {relatedSafaris.map((safari) => (
-                  <Link key={safari.id} href={`/safaris/${safari.id}`} prefetch className="block bg-white rounded-2xl border border-border shadow-card hover:shadow-card-hover transition-shadow overflow-hidden">
-                    <div className="relative h-40">
-                      <Image src={safari.image} alt={safari.name} fill className="object-cover" sizes="400px" />
+                  <Link key={safari.id} href={`/safaris/${safari.id}`} prefetch className="group block bg-white rounded-2xl border border-border shadow-card hover:shadow-card-hover transition-all duration-300 overflow-hidden">
+                    <div className="relative h-40 overflow-hidden">
+                      <Image src={safari.image} alt={safari.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" sizes="400px" />
                     </div>
                     <div className="p-4">
                       <p className="font-poppins font-semibold text-foreground text-sm mb-1">{safari.name}</p>
