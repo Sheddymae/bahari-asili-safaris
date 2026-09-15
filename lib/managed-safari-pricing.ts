@@ -3,27 +3,19 @@ import { buildSafariPlan, type PricingBreakdown, type SafariBuilderInput, type S
 
 export type BookingCurrency = 'KES' | 'USD' | 'EUR';
 export type PricingMode = 'manual' | 'benchmark';
-
 export interface ManagedDestinationRate { accommodationPerNight: number; parkFeePerAdultPerDay: number; parkFeePerChildPerDay: number; guideVehiclePerDay: number; mealsPerAdultPerDay: number; mealsPerChildPerDay: number; pricingMode: PricingMode; competitorReference: number; targetMarkupPercent: number; active: boolean; }
 export interface CurrencyRate { currency: BookingCurrency; kesPerUnit: number; active: boolean; }
 export interface PricingConfig { destinations: Partial<Record<SafariTab, ManagedDestinationRate>>; currencies: Record<BookingCurrency, CurrencyRate>; }
-
-export const DEFAULT_CURRENCY_RATES: Record<BookingCurrency, CurrencyRate> = {
-  KES: { currency: 'KES', kesPerUnit: 1, active: true },
-  USD: { currency: 'USD', kesPerUnit: 129.5, active: true },
-  EUR: { currency: 'EUR', kesPerUnit: 151, active: true },
-};
+export const DEFAULT_CURRENCY_RATES: Record<BookingCurrency, CurrencyRate> = { KES: { currency: 'KES', kesPerUnit: 1, active: true }, USD: { currency: 'USD', kesPerUnit: 129.5, active: true }, EUR: { currency: 'EUR', kesPerUnit: 151, active: true } };
 
 export function defaultPricingConfig(): PricingConfig {
   const destinations = {} as Partial<Record<SafariTab, ManagedDestinationRate>>;
-  (Object.keys(DESTINATION_RATES) as SafariTab[]).forEach((slug) => {
-    const r = DESTINATION_RATES[slug];
-    destinations[slug] = { accommodationPerNight: r.accommodationPerNight, parkFeePerAdultPerDay: r.parkFeePerAdultPerDay, parkFeePerChildPerDay: r.parkFeePerChildPerDay, guideVehiclePerDay: r.guideVehiclePerDay, mealsPerAdultPerDay: r.mealsPerAdultPerDay, mealsPerChildPerDay: r.mealsPerChildPerDay, pricingMode: 'manual', competitorReference: 0, targetMarkupPercent: 0, active: true };
-  });
+  (Object.keys(DESTINATION_RATES) as SafariTab[]).forEach((slug) => { const r = DESTINATION_RATES[slug]; destinations[slug] = { accommodationPerNight: r.accommodationPerNight, parkFeePerAdultPerDay: r.parkFeePerAdultPerDay, parkFeePerChildPerDay: r.parkFeePerChildPerDay, guideVehiclePerDay: r.guideVehiclePerDay, mealsPerAdultPerDay: r.mealsPerAdultPerDay, mealsPerChildPerDay: r.mealsPerChildPerDay, pricingMode: 'manual', competitorReference: 0, targetMarkupPercent: 0, active: true }; });
   return { destinations, currencies: { ...DEFAULT_CURRENCY_RATES } };
 }
 
-function effectiveRate(rate: ManagedDestinationRate, field: keyof Pick<ManagedDestinationRate, 'accommodationPerNight' | 'parkFeePerAdultPerDay' | 'parkFeeChildPerDay' | 'guideVehiclePerDay' | 'mealsPerAdultPerDay' | 'mealsPerChildPerDay'>): number {
+type RateField = 'accommodationPerNight' | 'parkFeePerAdultPerDay' | 'parkFeePerChildPerDay' | 'guideVehiclePerDay' | 'mealsPerAdultPerDay' | 'mealsPerChildPerDay';
+function effectiveRate(rate: ManagedDestinationRate, field: RateField): number {
   const manual = Number(rate[field]) || 0;
   if (rate.pricingMode !== 'benchmark' || !(rate.competitorReference > 0)) return manual;
   const markup = Math.max(-100, Math.min(500, Number(rate.targetMarkupPercent) || 0));
@@ -42,7 +34,6 @@ export function buildManagedSafariPlan(input: SafariBuilderInput, currency: Book
   const split = base.nightsPerDestination;
   const accMultiplier = input.accommodationType === 'standard' ? 0.8 : input.accommodationType === 'luxury' ? 1.6 : 1;
   let accommodation = 0; let parkFees = 0; let guide = 0; let meals = 0;
-
   split.forEach(({ slug, nights: n }) => {
     const managed = config.destinations[slug];
     const fallback = DESTINATION_RATES[slug];
@@ -53,7 +44,6 @@ export function buildManagedSafariPlan(input: SafariBuilderInput, currency: Book
     guide += effectiveRate(rate, 'guideVehiclePerDay') * n;
     meals += (effectiveRate(rate, 'mealsPerAdultPerDay') * input.adults + effectiveRate(rate, 'mealsPerChildPerDay') * input.children) * n;
   });
-
   let transport = 0;
   const legs = ['start', ...input.destinationSlugs, 'end'] as (SafariTab | 'start' | 'end')[];
   for (let i = 0; i < legs.length - 1; i++) transport += legs[i] === 'mara' || legs[i + 1] === 'mara' ? 16000 : 7000;
