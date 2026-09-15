@@ -53,7 +53,6 @@
 
 html { scroll-behavior: smooth; }
 
-/* Fluid interaction system */
 a, button, input, select, textarea, [role='button'] {
   transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
   transition-duration: 220ms;
@@ -74,14 +73,12 @@ a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow])
 
 button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active { transform: translateY(0) scale(0.98); }
 
-/* Seamless responsive service marquee */
 .trust-marquee-mask { width: 100%; overflow: hidden; }
 .trust-marquee-track { display: flex; width: max-content; min-width: max-content; animation: trust-marquee-scroll 32s linear infinite; will-change: transform; }
 .trust-marquee-group { width: max-content; }
 .trust-marquee-track:hover, .trust-marquee-track:focus-visible { animation-play-state: paused; }
 @keyframes trust-marquee-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 
-/* Premium CTA */
 .glow-button { position: relative; isolation: isolate; box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 8px 24px rgba(249,115,22,.22); transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease; animation: glow-button-pulse 2.8s ease-in-out infinite; }
 .glow-button:hover, .glow-button:focus-visible { box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 0 24px rgba(249,115,22,.68), 0 12px 32px rgba(249,115,22,.36); filter: brightness(1.06); animation: none; }
 .glow-button:active { transform: scale(.97); }
@@ -97,11 +94,26 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
 ::-webkit-scrollbar-track { background: #f1f5f9; }
 ::-webkit-scrollbar-thumb { background: #0e7490; border-radius: 3px; }
 
-/* Homepage responsive safeguards. Keep desktop composition while preventing
-   clipped content, oversized typography and horizontal scrolling on smaller screens. */
 .homepage-main { width: 100%; max-width: 100%; }
 .homepage-main section { max-width: 100%; }
 .homepage-main .max-w-7xl, .homepage-main .max-w-6xl, .homepage-main .max-w-5xl { width: 100%; }
+
+/* Traveler Essentials: compact, layered cards on small screens. The
+   negative offset creates a true card-stack feel while preserving every
+   destination as a reachable link. Desktop/tablet retain the 3-column grid. */
+.traveler-essential-card {
+  position: relative;
+  z-index: 1;
+  transition: transform 280ms cubic-bezier(.22,1,.36,1), box-shadow 280ms ease, border-color 280ms ease, background-color 280ms ease;
+}
+.traveler-essential-card:hover,
+.traveler-essential-card:focus-visible {
+  z-index: 10;
+  transform: translateY(-7px) scale(1.012);
+  border-color: rgba(249,115,22,.35);
+  background: #fff;
+  box-shadow: 0 18px 42px rgba(14,116,144,.14), 0 0 24px rgba(249,115,22,.08);
+}
 
 @media (max-width: 767px) {
   .homepage-main section { scroll-margin-top: 76px; }
@@ -109,6 +121,46 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .trust-marquee-group { gap: 1.5rem; padding-top: .9rem; padding-bottom: .9rem; }
   .trust-marquee-track { animation-duration: 24s; }
   .tour-card { border-radius: 1rem; }
+
+  .traveler-essentials { padding-top: 2.75rem; padding-bottom: 2.75rem; }
+  .traveler-essentials-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0 .15rem .75rem;
+  }
+  .traveler-essentials-grid > div {
+    position: relative;
+    margin-top: -18px;
+  }
+  .traveler-essentials-grid > div:first-child { margin-top: 0; }
+  .traveler-essentials-grid > div:nth-child(2) { z-index: 2; }
+  .traveler-essentials-grid > div:nth-child(3) { z-index: 3; }
+  .traveler-essentials-grid > div:nth-child(4) { z-index: 4; }
+  .traveler-essentials-grid > div:nth-child(5) { z-index: 5; }
+  .traveler-essentials-grid > div:nth-child(6) { z-index: 6; }
+  .traveler-essential-card {
+    min-height: 0;
+    padding: 1rem 1.05rem;
+    border-radius: 1.15rem;
+    box-shadow: 0 7px 20px rgba(15,23,42,.08);
+  }
+  .traveler-essential-card:hover,
+  .traveler-essential-card:focus-visible {
+    transform: translateY(-6px) scale(1.01);
+  }
+  .traveler-essential-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    line-clamp: 2;
+    line-height: 1.45rem;
+  }
+
+  /* Safari cards are critical landing-page content. GSAP may not receive a
+     ScrollTrigger callback on some mobile browsers; keep the content visible
+     rather than allowing a JS animation to leave the page blank. */
+  .homepage-main .tour-card { opacity: 1 !important; visibility: visible !important; }
 }
 
 @media (min-width: 768px) and (max-width: 1279px) {

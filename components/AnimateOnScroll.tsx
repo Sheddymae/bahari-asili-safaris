@@ -7,10 +7,10 @@ type Direction = 'up' | 'down' | 'left' | 'right' | 'none';
 interface AnimateOnScrollProps {
   children: ReactNode;
   direction?: Direction;
-  delay?: number;      // milliseconds
-  duration?: number;   // milliseconds
+  delay?: number;
+  duration?: number;
   className?: string;
-  once?: boolean;      // if true, animates only the first time it enters view
+  once?: boolean;
 }
 
 const directionOffset: Record<Direction, string> = {
@@ -30,11 +30,14 @@ export default function AnimateOnScroll({
   once = true,
 }: AnimateOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  // Critical page content starts visible. This prevents a failed/delayed
+  // IntersectionObserver on mobile from turning the rest of the homepage
+  // into a blank white page.
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -45,7 +48,7 @@ export default function AnimateOnScroll({
           setIsVisible(false);
         }
       },
-      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
     );
 
     observer.observe(node);
