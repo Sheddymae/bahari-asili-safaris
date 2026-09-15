@@ -24,7 +24,9 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
   const { t, locale } = useLanguage();
   const content = getLocalizedExcursion(excursion, locale as SupportedLocale);
   const ee = t.excursions;
-  const cta = locale === 'en' ? { title: ee.askAboutExcursion.replace('this excursion', content.name), description: 'Tell us your dates and group size — we’ll confirm availability and, if useful, suggest a safari to pair it with.' } : ctaCopy[locale as Exclude<SupportedLocale, 'en'>];
+  const cta = locale === 'en'
+    ? { title: ee.askAboutExcursion.replace('this excursion', content.name), description: 'Tell us your dates and group size — we’ll confirm availability and, if useful, suggest a safari to pair it with.' }
+    : ctaCopy[locale as Exclude<SupportedLocale, 'en'>];
   const related = excursions.filter((e) => e.category === excursion.category && e.id !== excursion.id).slice(0, 3);
 
   return (
@@ -58,7 +60,7 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
             <div className="bg-sand-50 rounded-2xl p-6"><h3 className="font-poppins font-bold text-base text-foreground mb-4">{ee.notIncludedTitle}</h3><ul className="space-y-2.5">{content.notIncluded.map((item, i) => <li key={i} className="flex items-start gap-2.5 font-inter text-sm text-muted-foreground"><X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />{item}</li>)}</ul></div>
           </div>
 
-          <div className="mb-12 border border-safari-200 bg-safari-50/40 rounded-2xl p-6"><div className="flex items-center gap-2 mb-3"><Info className="w-5 h-5 text-safari-600" /><h3 className="font-poppins font-bold text-base text-foreground">{ee.goodToKnow}</h3></div><ul className="space-y-2">{content.goodToKnow.map((line, i) => <li key={i} className="font-inter text-sm text-foreground leading-relaxed" key={i}>{line}</li>)}</ul></div>
+          <div className="mb-12 border border-safari-200 bg-safari-50/40 rounded-2xl p-6"><div className="flex items-center gap-2 mb-3"><Info className="w-5 h-5 text-safari-600" /><h3 className="font-poppins font-bold text-base text-foreground">{ee.goodToKnow}</h3></div><ul className="space-y-2">{content.goodToKnow.map((line, i) => <li key={i} className="font-inter text-sm text-foreground leading-relaxed">{line}</li>)}</ul></div>
 
           <div className="bg-foreground rounded-2xl p-8 sm:p-10 text-center"><h3 className="font-poppins font-bold text-2xl text-white mb-3">{cta.title}</h3><p className="font-inter text-white/70 text-sm mb-6 max-w-lg mx-auto">{cta.description}</p><Link href={`/?book=${excursion.id}`} className="inline-flex items-center justify-center gap-2 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-8 py-3.5 rounded-xl transition-all hover:shadow-md">{ee.requestThisExcursion}</Link></div>
 
