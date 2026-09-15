@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { type Destination, getSafarisForDestination } from '@/lib/destinations-data';
 import { getLocalizedDestination } from '@/lib/destination-translations';
 import { regionalSafaris } from '@/lib/regional-safaris';
+import { getRegionalSafariDestinationSlugs } from '@/lib/regional-safari-destinations';
 import { getActivitiesForDestination } from '@/lib/destination-activities';
 
 export default function DestinationDetailClient({ destination }: { destination: Destination }) {
@@ -19,11 +20,7 @@ export default function DestinationDetailClient({ destination }: { destination: 
   const ee = t.homeExtras;
   const baseSafaris = getSafarisForDestination(destination.slug);
   const regionalForDestination = regionalSafaris.filter((safari) =>
-    safari.parks.some((park) => {
-      const p = park.toLowerCase();
-      const d = destination.name.toLowerCase();
-      return p.includes(d) || p.includes(destination.slug.replaceAll('-', ' '));
-    })
+    getRegionalSafariDestinationSlugs(safari.id).includes(destination.slug)
   );
   const relatedSafaris = [...baseSafaris, ...regionalForDestination].filter(
     (safari, index, all) => all.findIndex((item) => item.id === safari.id) === index
