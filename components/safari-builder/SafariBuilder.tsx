@@ -8,7 +8,6 @@ import TravellersStep, { type TravellersValue } from './TravellersStep';
 import InterestsStep from './InterestsStep';
 import DestinationsStep from './DestinationsStep';
 import ResultStep from './ResultStep';
-import { type SafariTab } from '@/lib/tours-data';
 import { type SafariBuilderResult } from '@/lib/quotation-pricing';
 import { type BookingCurrency } from '@/lib/managed-safari-pricing';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -22,23 +21,12 @@ export default function SafariBuilder() {
   const [trip, setTrip] = useState<TripDetailsValue>({ arrivalDate: '', departureDate: '', startLocation: '', endLocation: '' });
   const [travellers, setTravellers] = useState<TravellersValue>({ adults: 2, children: 0, childrenAges: [] });
   const [interests, setInterests] = useState<string[]>([]);
-  const [destinationSlugs, setDestinationSlugs] = useState<SafariTab[]>([]);
+  const [destinationSlugs, setDestinationSlugs] = useState<string[]>([]);
   const [plan, setPlan] = useState<SafariBuilderResult | null>(null);
   const [planLoading, setPlanLoading] = useState(false);
   const [planError, setPlanError] = useState<string | null>(null);
 
-  const requestPayload = {
-    arrivalDate: trip.arrivalDate,
-    departureDate: trip.departureDate,
-    startLocation: trip.startLocation,
-    endLocation: trip.endLocation,
-    adults: travellers.adults,
-    children: travellers.children,
-    childrenAges: travellers.childrenAges,
-    interests,
-    destinationSlugs,
-    currency,
-  };
+  const requestPayload = { arrivalDate: trip.arrivalDate, departureDate: trip.departureDate, startLocation: trip.startLocation, endLocation: trip.endLocation, adults: travellers.adults, children: travellers.children, childrenAges: travellers.childrenAges, interests, destinationSlugs, currency };
 
   const validateStep = useCallback((): boolean => {
     const e: Record<string, string> = {};
@@ -65,26 +53,19 @@ export default function SafariBuilder() {
     if (step !== 4) return;
     let cancelled = false;
     setPlanLoading(true); setPlanError(null);
-    fetch('/api/safari-builder', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'estimate', ...requestPayload }),
-    }).then(async (res) => {
+    fetch('/api/safari-builder', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'estimate', ...requestPayload }) }).then(async (res) => {
       const data = await res.json();
       if (cancelled) return;
       if (!res.ok || !data.success) { setPlanError(data.error || 'Could not calculate your itinerary.'); setPlan(null); return; }
       setPlan(data as SafariBuilderResult);
     }).catch(() => { if (!cancelled) setPlanError('Network error — please check your connection and try again.'); }).finally(() => { if (!cancelled) setPlanLoading(false); });
     return () => { cancelled = true; };
-    // Currency is intentionally included: changing it on the result step must recalculate the authoritative quote.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, currency]);
 
   return (
     <section className="py-14 lg:py-20 bg-sand-50 min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.nav.buildSafari}</span>
-          <h1 className="font-poppins font-bold text-3xl sm:text-4xl text-foreground">{t.safariBuilder.hero.title}</h1>
-        </div>
+        <div className="text-center mb-10"><span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.nav.buildSafari}</span><h1 className="font-poppins font-bold text-3xl sm:text-4xl text-foreground">{t.safariBuilder.hero.title}</h1></div>
         <BuilderProgress steps={STEP_LABELS} currentStep={step} />
         <div className="bg-white rounded-3xl border border-border shadow-card p-6 sm:p-10">
           {step === 0 && <TripDetailsStep value={trip} onChange={setTrip} errors={errors} />}
@@ -92,7 +73,6 @@ export default function SafariBuilder() {
           {step === 2 && <InterestsStep value={interests} onChange={setInterests} />}
           {step === 3 && <DestinationsStep value={destinationSlugs} onChange={setDestinationSlugs} errors={errors} />}
           {step === 4 && <ResultStep plan={plan} planLoading={planLoading} planError={planError} requestPayload={requestPayload} adults={travellers.adults} childrenCount={travellers.children} currency={currency} onCurrencyChange={setCurrency} onSubmitted={() => {}} />}
-
           {step < 4 && <div className="flex items-center justify-between mt-10 pt-6 border-t border-border"><button type="button" onClick={goBack} disabled={step === 0} className="font-inter text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-0 flex items-center gap-1 px-2"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button><button type="button" onClick={goNext} className="bg-book hover:bg-book-600 text-white font-poppins font-semibold px-7 py-3 rounded-xl transition-all flex items-center gap-1.5">{t.common.continue} <ChevronRight className="w-4 h-4" /></button></div>}
           {step === 4 && <div className="mt-8 pt-6 border-t border-border"><button type="button" onClick={goBack} className="font-inter text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-1"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button></div>}
         </div>
