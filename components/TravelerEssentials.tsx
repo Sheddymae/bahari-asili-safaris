@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Backpack, CalendarDays, CreditCard, FileCheck2, HeartPulse, MapPinned } from 'lucide-react';
-import { useState, type CSSProperties } from 'react';
+import { ArrowRight, Backpack, CalendarDays, CreditCard, ChevronLeft, ChevronRight, FileCheck2, HeartPulse, MapPinned } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { travelerEssentialsTranslations } from '@/lib/traveler-essentials-i18n';
+import { prefersReducedMotion } from '@/lib/video-config';
 
 const ESSENTIAL_ICONS = [FileCheck2, CalendarDays, Backpack, CreditCard, HeartPulse, MapPinned];
 
@@ -13,332 +14,157 @@ export default function TravelerEssentials() {
   const { locale, isRTL } = useLanguage();
   const content = travelerEssentialsTranslations[locale] ?? travelerEssentialsTranslations.en;
   const [activeIndex, setActiveIndex] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const displayedIndex = hoveredIndex ?? activeIndex;
+  const [paused, setPaused] = useState(false);
+  const [cardDistance, setCardDistance] = useState(285);
+  const pointerStartX = useRef<number | null>(null);
+  const reducedMotion = prefersReducedMotion();
+
+  useEffect(() => {
+    const updateDistance = () => {
+      setCardDistance(window.innerWidth < 640 ? 170 : window.innerWidth < 1024 ? 235 : 285);
+    };
+    updateDistance();
+    window.addEventListener('resize', updateDistance, { passive: true });
+    return () => window.removeEventListener('resize', updateDistance);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || paused) return;
+    const timer = window.setInterval(() => {
+      setActiveIndex((current) => (current + 1) % content.items.length);
+    }, 3600);
+    return () => window.clearInterval(timer);
+  }, [content.items.length, paused, reducedMotion]);
+
+  const goTo = (direction: 1 | -1) => {
+    setActiveIndex((current) => (current + direction + content.items.length) % content.items.length);
+  };
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    pointerStartX.current = event.clientX;
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (pointerStartX.current === null) return;
+    const distance = event.clientX - pointerStartX.current;
+    pointerStartX.current = null;
+    if (Math.abs(distance) > 50) goTo(distance < 0 ? 1 : -1);
+  };
+
+  const getOffset = (index: number) => {
+    let offset = index - activeIndex;
+    const count = content.items.length;
+    if (offset > count / 2) offset -= count;
+    if (offset < -count / 2) offset += count;
+    return offset;
+  };
 
   return (
     <section
       key={locale}
       lang={locale}
       dir={isRTL ? 'rtl' : 'ltr'}
-      className="traveler-essentials relative overflow-hidden border-y border-sand-200 bg-white py-12 sm:py-16 lg:py-20"
+      className="traveler-essentials relative overflow-hidden border-y border-sand-200 bg-white py-14 sm:py-18 lg:py-20"
       aria-labelledby="traveler-essentials-title"
       data-traveler-locale={locale}
     >
-      <style jsx>{`
-        .travel-smart-tabs {
-          position: relative;
-          width: 100%;
-          height: 470px;
-          max-width: 1180px;
-          margin: 0 auto;
-          isolation: isolate;
-        }
+      <div className="pointer-events-none absolute right-0 top-20 h-72 w-72 rounded-full bg-safari-100/30 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-96 w-96 rounded-full bg-ocean-100/20 blur-3xl" />
 
-        .travel-smart-card {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          display: block;
-          width: min(390px, 31vw);
-          min-height: 390px;
-          overflow: hidden;
-          border: 1px solid rgba(225, 214, 193, 0.9);
-          border-radius: 28px;
-          background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(248,246,241,0.78));
-          box-shadow: 0 18px 45px rgba(13, 27, 42, 0.10), inset 0 1px 0 rgba(255,255,255,0.9);
-          backdrop-filter: blur(22px);
-          -webkit-backdrop-filter: blur(22px);
-          transform-origin: 50% 92%;
-          transition: transform 850ms cubic-bezier(0.22, 1, 0.36, 1), width 850ms cubic-bezier(0.22, 1, 0.36, 1), min-height 850ms cubic-bezier(0.22, 1, 0.36, 1), opacity 650ms ease, box-shadow 650ms ease, border-color 500ms ease;
-          will-change: transform, width;
-          cursor: pointer;
-        }
-
-        .travel-smart-card::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          background: radial-gradient(circle at 18% 8%, rgba(255,255,255,0.95), transparent 30%), linear-gradient(135deg, rgba(255,112,0,0.08), transparent 48%, rgba(8,126,164,0.06));
-          opacity: 0.75;
-        }
-
-        .travel-smart-card.is-active {
-          width: min(430px, 34vw);
-          min-height: 410px;
-          box-shadow: 0 34px 80px rgba(13, 27, 42, 0.19), 0 0 0 1px rgba(255,112,0,0.10), inset 0 1px 0 rgba(255,255,255,0.95);
-          border-color: rgba(255,112,0,0.30);
-        }
-
-        .travel-smart-card:hover,
-        .travel-smart-card:focus-visible {
-          border-color: rgba(255,112,0,0.42);
-        }
-
-        .travel-smart-card-inner {
-          position: relative;
-          z-index: 1;
-          display: flex;
-          height: 100%;
-          min-width: 0;
-          min-height: inherit;
-          flex-direction: column;
-          padding: 30px;
-        }
-
-        .travel-smart-card-icon {
-          display: flex;
-          height: 52px;
-          width: 52px;
-          flex: 0 0 52px;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid rgba(225, 214, 193, 0.75);
-          border-radius: 16px;
-          background: rgba(255,255,255,0.88);
-          color: #ff7000;
-          box-shadow: 0 9px 24px rgba(13,27,42,0.08);
-          transition: transform 500ms cubic-bezier(0.22,1,0.36,1), box-shadow 500ms ease;
-        }
-
-        .travel-smart-card.is-active .travel-smart-card-icon {
-          transform: scale(1.07) rotate(-2deg);
-          box-shadow: 0 12px 30px rgba(255,112,0,0.16);
-        }
-
-        .travel-smart-card-copy {
-          min-width: 0;
-          margin-top: 28px;
-        }
-
-        .travel-smart-card-title {
-          max-width: 100%;
-          overflow-wrap: anywhere;
-          font-size: 1.22rem;
-          line-height: 1.2;
-          font-weight: 800;
-          color: #0d1b2a;
-          transition: font-size 500ms ease, transform 500ms ease;
-        }
-
-        .travel-smart-card.is-active .travel-smart-card-title {
-          font-size: 1.55rem;
-        }
-
-        .travel-smart-card-description,
-        .travel-smart-card-link {
-          opacity: 0;
-          visibility: hidden;
-          transform: translateY(18px);
-          pointer-events: none;
-          transition: opacity 420ms ease, visibility 420ms ease, transform 650ms cubic-bezier(0.22,1,0.36,1);
-        }
-
-        .travel-smart-card.is-active .travel-smart-card-description,
-        .travel-smart-card.is-active .travel-smart-card-link {
-          opacity: 1;
-          visibility: visible;
-          transform: translateY(0);
-          pointer-events: auto;
-        }
-
-        .travel-smart-card-description {
-          margin-top: 16px;
-          max-width: 31rem;
-          font-size: 1rem;
-          line-height: 1.7;
-          color: rgba(13,27,42,0.70);
-        }
-
-        .travel-smart-card-link {
-          display: inline-flex;
-          width: fit-content;
-          align-items: center;
-          gap: 8px;
-          margin-top: auto;
-          padding-top: 24px;
-          color: #087ea4;
-          font-size: 0.86rem;
-          font-weight: 800;
-        }
-
-        .travel-smart-card-link svg {
-          transition: transform 300ms ease;
-        }
-
-        .travel-smart-card-link:hover svg,
-        .travel-smart-card-link:focus-visible svg {
-          transform: translateX(5px);
-        }
-
-        .travel-smart-card-index {
-          position: absolute;
-          right: 24px;
-          bottom: 22px;
-          z-index: 2;
-          display: flex;
-          height: 30px;
-          min-width: 30px;
-          align-items: center;
-          justify-content: center;
-          border: 1px solid rgba(225,214,193,0.7);
-          border-radius: 999px;
-          background: rgba(255,255,255,0.65);
-          color: rgba(13,27,42,0.52);
-          font: 700 0.68rem/1 var(--font-manrope, sans-serif);
-          backdrop-filter: blur(10px);
-          transition: opacity 350ms ease, transform 350ms ease;
-        }
-
-        .travel-smart-card.is-active .travel-smart-card-index {
-          opacity: 0;
-          transform: scale(0.8);
-        }
-
-        .travel-smart-instruction {
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          color: rgba(13,27,42,0.45);
-          font: 700 0.68rem/1 var(--font-manrope, sans-serif);
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          white-space: nowrap;
-          pointer-events: none;
-        }
-
-        @media (max-width: 999px) {
-          .travel-smart-tabs {
-            height: auto;
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-          }
-
-          .travel-smart-card,
-          .travel-smart-card.is-active {
-            position: relative;
-            inset: auto;
-            width: 100%;
-            min-height: 270px;
-            transform: none !important;
-            opacity: 1 !important;
-          }
-
-          .travel-smart-card-inner {
-            min-height: 270px;
-            padding: 22px;
-          }
-
-          .travel-smart-card-title,
-          .travel-smart-card.is-active .travel-smart-card-title {
-            font-size: 1.08rem;
-          }
-
-          .travel-smart-card-description,
-          .travel-smart-card.is-active .travel-smart-card-description,
-          .travel-smart-card-link,
-          .travel-smart-card.is-active .travel-smart-card-link {
-            opacity: 1;
-            visibility: visible;
-            transform: none;
-            pointer-events: auto;
-          }
-
-          .travel-smart-card-index,
-          .travel-smart-instruction {
-            display: none;
-          }
-        }
-
-        @media (max-width: 639px) {
-          .travel-smart-tabs {
-            grid-template-columns: 1fr;
-          }
-
-          .travel-smart-card-inner {
-            min-height: 245px;
-            padding: 20px;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .travel-smart-card,
-          .travel-smart-card-icon,
-          .travel-smart-card-title,
-          .travel-smart-card-description,
-          .travel-smart-card-link,
-          .travel-smart-card-link svg,
-          .travel-smart-card-index {
-            transition: none !important;
-          }
-        }
-      `}</style>
-
-      <div className="pointer-events-none absolute -left-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-ocean-100/30 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-safari-100/40 blur-3xl" />
-
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <AnimateOnScroll direction="up">
-          <div className="mx-auto mb-9 max-w-3xl text-center sm:mb-11">
-            <span className="mb-2 inline-block font-inter text-xs font-bold uppercase tracking-[0.2em] text-safari-500">{content.label}</span>
-            <h2 id="traveler-essentials-title" className="font-poppins text-3xl font-extrabold leading-tight text-foreground sm:text-4xl lg:text-5xl">{content.title}</h2>
-            <p className="mt-3 font-inter text-sm leading-6 text-foreground/70 sm:text-base sm:leading-7">{content.subtitle}</p>
+          <div className="mx-auto mb-10 max-w-3xl text-center lg:mb-14">
+            <span className="mb-3 block font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">{content.label}</span>
+            <h2 id="traveler-essentials-title" className="font-poppins text-3xl font-extrabold leading-tight text-foreground sm:text-5xl lg:text-6xl">{content.title}</h2>
+            <p className="mx-auto mt-4 max-w-3xl font-inter text-base leading-7 text-foreground/70 sm:text-lg">{content.subtitle}</p>
           </div>
         </AnimateOnScroll>
 
-        <div className="travel-smart-tabs" aria-label={content.title} onMouseLeave={() => setHoveredIndex(null)}>
+        <div
+          className="relative mx-auto h-[350px] max-w-6xl select-none touch-pan-y overflow-visible sm:h-[370px] lg:h-[390px]"
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={() => { pointerStartX.current = null; }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
+          aria-label={content.title}
+        >
           {content.items.map(({ title, text, href }, index) => {
             const Icon = ESSENTIAL_ICONS[index] ?? MapPinned;
-            const isActive = displayedIndex === index;
-            const distance = index - displayedIndex;
-            const absDistance = Math.abs(distance);
+            const offset = getOffset(index);
+            const isActive = offset === 0;
             const direction = isRTL ? -1 : 1;
-
-            let transform: string;
-            let zIndex: number;
-            let opacity = 1;
-
-            if (isActive) {
-              transform = 'translate(-50%, -50%) translateX(0) translateY(0) rotate(0deg) scale(1)';
-              zIndex = 50;
-            } else {
-              const x = direction * distance * 108;
-              const y = absDistance * 5;
-              const rotation = direction * distance * 1.7;
-              const scale = Math.max(0.88, 1 - absDistance * 0.025);
-              zIndex = 40 - absDistance;
-              opacity = Math.max(0.78, 1 - absDistance * 0.04);
-              transform = `translate(-50%, -50%) translateX(${x}px) translateY(${y}px) rotate(${rotation}deg) scale(${scale})`;
-            }
+            const absOffset = Math.abs(offset);
 
             return (
-              <Link
+              <article
                 key={`${locale}-${index}-${title}`}
-                href={href}
-                aria-label={title}
-                aria-current={isActive ? 'true' : undefined}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onFocus={() => setHoveredIndex(index)}
-                onClick={() => setActiveIndex(index)}
-                className={`travel-smart-card group focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-400 focus-visible:ring-offset-4 ${isActive ? 'is-active' : ''}`}
-                style={{ transform, zIndex, opacity } as CSSProperties}
+                className={`absolute left-1/2 top-1/2 w-[82vw] max-w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-[1px] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'z-30' : 'z-20'}`}
+                style={{
+                  transform: `translate(calc(-50% + ${direction * offset * cardDistance}px), -50%) scale(${isActive ? 1 : 0.84})`,
+                  opacity: absOffset > 1 ? 0 : isActive ? 1 : 0.68,
+                  filter: isActive ? 'none' : 'saturate(0.82)',
+                  pointerEvents: absOffset > 1 ? 'none' : 'auto',
+                }}
               >
-                <div className="travel-smart-card-inner">
-                  <div className="travel-smart-card-icon" aria-hidden="true"><Icon className="h-5 w-5" /></div>
-                  <div className="travel-smart-card-copy">
-                    <h3 className="travel-smart-card-title font-poppins">{title}</h3>
-                    <p className="travel-smart-card-description font-inter">{text}</p>
-                  </div>
-                  <span className="travel-smart-card-link font-inter">{content.learnMore}<ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
+                <div className={`h-full min-h-[310px] rounded-2xl border bg-white p-6 shadow-xl transition-all duration-700 sm:min-h-[325px] ${isActive ? 'border-safari-300 shadow-[0_20px_60px_rgba(14,116,144,0.18)]' : 'border-sand-200 shadow-card'}`}>
+                  <Link
+                    href={href}
+                    aria-label={title}
+                    aria-current={isActive ? 'true' : undefined}
+                    onClick={() => setActiveIndex(index)}
+                    className="block h-full rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-400 focus-visible:ring-offset-4"
+                  >
+                    <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500 ${isActive ? 'bg-safari-500 text-white shadow-[0_0_28px_rgba(249,115,22,0.42)]' : 'bg-safari-50 text-safari-500'}`}>
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <h3 className="mb-2 font-poppins text-lg font-bold leading-snug text-foreground sm:text-xl">{title}</h3>
+                    <p className="font-inter text-sm leading-6 text-foreground/75 sm:text-base">{text}</p>
+                    <div className={`mt-5 h-1 rounded-full transition-all duration-700 ${isActive ? 'w-20 bg-safari-500' : 'w-10 bg-sand-200'}`} />
+                    <span className="mt-5 inline-flex items-center gap-2 font-inter text-sm font-semibold text-ocean-700 transition-all duration-300 hover:gap-3 hover:text-ocean-800">
+                      {content.learnMore}
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                  </Link>
                 </div>
-                <span className="travel-smart-card-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-              </Link>
+              </article>
             );
           })}
-          <span className="travel-smart-instruction" aria-hidden="true">Hover to reveal · Focus to explore</span>
+        </div>
+
+        <div className="mt-1 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => goTo(-1)}
+            aria-label="Previous travel tip"
+            className="group flex h-12 w-12 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:text-safari-600 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"
+          >
+            <ChevronLeft className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-0.5" />
+          </button>
+
+          <div className="flex items-center gap-1.5" aria-label="Travel tips position">
+            {content.items.map((item, index) => (
+              <button
+                key={`${locale}-dot-${index}`}
+                type="button"
+                aria-label={`Go to ${item.title}`}
+                aria-current={activeIndex === index}
+                onClick={() => setActiveIndex(index)}
+                className={`h-2 rounded-full transition-all duration-500 ${activeIndex === index ? 'w-7 bg-safari-500 shadow-[0_0_12px_rgba(249,115,22,0.45)]' : 'w-2 bg-sand-300 hover:bg-safari-300'}`}
+              />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => goTo(1)}
+            aria-label="Next travel tip"
+            className="group flex h-12 w-12 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"
+          >
+            <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </button>
         </div>
       </div>
     </section>
