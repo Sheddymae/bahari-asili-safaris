@@ -39,7 +39,7 @@ function convertBreakdown(kes: PricingBreakdown, currency: BookingCurrency, curr
     throw new Error(`No valid KES exchange rate is configured for ${currency}.`);
   }
   const convert = (value: number) => currency === 'KES' ? Math.round(value) : Math.round((value / kesPerUnit) * 100) / 100;
-  return {
+  const converted = {
     accommodation_cost: convert(kes.accommodation_cost),
     park_fees: convert(kes.park_fees),
     guide_cost: convert(kes.guide_cost),
@@ -51,6 +51,12 @@ function convertBreakdown(kes: PricingBreakdown, currency: BookingCurrency, curr
     total_cost: convert(kes.total_cost),
     currency,
   };
+
+  // PricingBreakdown predates customer-selectable currencies and currently
+  // declares currency as KES-only. Keep that shared legacy type unchanged so
+  // existing quotation code remains compatible, while preserving the real
+  // selected currency at runtime for the builder/UI/API response.
+  return converted as PricingBreakdown;
 }
 
 function splitNights(totalNights: number, slugs: string[]) {
@@ -99,12 +105,14 @@ export function buildManagedSafariPlan(input: SafariBuilderInput, currency: Book
     const b = i === slugs.length ? '' : slugs[i];
     transport += longHaul.has(a) || longHaul.has(b) ? 16000 : 7000;
   }
-  const other = Math.round((accommodation + parkFees + guide + meals) * 0.03);
-  const subtotal = accommodation + parkFees + guide + transport + meals + other;
-  const discount = nights >= 7 ? Math.round(subtotal * 0.05) : 0;
-  const taxable = subtotal - discount;
-  const tax = Math.round(taxable * 0.16);
-  const kesPricing: PricingBreakdown = { accommodation_cost: Math.round(accommodation), park_fees: Math.round(parkFees), guide_cost: Math.round(guide), transport_cost: Math.round(transport), meals_cost: Math.round(meals), other_costs: other, discount, tax, total_cost: Math.round(taxable + tax), currency: 'KES' };
+  const subtotal = accommodation + parkFees + guide + transport + meals;
+  const other = 0;
+  const discount = 0;
+  const tax = Math.round(subtotal * 0.05);
+  const total = subtotal + other - discount + tax;
+  const kes: PricingBreakdown = { accommodation_cost: Math.round(accommodation), park_fees: Math.round(parkFees), guide_cost: Math.round(guide), transport_cost: Math.round(transport), meals_cost: Math.round(meals), other_costs: other, discount, tax, total_cost: Math.round(total), currency: 'KES' };
+  const pricing = convertBreakdown(kes, currency, config.currencies);
+  const itinerary = buildGenericItinerary(input, split);
   const selectedDestinations = slugs.map((slug) => destinations.find((d) => d.slug === slug)).filter(Boolean) as typeof destinations;
-  return { nights, nightsPerDestination: split.map(({ slug, nights: n }) => ({ slug: slug as any, name: destinations.find((d) => d.slug === slug)?.name || slug, nights: n })), itinerary: buildGenericItinerary(input, split), pricing: convertBreakdown(kesPricing, currency, config.currencies), destinations: selectedDestinations };
+  return { nights, nightsPerDestination: split.map((s) => ({ ...s, slug: s.slug as any, name: destinations.find((d) => d.slug === s.slug)?.name || s.slug })), itinerary, pricing, destinations: selectedDestinations };
 }
