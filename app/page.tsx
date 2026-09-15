@@ -53,8 +53,10 @@ export default function Home() {
       <main className="homepage-main min-w-0 overflow-x-clip">
         <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
-        <AnimateOnScroll direction="up"><AboutSection /></AnimateOnScroll>
+        {/* Traveler-critical information comes immediately after the hero so
+            visitors can find entry, health, packing and payment guidance first. */}
         <TravelerEssentials />
+        <AnimateOnScroll direction="up"><AboutSection /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ToursSection onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeDestinationsSection /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
