@@ -32,192 +32,95 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-white text-gray-800 font-inter antialiased;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-poppins;
-  }
+  * { @apply border-border; }
+  body { @apply bg-white text-gray-800 font-inter antialiased; overflow-x: clip; }
+  h1, h2, h3, h4, h5, h6 { @apply font-poppins; }
+  img, svg, video, canvas { max-width: 100%; }
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 }
 
 @layer utilities {
-  .font-poppins {
-    font-family: 'Poppins', sans-serif;
-  }
-  .font-inter {
-    font-family: 'Inter', sans-serif;
-  }
-  .text-ocean {
-    color: #0e7490;
-  }
-  .text-orange {
-    color: #f97316;
-  }
-  .bg-ocean {
-    background-color: #0e7490;
-  }
-  .bg-orange {
-    background-color: #f97316;
-  }
-  .bg-sand {
-    background-color: #f5f1e8;
-  }
-  .border-ocean {
-    border-color: #0e7490;
-  }
-  .section-padding {
-    @apply px-4 sm:px-6 lg:px-8;
-  }
+  .font-poppins { font-family: 'Poppins', sans-serif; }
+  .font-inter { font-family: 'Inter', sans-serif; }
+  .text-ocean { color: #0e7490; }
+  .text-orange { color: #f97316; }
+  .bg-ocean { background-color: #0e7490; }
+  .bg-orange { background-color: #f97316; }
+  .bg-sand { background-color: #f5f1e8; }
+  .border-ocean { border-color: #0e7490; }
+  .section-padding { @apply px-4 sm:px-6 lg:px-8; }
 }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
-/* Global interaction transitions: keep the site feeling fluid without
-   animating layout-heavy properties such as width, height or position. */
-a,
-button,
-input,
-select,
-textarea,
-[role='button'] {
+/* Fluid interaction system */
+a, button, input, select, textarea, [role='button'] {
   transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
   transition-duration: 220ms;
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Make primary interactive buttons feel alive across the site. Buttons can
-   opt out with data-no-glow when a utility/icon control should stay quiet. */
-button:not([data-no-glow]),
-a[role='button']:not([data-no-glow]) {
+button:not([data-no-glow]), a[role='button']:not([data-no-glow]) {
   position: relative;
   isolation: isolate;
   box-shadow: 0 4px 16px rgba(14, 116, 144, 0.10);
 }
 
-button:not([data-no-glow]):hover,
-button:not([data-no-glow]):focus-visible,
-a[role='button']:not([data-no-glow]):hover,
-a[role='button']:not([data-no-glow]):focus-visible {
+button:not([data-no-glow]):hover, button:not([data-no-glow]):focus-visible,
+a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow]):focus-visible {
   box-shadow: 0 0 18px rgba(14, 116, 144, 0.32), 0 8px 24px rgba(14, 116, 144, 0.16);
   transform: translateY(-1px);
 }
 
-button:not([data-no-glow]):active,
-a[role='button']:not([data-no-glow]):active {
-  transform: translateY(0) scale(0.98);
+button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active { transform: translateY(0) scale(0.98); }
+
+/* Seamless responsive service marquee */
+.trust-marquee-mask { width: 100%; overflow: hidden; }
+.trust-marquee-track { display: flex; width: max-content; min-width: max-content; animation: trust-marquee-scroll 32s linear infinite; will-change: transform; }
+.trust-marquee-group { width: max-content; }
+.trust-marquee-track:hover, .trust-marquee-track:focus-visible { animation-play-state: paused; }
+@keyframes trust-marquee-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
+
+/* Premium CTA */
+.glow-button { position: relative; isolation: isolate; box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 8px 24px rgba(249,115,22,.22); transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease; animation: glow-button-pulse 2.8s ease-in-out infinite; }
+.glow-button:hover, .glow-button:focus-visible { box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 0 24px rgba(249,115,22,.68), 0 12px 32px rgba(249,115,22,.36); filter: brightness(1.06); animation: none; }
+.glow-button:active { transform: scale(.97); }
+@keyframes glow-button-pulse { 0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 8px 24px rgba(249,115,22,.20); } 50% { box-shadow: 0 0 0 1px rgba(255,255,255,.20), 0 0 20px rgba(249,115,22,.48), 0 10px 28px rgba(249,115,22,.28); } }
+
+.tour-card { transition: transform .3s ease, box-shadow .3s ease; }
+.tour-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.14); }
+
+.nav-link::after { content: ''; display: block; height: 2px; width: 0; background: #f97316; transition: width .3s ease; }
+.nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #0e7490; border-radius: 3px; }
+
+/* Homepage responsive safeguards. Keep desktop composition while preventing
+   clipped content, oversized typography and horizontal scrolling on smaller screens. */
+.homepage-main { width: 100%; max-width: 100%; }
+.homepage-main section { max-width: 100%; }
+.homepage-main .max-w-7xl, .homepage-main .max-w-6xl, .homepage-main .max-w-5xl { width: 100%; }
+
+@media (max-width: 767px) {
+  .homepage-main section { scroll-margin-top: 76px; }
+  .homepage-main h1 { overflow-wrap: anywhere; }
+  .trust-marquee-group { gap: 1.5rem; padding-top: .9rem; padding-bottom: .9rem; }
+  .trust-marquee-track { animation-duration: 24s; }
+  .tour-card { border-radius: 1rem; }
 }
 
-/* Seamless, responsive infinite service-highlight marquee */
-.trust-marquee-mask {
-  width: 100%;
-  overflow: hidden;
+@media (min-width: 768px) and (max-width: 1279px) {
+  .homepage-main .max-w-7xl, .homepage-main .max-w-6xl, .homepage-main .max-w-5xl { padding-left: 1.5rem; padding-right: 1.5rem; }
 }
 
-.trust-marquee-track {
-  display: flex;
-  width: max-content;
-  min-width: max-content;
-  animation: trust-marquee-scroll 32s linear infinite;
-  will-change: transform;
-}
-
-.trust-marquee-group {
-  width: max-content;
-}
-
-.trust-marquee-track:hover,
-.trust-marquee-track:focus-visible {
-  animation-play-state: paused;
-}
-
-@keyframes trust-marquee-scroll {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
+@media (max-width: 380px) {
+  .homepage-main .px-4 { padding-left: .9rem; padding-right: .9rem; }
+  .homepage-main button { min-height: 42px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-tide,
-  .trust-marquee-track,
-  .glow-button,
-  button:not([data-no-glow]),
-  a[role='button']:not([data-no-glow]) {
-    animation: none !important;
-    transition-duration: 0.01ms !important;
-  }
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-/* Premium CTA glow: stronger orange breathing light for the main booking CTA. */
-.glow-button {
-  position: relative;
-  isolation: isolate;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 8px 24px rgba(249, 115, 22, 0.22);
-  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
-  animation: glow-button-pulse 2.8s ease-in-out infinite;
-}
-
-.glow-button:hover,
-.glow-button:focus-visible {
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28), 0 0 24px rgba(249, 115, 22, 0.68), 0 12px 32px rgba(249, 115, 22, 0.36);
-  filter: brightness(1.06);
-  animation: none;
-}
-
-.glow-button:active {
-  transform: scale(0.97);
-}
-
-@keyframes glow-button-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 8px 24px rgba(249, 115, 22, 0.20);
-  }
-  50% {
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.20), 0 0 20px rgba(249, 115, 22, 0.48), 0 10px 28px rgba(249, 115, 22, 0.28);
-  }
-}
-
-/* Tour card hover */
-.tour-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.tour-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.14);
-}
-
-/* Nav link underline animation */
-.nav-link::after {
-  content: '';
-  display: block;
-  height: 2px;
-  width: 0;
-  background: #f97316;
-  transition: width 0.3s ease;
-}
-.nav-link:hover::after,
-.nav-link.active::after {
-  width: 100%;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-::-webkit-scrollbar-thumb {
-  background: #0e7490;
-  border-radius: 3px;
+  .animate-tide, .trust-marquee-track, .glow-button, button:not([data-no-glow]), a[role='button']:not([data-no-glow]) { animation: none !important; transition-duration: .01ms !important; }
+  html { scroll-behavior: auto; }
 }
