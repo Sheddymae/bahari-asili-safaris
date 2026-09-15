@@ -1,5 +1,4 @@
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
-import { type SafariTab } from '@/lib/tours-data';
 import { defaultPricingConfig, type BookingCurrency, type ManagedDestinationRate, type PricingConfig } from '@/lib/managed-safari-pricing';
 
 export async function getManagedPricingConfig(): Promise<PricingConfig> {
@@ -12,7 +11,7 @@ export async function getManagedPricingConfig(): Promise<PricingConfig> {
     ]);
 
     for (const row of destinationRows || []) {
-      const slug = String(row.destination_slug) as SafariTab;
+      const slug = String(row.destination_slug);
       if (!(slug in fallback.destinations)) continue;
       fallback.destinations[slug] = {
         accommodationPerNight: Number(row.accommodation_per_night) || 0,
@@ -38,8 +37,6 @@ export async function getManagedPricingConfig(): Promise<PricingConfig> {
       };
     }
   } catch (error) {
-    // Before the migration is applied, keep the builder fully functional using
-    // the checked-in defaults rather than failing a customer quotation.
     console.warn('Safari pricing settings unavailable; using safe defaults.', error);
   }
   return fallback;
