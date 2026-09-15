@@ -36,14 +36,28 @@ function staggerDelay(index: number) {
 function ToursPageInner() {
   const { t, locale } = useLanguage();
   const groupLabels = groupDepartureLabels[locale];
-  const [programs, setPrograms] = useState<typeof safaris>(safaris);
+  const [programs, setPrograms] = useState<typeof safaris>([]);
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'day' ? 'day' : searchParams.get('tab') === 'group' ? 'group' : 'private';
   const [groupTours, setGroupTours] = useState<GroupTour[] | null>(null);
   const [selectedTour, setSelectedTour] = useState<string | null>(null);
+  const [programsLoading, setProgramsLoading] = useState(true);
 
   useEffect(() => { getGroupTours().then(setGroupTours); }, []);
-  useEffect(() => { let active=true; fetch(`/api/programs?locale=${locale}`).then(r=>r.json()).then(d=>{ if(active && d.success && Array.isArray(d.programs)) setPrograms(d.programs); }).catch(()=>{}); return ()=>{active=false}; }, [locale]);
+  useEffect(() => {
+    let active = true;
+    setProgramsLoading(true);
+    fetch(`/api/programs?locale=${locale}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!active) return;
+        if (d.success && Array.isArray(d.programs)) setPrograms(d.programs);
+        else setPrograms([]);
+      })
+      .catch(() => { if (active) setPrograms([]); })
+      .finally(() => { if (active) setProgramsLoading(false); });
+    return () => { active = false; };
+  }, [locale]);
 
   const dayTrips = useMemo(() => excursions.filter((e) => isDayTrip(e.duration)), []);
   const openBooking = useCallback((name: string) => setSelectedTour(name), []);
@@ -96,21 +110,27 @@ function ToursPageInner() {
             </TabsContent>
 
             <TabsContent value="private">
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {programs.map((s, i) => (
-                  <AnimateOnScroll key={s.id} direction="up" delay={staggerDelay(i)}>
-                    <div className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col h-full">
-                      <div className="relative h-40 w-full"><Image src={s.image} alt={s.name} fill className="object-cover" /></div>
-                      <div className="p-5 flex flex-col flex-1">
-                        <h3 className="font-poppins font-bold text-base text-foreground mb-1">{s.name}</h3>
-                        <p className="font-inter text-xs text-muted-foreground mb-3 flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {s.parks.join(', ')}</p>
-                        <div className="flex items-center gap-1 mb-4"><Star className="w-3.5 h-3.5 fill-safari-500 text-safari-500" /><span className="font-inter text-xs text-foreground">{s.rating} ({s.reviewCount})</span><span className="font-inter text-xs text-muted-foreground ml-auto">{s.days}D/{s.nights}N</span></div>
-                        <Link href={`/safaris/${s.id}`} prefetch className="mt-auto text-center border border-book text-book hover:bg-book/5 font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors">{t.tours.bookNow}</Link>
+              {programsLoading ? (
+                <div className="text-center py-16 font-inter text-muted-foreground">{t.common.loading}</div>
+              ) : programs.length === 0 ? (
+                <div className="text-center py-16 font-inter text-muted-foreground">{t.tours.noSafaris}</div>
+              ) : (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {programs.map((s, i) => (
+                    <AnimateOnScroll key={s.id} direction="up" delay={staggerDelay(i)}>
+                      <div className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col h-full">
+                        <div className="relative h-40 w-full"><Image src={s.image} alt={s.name} fill className="object-cover" /></div>
+                        <div className="p-5 flex flex-col flex-1">
+                          <h3 className="font-poppins font-bold text-base text-foreground mb-1">{s.name}</h3>
+                          <p className="font-inter text-xs text-muted-foreground mb-3 flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {s.parks.join(', ')}</p>
+                          <div className="flex items-center gap-1 mb-4"><Star className="w-3.5 h-3.5 fill-safari-500 text-safari-500" /><span className="font-inter text-xs text-foreground">{s.rating} ({s.reviewCount})</span><span className="font-inter text-xs text-muted-foreground ml-auto">{s.days}D/{s.nights}N</span></div>
+                          <Link href={`/safaris/${s.id}`} prefetch className="mt-auto text-center border border-book text-book hover:bg-book/5 font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors">{t.tours.bookNow}</Link>
+                        </div>
                       </div>
-                    </div>
-                  </AnimateOnScroll>
-                ))}
-              </div>
+                    </AnimateOnScroll>
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="day">
