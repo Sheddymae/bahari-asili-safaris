@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Star, Clock, ChevronDown, ChevronUp, Sparkles, CalendarDays, ArrowLeft } from 'lucide-react';
+import { MapPin, Star, Clock, ChevronDown, ChevronUp, Sparkles, CalendarDays, ArrowLeft, Landmark } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -22,36 +22,46 @@ export default function DestinationDetailClient({ destination }: { destination: 
     <>
       <Navbar />
       <main className="overflow-x-hidden">
-        {/* Hero */}
         <div className="relative h-[50vh] min-h-[360px]">
           <Image src={destination.heroImage} alt={content.name} fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
           <div className="absolute inset-0 flex flex-col justify-end">
             <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
-              <Link
-                href="/destinations"
-                prefetch
-                className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-inter mb-4 transition-colors"
-              >
+              <Link href="/destinations" prefetch className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-inter mb-4 transition-colors">
                 <ArrowLeft className="w-4 h-4" /> {tt.backToAll}
               </Link>
-              <div className="flex items-center gap-1.5 mb-2">
-                <MapPin className="w-4 h-4 text-safari-400" />
-                <span className="font-inter text-xs font-semibold text-safari-300 uppercase tracking-wider">{ee.destGuideLabel}</span>
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-safari-400" />
+                  <span className="font-inter text-xs font-semibold text-safari-300 uppercase tracking-wider">{ee.destGuideLabel}</span>
+                </div>
+                {destination.country && <span className="text-white/70 text-xs font-inter">• {destination.country}</span>}
+                {destination.region && <span className="text-white/60 text-xs font-inter">• {destination.region}</span>}
               </div>
-              <h1 className="font-poppins font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
-                {content.name}
-              </h1>
+              <h1 className="font-poppins font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">{content.name}</h1>
               <p className="font-inter text-white/85 text-base mt-2 max-w-2xl">{content.tagline}</p>
             </div>
           </div>
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
-          {/* Intro */}
-          <p className="font-inter text-foreground text-base leading-relaxed mb-10 max-w-3xl">{content.intro}</p>
+          <p className="font-inter text-foreground text-base leading-relaxed mb-8 max-w-3xl">{content.intro}</p>
 
-          {/* Wildlife highlights + Best season */}
+          {destination.history && (
+            <section className="mb-10 rounded-2xl border border-border bg-white p-6 sm:p-8 shadow-card">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sand-50 text-safari-500">
+                  <Landmark className="w-5 h-5" />
+                </span>
+                <div>
+                  <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">Destination story</p>
+                  <h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground">A short history of {content.name}</h2>
+                </div>
+              </div>
+              <p className="font-inter text-foreground/80 leading-relaxed max-w-4xl">{destination.history}</p>
+            </section>
+          )}
+
           <div className="grid sm:grid-cols-2 gap-5 mb-12">
             <div className="bg-sand-50 rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -76,18 +86,12 @@ export default function DestinationDetailClient({ destination }: { destination: 
             </div>
           </div>
 
-          {/* Available safaris */}
           {relatedSafaris.length > 0 && (
             <div className="mb-12">
               <h2 className="font-poppins font-bold text-2xl text-foreground mb-5">{ee.safarisToPrefix} {content.name}</h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {relatedSafaris.map((safari) => (
-                  <Link
-                    key={safari.id}
-                    href={`/safaris/${safari.id}`}
-                    prefetch
-                    className="block bg-white rounded-2xl border border-border shadow-card hover:shadow-card-hover transition-shadow overflow-hidden"
-                  >
+                  <Link key={safari.id} href={`/safaris/${safari.id}`} prefetch className="block bg-white rounded-2xl border border-border shadow-card hover:shadow-card-hover transition-shadow overflow-hidden">
                     <div className="relative h-40">
                       <Image src={safari.image} alt={safari.name} fill className="object-cover" sizes="400px" />
                     </div>
@@ -104,44 +108,29 @@ export default function DestinationDetailClient({ destination }: { destination: 
             </div>
           )}
 
-          {/* FAQ */}
           {content.faqs.length > 0 && (
             <div className="mb-12">
               <h2 className="font-poppins font-bold text-2xl text-foreground mb-5">{tt.faqTitle}</h2>
               <div className="space-y-3">
                 {content.faqs.map((faq, i) => (
                   <div key={i} className="border border-border rounded-xl overflow-hidden">
-                    <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-sand-50 transition-colors text-left"
-                    >
+                    <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-sand-50 transition-colors text-left">
                       <span className="font-inter font-semibold text-sm text-foreground">{faq.q}</span>
                       {openFaq === i ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
                     </button>
-                    {openFaq === i && (
-                      <div className="px-5 pb-4 bg-white">
-                        <p className="font-inter text-sm text-foreground leading-relaxed">{faq.a}</p>
-                      </div>
-                    )}
+                    {openFaq === i && <div className="px-5 pb-4 bg-white"><p className="font-inter text-sm text-foreground leading-relaxed">{faq.a}</p></div>}
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* CTA */}
           <div className="bg-ocean-700 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <p className="font-poppins font-bold text-white text-lg">{ee.readyToExplore} {content.name}?</p>
               <p className="font-inter text-white/70 text-sm mt-1">{tt.noPricesNote}</p>
             </div>
-            <Link
-              href="/tours"
-              prefetch
-              className="flex-shrink-0 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-8 py-3.5 rounded-xl transition-all hover:shadow-md whitespace-nowrap"
-            >
-              {tt.bookNow}
-            </Link>
+            <Link href="/tours" prefetch className="flex-shrink-0 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-8 py-3.5 rounded-xl transition-all hover:shadow-md whitespace-nowrap">{tt.bookNow}</Link>
           </div>
         </div>
       </main>
