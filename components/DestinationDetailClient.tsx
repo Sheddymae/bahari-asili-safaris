@@ -12,12 +12,14 @@ import { getLocalizedDestination } from '@/lib/destination-translations';
 import { regionalSafaris } from '@/lib/regional-safaris';
 import { getRegionalSafariDestinationSlugs } from '@/lib/regional-safari-destinations';
 import { getActivitiesForDestination } from '@/lib/destination-activities';
+import { getLocalizedDestinationActivity, destinationActivitiesLabels } from '@/lib/destination-activities-i18n';
 
 export default function DestinationDetailClient({ destination }: { destination: Destination }) {
   const { t, locale } = useLanguage();
   const content = getLocalizedDestination(destination, locale);
   const tt = t.tours;
   const ee = t.homeExtras;
+  const activityLabels = destinationActivitiesLabels[locale];
   const baseSafaris = getSafarisForDestination(destination.slug);
   const regionalForDestination = regionalSafaris.filter((safari) =>
     getRegionalSafariDestinationSlugs(safari.id).includes(destination.slug)
@@ -100,26 +102,29 @@ export default function DestinationDetailClient({ destination }: { destination: 
             <section className="mb-12">
               <div className="flex items-end justify-between gap-4 mb-5">
                 <div>
-                  <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">Things to do</p>
-                  <h2 className="font-poppins font-bold text-2xl text-foreground mt-1">Activities in {content.name}</h2>
+                  <p className="font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">{activityLabels.eyebrow}</p>
+                  <h2 className="font-poppins font-bold text-2xl text-foreground mt-1">{activityLabels.title} {content.name}</h2>
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-5">
-                {activities.map((activity) => (
-                  <article key={activity.id} className="overflow-hidden rounded-2xl border border-border bg-white shadow-card hover:shadow-card-hover transition-shadow">
-                    <div className="relative h-44">
-                      <Image src={activity.image} alt={activity.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
-                      <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-inter font-semibold text-white backdrop-blur-sm">{activity.level}</span>
-                    </div>
-                    <div className="p-5">
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="font-poppins font-bold text-base text-foreground">{activity.name}</h3>
-                        <span className="shrink-0 font-inter text-xs text-muted-foreground">{activity.duration}</span>
+                {activities.map((activity) => {
+                  const localized = getLocalizedDestinationActivity(activity.id, locale);
+                  return (
+                    <article key={activity.id} className="overflow-hidden rounded-2xl border border-border bg-white shadow-card hover:shadow-card-hover transition-shadow">
+                      <div className="relative h-44">
+                        <Image src={activity.image} alt={localized.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, 50vw" />
+                        <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-xs font-inter font-semibold text-white backdrop-blur-sm">{localized.level}</span>
                       </div>
-                      <p className="font-inter text-sm text-foreground/75 leading-relaxed mt-2">{activity.description}</p>
-                    </div>
-                  </article>
-                ))}
+                      <div className="p-5">
+                        <div className="flex items-start justify-between gap-3">
+                          <h3 className="font-poppins font-bold text-base text-foreground">{localized.name}</h3>
+                          <span className="shrink-0 font-inter text-xs text-muted-foreground">{localized.duration}</span>
+                        </div>
+                        <p className="font-inter text-sm text-foreground/75 leading-relaxed mt-2">{localized.description}</p>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </section>
           )}
