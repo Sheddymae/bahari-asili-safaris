@@ -45,21 +45,12 @@ export default function TravelerEssentials() {
           overflow: hidden;
           border: 1px solid rgba(225, 214, 193, 0.9);
           border-radius: 28px;
-          background:
-            linear-gradient(145deg, rgba(255,255,255,0.94), rgba(248,246,241,0.78));
-          box-shadow:
-            0 18px 45px rgba(13, 27, 42, 0.10),
-            inset 0 1px 0 rgba(255,255,255,0.9);
+          background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(248,246,241,0.78));
+          box-shadow: 0 18px 45px rgba(13, 27, 42, 0.10), inset 0 1px 0 rgba(255,255,255,0.9);
           backdrop-filter: blur(22px);
           -webkit-backdrop-filter: blur(22px);
           transform-origin: 50% 92%;
-          transition:
-            transform 850ms cubic-bezier(0.22, 1, 0.36, 1),
-            width 850ms cubic-bezier(0.22, 1, 0.36, 1),
-            min-height 850ms cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 650ms ease,
-            box-shadow 650ms ease,
-            border-color 500ms ease;
+          transition: transform 850ms cubic-bezier(0.22, 1, 0.36, 1), width 850ms cubic-bezier(0.22, 1, 0.36, 1), min-height 850ms cubic-bezier(0.22, 1, 0.36, 1), opacity 650ms ease, box-shadow 650ms ease, border-color 500ms ease;
           will-change: transform, width;
           cursor: pointer;
         }
@@ -69,19 +60,14 @@ export default function TravelerEssentials() {
           position: absolute;
           inset: 0;
           pointer-events: none;
-          background:
-            radial-gradient(circle at 18% 8%, rgba(255,255,255,0.95), transparent 30%),
-            linear-gradient(135deg, rgba(255,112,0,0.08), transparent 48%, rgba(8,126,164,0.06));
+          background: radial-gradient(circle at 18% 8%, rgba(255,255,255,0.95), transparent 30%), linear-gradient(135deg, rgba(255,112,0,0.08), transparent 48%, rgba(8,126,164,0.06));
           opacity: 0.75;
         }
 
         .travel-smart-card.is-active {
           width: min(430px, 34vw);
           min-height: 410px;
-          box-shadow:
-            0 34px 80px rgba(13, 27, 42, 0.19),
-            0 0 0 1px rgba(255,112,0,0.10),
-            inset 0 1px 0 rgba(255,255,255,0.95);
+          box-shadow: 0 34px 80px rgba(13, 27, 42, 0.19), 0 0 0 1px rgba(255,112,0,0.10), inset 0 1px 0 rgba(255,255,255,0.95);
           border-color: rgba(255,112,0,0.30);
         }
 
@@ -146,10 +132,7 @@ export default function TravelerEssentials() {
           visibility: hidden;
           transform: translateY(18px);
           pointer-events: none;
-          transition:
-            opacity 420ms ease,
-            visibility 420ms ease,
-            transform 650ms cubic-bezier(0.22,1,0.36,1);
+          transition: opacity 420ms ease, visibility 420ms ease, transform 650ms cubic-bezier(0.22,1,0.36,1);
         }
 
         .travel-smart-card.is-active .travel-smart-card-description,
@@ -306,11 +289,7 @@ export default function TravelerEssentials() {
           </div>
         </AnimateOnScroll>
 
-        <div
-          className="travel-smart-tabs"
-          aria-label={content.title}
-          onMouseLeave={() => setHoveredIndex(null)}
-        >
+        <div className="travel-smart-tabs" aria-label={content.title} onMouseLeave={() => setHoveredIndex(null)}>
           {content.items.map(({ title, text, href }, index) => {
             const Icon = ESSENTIAL_ICONS[index] ?? MapPinned;
             const isActive = displayedIndex === index;
@@ -326,20 +305,14 @@ export default function TravelerEssentials() {
               transform = 'translate(-50%, -50%) translateX(0) translateY(0) rotate(0deg) scale(1)';
               zIndex = 50;
             } else {
-              const x = direction * distance * 82;
-              const y = absDistance * 7;
-              const rotation = direction * distance * 2.2;
-              const scale = Math.max(0.86, 1 - absDistance * 0.035);
+              const x = direction * distance * 108;
+              const y = absDistance * 5;
+              const rotation = direction * distance * 1.7;
+              const scale = Math.max(0.88, 1 - absDistance * 0.025);
               zIndex = 40 - absDistance;
-              opacity = Math.max(0.72, 1 - absDistance * 0.05);
+              opacity = Math.max(0.78, 1 - absDistance * 0.04);
               transform = `translate(-50%, -50%) translateX(${x}px) translateY(${y}px) rotate(${rotation}deg) scale(${scale})`;
             }
-
-            const cardStyle = {
-              transform,
-              zIndex,
-              opacity,
-            } as CSSProperties;
 
             return (
               <Link
@@ -351,29 +324,20 @@ export default function TravelerEssentials() {
                 onFocus={() => setHoveredIndex(index)}
                 onClick={() => setActiveIndex(index)}
                 className={`travel-smart-card group focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-400 focus-visible:ring-offset-4 ${isActive ? 'is-active' : ''}`}
-                style={cardStyle}
+                style={{ transform, zIndex, opacity } as CSSProperties}
               >
                 <div className="travel-smart-card-inner">
-                  <div className="travel-smart-card-icon" aria-hidden="true">
-                    <Icon className="h-5 w-5" />
-                  </div>
-
+                  <div className="travel-smart-card-icon" aria-hidden="true"><Icon className="h-5 w-5" /></div>
                   <div className="travel-smart-card-copy">
                     <h3 className="travel-smart-card-title font-poppins">{title}</h3>
                     <p className="travel-smart-card-description font-inter">{text}</p>
                   </div>
-
-                  <span className="travel-smart-card-link font-inter">
-                    {content.learnMore}
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </span>
+                  <span className="travel-smart-card-link font-inter">{content.learnMore}<ArrowRight className="h-4 w-4" aria-hidden="true" /></span>
                 </div>
-
                 <span className="travel-smart-card-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
               </Link>
             );
           })}
-
           <span className="travel-smart-instruction" aria-hidden="true">Hover to reveal · Focus to explore</span>
         </div>
       </div>
