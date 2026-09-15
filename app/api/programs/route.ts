@@ -21,4 +21,21 @@ const getCachedProgramRows = unstable_cache(
   { revalidate: 300, tags: ['programs'] }
 );
 
-export async function GET(req:NextRequest){try{const locale=normalizeLocale(new URL(req.url).searchParams.get('locale'));const rows=await getCachedProgramRows(locale);const map=new Map(rows.map(r=>[r.slug,r]));const base=safaris.map(s=>map.has(s.id)?{...s,...rowToSafari(map.get(s.id))}:s);const custom=rows.filter(r=>!safaris.some(s=>s.id===r.slug)).map(rowToSafari);return NextResponse.json({success:true,programs:[...base,...custom]});}catch(e){return NextResponse.json({success:false,error:'Failed to load programs'},{status:500});}}
+export async function GET(req: NextRequest) {
+  try {
+    const locale = normalizeLocale(new URL(req.url).searchParams.get('locale'));
+    const rows = await getCachedProgramRows(locale);
+    const map = new Map(rows.map((r) => [r.slug, r]));
+
+    // English is the canonical catalogue language. Every other locale must
+    // come from its own localized CMS row. Never silently render English
+    // catalogue content after a visitor selects another language.
+    const programs = locale === 'en'
+      ? safaris.map((s) => (map.has(s.id) ? { ...s, ...rowToSafari(map.get(s.id)) } : s))
+      : rows.map((row) => rowToSafari(row));
+
+    return NextResponse.json({ success: true, programs });
+  } catch (e) {
+    return NextResponse.json({ success: false, error: 'Failed to load programs' }, { status: 500 });
+  }
+}
