@@ -12,6 +12,7 @@ interface InterestsStepProps {
 export default function InterestsStep({ value, onChange }: InterestsStepProps) {
   const { t } = useLanguage();
   const st = t.safariBuilder.style;
+  const interestLabels = t.safariBuilder.interestLabels as Record<string, string>;
   const toggle = (key: string) => {
     onChange(value.includes(key) ? value.filter((k) => k !== key) : [...value, key]);
   };
@@ -28,7 +29,7 @@ export default function InterestsStep({ value, onChange }: InterestsStepProps) {
       <div className="flex flex-wrap gap-3" role="group" aria-label="Safari interests">
         {SAFARI_INTERESTS.map((interest) => {
           const selected = value.includes(interest.key);
-          const label = (st.interestLabels as Record<string, string>)[interest.key] || interest.label;
+          const label = interestLabels[interest.key] || interest.label;
           return (
             <button
               key={interest.key}
