@@ -77,6 +77,7 @@ const packingTips = [
 export const safaris: Safari[] = [
   {
     id: 'experience',
+    priceTier: 'mid-range',
     name: '2-Day Tsavo East Safari',
     tagline: 'Your first taste of the wild Kenya',
     days: 2,
@@ -112,6 +113,7 @@ export const safaris: Safari[] = [
   },
   {
     id: 'inside',
+    priceTier: 'mid-range',
     name: '3-Day Tsavo East & Amboseli Safari',
     tagline: 'Elephants, red dust, and Kilimanjaro skies',
     days: 3,
@@ -194,6 +196,7 @@ export const safaris: Safari[] = [
   },
   {
     id: 'simba-timon',
+    priceTier: 'mid-range',
     name: '4-Day Tsavo & Amboseli Safari',
     tagline: 'Three parks, one legendary journey',
     days: 4,
@@ -243,6 +246,7 @@ export const safaris: Safari[] = [
   },
   {
     id: 'zazu',
+    priceTier: 'mid-range',
     name: '3-Day Masai Mara Safari',
     tagline: 'The Masai Mara — Africa\'s greatest wildlife show',
     days: 3,
@@ -285,6 +289,7 @@ export const safaris: Safari[] = [
   },
   {
     id: 'twiga',
+    priceTier: 'mid-range',
     name: '4-Day Tsavo, Taita Hills & Amboseli Safari',
     tagline: 'Tall horizons across four landscapes',
     days: 4,
@@ -333,6 +338,7 @@ export const safaris: Safari[] = [
   },
   {
     id: 'rafiki',
+    priceTier: 'mid-range',
     name: '5-Day Tsavo, Taita Hills & Amboseli Safari',
     tagline: 'Five days of pure Kenya wilderness',
     days: 5,
@@ -436,6 +442,7 @@ export const safaris: Safari[] = [
   },
   {
     id: 'tembo',
+    priceTier: 'mid-range',
     name: '6-Day Grand Kenya Safari',
     tagline: 'Six days — the full heart of Kenya',
     days: 6,
