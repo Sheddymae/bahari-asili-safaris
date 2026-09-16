@@ -10,6 +10,7 @@ import TravelerEssentials from '@/components/TravelerEssentials';
 import HomeConversionSection from '@/components/HomeConversionSection';
 import StructuredData from '@/components/StructuredData';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
+import SafariAssistant from '@/components/SafariAssistant';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
 
@@ -63,6 +64,7 @@ export default function Home() {
       {isBookingOpen && <BookingModal isOpen={isBookingOpen} onClose={closeBooking} selectedTour={selectedTour} />}
       <HeroBookingModal isOpen={isHeroBookingOpen} onClose={closeHeroBooking} initialSelection={heroBookingSelection} />
       <WhatsAppButton />
+      <SafariAssistant onRequestQuote={() => openHeroBooking()} />
     </>
   );
 }
