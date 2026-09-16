@@ -1,5 +1,5 @@
 import './globals.css';
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { translations, type Locale } from '@/lib/i18n';
@@ -18,11 +18,11 @@ const manrope = Manrope({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
 
-export const viewport: Viewport = {
+export const viewport = {
   width: 'device-width',
   initialScale: 1,
   colorScheme: 'light',
-};
+} as const;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
