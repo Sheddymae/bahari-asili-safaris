@@ -6,7 +6,6 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import TrustStrip from '@/components/TrustStrip';
 import AboutSection from '@/components/AboutSection';
-import TravelerEssentials from '@/components/TravelerEssentials';
 import HomeConversionSection from '@/components/HomeConversionSection';
 import StructuredData from '@/components/StructuredData';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
@@ -21,7 +20,6 @@ const WildlifeCalendarSection = dynamic(() => import('@/components/WildlifeCalen
 const TransfersSection = dynamic(() => import('@/components/TransfersSection'), { loading: () => <div className="h-64 bg-sand-50 animate-pulse" /> });
 const GallerySection = dynamic(() => import('@/components/GallerySection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const ReviewsSection = dynamic(() => import('@/components/ReviewsSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
-const MemoriesSection = dynamic(() => import('@/components/MemoriesSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), { loading: () => <div className="h-48 bg-ocean-700 animate-pulse" /> });
 const Footer = dynamic(() => import('@/components/Footer'));
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
@@ -45,16 +43,14 @@ export default function Home() {
         <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
         <HomeConversionSection onBook={() => openHeroBooking()} />
-        <TravelerEssentials />
-        <AnimateOnScroll direction="up"><AboutSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><ToursSection onBook={openBooking} /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><AboutSection variant="home" /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><ToursSection variant="home" onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeDestinationsSection /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><ExcursionsSection onBook={openBooking} /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><ExcursionsSection variant="home" onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><WildlifeCalendarSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><MemoriesSection onBook={() => openBooking()} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><TransfersSection onBook={openBooking} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><GallerySection /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><TransfersSection variant="home" onBook={openBooking} /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><GallerySection variant="home" /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ReviewsSection /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><FinalCtaSection onBook={() => openHeroBooking()} /></AnimateOnScroll>
       </main>
