@@ -1,7 +1,6 @@
 'use client';
 
-import type { CSSProperties } from 'react';
-import { Phone, MessageCircle, X } from 'lucide-react';
+import { Phone, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 
@@ -49,20 +48,28 @@ export default function WhatsAppButton() {
         <a
           href={`tel:${CALL_NUMBER}`}
           aria-label={labels.call}
-          className="flex min-h-11 items-center gap-2 rounded-full bg-ocean-700 px-4 text-white shadow-lg transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-ocean-300"
+          style={{ '--brand': '#0e7490' } as React.CSSProperties}
+          className="group relative flex min-h-11 items-center overflow-hidden rounded-full bg-white/10 px-3 text-white shadow-lg transition-all duration-300 ease-out hover:pr-5 hover:scale-105 hover:text-white focus:outline-none focus:ring-4 focus:ring-ocean-300"
         >
-          <Phone className="h-5 w-5" aria-hidden="true" />
-          <span className="font-inter text-sm font-semibold">{labels.call}</span>
+          <span className="absolute inset-0 rounded-full bg-ocean-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <span className="relative z-10 flex items-center">
+            <Phone className="h-5 w-5" aria-hidden="true" />
+            <span className="ml-0 max-w-0 overflow-hidden whitespace-nowrap font-inter text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:max-w-[120px] group-hover:opacity-100">{labels.call}</span>
+          </span>
         </a>
         <a
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={labels.whatsapp}
-          className="flex min-h-11 items-center gap-2 rounded-full bg-[#25D366] px-4 text-white shadow-lg transition-transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
+          style={{ '--brand': '#25D366' } as React.CSSProperties}
+          className="group relative flex min-h-11 items-center overflow-hidden rounded-full bg-white/10 px-3 text-white shadow-lg transition-all duration-300 ease-out hover:pr-5 hover:scale-105 hover:text-white focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
         >
-          <WhatsAppIcon />
-          <span className="font-inter text-sm font-semibold">{labels.whatsapp}</span>
+          <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <span className="relative z-10 flex items-center">
+            <WhatsAppIcon />
+            <span className="ml-0 max-w-0 overflow-hidden whitespace-nowrap font-inter text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:max-w-[120px] group-hover:opacity-100">{labels.whatsapp}</span>
+          </span>
         </a>
       </div>
 
@@ -72,9 +79,19 @@ export default function WhatsAppButton() {
         aria-expanded={open}
         aria-label={labels.contact}
         title={labels.contact}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-ocean-700 text-white shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition-all duration-200 hover:scale-105 hover:bg-ocean-800 focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
+        className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-ocean-700 text-white shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition-all duration-300 hover:scale-105 hover:bg-ocean-800 focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
       >
-        {open ? <X className="h-6 w-6" aria-hidden="true" /> : <MessageCircle className="h-6 w-6" aria-hidden="true" />}
+        {open ? (
+          <X className="h-6 w-6 transition-transform duration-300 group-hover:rotate-90" aria-hidden="true" />
+        ) : (
+          <span className="relative flex h-7 w-9 items-center justify-center">
+            <Phone className="absolute left-0 h-5 w-5 -translate-x-1 opacity-100 transition-all duration-300 group-hover:-translate-x-1.5 group-hover:opacity-0" aria-hidden="true" />
+            <WhatsAppIcon />
+            <span className="absolute right-0 h-5 w-5 translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-1.5 group-hover:opacity-100" aria-hidden="true">
+              <Phone className="h-5 w-5" />
+            </span>
+          </span>
+        )}
         <span className="sr-only">{labels.contact}</span>
       </button>
     </div>
