@@ -1,329 +1,77 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, Clock, ChevronDown, ChevronUp, MapPin, Building2, Backpack, Sun, Sunset, MoonStar, Check, X, ClipboardList, Wallet, Gem, Award } from 'lucide-react';
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
+import { Clock, MapPin, Star, ChevronDown, ChevronUp, Check, X, Backpack, Building2, Sun, Sunset, MoonStar } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { safaris } from '@/lib/safari-catalogue';
-import { type Safari, type SafariTab, DEFAULT_INCLUDED, DEFAULT_EXCLUDED, getPriceTier } from '@/lib/tours-data';
-import { prefersReducedMotion } from '@/lib/video-config';
-
-gsap.registerPlugin(ScrollTrigger);
+import type { Safari, SafariTab } from '@/lib/tours-data';
+import { DEFAULT_INCLUDED, DEFAULT_EXCLUDED, getPriceTier } from '@/lib/tours-data';
+import { getLocalizedSafari, type SafariLocale } from '@/lib/safari-content-i18n';
 
 type TabKey = SafariTab | 'multiday';
-
-const TAB_CONFIG: { key: TabKey; label: string; emoji: string }[] = [
-  { key: 'tsavo',       label: 'Tsavo',       emoji: '🐘' },
-  { key: 'amboseli',    label: 'Amboseli',     emoji: '🏔️' },
-  { key: 'mara',        label: 'Masai Mara',   emoji: '🦁' },
-  { key: 'taita',       label: 'Taita Hills',  emoji: '🦅' },
-  { key: 'multiday',    label: 'Multi-day',    emoji: '🗺️' },
+const TABS: { key: TabKey; label: string; emoji: string }[] = [
+  { key: 'tsavo', label: 'Tsavo', emoji: '🐘' },
+  { key: 'amboseli', label: 'Amboseli', emoji: '🏔️' },
+  { key: 'mara', label: 'Masai Mara', emoji: '🦁' },
+  { key: 'taita', label: 'Taita Hills', emoji: '🦅' },
+  { key: 'multiday', label: 'Multi-day', emoji: '🗺️' },
 ];
 
-const TIER_STYLE = {
-  budget: { icon: Wallet, className: 'bg-ocean-50 text-ocean-700 border-ocean-100' },
-  'mid-range': { icon: Award, className: 'bg-safari-50 text-safari-700 border-safari-100' },
-  luxury: { icon: Gem, className: 'bg-accent/10 text-accent border-accent/20' },
-} as const;
-
-function PriceTierBadge({ safari, t }: { safari: Safari; t: any }) {
+function SafariCard({ safari, t, locale, onBook }: { safari: Safari; t: any; locale: SafariLocale; onBook: (name: string) => void }) {
+  const [open, setOpen] = useState<'itinerary' | 'packing' | 'included' | null>(null);
+  const s = getLocalizedSafari(safari, locale);
   const tier = getPriceTier(safari);
-  const { icon: Icon, className } = TIER_STYLE[tier];
-  const label = tier === 'budget' ? t.priceTierBudget : tier === 'luxury' ? t.priceTierLuxury : t.priceTierMidRange;
-  return (
-    <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 ${className}`}>
-      <Icon className="w-3.5 h-3.5" />
-      <span className="font-inter font-semibold text-xs">{label}</span>
-    </div>
-  );
-}
-
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} className={`w-3 h-3 ${i <= Math.round(rating) ? 'fill-accent text-accent' : 'text-muted-foreground fill-muted-foreground'}`} />
-      ))}
-      <span className="font-inter text-xs text-muted-foreground ml-1">{rating}</span>
-    </div>
-  );
-}
-
-function SafariCard({ safari, onBook, t }: { safari: Safari; onBook: (name: string) => void; t: any }) {
-  const [tab, setTab] = useState<'itinerary' | 'packing' | 'included' | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const toggleTab = (v: 'itinerary' | 'packing' | 'included') => setTab(p => p === v ? null : v);
-
-  // Animate card on scroll
-  useEffect(() => {
-    if (prefersReducedMotion() || !cardRef.current) return;
-    
-    gsap.fromTo(
-      cardRef.current,
-      { autoAlpha: 0, y: 30 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.6,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cardRef.current,
-          start: 'top 85%',
-          markers: false,
-        },
-      }
-    );
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
-  }, []);
+  const toggle = (key: 'itinerary' | 'packing' | 'included') => setOpen(value => value === key ? null : key);
 
   return (
-    <div ref={cardRef} className="tour-card bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover border border-border flex flex-col h-full transition-all duration-300 hover:-translate-y-1">
+    <article className="bg-white rounded-2xl overflow-hidden shadow-card border border-border flex flex-col h-full">
       <div className="relative h-52">
-        <Image src={safari.image} alt={safari.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-2.5 py-1 flex items-center gap-1">
-          <Star className="w-3 h-3 fill-accent text-accent" />
-          <span className="font-inter font-semibold text-xs text-foreground">{safari.rating}</span>
-        </div>
-        {safari.popular && (
-          <div className="absolute top-3 left-3 bg-safari-500 rounded-full px-3 py-1 shadow-sm">
-            <span className="font-inter font-bold text-[10px] tracking-wide uppercase text-white">{t.popular}</span>
-          </div>
-        )}
-        <div className="absolute bottom-3 left-3">
-          <h3 className="font-poppins font-bold text-white text-lg leading-tight">{safari.name}</h3>
-          <p className="font-inter text-white/80 text-xs mt-0.5">{safari.tagline}</p>
-        </div>
+        <Image src={safari.image} alt={s.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        {safari.popular && <span className="absolute top-3 left-3 bg-safari-500 text-white rounded-full px-3 py-1 font-inter font-bold text-[10px] tracking-wide uppercase">{t.popular}</span>}
+        <div className="absolute top-3 right-3 bg-white/95 rounded-full px-2.5 py-1 flex items-center gap-1"><Star className="w-3 h-3 fill-accent text-accent" /><span className="font-inter font-semibold text-xs">{safari.rating}</span></div>
+        <div className="absolute bottom-3 left-4 right-4"><h3 className="font-poppins font-bold text-white text-lg leading-tight">{s.name}</h3><p className="font-inter text-white/85 text-xs mt-1">{s.tagline}</p></div>
       </div>
 
       <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="flex items-center gap-1 bg-sand-50 rounded-full px-3 py-1">
-            <Clock className="w-3.5 h-3.5 text-ocean-700" />
-            <span className="font-inter text-xs text-ocean-700 font-semibold">{safari.days} {t.days} / {safari.nights} {t.nights}</span>
-          </div>
-          <StarRating rating={safari.rating} />
-        </div>
+        <div className="flex items-center justify-between gap-2 mb-4"><span className="inline-flex items-center gap-1.5 bg-sand-50 rounded-full px-3 py-1 font-inter text-xs text-ocean-700 font-semibold"><Clock className="w-3.5 h-3.5" />{safari.days} {t.days} / {safari.nights} {t.nights}</span><span className="font-inter text-xs font-semibold text-muted-foreground uppercase">{tier === 'luxury' ? t.priceTierLuxury : tier === 'budget' ? t.priceTierBudget : t.priceTierMidRange}</span></div>
 
-        <div className="mb-3">
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <MapPin className="w-3.5 h-3.5 text-safari-500" />
-            <span className="font-inter text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t.parks}</span>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {safari.parks.map((park, i) => (
-              <span key={i} className="bg-ocean-50 text-ocean-700 font-inter text-xs px-2.5 py-0.5 rounded-full border border-ocean-100">{park}</span>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {safari.highlights.slice(0, 3).map((h, i) => (
-            <span key={i} className="bg-sand-50 text-foreground font-inter text-xs px-2 py-0.5 rounded-full">{h}</span>
-          ))}
-        </div>
-
-        <Link
-          href={`/safaris/${safari.id}`}
-          className="font-inter text-xs font-semibold text-ocean-700 hover:text-ocean-800 mb-3 inline-flex items-center gap-1"
-        >
-          {t.readMore} →
-        </Link>
+        <div className="mb-3"><div className="flex items-center gap-1.5 mb-1.5"><MapPin className="w-3.5 h-3.5 text-safari-500" /><span className="font-inter text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t.parks}</span></div><div className="flex flex-wrap gap-1.5">{s.parks.map((park, i) => <span key={i} className="bg-ocean-50 text-ocean-700 font-inter text-xs px-2.5 py-0.5 rounded-full border border-ocean-100">{park}</span>)}</div></div>
+        <div className="flex flex-wrap gap-1.5 mb-4">{s.highlights.slice(0, 3).map((item, i) => <span key={i} className="bg-sand-50 text-foreground font-inter text-xs px-2 py-0.5 rounded-full">{item}</span>)}</div>
+        <Link href={`/safaris/${safari.id}`} className="font-inter text-xs font-semibold text-ocean-700 hover:text-ocean-800 mb-4">{t.readMore} →</Link>
 
         <div className="space-y-2 mb-4">
-          <button onClick={() => toggleTab('itinerary')} className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-sand-50 hover:bg-sand-100 transition-colors">
-            <span className="font-inter text-sm font-semibold text-foreground">{t.itinerary}</span>
-            {tab === 'itinerary' ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-          </button>
-          {tab === 'itinerary' && (
-            <div className="space-y-3 px-1 max-h-64 overflow-y-auto">
-              {safari.itinerary.map((day, i) => (
-                <div key={i} className="border border-border rounded-xl overflow-hidden">
-                  <div className="bg-ocean-700 px-4 py-2">
-                    <span className="font-poppins font-bold text-white text-sm">{day.day}</span>
-                    <span className="font-inter text-white/80 text-xs ml-2">— {day.title}</span>
-                  </div>
-                  <div className="p-3 space-y-2">
-                    <div className="flex gap-2"><Sun className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" /><div><div className="font-inter text-xs font-semibold text-muted-foreground mb-0.5">{t.morning}</div><p className="font-inter text-xs text-foreground leading-relaxed">{day.morning}</p></div></div>
-                    <div className="flex gap-2"><Sunset className="w-4 h-4 text-safari-400 flex-shrink-0 mt-0.5" /><div><div className="font-inter text-xs font-semibold text-muted-foreground mb-0.5">{t.afternoon}</div><p className="font-inter text-xs text-foreground leading-relaxed">{day.afternoon}</p></div></div>
-                    <div className="flex gap-2"><MoonStar className="w-4 h-4 text-ocean-400 flex-shrink-0 mt-0.5" /><div><div className="font-inter text-xs font-semibold text-muted-foreground mb-0.5">{t.overnight}</div><p className="font-inter text-xs text-foreground">{day.overnight}</p></div></div>
-                  </div>
-                </div>
-              ))}
-              <div className="bg-sand-50 rounded-xl p-3">
-                <div className="flex items-center gap-1.5 mb-2"><Building2 className="w-3.5 h-3.5 text-ocean-700" /><span className="font-inter text-xs font-semibold text-foreground uppercase tracking-wide">{t.lodges}</span></div>
-                <div className="flex flex-wrap gap-1.5">
-                  {safari.lodges.map((lodge, i) => <span key={i} className="bg-white text-foreground font-inter text-xs px-2.5 py-1 rounded-lg border border-border">{lodge}</span>)}
-                </div>
-              </div>
-            </div>
-          )}
+          <button type="button" onClick={() => toggle('itinerary')} className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-sand-50"><span className="font-inter text-sm font-semibold">{t.itinerary}</span>{open === 'itinerary' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</button>
+          {open === 'itinerary' && <div className="space-y-3 max-h-72 overflow-y-auto">{s.itinerary.map((day, i) => <div key={i} className="border border-border rounded-xl overflow-hidden"><div className="bg-ocean-700 px-4 py-2"><span className="font-poppins font-bold text-white text-sm">{day.day}</span><span className="font-inter text-white/80 text-xs ml-2">{day.title}</span></div><div className="p-3 space-y-2"><div className="flex gap-2"><Sun className="w-4 h-4 flex-shrink-0" /><div><div className="text-xs font-semibold text-muted-foreground">{t.morning}</div><p className="text-xs leading-relaxed">{day.morning}</p></div></div><div className="flex gap-2"><Sunset className="w-4 h-4 flex-shrink-0" /><div><div className="text-xs font-semibold text-muted-foreground">{t.afternoon}</div><p className="text-xs leading-relaxed">{day.afternoon}</p></div></div><div className="flex gap-2"><MoonStar className="w-4 h-4 flex-shrink-0" /><div><div className="text-xs font-semibold text-muted-foreground">{t.overnight}</div><p className="text-xs">{day.overnight}</p></div></div></div></div>)}<div className="bg-sand-50 rounded-xl p-3"><div className="flex items-center gap-1.5 mb-2"><Building2 className="w-3.5 h-3.5" /><span className="text-xs font-semibold uppercase">{t.lodges}</span></div><div className="flex flex-wrap gap-1.5">{s.lodges.map((lodge, i) => <span key={i} className="bg-white text-xs px-2.5 py-1 rounded-lg border border-border">{lodge}</span>)}</div></div></div>}
 
-          <button onClick={() => toggleTab('packing')} className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-sand-50 hover:bg-sand-100 transition-colors">
-            <span className="font-inter text-sm font-semibold text-foreground"><Backpack className="w-4 h-4 inline mr-1.5 text-safari-500" />{t.packing}</span>
-            {tab === 'packing' ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-          </button>
-          {tab === 'packing' && (
-            <div className="bg-sand-50 rounded-xl p-3">
-              <ul className="space-y-1.5">
-                {safari.packingTips.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className={`w-4 h-4 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center text-xs font-bold ${tip.includes('NO DRONE') ? 'bg-[#ef4444]/10 text-destructive' : 'bg-safari-100 text-safari-700'}`}>{tip.includes('NO DRONE') ? '✗' : '✓'}</span>
-                    <span className={`font-inter text-xs leading-relaxed ${tip.includes('NO DRONE') ? 'text-destructive font-semibold' : 'text-foreground'}`}>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <button type="button" onClick={() => toggle('packing')} className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-sand-50"><span className="font-inter text-sm font-semibold"><Backpack className="w-4 h-4 inline mr-1.5" />{t.packing}</span>{open === 'packing' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</button>
+          {open === 'packing' && <ul className="bg-sand-50 rounded-xl p-3 space-y-1.5">{s.packingTips.map((tip, i) => <li key={i} className="flex items-start gap-2"><Check className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" /><span className="text-xs leading-relaxed">{tip}</span></li>)}</ul>}
 
-          <button onClick={() => toggleTab('included')} className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-sand-50 hover:bg-sand-100 transition-colors">
-            <span className="font-inter text-sm font-semibold text-foreground"><ClipboardList className="w-4 h-4 inline mr-1.5 text-safari-500" />{t.included}</span>
-            {tab === 'included' ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
-          </button>
-          {tab === 'included' && (
-            <div className="grid grid-cols-2 gap-3 bg-sand-50 rounded-xl p-3">
-              <div>
-                <p className="font-inter text-xs font-semibold text-primary uppercase tracking-wide mb-2">{t.includedTitle}</p>
-                <ul className="space-y-1.5">
-                  {(safari.included || DEFAULT_INCLUDED).map((item, i) => (
-                    <li key={i} className="flex items-start gap-1.5">
-                      <Check className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
-                      <span className="font-inter text-xs text-foreground leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="font-inter text-xs font-semibold text-destructive uppercase tracking-wide mb-2">{t.excludedTitle}</p>
-                <ul className="space-y-1.5">
-                  {(safari.excluded || DEFAULT_EXCLUDED).map((item, i) => (
-                    <li key={i} className="flex items-start gap-1.5">
-                      <X className="w-3.5 h-3.5 text-destructive flex-shrink-0 mt-0.5" />
-                      <span className="font-inter text-xs text-foreground leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
+          <button type="button" onClick={() => toggle('included')} className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl bg-sand-50"><span className="font-inter text-sm font-semibold">{t.included}</span>{open === 'included' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}</button>
+          {open === 'included' && <div className="grid grid-cols-2 gap-3 bg-sand-50 rounded-xl p-3"><div><p className="text-xs font-semibold uppercase mb-2">{t.includedTitle}</p><ul className="space-y-1.5">{(s.included?.length ? s.included : DEFAULT_INCLUDED).map((item, i) => <li key={i} className="flex gap-1.5"><Check className="w-3.5 h-3.5 flex-shrink-0" /><span className="text-xs leading-relaxed">{item}</span></li>)}</ul></div><div><p className="text-xs font-semibold uppercase mb-2">{t.excludedTitle}</p><ul className="space-y-1.5">{(s.excluded?.length ? s.excluded : DEFAULT_EXCLUDED).map((item, i) => <li key={i} className="flex gap-1.5"><X className="w-3.5 h-3.5 flex-shrink-0" /><span className="text-xs leading-relaxed">{item}</span></li>)}</ul></div></div>}
         </div>
-
-        <div className="flex flex-col items-center gap-1.5 mb-4">
-          <PriceTierBadge safari={safari} t={t} />
-          <p className="font-inter text-xs text-muted-foreground text-center">{t.pricePerPersonNote}</p>
-        </div>
-        <button onClick={() => onBook(safari.name)} className="mt-auto w-full bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm py-3 rounded-xl transition-all hover:shadow-md">
-          {t.bookNow}
-        </button>
+        <p className="text-xs text-muted-foreground text-center mb-3">{t.pricePerPersonNote}</p>
+        <button type="button" onClick={() => onBook(s.name)} className="mt-auto w-full bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm py-3 rounded-xl">{t.bookNow}</button>
       </div>
-    </div>
+    </article>
   );
 }
 
 export default function ToursSection({ onBook }: { onBook: (tourName?: string) => void }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabKey>('tsavo');
-
-  const isRegionTab = (tab: TabKey): tab is SafariTab => ['tsavo', 'amboseli', 'mara', 'taita'].includes(tab);
-
-  // Regional tabs show short/medium safaris for that park; long multi-park itineraries
-  // get their own "Multi-day" tab instead of being duplicated across every region they touch.
-  const currentSafaris = (
-    activeTab === 'multiday'
-      ? safaris.filter(s => s.category === 'long')
-      : isRegionTab(activeTab)
-      ? safaris.filter(s => s.tabs.includes(activeTab) && s.category !== 'long')
-      : []
-  ).slice().sort((a, b) => a.days - b.days);
-
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  // Animate heading
-  useEffect(() => {
-    if (prefersReducedMotion() || !sectionRef.current) return;
-
-    const heading = sectionRef.current.querySelector('h2');
-    if (heading) {
-      gsap.fromTo(
-        heading,
-        { autoAlpha: 0, y: 20 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 85%',
-            markers: false,
-          },
-        }
-      );
-    }
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
-  }, []);
+  const currentSafaris = useMemo(() => activeTab === 'multiday' ? safaris.filter(s => s.category === 'long') : safaris.filter(s => s.tabs.includes(activeTab as SafariTab) && s.category !== 'long'), [activeTab]);
+  const safariLocale: SafariLocale = (['en','it','fr','es','de','ar','zh','sw'].includes(locale) ? locale : 'en') as SafariLocale;
+  const tabs = (t.tours?.tabLabels ?? {}) as Record<string, string>;
 
   return (
-    <section ref={sectionRef} id="tours" className="py-24 lg:py-32 bg-sand-50">
+    <section id="tours" className="py-24 lg:py-32 bg-sand-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-16">
-          <span className="font-inter text-safari-500 font-semibold text-xs tracking-widest uppercase block mb-4">{t.tours?.label || 'Our Experiences'}</span>
-          <h2 className="font-poppins font-extrabold text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight text-balance">
-            Explore Safari{' '}<span className="text-safari-500 relative">
-              {t.tours.packagesLabel}
-              <span className="absolute -bottom-2 left-0 w-full h-1 bg-safari-300/40 -z-10" />
-            </span>
-          </h2>
-        </div>
-
-        {/* Tab bar */}
-        <div className="flex items-center gap-2 mb-10 overflow-x-auto pb-2 scrollbar-hide">
-          {TAB_CONFIG.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-1.5 font-inter font-semibold text-sm px-5 py-2.5 rounded-full border whitespace-nowrap transition-all flex-shrink-0 ${
-                activeTab === tab.key
-                  ? 'bg-ocean-700 text-white border-ocean-700 shadow-sm'
-                  : 'bg-white text-foreground border-border hover:border-ocean-600 hover:text-ocean-700'
-              }`}
-            >
-              <span>{tab.emoji}</span>
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {isRegionTab(activeTab) && (
-          <Link
-            href={`/destinations/${activeTab}`}
-            className="inline-flex items-center gap-1.5 font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800 mb-8"
-          >
-            <MapPin className="w-4 h-4" /> Explore the {TAB_CONFIG.find(t => t.key === activeTab)?.label} destination guide →
-          </Link>
-        )}
-
-        {/* Safari cards */}
-        {currentSafaris.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentSafaris.map(safari => (
-              <SafariCard key={safari.id} safari={safari} onBook={onBook} t={t.tours} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <p className="font-inter text-muted-foreground">{t.tours.noSafarisInCategory}</p>
-          </div>
-        )}
+        <div className="mb-12"><span className="font-inter text-safari-500 font-semibold text-xs tracking-widest uppercase block mb-4">{t.tours?.label}</span><h2 className="font-poppins font-extrabold text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight">{t.tours?.packagesLabel}</h2><p className="font-inter text-muted-foreground mt-4 max-w-2xl">{t.tours?.subtitle}</p></div>
+        <div className="flex items-center gap-2 mb-10 overflow-x-auto pb-2 scrollbar-hide">{TABS.map(tab => <button type="button" key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-1.5 font-inter font-semibold text-sm px-5 py-2.5 rounded-full border whitespace-nowrap flex-shrink-0 ${activeTab === tab.key ? 'bg-ocean-700 text-white border-ocean-700' : 'bg-white text-foreground border-border'}`}><span>{tab.emoji}</span><span>{tabs[tab.key] || tab.label}</span></button>)}</div>
+        {currentSafaris.length ? <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{currentSafaris.map(safari => <SafariCard key={safari.id} safari={safari} t={t.tours} locale={safariLocale} onBook={onBook} />)}</div> : <div className="text-center py-16 text-muted-foreground">{t.tours?.noSafarisInCategory}</div>}
       </div>
     </section>
   );
