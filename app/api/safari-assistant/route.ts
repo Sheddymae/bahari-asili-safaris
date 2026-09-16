@@ -45,6 +45,38 @@ function extractResponseText(data: unknown): string {
   return parts.join('\n\n').trim();
 }
 
+function cleanCustomerReply(text: string): string {
+  let cleaned = text;
+
+  // Remove citation and source UI tokens if the model emits them.
+  cleaned = cleaned.replace(/(?:cite|url|entity|image_group|video|navlist)[^]*/g, '');
+
+  // Remove Markdown links completely, including the linked source name.
+  cleaned = cleaned.replace(/\[[^\]]*\]\(https?:\/\/[^)]+\)/gi, '');
+
+  // Remove HTML links if they somehow appear in model output.
+  cleaned = cleaned.replace(/<a\b[^>]*>[\s\S]*?<\/a>/gi, '');
+
+  // Remove bare URLs.
+  cleaned = cleaned.replace(/https?:\/\/\S+/gi, '');
+  cleaned = cleaned.replace(/www\.\S+/gi, '');
+
+  // Remove empty source-style parentheses left after link removal.
+  cleaned = cleaned.replace(/\s*\(\s*\)/g, '');
+
+  // Remove common source/citation lines without changing the substantive answer.
+  cleaned = cleaned.replace(/^\s*(?:fonti consultate|fonti|sources checked|sources consulted|sources|source|fontes|fuentes|quellen|المصادر|已查询来源|vyanzo)\s*:?[\s\S]*$/gim, '');
+
+  // Clean up whitespace created by sanitisation.
+  cleaned = cleaned
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n[ \t]+/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+
+  return cleaned;
+}
+
 export async function POST(request: NextRequest) {
   let locale: Locale = 'en';
 
@@ -90,13 +122,15 @@ RESEARCH-FIRST POLICY
 - If a requested fact cannot be verified, clearly say that it could not be verified.
 - Use researched information to improve the answer, but do not expose the research process.
 
-NO SOURCES OR LINKS IN CUSTOMER ANSWERS
-- NEVER mention websites, URLs, source names, source lists, citations, links, search results or that you searched online.
-- NEVER write phrases such as 'according to Kenya Wildlife Service', 'according to the website', 'I found online', 'sources consulted', 'based on my research' or similar source references.
-- Do not place URLs or Markdown links in the answer.
-- Do not refer the visitor to an external website to obtain the answer.
-- The research is internal. Present the verified information naturally as your own helpful answer.
-- The frontend should receive only the customer-facing answer, not a list of research sources.
+STRICT CUSTOMER OUTPUT FORMAT
+- Return ONLY the final customer-facing answer.
+- NEVER include URLs, website addresses, hyperlinks, Markdown links, citations, source names, source lists or references to where information was obtained.
+- NEVER mention that you searched, researched or consulted sources.
+- NEVER write phrases such as 'according to', 'based on my research', 'I found online', 'sources consulted', 'sources checked', 'the website says' or equivalent wording in any language.
+- Do not add a Sources or Fonti section.
+- Do not put source information in parentheses at the end of sentences.
+- Do not expose web-search citations or tool output.
+- The research is internal. Give the visitor the useful information directly and naturally.
 
 CONVERSATION BEHAVIOUR
 - Answer the actual question first.
@@ -142,7 +176,8 @@ CONVERSATION BEHAVIOUR
     }
 
     const data = await response.json();
-    const reply = extractResponseText(data) || fallbackReplies[locale];
+    const rawReply = extractResponseText(data);
+    const reply = cleanCustomerReply(rawReply) || fallbackReplies[locale];
 
     return NextResponse.json({ reply, mode: 'ai-research' });
   } catch (error) {
