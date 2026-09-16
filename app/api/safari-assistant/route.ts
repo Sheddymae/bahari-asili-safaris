@@ -88,7 +88,7 @@ function extractResponseText(data: unknown): string {
 
 function cleanCustomerReply(text: string): string {
   let cleaned = text
-    .replace(/(?:cite|url|entity|image_group|video|navlist)[^]*/g, '')
+    .replace(/(?:cite|url|entity|image_group|video|navlist)[^]*/g, '')
     .replace(/\[[^\]]*\]\(https?:\/\/[^)]+\)/gi, '')
     .replace(/<a\b[^>]*>[\s\S]*?<\/a>/gi, '')
     .replace(/https?:\/\/\S+/gi, '')
@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
     const key = process.env.OPENAI_API_KEY?.trim();
     if (!key) {
       console.error('[Safari Assistant] OPENAI_API_KEY is not configured.');
-      return NextResponse.json({ reply: localFallback(locale, latest), mode: 'local-fallback' });
+      return NextResponse.json({ reply: localFallback(locale, latest), mode: 'local-fallback-no-key' });
     }
 
     const baseBody = {
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
       if (!response.ok) {
         const retryError = await readError(response);
         console.error(`[Safari Assistant] AI retry failed (${response.status}): ${retryError}`);
-        return NextResponse.json({ reply: localFallback(locale, latest), mode: 'local-fallback' });
+        return NextResponse.json({ reply: localFallback(locale, latest), mode: 'local-fallback-ai-failed', status: response.status });
       }
     }
 
@@ -210,12 +210,12 @@ export async function POST(request: NextRequest) {
     const reply = cleanCustomerReply(extractResponseText(data));
     if (!reply) {
       console.error('[Safari Assistant] AI returned no usable text.');
-      return NextResponse.json({ reply: localFallback(locale, latest), mode: 'local-fallback' });
+      return NextResponse.json({ reply: localFallback(locale, latest), mode: 'local-fallback-empty-text' });
     }
 
     return NextResponse.json({ reply, mode: 'ai' });
   } catch (error) {
     console.error('[Safari Assistant] Unexpected server error:', error);
-    return NextResponse.json({ reply: localFallback(locale, ''), mode: 'local-fallback' });
+    return NextResponse.json({ reply: localFallback(locale, ''), mode: 'local-fallback-exception' });
   }
 }
