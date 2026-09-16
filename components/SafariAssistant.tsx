@@ -51,28 +51,32 @@ export default function SafariAssistant({ onRequestQuote }: Props) {
     } finally { setLoading(false); }
   }
 
-  const whatsappMessage = encodeURIComponent(activeLocale === 'en' ? 'Hello Bahari Asili, I need more information about a safari.' : 'Hello Bahari Asili, I need more information about a safari.');
+  const whatsappMessage = encodeURIComponent('Hello Bahari Asili, I need more information about a safari.');
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`;
 
   return (
     <>
       {!open && (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label={active.open}
-          className="fixed bottom-6 right-6 z-[100] flex items-center gap-3 rounded-full bg-ocean-700 px-5 py-3.5 text-sm font-semibold text-white shadow-2xl ring-2 ring-white/80 transition-all duration-200 hover:scale-105 hover:bg-ocean-800 hover:shadow-ocean-900/30 focus:outline-none focus:ring-4 focus:ring-ocean-300 sm:px-6 sm:py-4"
-        >
-          <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white/15">
-            <Bot className="h-5 w-5" />
-            <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-ocean-700" aria-hidden="true" />
-          </span>
-          <span>{active.title}</span>
-          <MessageCircle className="hidden h-4 w-4 opacity-80 sm:block" />
-        </button>
+        <div className="fixed bottom-5 right-5 z-[9999] flex items-end justify-end pointer-events-none">
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label={active.open}
+            title={active.title}
+            className="group pointer-events-auto relative flex h-14 w-14 items-center justify-center rounded-full bg-ocean-700 text-white shadow-2xl ring-2 ring-white transition-all duration-200 hover:scale-110 hover:bg-ocean-800 hover:shadow-ocean-900/40 focus:outline-none focus:ring-4 focus:ring-ocean-300 sm:h-16 sm:w-16"
+          >
+            <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/10 sm:h-10 sm:w-10">
+              <Bot className="h-6 w-6 sm:h-7 sm:w-7" aria-hidden="true" />
+              <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-ocean-700" aria-hidden="true" />
+            </span>
+            <span className="pointer-events-none absolute right-[calc(100%+0.75rem)] top-1/2 hidden -translate-y-1/2 whitespace-nowrap rounded-lg bg-gray-900 px-3 py-2 text-sm font-semibold text-white shadow-xl opacity-0 translate-x-2 transition-all duration-200 group-hover:block group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:block group-focus-visible:translate-x-0 group-focus-visible:opacity-100">
+              {active.title}
+            </span>
+          </button>
+        </div>
       )}
       {open && (
-        <div className="fixed bottom-5 right-5 z-[100] flex w-[calc(100vw-2rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-sand-200 bg-white shadow-2xl" role="dialog" aria-label={active.title}>
+        <div className="fixed bottom-5 right-5 z-[9999] flex w-[calc(100vw-2rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-sand-200 bg-white shadow-2xl" role="dialog" aria-label={active.title}>
           <div className="flex items-center justify-between bg-ocean-800 px-4 py-3 text-white"><div className="flex items-center gap-2"><Bot className="h-5 w-5" /><span className="font-semibold">{active.title}</span></div><button type="button" onClick={() => setOpen(false)} aria-label={active.close} className="rounded-full p-1 hover:bg-white/10"><X className="h-5 w-5" /></button></div>
           <div className="max-h-[52vh] min-h-[260px] space-y-3 overflow-y-auto bg-sand-50 p-3" aria-live="polite">
             {messages.map((m, i) => <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${m.role === 'user' ? 'ml-auto bg-ocean-700 text-white' : 'bg-white text-foreground shadow-sm'}`}>{m.content}</div>)}
