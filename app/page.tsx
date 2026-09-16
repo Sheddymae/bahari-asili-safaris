@@ -10,7 +10,6 @@ import TravelerEssentials from '@/components/TravelerEssentials';
 import HomeConversionSection from '@/components/HomeConversionSection';
 import StructuredData from '@/components/StructuredData';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
-import SafariAssistant from '@/components/SafariAssistant';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
 
@@ -62,7 +61,7 @@ export default function Home() {
       <Footer />
       {isBookingOpen && <BookingModal isOpen={isBookingOpen} onClose={closeBooking} selectedTour={selectedTour} />}
       <HeroBookingModal isOpen={isHeroBookingOpen} onClose={closeHeroBooking} initialSelection={heroBookingSelection} />
-      <SafariAssistant onRequestQuote={() => openHeroBooking()} />
+      {/* Safari Assistant intentionally disabled. Re-enable by restoring <SafariAssistant onRequestQuote={() => openHeroBooking()} /> here. */}
     </>
   );
 }
