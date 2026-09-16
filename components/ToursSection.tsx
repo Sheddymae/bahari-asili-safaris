@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, Clock, ChevronDown, ChevronUp, MapPin, Building2, Backpack, Sun, Sunset, MoonStar, Check, X, ClipboardList } from 'lucide-react';
+import { Star, Clock, ChevronDown, ChevronUp, MapPin, Building2, Backpack, Sun, Sunset, MoonStar, Check, X, ClipboardList, Wallet, Gem, Award } from 'lucide-react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { safaris } from '@/lib/safari-catalogue';
-import { type Safari, type SafariTab, DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from '@/lib/tours-data';
+import { type Safari, type SafariTab, DEFAULT_INCLUDED, DEFAULT_EXCLUDED, getPriceTier } from '@/lib/tours-data';
 import { prefersReducedMotion } from '@/lib/video-config';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -22,6 +22,24 @@ const TAB_CONFIG: { key: TabKey; label: string; emoji: string }[] = [
   { key: 'taita',       label: 'Taita Hills',  emoji: '🦅' },
   { key: 'multiday',    label: 'Multi-day',    emoji: '🗺️' },
 ];
+
+const TIER_STYLE = {
+  budget: { icon: Wallet, className: 'bg-ocean-50 text-ocean-700 border-ocean-100' },
+  'mid-range': { icon: Award, className: 'bg-safari-50 text-safari-700 border-safari-100' },
+  luxury: { icon: Gem, className: 'bg-accent/10 text-accent border-accent/20' },
+} as const;
+
+function PriceTierBadge({ safari, t }: { safari: Safari; t: any }) {
+  const tier = getPriceTier(safari);
+  const { icon: Icon, className } = TIER_STYLE[tier];
+  const label = tier === 'budget' ? t.priceTierBudget : tier === 'luxury' ? t.priceTierLuxury : t.priceTierMidRange;
+  return (
+    <div className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 ${className}`}>
+      <Icon className="w-3.5 h-3.5" />
+      <span className="font-inter font-semibold text-xs">{label}</span>
+    </div>
+  );
+}
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -196,7 +214,10 @@ function SafariCard({ safari, onBook, t }: { safari: Safari; onBook: (name: stri
           )}
         </div>
 
-        <p className="font-inter text-xs text-muted-foreground italic mb-4 text-center">{t.noPricesNote}</p>
+        <div className="flex flex-col items-center gap-1.5 mb-4">
+          <PriceTierBadge safari={safari} t={t} />
+          <p className="font-inter text-xs text-muted-foreground text-center">{t.pricePerPersonNote}</p>
+        </div>
         <button onClick={() => onBook(safari.name)} className="mt-auto w-full bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm py-3 rounded-xl transition-all hover:shadow-md">
           {t.bookNow}
         </button>
