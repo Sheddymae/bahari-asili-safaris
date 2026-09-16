@@ -11,6 +11,8 @@ import { prefersReducedMotion } from '@/lib/video-config';
 
 gsap.registerPlugin(ScrollTrigger);
 
+type AboutVariant = 'home' | 'full';
+
 const WHY_ITEMS = [
   { icon: Compass, titleKey: 'whyLocalTitle', bodyKey: 'whyLocalBody' },
   { icon: Sparkles, titleKey: 'whyTailorTitle', bodyKey: 'whyTailorBody' },
@@ -19,7 +21,7 @@ const WHY_ITEMS = [
   { icon: ListChecks, titleKey: 'whyDetailTitle', bodyKey: 'whyDetailBody' },
 ] as const;
 
-export default function AboutSection() {
+export default function AboutSection({ variant = 'full' }: { variant?: AboutVariant }) {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -45,10 +47,10 @@ export default function AboutSection() {
   }, [reducedMotion]);
 
   useEffect(() => {
-    if (reducedMotion || paused) return;
+    if (variant !== 'full' || reducedMotion || paused) return;
     const timer = window.setInterval(() => setActiveIndex((current) => (current + 1) % WHY_ITEMS.length), 3600);
     return () => window.clearInterval(timer);
-  }, [paused, reducedMotion]);
+  }, [paused, reducedMotion, variant]);
 
   const goTo = (direction: 1 | -1) => setActiveIndex((current) => (current + direction + WHY_ITEMS.length) % WHY_ITEMS.length);
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => { pointerStartX.current = event.clientX; };
@@ -67,7 +69,7 @@ export default function AboutSection() {
   };
 
   return (
-    <section ref={sectionRef} id="about" className="relative overflow-hidden bg-sand-50 py-14 sm:py-18 lg:py-20">
+    <section ref={sectionRef} id="about" className={`relative overflow-hidden bg-sand-50 ${variant === 'home' ? 'py-14 lg:py-18' : 'py-14 sm:py-18 lg:py-20'}`}>
       <div className="pointer-events-none absolute right-0 top-20 h-72 w-72 rounded-full bg-safari-100/30 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 left-0 h-96 w-96 rounded-full bg-ocean-100/20 blur-3xl" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -99,20 +101,22 @@ export default function AboutSection() {
           </div>
         </div>
 
-        <div className="mt-12 lg:mt-16">
-          <div className="mx-auto mb-7 max-w-2xl text-center lg:mb-9"><span className="mb-2 inline-flex items-center rounded-full bg-safari-100 px-4 py-1.5 font-inter text-xs font-bold uppercase tracking-[0.18em] text-safari-700">{t.about.label}</span><h3 className="mb-2 font-poppins text-2xl font-extrabold text-foreground sm:text-4xl">{t.about.whyTitle}</h3><p className="font-inter text-sm leading-6 text-foreground/70 sm:text-base">{t.about.whySubtitle}</p></div>
-          <div className="relative mx-auto h-[330px] max-w-6xl select-none touch-pan-y overflow-visible sm:h-[350px] lg:h-[360px]" onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} onPointerCancel={() => { pointerStartX.current = null; }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)} aria-label={t.about.whyTitle}>
-            {WHY_ITEMS.map(({ icon: Icon, titleKey, bodyKey }, index) => {
-              const offset = getOffset(index);
-              const isActive = offset === 0;
-              const title = t.about[titleKey as keyof typeof t.about] as string;
-              const body = t.about[bodyKey as keyof typeof t.about] as string;
-              return <article key={titleKey} className={`absolute left-1/2 top-1/2 w-[82vw] max-w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-[1px] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'z-30' : 'z-20'}`} style={{ transform: `translate(calc(-50% + ${offset * cardDistance}px), -50%) scale(${isActive ? 1 : 0.84})`, opacity: Math.abs(offset) > 1 ? 0 : isActive ? 1 : 0.68, filter: isActive ? 'none' : 'saturate(0.82)', pointerEvents: Math.abs(offset) > 1 ? 'none' : 'auto' }}><div className={`h-full min-h-[300px] rounded-2xl border bg-white p-6 shadow-xl transition-all duration-700 sm:min-h-[315px] ${isActive ? 'border-safari-300 shadow-[0_20px_60px_rgba(14,116,144,0.18)]' : 'border-sand-200 shadow-card'}`}><div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500 ${isActive ? 'bg-safari-500 text-white shadow-[0_0_28px_rgba(249,115,22,0.42)]' : 'bg-safari-50 text-safari-500'}`}><Icon className="h-6 w-6" /></div><h4 className="mb-2 font-poppins text-lg font-bold leading-snug text-foreground">{title}</h4><p className="font-inter text-sm leading-6 text-foreground/75 sm:text-base">{body}</p><div className={`mt-5 h-1 rounded-full transition-all duration-700 ${isActive ? 'w-20 bg-safari-500' : 'w-10 bg-sand-200'}`} /></div></article>;
-            })}
+        {variant === 'full' && <>
+          <div className="mt-12 lg:mt-16">
+            <div className="mx-auto mb-7 max-w-2xl text-center lg:mb-9"><span className="mb-2 inline-flex items-center rounded-full bg-safari-100 px-4 py-1.5 font-inter text-xs font-bold uppercase tracking-[0.18em] text-safari-700">{t.about.label}</span><h3 className="mb-2 font-poppins text-2xl font-extrabold text-foreground sm:text-4xl">{t.about.whyTitle}</h3><p className="font-inter text-sm leading-6 text-foreground/70 sm:text-base">{t.about.whySubtitle}</p></div>
+            <div className="relative mx-auto h-[330px] max-w-6xl select-none touch-pan-y overflow-visible sm:h-[350px] lg:h-[360px]" onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} onPointerCancel={() => { pointerStartX.current = null; }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)} aria-label={t.about.whyTitle}>
+              {WHY_ITEMS.map(({ icon: Icon, titleKey, bodyKey }, index) => {
+                const offset = getOffset(index);
+                const isActive = offset === 0;
+                const title = t.about[titleKey as keyof typeof t.about] as string;
+                const body = t.about[bodyKey as keyof typeof t.about] as string;
+                return <article key={titleKey} className={`absolute left-1/2 top-1/2 w-[82vw] max-w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-[1px] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'z-30' : 'z-20'}`} style={{ transform: `translate(calc(-50% + ${offset * cardDistance}px), -50%) scale(${isActive ? 1 : 0.84})`, opacity: Math.abs(offset) > 1 ? 0 : isActive ? 1 : 0.68, filter: isActive ? 'none' : 'saturate(0.82)', pointerEvents: Math.abs(offset) > 1 ? 'none' : 'auto' }}><div className={`h-full min-h-[300px] rounded-2xl border bg-white p-6 shadow-xl transition-all duration-700 sm:min-h-[315px] ${isActive ? 'border-safari-300 shadow-[0_20px_60px_rgba(14,116,144,0.18)]' : 'border-sand-200 shadow-card'}`}><div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500 ${isActive ? 'bg-safari-500 text-white shadow-[0_0_28px_rgba(249,115,22,0.42)]' : 'bg-safari-50 text-safari-500'}`}><Icon className="h-6 w-6" /></div><h4 className="mb-2 font-poppins text-lg font-bold leading-snug text-foreground">{title}</h4><p className="font-inter text-sm leading-6 text-foreground/75 sm:text-base">{body}</p><div className={`mt-5 h-1 rounded-full transition-all duration-700 ${isActive ? 'w-20 bg-safari-500' : 'w-10 bg-sand-200'}`} /></div></article>;
+              })}
+            </div>
+            <div className="mt-1 flex items-center justify-center gap-3"><button type="button" onClick={() => goTo(-1)} aria-label={t.about.whyTitle} className="group flex h-10 w-10 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:text-safari-600 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"><ChevronLeft className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-0.5" /></button><div className="flex items-center gap-1.5" aria-label={t.about.whyTitle}>{WHY_ITEMS.map((item, index) => <button key={item.titleKey} type="button" aria-label={t.about[item.titleKey as keyof typeof t.about] as string} aria-current={activeIndex === index} onClick={() => setActiveIndex(index)} className={`h-2 rounded-full transition-all duration-500 ${activeIndex === index ? 'w-7 bg-safari-500 shadow-[0_0_12px_rgba(249,115,22,0.45)]' : 'w-2 bg-sand-300 hover:bg-safari-300'}`} />)}</div><button type="button" onClick={() => goTo(1)} aria-label={t.about.whyTitle} className="group flex h-10 w-10 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"><ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5" /></button></div>
           </div>
-          <div className="mt-1 flex items-center justify-center gap-3"><button type="button" onClick={() => goTo(-1)} aria-label={t.about.whyTitle} className="group flex h-10 w-10 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:text-safari-600 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"><ChevronLeft className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-0.5" /></button><div className="flex items-center gap-1.5" aria-label={t.about.whyTitle}>{WHY_ITEMS.map((item, index) => <button key={item.titleKey} type="button" aria-label={t.about[item.titleKey as keyof typeof t.about] as string} aria-current={activeIndex === index} onClick={() => setActiveIndex(index)} className={`h-2 rounded-full transition-all duration-500 ${activeIndex === index ? 'w-7 bg-safari-500 shadow-[0_0_12px_rgba(249,115,22,0.45)]' : 'w-2 bg-sand-300 hover:bg-safari-300'}`} />)}</div><button type="button" onClick={() => goTo(1)} aria-label={t.about.whyTitle} className="group flex h-10 w-10 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"><ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5" /></button></div>
-        </div>
-        <p className="mt-10 text-center font-poppins text-base font-semibold text-foreground sm:text-xl lg:mt-12">{t.about.closingLine}</p>
+          <p className="mt-10 text-center font-poppins text-base font-semibold text-foreground sm:text-xl lg:mt-12">{t.about.closingLine}</p>
+        </>}
       </div>
     </section>
   );
