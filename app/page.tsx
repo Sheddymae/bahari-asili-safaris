@@ -27,7 +27,6 @@ const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), { 
 const Footer = dynamic(() => import('@/components/Footer'));
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
 const HeroBookingModal = dynamic(() => import('@/components/HeroBookingModal'), { ssr: false });
-const WhatsAppButton = dynamic(() => import('@/components/WhatsAppButton'), { ssr: false });
 
 export default function Home() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -63,7 +62,6 @@ export default function Home() {
       <Footer />
       {isBookingOpen && <BookingModal isOpen={isBookingOpen} onClose={closeBooking} selectedTour={selectedTour} />}
       <HeroBookingModal isOpen={isHeroBookingOpen} onClose={closeHeroBooking} initialSelection={heroBookingSelection} />
-      <WhatsAppButton />
       <SafariAssistant onRequestQuote={() => openHeroBooking()} />
     </>
   );
