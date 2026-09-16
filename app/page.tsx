@@ -7,6 +7,7 @@ import HeroSection from '@/components/HeroSection';
 import TrustStrip from '@/components/TrustStrip';
 import AboutSection from '@/components/AboutSection';
 import TravelerEssentials from '@/components/TravelerEssentials';
+import HomeConversionSection from '@/components/HomeConversionSection';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
@@ -31,30 +32,18 @@ export default function Home() {
   const [isHeroBookingOpen, setIsHeroBookingOpen] = useState(false);
   const [selectedTour, setSelectedTour] = useState<string>('');
   const [heroBookingSelection, setHeroBookingSelection] = useState<HeroBookingSelection>({});
-
   const openBooking = useCallback((tourName?: string) => { setSelectedTour(tourName || ''); setIsBookingOpen(true); }, []);
   const closeBooking = useCallback(() => setIsBookingOpen(false), []);
   const openHeroBooking = useCallback((selection: HeroBookingSelection = {}) => { setHeroBookingSelection(selection); setIsHeroBookingOpen(true); }, []);
   const closeHeroBooking = useCallback(() => setIsHeroBookingOpen(false), []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const bookSlug = params.get('book');
-    if (!bookSlug) return;
-    const safari = safaris.find((s) => s.id === bookSlug);
-    if (safari) { openBooking(safari.name); document.getElementById('tours')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
-    const excursion = excursions.find((e) => e.id === bookSlug);
-    if (excursion) { openBooking(excursion.name); document.getElementById('excursions')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  }, [openBooking]);
-
+  useEffect(() => { const params = new URLSearchParams(window.location.search); const bookSlug = params.get('book'); if (!bookSlug) return; const safari = safaris.find((s) => s.id === bookSlug); if (safari) { openBooking(safari.name); document.getElementById('tours')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; } const excursion = excursions.find((e) => e.id === bookSlug); if (excursion) { openBooking(excursion.name); document.getElementById('excursions')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, [openBooking]);
   return (
     <>
       <Navbar />
       <main className="homepage-main min-w-0 overflow-x-clip">
         <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
-        {/* Traveler-critical information comes immediately after the hero so
-            visitors can find entry, health, packing and payment guidance first. */}
+        <HomeConversionSection onBook={() => openHeroBooking()} />
         <TravelerEssentials />
         <AnimateOnScroll direction="up"><AboutSection /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ToursSection onBook={openBooking} /></AnimateOnScroll>
