@@ -8,6 +8,7 @@ import TrustStrip from '@/components/TrustStrip';
 import AboutSection from '@/components/AboutSection';
 import TravelerEssentials from '@/components/TravelerEssentials';
 import HomeConversionSection from '@/components/HomeConversionSection';
+import StructuredData from '@/components/StructuredData';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
@@ -39,6 +40,7 @@ export default function Home() {
   useEffect(() => { const params = new URLSearchParams(window.location.search); const bookSlug = params.get('book'); if (!bookSlug) return; const safari = safaris.find((s) => s.id === bookSlug); if (safari) { openBooking(safari.name); document.getElementById('tours')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; } const excursion = excursions.find((e) => e.id === bookSlug); if (excursion) { openBooking(excursion.name); document.getElementById('excursions')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, [openBooking]);
   return (
     <>
+      <StructuredData />
       <Navbar />
       <main className="homepage-main min-w-0 overflow-x-clip">
         <HeroSection onBook={openHeroBooking} />
