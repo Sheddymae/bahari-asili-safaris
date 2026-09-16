@@ -9,6 +9,7 @@ import { Toaster } from '@/components/ui/toaster';
 import LanguageFloatingSelector from '@/components/LanguageFloatingSelector';
 import CookieConsent from '@/components/CookieConsent';
 import Analytics from '@/components/Analytics';
+import WhatsAppButton from '@/components/WhatsAppButton';
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LanguageProvider initialLocale={initialLocale}>
             {children}
             <LanguageFloatingSelector />
+            <WhatsAppButton />
             <CookieConsent locale={initialLocale} />
           </LanguageProvider>
         </AuthProvider>
