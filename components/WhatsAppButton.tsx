@@ -47,9 +47,9 @@ export default function WhatsAppButton() {
         aria-label={label}
         title={label}
         style={{ '--brand': '#25D366' } as CSSProperties}
-        className="group relative pointer-events-auto flex h-11 items-center overflow-hidden rounded-full bg-white/10 pl-[11px] pr-[11px] text-white shadow-[0_0_12px_rgba(37,211,102,0.55)] transition-all duration-300 ease-out animate-[whatsapp-breathe_3.2s_ease-in-out_infinite] hover:pr-5 hover:text-white hover:shadow-[0_0_22px_rgba(37,211,102,0.85)] hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
+        className="group relative pointer-events-auto flex h-11 items-center overflow-hidden rounded-full bg-white/10 pl-[11px] pr-[11px] text-white shadow-[0_0_12px_rgba(37,211,102,0.55)] transition-all duration-300 ease-out animate-[whatsapp-breathe_7s_ease-in-out_infinite] hover:pr-5 hover:text-white hover:shadow-[0_0_22px_rgba(37,211,102,0.85)] hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-[#25D366]/40"
       >
-        <span className="absolute -inset-1 -z-10 rounded-full bg-[#25D366]/45 blur-md opacity-80 animate-[whatsapp-breathe_3.2s_ease-in-out_infinite]" />
+        <span className="absolute -inset-1 -z-10 rounded-full bg-[#25D366]/45 blur-md opacity-80 animate-[whatsapp-breathe_7s_ease-in-out_infinite]" />
         <span className="absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background-color:var(--brand)]" />
         <span className="relative z-10 flex items-center">
           <WhatsAppIcon />
