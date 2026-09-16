@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const staticRoutes = [
     '', '/about', '/contact', '/faq', '/blog', '/partners', '/destinations',
-    '/excursions', '/build-your-safari', '/terms', '/privacy',
+    '/excursions', '/build-your-safari', '/transfers', '/travel-guide', '/terms', '/privacy',
   ];
   const safariRoutes = safaris.map((safari) => `/safaris/${safari.id}`);
   const excursionRoutes = excursions.map((excursion) => `/excursions/${excursion.id}`);
