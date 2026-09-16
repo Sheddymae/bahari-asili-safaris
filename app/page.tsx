@@ -42,7 +42,7 @@ export default function Home() {
     <>
       <StructuredData />
       <Navbar />
-      <main className="homepage-main min-w-0 overflow-x-clip">
+      <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
         <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
         <HomeConversionSection onBook={() => openHeroBooking()} />
