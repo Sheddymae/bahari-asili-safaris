@@ -51,13 +51,10 @@ export default function CinematicTextOverlay() {
     }
 
     let swapTimeout: ReturnType<typeof setTimeout> | undefined;
-
     const holdTimeout = setTimeout(() => {
       setVisible(false);
       swapTimeout = setTimeout(() => {
-        setRotationIndex((previous) =>
-          previous === null ? localeIndex(locale) : (previous + 1) % HERO_LOCALES.length,
-        );
+        setRotationIndex((previous) => previous === null ? localeIndex(locale) : (previous + 1) % HERO_LOCALES.length);
         setVisible(true);
       }, CROSSFADE_MS);
     }, HOLD_MS);
@@ -68,62 +65,18 @@ export default function CinematicTextOverlay() {
     };
   }, [rotationIndex, locale, reduceMotion]);
 
-  const activeLocale = rotationIndex === null ? locale : (HERO_LOCALES[rotationIndex] ?? locale);
+  const activeLocale = rotationIndex === null ? locale : HERO_LOCALES[rotationIndex];
   const activeTranslation = translations[activeLocale];
-  const fallbackTranslation = translations.en;
-  const hero = activeTranslation.hero ?? fallbackTranslation.hero;
+  const hero = activeTranslation.hero;
 
-  const fadeStyle = {
-    opacity: visible ? 1 : 0,
-    transition: reduceMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out`,
-  };
+  const fadeStyle = { opacity: visible ? 1 : 0, transition: reduceMotion ? "none" : `opacity ${CROSSFADE_MS}ms ease-in-out` };
 
   return (
-    <div
-      className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center font-manrope"
-      dir={isRTL && activeLocale === "ar" ? "rtl" : "ltr"}
-      style={{ fontFamily: 'var(--font-manrope), "Noto Sans", "Segoe UI", Arial, sans-serif' }}
-    >
-      <h2
-        className="select-none font-bold text-white drop-shadow-lg"
-        style={{
-          fontSize: "clamp(1.75rem, 4vw, 2.75rem)",
-          letterSpacing: activeLocale === "ar" ? "normal" : "0.02em",
-          ...fadeStyle,
-        }}
-      >
-        {GREETINGS[activeLocale]}
-      </h2>
-
-      <h1
-        className="mt-4 max-w-full font-extrabold leading-tight text-white drop-shadow-xl"
-        style={{
-          fontSize: "clamp(2.35rem, 7.5vw, 6.25rem)",
-          letterSpacing: "-0.045em",
-        }}
-      >
-        BAHARI ASILI SAFARIS
-      </h1>
-
-      <p
-        className="mt-6 max-w-3xl font-bold text-white drop-shadow-md"
-        style={{
-          fontSize: "clamp(1.25rem, 2.6vw, 1.85rem)",
-          ...fadeStyle,
-        }}
-      >
-        {hero.title}
-      </p>
-
-      <p
-        className="mt-3 max-w-2xl text-white/90 drop-shadow-md"
-        style={{
-          fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
-          ...fadeStyle,
-        }}
-      >
-        {hero.subtitle}
-      </p>
+    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 pb-28 text-center font-manrope" dir={isRTL && activeLocale === "ar" ? "rtl" : "ltr"} style={{ fontFamily: 'var(--font-manrope), "Noto Sans", "Segoe UI", Arial, sans-serif' }}>
+      <h2 className="select-none font-bold text-white drop-shadow-lg" style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)", letterSpacing: activeLocale === "ar" ? "normal" : "0.02em", ...fadeStyle }}>{GREETINGS[activeLocale]}</h2>
+      <h1 className="mt-4 max-w-full font-extrabold leading-tight text-white drop-shadow-xl" style={{ fontSize: "clamp(2.35rem, 7.5vw, 6.25rem)", letterSpacing: "-0.045em" }}>BAHARI ASILI SAFARIS</h1>
+      <p className="mt-6 max-w-3xl font-bold text-white drop-shadow-md" style={{ fontSize: "clamp(1.25rem, 2.6vw, 1.85rem)", ...fadeStyle }}>{hero.title}</p>
+      <p className="mt-3 max-w-2xl text-white/90 drop-shadow-md" style={{ fontSize: "clamp(1rem, 1.5vw, 1.2rem)", ...fadeStyle }}>{hero.subtitle}</p>
     </div>
   );
 }
