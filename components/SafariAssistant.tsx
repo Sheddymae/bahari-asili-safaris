@@ -56,20 +56,36 @@ export default function SafariAssistant({ onRequestQuote }: Props) {
 
   return (
     <>
-      {!open && <button type="button" onClick={() => setOpen(true)} aria-label={active.open} className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 rounded-full bg-ocean-700 px-4 py-3 text-sm font-semibold text-white shadow-xl transition hover:scale-[1.02] hover:bg-ocean-800 focus:outline-none focus:ring-2 focus:ring-ocean-300"><MessageCircle className="h-5 w-5" /> <span className="hidden sm:inline">{active.title}</span></button>}
-      {open && <div className="fixed bottom-4 right-4 z-[60] flex w-[calc(100vw-2rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-sand-200 bg-white shadow-2xl" role="dialog" aria-label={active.title}>
-        <div className="flex items-center justify-between bg-ocean-800 px-4 py-3 text-white"><div className="flex items-center gap-2"><Bot className="h-5 w-5" /><span className="font-semibold">{active.title}</span></div><button type="button" onClick={() => setOpen(false)} aria-label={active.close} className="rounded-full p-1 hover:bg-white/10"><X className="h-5 w-5" /></button></div>
-        <div className="max-h-[52vh] min-h-[260px] space-y-3 overflow-y-auto bg-sand-50 p-3" aria-live="polite">
-          {messages.map((m, i) => <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${m.role === 'user' ? 'ml-auto bg-ocean-700 text-white' : 'bg-white text-foreground shadow-sm'}`}>{m.content}</div>)}
-          {loading && <div className="w-fit rounded-2xl bg-white px-3 py-2 text-sm text-muted-foreground shadow-sm">{active.thinking}</div>}
+      {!open && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={active.open}
+          className="fixed bottom-6 right-6 z-[100] flex items-center gap-3 rounded-full bg-ocean-700 px-5 py-3.5 text-sm font-semibold text-white shadow-2xl ring-2 ring-white/80 transition-all duration-200 hover:scale-105 hover:bg-ocean-800 hover:shadow-ocean-900/30 focus:outline-none focus:ring-4 focus:ring-ocean-300 sm:px-6 sm:py-4"
+        >
+          <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-white/15">
+            <Bot className="h-5 w-5" />
+            <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-ocean-700" aria-hidden="true" />
+          </span>
+          <span>{active.title}</span>
+          <MessageCircle className="hidden h-4 w-4 opacity-80 sm:block" />
+        </button>
+      )}
+      {open && (
+        <div className="fixed bottom-5 right-5 z-[100] flex w-[calc(100vw-2rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-sand-200 bg-white shadow-2xl" role="dialog" aria-label={active.title}>
+          <div className="flex items-center justify-between bg-ocean-800 px-4 py-3 text-white"><div className="flex items-center gap-2"><Bot className="h-5 w-5" /><span className="font-semibold">{active.title}</span></div><button type="button" onClick={() => setOpen(false)} aria-label={active.close} className="rounded-full p-1 hover:bg-white/10"><X className="h-5 w-5" /></button></div>
+          <div className="max-h-[52vh] min-h-[260px] space-y-3 overflow-y-auto bg-sand-50 p-3" aria-live="polite">
+            {messages.map((m, i) => <div key={i} className={`max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${m.role === 'user' ? 'ml-auto bg-ocean-700 text-white' : 'bg-white text-foreground shadow-sm'}`}>{m.content}</div>)}
+            {loading && <div className="w-fit rounded-2xl bg-white px-3 py-2 text-sm text-muted-foreground shadow-sm">{active.thinking}</div>}
+          </div>
+          <div className="border-t border-sand-200 bg-white p-3">
+            <button type="button" onClick={onRequestQuote} className="mb-2 flex w-full items-center justify-center gap-2 rounded-xl border border-ocean-200 bg-ocean-50 px-3 py-2 text-xs font-semibold text-ocean-800 hover:bg-ocean-100"><FileText className="h-4 w-4" />{active.quote}</button>
+            <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="mb-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2">{active.whatsapp}</a>
+            <div className="flex gap-2"><input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void send(); }} placeholder={active.placeholder} aria-label={active.placeholder} className="min-w-0 flex-1 rounded-xl border border-sand-300 px-3 py-2 text-sm outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500" /><button type="button" onClick={() => void send()} disabled={!input.trim() || loading} aria-label={active.send} className="rounded-xl bg-ocean-700 px-3 text-white disabled:opacity-40"><Send className="h-4 w-4" /></button></div>
+            <div className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground"><CalendarDays className="h-3 w-3" /> {active.note}</div>
+          </div>
         </div>
-        <div className="border-t border-sand-200 bg-white p-3">
-          <button type="button" onClick={onRequestQuote} className="mb-2 flex w-full items-center justify-center gap-2 rounded-xl border border-ocean-200 bg-ocean-50 px-3 py-2 text-xs font-semibold text-ocean-800 hover:bg-ocean-100"><FileText className="h-4 w-4" />{active.quote}</button>
-          <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="mb-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2">{active.whatsapp}</a>
-          <div className="flex gap-2"><input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void send(); }} placeholder={active.placeholder} aria-label={active.placeholder} className="min-w-0 flex-1 rounded-xl border border-sand-300 px-3 py-2 text-sm outline-none focus:border-ocean-500 focus:ring-1 focus:ring-ocean-500" /><button type="button" onClick={() => void send()} disabled={!input.trim() || loading} aria-label={active.send} className="rounded-xl bg-ocean-700 px-3 text-white disabled:opacity-40"><Send className="h-4 w-4" /></button></div>
-          <div className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground"><CalendarDays className="h-3 w-3" /> {active.note}</div>
-        </div>
-      </div>}
+      )}
     </>
   );
 }
