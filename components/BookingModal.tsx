@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { X, MessageCircle, Send, CheckCircle, AlertCircle, Download, UserPlus } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { X, MessageCircle, Send, AlertCircle, UserPlus, ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { safaris, excursions } from '@/lib/tours-data';
@@ -12,13 +12,14 @@ import InquiryStatusDisplay from '@/components/InquiryStatusDisplay';
 
 const WHATSAPP_NUMBER = '254101923355';
 
+type Status = 'idle' | 'loading' | 'success' | 'error';
+type Step = 1 | 2 | 3;
+
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedTour?: string;
 }
-
-type Status = 'idle' | 'loading' | 'success' | 'error';
 
 interface FormState {
   firstName: string;
@@ -33,18 +34,28 @@ interface FormState {
   message: string;
 }
 
-// Formats kids_ages array for display: [5, 9] → "5, 9 anni"
+const stepCopy = {
+  en: { steps: ['Who is travelling', 'When & which safari', 'Contact details'], back: 'Back', next: 'Continue', step: 'Step', of: 'of', required: 'Required fields are marked *', confirm: 'Send booking request', sending: 'Sending…', whatsapp: 'Prefer WhatsApp? Message us instead.' },
+  it: { steps: ['Chi viaggia', 'Quando e quale safari', 'Contatti'], back: 'Indietro', next: 'Continua', step: 'Passo', of: 'di', required: 'I campi obbligatori sono contrassegnati con *', confirm: 'Invia richiesta', sending: 'Invio…', whatsapp: 'Preferisci WhatsApp? Scrivici direttamente.' },
+  fr: { steps: ['Qui voyage', 'Quand et quel safari', 'Coordonnées'], back: 'Retour', next: 'Continuer', step: 'Étape', of: 'sur', required: 'Les champs obligatoires sont marqués *', confirm: 'Envoyer la demande', sending: 'Envoi…', whatsapp: 'Vous préférez WhatsApp ? Écrivez-nous directement.' },
+  es: { steps: ['Quién viaja', 'Cuándo y qué safari', 'Contacto'], back: 'Atrás', next: 'Continuar', step: 'Paso', of: 'de', required: 'Los campos obligatorios llevan *', confirm: 'Enviar solicitud', sending: 'Enviando…', whatsapp: '¿Prefieres WhatsApp? Escríbenos directamente.' },
+  de: { steps: ['Wer reist', 'Wann und welches Safari', 'Kontaktdaten'], back: 'Zurück', next: 'Weiter', step: 'Schritt', of: 'von', required: 'Pflichtfelder sind mit * markiert', confirm: 'Anfrage senden', sending: 'Senden…', whatsapp: 'Lieber WhatsApp? Schreiben Sie uns direkt.' },
+  ar: { steps: ['من يسافر', 'متى وأي سفاري', 'بيانات الاتصال'], back: 'رجوع', next: 'متابعة', step: 'الخطوة', of: 'من', required: 'الحقول المطلوبة تحمل *', confirm: 'إرسال الطلب', sending: 'جارٍ الإرسال…', whatsapp: 'تفضل واتساب؟ أرسل لنا رسالة مباشرة.' },
+  zh: { steps: ['谁要出行', '时间和 Safari', '联系方式'], back: '返回', next: '继续', step: '步骤', of: '/', required: '必填项标有 *', confirm: '发送预订请求', sending: '发送中…', whatsapp: '更喜欢 WhatsApp？直接联系我们。' },
+  sw: { steps: ['Nani anasafiri', 'Lini na safari gani', 'Maelezo ya mawasiliano'], back: 'Rudi', next: 'Endelea', step: 'Hatua', of: 'ya', required: 'Sehemu muhimu zimewekewa *', confirm: 'Tuma ombi la kuhifadhi', sending: 'Inatuma…', whatsapp: 'Unapendelea WhatsApp? Tutumie ujumbe moja kwa moja.' },
+} as const;
+
 export function formatKidsAges(ages: number[] | null | undefined, locale: string): string {
   if (!ages || ages.length === 0) return '';
   const years = locale === 'it' ? 'anni' : locale === 'fr' ? 'ans' : locale === 'es' ? 'años' : locale === 'de' ? 'Jahre' : locale === 'ar' ? 'سنوات' : locale === 'zh' ? '岁' : locale === 'sw' ? 'miaka' : 'yrs';
-  const anni = years;
-  return ages.join(', ') + ' ' + anni;
+  return `${ages.join(', ')} ${years}`;
 }
-
 
 export default function BookingModal({ isOpen, onClose, selectedTour }: BookingModalProps) {
   const { t, locale } = useLanguage();
   const { user } = useAuth();
+  const copy = stepCopy[locale as keyof typeof stepCopy] || stepCopy.en;
+  const [step, setStep] = useState<Step>(1);
   const [status, setStatus] = useState<Status>('idle');
   const [errorDetail, setErrorDetail] = useState('');
   const [bookingRef, setBookingRef] = useState('');
@@ -53,450 +64,130 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [kidsAges, setKidsAges] = useState<(number | '')[]>([]);
   const [kidsAgesError, setKidsAgesError] = useState(false);
-  const [form, setForm] = useState<FormState>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    whatsapp: '',
-    nationality: '',
-    adults: '2',
-    children: '0',
-    arrivalDate: '',
-    safari: selectedTour || '',
-    message: '',
-  });
+  const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', email: '', whatsapp: '', nationality: '', adults: '2', children: '0', arrivalDate: '', safari: selectedTour || '', message: '' });
 
-  // Sync kidsAges array length with children count
+  const childCount = Math.min(Math.max(parseInt(form.children) || 0, 0), 10);
+  const allSafariNames = useMemo(() => safaris.map(s => ({ name: s.name, days: s.days })), []);
+
   useEffect(() => {
-    const count = Math.min(Math.max(parseInt(form.children) || 0, 0), 10);
-    setKidsAges(prev => {
-      if (prev.length === count) return prev;
-      if (count < prev.length) return prev.slice(0, count);
-      return [...prev, ...Array(count - prev.length).fill('')];
-    });
+    const count = childCount;
+    setKidsAges(prev => prev.length === count ? prev : count < prev.length ? prev.slice(0, count) : [...prev, ...Array(count - prev.length).fill('')]);
     setKidsAgesError(false);
-  }, [form.children]);
+  }, [childCount]);
 
-  // Auto-fill from user profile
   useEffect(() => {
     if (user && isOpen) {
       const meta = user.user_metadata || {};
-      const fullName: string = meta.full_name || '';
-      const parts = fullName.trim().split(' ');
-      setForm(prev => ({
-        ...prev,
-        firstName: parts[0] || prev.firstName,
-        lastName: parts.slice(1).join(' ') || prev.lastName,
-        email: user.email || prev.email,
-        whatsapp: meta.whatsapp || prev.whatsapp,
-        nationality: meta.nationality || prev.nationality,
-      }));
+      const fullName = String(meta.full_name || '');
+      const parts = fullName.trim().split(/\s+/);
+      setForm(prev => ({ ...prev, firstName: parts[0] || prev.firstName, lastName: parts.slice(1).join(' ') || prev.lastName, email: user.email || prev.email, whatsapp: meta.whatsapp || prev.whatsapp, nationality: meta.nationality || prev.nationality }));
     }
   }, [user, isOpen]);
 
-  useEffect(() => {
-    if (selectedTour) setForm(prev => ({ ...prev, safari: selectedTour }));
-  }, [selectedTour]);
+  useEffect(() => { if (selectedTour) setForm(prev => ({ ...prev, safari: selectedTour })); }, [selectedTour]);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      setStatus('idle');
-      setErrorDetail('');
-      setBookingRef('');
-      setShowAuthPrompt(false);
-      setKidsAgesError(false);
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (isOpen) { setStep(1); setStatus('idle'); setErrorDetail(''); setBookingRef(''); setShowAuthPrompt(false); }
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  // Close on Escape
   useEffect(() => {
     if (!isOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, [isOpen, onClose]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleKidsAgeChange = (index: number, value: string) => { setKidsAges(prev => { const next = [...prev]; next[index] = value === '' ? '' : parseInt(value, 10); return next; }); setKidsAgesError(false); };
 
-  const handleKidsAgeChange = (index: number, value: string) => {
-    setKidsAges(prev => {
-      const next = [...prev];
-      next[index] = value === '' ? '' : parseInt(value);
-      return next;
-    });
-    setKidsAgesError(false);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate all child ages are selected
-    const childCount = parseInt(form.children) || 0;
-    if (childCount > 0 && kidsAges.some(a => a === '')) {
-      setKidsAgesError(true);
-      return;
+  const validateStep = (target: Step) => {
+    if (target === 1) {
+      if (!form.firstName.trim() || !form.lastName.trim() || (parseInt(form.adults) || 0) < 1) return false;
+      if (childCount > 0 && kidsAges.some(age => age === '')) { setKidsAgesError(true); return false; }
     }
+    if (target === 2 && (!form.arrivalDate || !form.safari)) return false;
+    if (target === 3 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return false;
+    return true;
+  };
 
-    setStatus('loading');
-    setErrorDetail('');
+  const buildWhatsAppMsg = (ref = bookingRef) => encodeURIComponent([
+    '*Bahari Asili Safaris booking*', ref ? `Ref: ${ref}` : '', `Name: ${form.firstName} ${form.lastName}`, `Adults: ${form.adults} | Children: ${form.children}${childCount ? ` (Ages: ${kidsAges.join(', ')})` : ''}`, `Safari: ${form.safari}`, `Date: ${form.arrivalDate}`, form.email ? `Email: ${form.email}` : '', form.whatsapp ? `WhatsApp: ${form.whatsapp}` : '', form.message ? `Notes: ${form.message}` : '',
+  ].filter(Boolean).join('\n'));
 
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateStep(3)) { setErrorDetail('Please enter a valid email address.'); return; }
+    setStatus('loading'); setErrorDetail('');
     try {
       const resolvedAges = kidsAges.filter((a): a is number => a !== '');
-
-      // Submit to the server — it is the single source of truth for saving the
-      // booking and generating the reservation number. (Previously this modal
-      // also inserted directly into Supabase from the client with its own
-      // separately-generated ref, which created a duplicate row with a
-      // mismatched reference number every time someone booked.)
-      const res = await fetch('/api/booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: form.firstName,
-          lastName: form.lastName,
-          email: form.email,
-          whatsapp: form.whatsapp,
-          nationality: form.nationality,
-          adults: parseInt(form.adults),
-          children: childCount,
-          kidsAges: resolvedAges,
-          arrivalDate: form.arrivalDate,
-          safariName: form.safari,
-          message: form.message,
-          userId: user?.id || null,
-          locale,
-        }),
-      });
-
+      const res = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ firstName: form.firstName, lastName: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kidsAges: resolvedAges, arrivalDate: form.arrivalDate, safariName: form.safari, message: form.message, userId: user?.id || null, locale }) });
       const data = await res.json();
-      if (!res.ok || !data.success || !data.bookingRef) {
-        throw new Error(data.error || 'Booking could not be saved.');
-      }
-
-      const ref: string = data.bookingRef;
-      setBookingRef(ref);
-      setEmailSent(data.emailSent === true);
-
-      // The booking is already safely saved server-side at this point — a
-      // failure past here (e.g. the client-side PDF generator failing to
-      // load) must NOT be reported to the customer as "booking failed", or
-      // they will assume it wasn't saved and resubmit, creating a duplicate
-      // reservation for the same trip. So we flip to success immediately,
-      // then best-effort generate/download the voucher in its own try/catch.
-      if (!user) setShowAuthPrompt(true);
-      setStatus('success');
-
+      if (!res.ok || !data.success || !data.bookingRef) throw new Error(data.error || 'Booking could not be saved.');
+      setBookingRef(data.bookingRef); setEmailSent(data.emailSent === true); setShowAuthPrompt(!user); setStatus('success');
       try {
-        // Generate the voucher PDF using the confirmed reservation number and
-        // auto-download it for the customer. The server already emailed a
-        // copy of this same voucher, so a failure here just means no local
-        // auto-download — nothing about the booking itself is affected.
-        const voucherBooking: Booking = {
-          booking_ref: ref,
-          first_name: form.firstName,
-          last_name: form.lastName,
-          email: form.email,
-          whatsapp: form.whatsapp,
-          nationality: form.nationality,
-          adults: parseInt(form.adults),
-          children: childCount,
-          kids_ages: resolvedAges.length > 0 ? resolvedAges : null,
-          arrival_date: form.arrivalDate,
-          safari_name: form.safari,
-          message: form.message,
-          reservation_status: 'pending',
-          booking_type: data.bookingType,
-          locale,
-        };
+        const voucherBooking: Booking = { booking_ref: data.bookingRef, first_name: form.firstName, last_name: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kids_ages: resolvedAges.length ? resolvedAges : null, arrival_date: form.arrivalDate, safari_name: form.safari, message: form.message, reservation_status: 'pending', booking_type: data.bookingType, locale };
         const { dataUrl } = await generateVoucherPDF(voucherBooking);
-
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = `${ref}.pdf`;
-        a.click();
-      } catch (voucherErr) {
-        console.error('Voucher PDF generation/download failed (booking was still saved):', voucherErr);
-      }
-    } catch (err) {
-      console.error('Booking error:', err);
-      setErrorDetail(err instanceof Error ? err.message : '');
-      setStatus('error');
-    }
-  };
-
-  const buildWhatsAppMsg = () => {
-    const childCount = parseInt(form.children) || 0;
-    const agesStr = childCount > 0 && kidsAges.length > 0
-      ? ` (Ages: ${kidsAges.join(', ')})`
-      : '';
-    const lines = [
-      `*Booking – Bahari Asili Safaris*`,
-      bookingRef ? `Ref: ${bookingRef}` : '',
-      `Name: ${form.firstName} ${form.lastName}`,
-      `Email: ${form.email}`,
-      form.nationality ? `Nationality: ${form.nationality}` : '',
-      `Adults: ${form.adults} | Children: ${form.children}${agesStr}`,
-      `Safari: ${form.safari}`,
-      `Date: ${form.arrivalDate}`,
-      form.message ? `Notes: ${form.message}` : '',
-    ].filter(Boolean);
-    return encodeURIComponent(lines.join('\n'));
+        const a = document.createElement('a'); a.href = dataUrl; a.download = `${data.bookingRef}.pdf`; a.click();
+      } catch (voucherError) { console.error('Voucher download failed after successful booking:', voucherError); }
+    } catch (error) { console.error('Booking error:', error); setErrorDetail(error instanceof Error ? error.message : ''); setStatus('error'); }
   };
 
   if (!isOpen) return null;
+  const ageLabel = (i: number) => locale === 'it' ? `Età bambino ${i + 1}` : locale === 'fr' ? `Âge enfant ${i + 1}` : locale === 'es' ? `Edad niño ${i + 1}` : locale === 'de' ? `Alter Kind ${i + 1}` : locale === 'ar' ? `عمر الطفل ${i + 1}` : locale === 'zh' ? `儿童 ${i + 1} 年龄` : locale === 'sw' ? `Umri wa mtoto ${i + 1}` : `Child ${i + 1} age`;
+  const selectAge = locale === 'it' ? 'Seleziona età' : locale === 'fr' ? 'Sélectionner' : locale === 'es' ? 'Seleccionar edad' : locale === 'de' ? 'Alter auswählen' : locale === 'ar' ? 'اختر العمر' : locale === 'zh' ? '选择年龄' : locale === 'sw' ? 'Chagua umri' : 'Select age';
 
-  const childCount = parseInt(form.children) || 0;
-  const allSafariNames = safaris.map(s => ({ name: s.name, days: s.days }));
-
-  const childAgeLabel = (i: number) =>
-    locale === 'it'
-      ? `Età Bambino ${i + 1}`
-      : locale === 'fr'
-        ? `Âge Enfant ${i + 1}`
-        : `Child ${i + 1} Age`;
-
-  return (
-    <>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="booking-modal-title"
-          className="relative bg-white rounded-3xl shadow-hero w-full max-w-lg max-h-[90vh] overflow-y-auto z-10"
-        >
-          {/* Header */}
-          <div className="sticky top-0 bg-white rounded-t-3xl border-b border-border px-6 py-5 flex items-center justify-between z-10">
-            <div>
-              <h2 id="booking-modal-title" className="font-poppins font-bold text-xl text-foreground">{t.booking.title}</h2>
-              <p className="font-inter text-muted-foreground text-sm mt-0.5">{t.booking.subtitle}</p>
-            </div>
-            <button onClick={onClose} aria-label="Close" className="w-9 h-9 rounded-full bg-muted hover:bg-muted flex items-center justify-center transition-colors">
-              <X className="w-4 h-4 text-foreground" />
-            </button>
+  return <>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <button aria-label="Close" className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div role="dialog" aria-modal="true" aria-labelledby="booking-modal-title" className="relative bg-white rounded-3xl shadow-hero w-full max-w-lg max-h-[92vh] overflow-y-auto z-10">
+        <div className="sticky top-0 bg-white rounded-t-3xl border-b border-border px-5 sm:px-6 py-5 z-10">
+          <div className="flex items-start justify-between gap-4">
+            <div><h2 id="booking-modal-title" className="font-poppins font-bold text-xl text-foreground">{t.booking.title}</h2><p className="font-inter text-muted-foreground text-sm mt-1">{copy.step} {step} {copy.of} 3 · {copy.steps[step - 1]}</p></div>
+            <button onClick={onClose} aria-label="Close" className="w-9 h-9 shrink-0 rounded-full bg-muted flex items-center justify-center"><X className="w-4 h-4" /></button>
           </div>
-
-          {/* Guest banner */}
-          {!user && status === 'idle' && (
-            <div className="mx-6 mt-4 bg-ocean-50 border border-ocean-200 rounded-xl px-4 py-3 flex items-start gap-3">
-              <UserPlus className="w-4 h-4 text-ocean-600 flex-shrink-0 mt-0.5" />
-              <p className="font-inter text-sm text-ocean-800">
-                <button onClick={() => setAuthModalOpen(true)} className="font-semibold underline">{t.bookingModal.signUpLink}</button> {t.bookingModal.toSaveVouchers}
-              </p>
-            </div>
-          )}
-
-          {/* Success */}
-          {status === 'success' ? (
-            <div className="px-6 py-10">
-              <div className="mb-6">
-                <InquiryStatusDisplay
-                  bookingRef={bookingRef}
-                  firstName={form.firstName}
-                  email={form.email}
-                  whatsapp={form.whatsapp}
-                  emailSent={emailSent}
-                  status="pending"
-                />
-              </div>
-              {showAuthPrompt && !user && (
-                <div className="bg-ocean-50 border border-ocean-200 rounded-xl px-4 py-4 mb-4 text-left">
-                  <div className="flex items-start gap-3">
-                    <UserPlus className="w-5 h-5 text-ocean-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-inter font-semibold text-ocean-800 text-sm mb-1">{t.bookingModal.createAccountTitle}</p>
-                      <p className="font-inter text-xs text-ocean-600 mb-3">{t.bookingModal.createAccountDesc}</p>
-                      <button onClick={() => setAuthModalOpen(true)} className="font-inter text-sm font-semibold text-white bg-ocean-700 hover:bg-ocean-800 px-4 py-2 rounded-lg transition-colors">
-                        {t.bookingModal.createAccountBtn}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-3 mt-6">
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMsg()}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary text-white font-poppins font-semibold text-sm py-3 rounded-xl transition-all"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  WhatsApp
-                </a>
-                <button onClick={() => { setStatus('idle'); onClose(); }} className="flex-1 bg-ocean-700 hover:bg-ocean-800 text-white font-poppins font-semibold text-sm py-3 rounded-xl transition-all">
-                  OK
-                </button>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="px-6 py-6 space-y-4">
-              {/* Name */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.firstName} <span className="text-safari-500">*</span></label>
-                  <input type="text" name="firstName" required value={form.firstName} onChange={handleChange} placeholder={t.booking.firstNamePlaceholder} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-                </div>
-                <div>
-                  <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.lastName} <span className="text-safari-500">*</span></label>
-                  <input type="text" name="lastName" required value={form.lastName} onChange={handleChange} placeholder={t.booking.lastNamePlaceholder} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-                </div>
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.email} <span className="text-safari-500">*</span></label>
-                <input type="email" name="email" required value={form.email} onChange={handleChange} placeholder={t.booking.emailPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-              </div>
-
-              {/* WhatsApp */}
-              <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.whatsapp}</label>
-                <input type="tel" name="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder={t.booking.whatsappPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-              </div>
-
-              {/* Nationality */}
-              <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.nationality}</label>
-                <input type="text" name="nationality" value={form.nationality} onChange={handleChange} placeholder={t.booking.nationalityPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-              </div>
-
-              {/* Adults + Children */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.adults}</label>
-                  <input type="number" name="adults" min="1" max="30" value={form.adults} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-                </div>
-                <div>
-                  <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.children}</label>
-                  <input type="number" name="children" min="0" max="10" value={form.children} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-                </div>
-              </div>
-
-              {/* Dynamic child age dropdowns */}
-              {childCount > 0 && (
-                <div className={`rounded-2xl border p-4 space-y-3 transition-all ${kidsAgesError ? 'border-destructive bg-[#ef4444]/10' : 'border-safari-200 bg-safari-50'}`}>
-                  <p className="font-inter text-sm font-semibold text-foreground">
-                    {locale === 'it' ? 'Età dei bambini' : locale === 'fr' ? 'Âge des enfants' : locale === 'es' ? 'Edades de los niños' : locale === 'de' ? 'Kinderalter' : locale === 'ar' ? 'أعمار الأطفال' : locale === 'zh' ? '儿童年龄' : locale === 'sw' ? 'Umri wa watoto' : 'Children ages'} <span className="text-safari-500">*</span>
-                  </p>
-                  <div className={`grid gap-3 ${childCount === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                    {kidsAges.map((age, i) => (
-                      <div key={i}>
-                        <label className="font-inter text-xs font-medium text-foreground block mb-1">
-                          {childAgeLabel(i)}
-                        </label>
-                        <select
-                          value={age === '' ? '' : String(age)}
-                          onChange={e => handleKidsAgeChange(i, e.target.value)}
-                          className={`w-full border rounded-xl px-3 py-2.5 font-inter text-sm text-foreground outline-none focus:ring-2 transition-all bg-white cursor-pointer ${
-                            kidsAgesError && age === ''
-                              ? 'border-destructive focus:border-destructive focus:ring-[#ef4444]/30'
-                              : 'border-border focus:border-ocean-600 focus:ring-ocean-100'
-                          }`}
-                        >
-                          <option value="">
-                            {locale === 'it' ? '— Seleziona età —' : locale === 'fr' ? '— Sélectionner —' : locale === 'es' ? '— Seleccionar edad —' : locale === 'de' ? '— Alter auswählen —' : locale === 'ar' ? '— اختر العمر —' : locale === 'zh' ? '— 选择年龄 —' : locale === 'sw' ? '— Chagua umri —' : '— Select age —'}
-                          </option>
-                          {Array.from({ length: 18 }, (_, n) => (
-                            <option key={n} value={String(n)}>
-                              {n} {locale === 'it' ? 'anni' : locale === 'fr' ? 'ans' : locale === 'es' ? 'años' : locale === 'de' ? 'Jahre' : locale === 'ar' ? 'سنوات' : locale === 'zh' ? '岁' : locale === 'sw' ? 'miaka' : 'yrs'}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    ))}
-                  </div>
-                  {kidsAgesError && (
-                    <p className="font-inter text-xs text-destructive flex items-center gap-1.5">
-                      <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                      {locale === 'it' ? 'Seleziona l\'età di ogni bambino prima di procedere.' : locale === 'fr' ? 'Veuillez sélectionner l\'âge de chaque enfant.' : locale === 'es' ? 'Selecciona la edad de cada niño antes de continuar.' : locale === 'de' ? 'Bitte wählen Sie das Alter jedes Kindes aus.' : locale === 'ar' ? 'يرجى اختيار عمر كل طفل قبل المتابعة.' : locale === 'zh' ? '请在提交前选择每个孩子的年龄。' : locale === 'sw' ? 'Tafadhali chagua umri wa kila mtoto kabla ya kuendelea.' : 'Please select an age for each child before submitting.'}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Arrival date */}
-              <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.arrivalDate} <span className="text-safari-500">*</span></label>
-                <input type="date" name="arrivalDate" required value={form.arrivalDate} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted cursor-pointer" />
-              </div>
-
-              {/* Safari select */}
-              <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.safari} <span className="text-safari-500">*</span></label>
-                <select name="safari" required value={form.safari} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted cursor-pointer">
-                  <option value="">{t.booking.safariPlaceholder}</option>
-                  <optgroup label={t.bookingOptions.safarisGroup}>
-                    {allSafariNames.map(s => <option key={s.name} value={s.name}>{s.name} — {s.days} {t.tours.days}</option>)}
-                  </optgroup>
-                  <optgroup label={t.bookingOptions.excursionsGroup}>
-                    {excursions.map(e => <option key={e.id} value={e.nameIt}>{e.nameIt}</option>)}
-                  </optgroup>
-                  <optgroup label={t.bookingOptions.transfersGroup}>
-                    <option value="Airport Transfer – MYD (Malindi)">Airport Transfer – MYD (Malindi)</option>
-                    <option value="Airport Transfer – MBA (Mombasa)">Airport Transfer – MBA (Mombasa)</option>
-                    <option value="Airport Transfer – NBO (Nairobi)">Airport Transfer – NBO (Nairobi)</option>
-                    <option value="Private 4×4 Driver">Private 4×4 Driver</option>
-                    <option value="Transfer aeroporto">Transfer aeroporto / Airport transfer</option>
-                  </optgroup>
-                  <option value="Altro / Other">Altro / Other</option>
-                </select>
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.booking.message}</label>
-                <textarea name="message" rows={3} value={form.message} onChange={handleChange} placeholder={t.booking.messagePlaceholder} className="w-full border border-border rounded-xl px-4 py-3 font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted resize-none" />
-              </div>
-
-              {status === 'error' && (
-                <div className="flex items-center gap-2 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-xl px-4 py-3">
-                  <AlertCircle className="w-4 h-4 text-destructive flex-shrink-0" />
-                  <p className="font-inter text-sm text-destructive">{errorDetail || t.booking.error}</p>
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMsg()}`, '_blank')}
-                  className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary text-white font-poppins font-semibold text-sm py-3.5 rounded-xl transition-all hover:shadow-md"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  {t.booking.whatsappBtn}
-                </button>
-                <button
-                  type="submit"
-                  disabled={status === 'loading'}
-                  className="flex-1 flex items-center justify-center gap-2 bg-safari-500 hover:bg-safari-600 disabled:opacity-60 text-white font-poppins font-semibold text-sm py-3.5 rounded-xl transition-all hover:shadow-md"
-                >
-                  <Send className="w-4 h-4" />
-                  {status === 'loading' ? (
-                    <span className="flex items-center gap-2">
-                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                      {locale === 'it' ? 'Invio...' : locale === 'fr' ? 'Envoi...' : locale === 'es' ? 'Enviando...' : locale === 'de' ? 'Wird gesendet...' : locale === 'ar' ? 'جارٍ الإرسال...' : locale === 'zh' ? '发送中...' : locale === 'sw' ? 'Inatuma...' : 'Sending...'}
-                    </span>
-                  ) : t.booking.submit}
-                </button>
-              </div>
-            </form>
-          )}
+          <div className="grid grid-cols-3 gap-1.5 mt-4" aria-label={`${copy.step} ${step} ${copy.of} 3`}>
+            {[1, 2, 3].map(n => <div key={n} className={`h-1.5 rounded-full transition-colors ${n <= step ? 'bg-ocean-700' : 'bg-border'}`} />)}
+          </div>
         </div>
-      </div>
 
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        defaultMode="signup"
-      />
-    </>
-  );
+        {status === 'success' ? <div className="px-6 py-10">
+          <div className="text-center mb-5"><CheckCircle className="w-14 h-14 text-ocean-700 mx-auto mb-3" /><h3 className="font-poppins font-bold text-xl">{t.booking.success}</h3></div>
+          <InquiryStatusDisplay bookingRef={bookingRef} firstName={form.firstName} email={form.email} whatsapp={form.whatsapp} emailSent={emailSent} status="pending" />
+          {showAuthPrompt && <div className="mt-5 bg-ocean-50 border border-ocean-200 rounded-xl p-4 flex gap-3"><UserPlus className="w-5 h-5 text-ocean-700 shrink-0" /><div><p className="font-semibold text-sm">{t.bookingModal.createAccountTitle}</p><p className="text-xs text-muted-foreground mt-1 mb-3">{t.bookingModal.createAccountDesc}</p><button onClick={() => setAuthModalOpen(true)} className="rounded-lg bg-ocean-700 text-white px-4 py-2 text-sm font-semibold">{t.bookingModal.createAccountBtn}</button></div></div>}
+          <div className="grid grid-cols-2 gap-3 mt-6"><a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMsg(bookingRef)}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] text-white py-3 font-semibold"><MessageCircle className="w-4 h-4" />WhatsApp</a><button onClick={onClose} className="rounded-xl bg-ocean-700 text-white py-3 font-semibold">OK</button></div>
+        </div> : <form onSubmit={submit} className="px-5 sm:px-6 py-6">
+          <div className="mb-5 rounded-xl bg-sand-50 border border-border px-4 py-3 text-xs text-muted-foreground">{copy.required}</div>
+
+          {step === 1 && <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3"><div><label className="block text-sm font-medium mb-1.5">{t.booking.firstName} *</label><input required autoFocus name="firstName" value={form.firstName} onChange={handleChange} placeholder={t.booking.firstNamePlaceholder} className="w-full border border-border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-100" /></div><div><label className="block text-sm font-medium mb-1.5">{t.booking.lastName} *</label><input required name="lastName" value={form.lastName} onChange={handleChange} placeholder={t.booking.lastNamePlaceholder} className="w-full border border-border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-100" /></div></div>
+            <div className="grid grid-cols-2 gap-3"><div><label className="block text-sm font-medium mb-1.5">{t.booking.adults} *</label><input required type="number" min="1" max="30" name="adults" value={form.adults} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-100" /></div><div><label className="block text-sm font-medium mb-1.5">{t.booking.children}</label><input type="number" min="0" max="10" name="children" value={form.children} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-100" /></div></div>
+            {childCount > 0 && <div className={`rounded-2xl border p-4 space-y-3 ${kidsAgesError ? 'border-red-400 bg-red-50' : 'border-safari-200 bg-safari-50'}`}><p className="text-sm font-semibold">{locale === 'it' ? 'Età dei bambini' : locale === 'fr' ? 'Âge des enfants' : locale === 'es' ? 'Edades de los niños' : locale === 'de' ? 'Kinderalter' : locale === 'ar' ? 'أعمار الأطفال' : locale === 'zh' ? '儿童年龄' : locale === 'sw' ? 'Umri wa watoto' : 'Children ages'} *</p><div className={`grid gap-3 ${childCount === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>{kidsAges.map((age, i) => <div key={i}><label className="block text-xs font-medium mb-1">{ageLabel(i)}</label><select value={age === '' ? '' : String(age)} onChange={e => handleKidsAgeChange(i, e.target.value)} className="w-full border border-border rounded-xl px-3 py-2.5 bg-white"><option value="">{selectAge}</option>{Array.from({ length: 17 }, (_, n) => <option key={n} value={n}>{n} {locale === 'it' ? 'anni' : locale === 'fr' ? 'ans' : locale === 'es' ? 'años' : locale === 'de' ? 'Jahre' : locale === 'ar' ? 'سنوات' : locale === 'zh' ? '岁' : locale === 'sw' ? 'miaka' : 'yrs'}</option>)}</select></div>)}</div>{kidsAgesError && <p className="text-xs text-red-700 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />Please select every child age.</p>}</div>}
+          </div>}
+
+          {step === 2 && <div className="space-y-4">
+            <div><label className="block text-sm font-medium mb-1.5">{t.booking.safari} *</label><select required autoFocus name="safari" value={form.safari} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 bg-muted"><option value="">{t.booking.safariPlaceholder}</option><optgroup label={t.bookingOptions.safarisGroup}>{allSafariNames.map(s => <option key={s.name} value={s.name}>{s.name} — {s.days} {t.tours.days}</option>)}</optgroup><optgroup label={t.bookingOptions.excursionsGroup}>{excursions.map(e => <option key={e.id} value={e.nameIt}>{e.nameIt}</option>)}</optgroup><optgroup label={t.bookingOptions.transfersGroup}><option value="Airport Transfer – MYD (Malindi)">Airport Transfer – MYD (Malindi)</option><option value="Airport Transfer – MBA (Mombasa)">Airport Transfer – MBA (Mombasa)</option><option value="Airport Transfer – NBO (Nairobi)">Airport Transfer – NBO (Nairobi)</option><option value="Private 4×4 Driver">Private 4×4 Driver</option></optgroup><option value="Altro / Other">Altro / Other</option></select></div>
+            <div><label className="block text-sm font-medium mb-1.5">{t.booking.arrivalDate} *</label><input required type="date" name="arrivalDate" value={form.arrivalDate} onChange={handleChange} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
+            <div><label className="block text-sm font-medium mb-1.5">{t.booking.message}</label><textarea name="message" rows={4} value={form.message} onChange={handleChange} placeholder={t.booking.messagePlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted resize-none" /></div>
+          </div>}
+
+          {step === 3 && <div className="space-y-4">
+            <div><label className="block text-sm font-medium mb-1.5">{t.booking.email} *</label><input required autoFocus type="email" name="email" value={form.email} onChange={handleChange} placeholder={t.booking.emailPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
+            <div><label className="block text-sm font-medium mb-1.5">{t.booking.whatsapp}</label><input type="tel" name="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder={t.booking.whatsappPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
+            <div><label className="block text-sm font-medium mb-1.5">{t.booking.nationality}</label><input type="text" name="nationality" value={form.nationality} onChange={handleChange} placeholder={t.booking.nationalityPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
+            <button type="button" onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMsg()}`, '_blank')} className="w-full flex items-center justify-center gap-2 border border-[#25D366] text-[#168f45] rounded-xl py-3 font-semibold"><MessageCircle className="w-4 h-4" />{copy.whatsapp}</button>
+          </div>}
+
+          {status === 'error' && <div className="mt-4 flex gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />{errorDetail || t.booking.error}</div>}
+
+          <div className="flex gap-3 mt-6">
+            {step > 1 && <button type="button" onClick={() => setStep((step - 1) as Step)} className="flex-1 flex items-center justify-center gap-2 border border-border rounded-xl py-3.5 font-semibold"><ArrowLeft className="w-4 h-4" />{copy.back}</button>}
+            {step < 3 ? <button type="button" onClick={() => { if (validateStep(step)) setStep((step + 1) as Step); else setErrorDetail('Please complete the required fields before continuing.'); }} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-safari-500 hover:bg-safari-600 text-white py-3.5 font-semibold">{copy.next}<ArrowRight className="w-4 h-4" /></button> : <button type="submit" disabled={status === 'loading'} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-safari-500 hover:bg-safari-600 disabled:opacity-60 text-white py-3.5 font-semibold"><Send className="w-4 h-4" />{status === 'loading' ? copy.sending : copy.confirm}</button>}
+          </div>
+        </form>}
+      </div>
+    </div>
+    <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode="signup" />
+  </>;
 }
