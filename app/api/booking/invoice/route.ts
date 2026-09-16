@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       safari_name: safariName,
       message,
       reservation_status: 'pending',
-      booking_type: body.bookingType || 'safari',
+      booking_type: (body.bookingType || 'safari') as Booking['booking_type'],
       locale,
     };
 
