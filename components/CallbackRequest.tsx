@@ -15,7 +15,9 @@ const copy = {
   sw: { button: 'Omba tupige simu', title: 'Tunaweza kukupigia', text: 'Acha jina na nambari yako ya simu. Tutakupigia.', name: 'Jina lako', phone: 'Nambari ya simu', submit: 'Omba simu', sending: 'Inatuma…', done: 'Ombi limepokelewa', doneText: 'Asante. Tutakupigia hivi karibuni.', close: 'Funga', error: 'Hatukuweza kutuma ombi. Tupigie au tutumie WhatsApp.' },
 } as const;
 
-export default function CallbackRequest() {
+interface CallbackRequestProps { inline?: boolean }
+
+export default function CallbackRequest({ inline = false }: CallbackRequestProps) {
   const { locale } = useLanguage();
   const c = copy[locale as keyof typeof copy] || copy.en;
   const [open, setOpen] = useState(false);
@@ -35,8 +37,8 @@ export default function CallbackRequest() {
 
   return (
     <>
-      <button type="button" onClick={() => { setOpen(true); setStatus('idle'); }} className="fixed bottom-20 right-5 z-[9998] rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ocean-800 shadow-lg border border-border hover:shadow-xl transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-ocean-500" aria-label={c.button}>
-        <Phone className="w-4 h-4" />{c.button}
+      <button type="button" onClick={() => { setOpen(true); setStatus('idle'); }} className={inline ? 'font-inter text-sm text-muted-foreground hover:text-safari-400 transition-colors text-left' : 'fixed bottom-20 right-5 z-[9998] rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ocean-800 shadow-lg border border-border hover:shadow-xl transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-ocean-500'} aria-label={c.button}>
+        {!inline && <Phone className="w-4 h-4" />}{c.button}
       </button>
       {open && <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
         <button aria-label={c.close} className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
