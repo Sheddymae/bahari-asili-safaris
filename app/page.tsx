@@ -9,6 +9,7 @@ import AboutSection from '@/components/AboutSection';
 import HomeConversionSection from '@/components/HomeConversionSection';
 import StructuredData from '@/components/StructuredData';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
+import HowToBook from '@/components/HowToBook';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
 
@@ -42,6 +43,7 @@ export default function Home() {
       <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
         <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
+        <HowToBook />
         <HomeConversionSection onBook={() => openHeroBooking()} />
         <AnimateOnScroll direction="up"><AboutSection variant="home" /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ToursSection variant="home" onBook={openBooking} /></AnimateOnScroll>
