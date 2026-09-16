@@ -1,6 +1,6 @@
 'use client';
 
-import { Phone, X } from 'lucide-react';
+import { MessageCircle, Phone, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 
@@ -41,27 +41,56 @@ export default function WhatsAppButton() {
 
   return (
     <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-3">
-      <div className={`flex flex-col items-end gap-2 transition-all duration-200 ${open ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0'}`} aria-hidden={!open}>
-        <a href={`tel:${CALL_NUMBER}`} aria-label={labels.call} className="group relative flex min-h-11 items-center overflow-hidden rounded-full bg-white/10 px-3 text-white shadow-lg transition-all duration-300 ease-out hover:pr-5 hover:scale-105 hover:text-white focus:outline-none focus:ring-4 focus:ring-ocean-300">
-          <span className="absolute inset-0 rounded-full bg-ocean-700 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          <span className="relative z-10 flex items-center"><Phone className="h-5 w-5" aria-hidden="true" /><span className="ml-0 max-w-0 overflow-hidden whitespace-nowrap font-inter text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:max-w-[120px] group-hover:opacity-100">{labels.call}</span></span>
+      {/* Compact contact choices: no long expanding text bars. */}
+      <div
+        className={`flex items-center gap-2 transition-all duration-300 ease-out ${open ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0'}`}
+        aria-hidden={!open}
+      >
+        <a
+          href={`tel:${CALL_NUMBER}`}
+          aria-label={labels.call}
+          title={labels.call}
+          className="group flex h-11 w-11 items-center justify-center rounded-full bg-ocean-700 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-ocean-800 focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
+        >
+          <Phone className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
         </a>
-        <a href={whatsappHref} target="_blank" rel="noopener noreferrer" aria-label={labels.whatsapp} className="group relative flex min-h-11 items-center overflow-hidden rounded-full bg-white/10 px-3 text-white shadow-lg transition-all duration-300 ease-out hover:pr-5 hover:scale-105 hover:text-white focus:outline-none focus:ring-4 focus:ring-[#25D366]/40">
-          <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          <span className="relative z-10 flex items-center"><WhatsAppIcon /><span className="ml-0 max-w-0 overflow-hidden whitespace-nowrap font-inter text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:max-w-[120px] group-hover:opacity-100">{labels.whatsapp}</span></span>
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={labels.whatsapp}
+          title={labels.whatsapp}
+          className="group flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#20bd5a] focus:outline-none focus:ring-4 focus:ring-[#25D366]/40 active:scale-95"
+        >
+          <WhatsAppIcon />
         </a>
       </div>
 
-      <button type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label={labels.contact} title={labels.contact} className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-ocean-700 text-white shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition-all duration-300 hover:scale-105 hover:bg-ocean-800 focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-label={labels.contact}
+        title={labels.contact}
+        className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-ocean-700 text-white shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition-all duration-300 hover:scale-105 hover:bg-ocean-800 focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
+      >
         {open ? (
           <X className="h-6 w-6 transition-transform duration-300 group-hover:rotate-90" aria-hidden="true" />
         ) : (
-          <span className="relative flex h-7 w-8 items-center justify-center">
-            <WhatsAppIcon />
-            <span className="absolute right-0 flex h-5 w-5 translate-x-1 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100" aria-hidden="true">
-              <Phone className="h-5 w-5" />
+          <>
+            {/* Original contact icon stays visible until the pointer reaches the button. */}
+            <MessageCircle className="h-6 w-6 transition-all duration-200 group-hover:scale-75 group-hover:opacity-0" aria-hidden="true" />
+
+            {/* On hover/focus, reveal the real WhatsApp and Call icons inside the contact button. */}
+            <span className="pointer-events-none absolute inset-0 flex items-center justify-center gap-1 opacity-0 transition-all duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-all duration-300 -translate-x-1 group-hover:translate-x-0 group-focus-visible:translate-x-0">
+                <WhatsAppIcon />
+              </span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-ocean-800 shadow-sm transition-all duration-300 translate-x-1 group-hover:translate-x-0 group-focus-visible:translate-x-0">
+                <Phone className="h-4 w-4" aria-hidden="true" />
+              </span>
             </span>
-          </span>
+          </>
         )}
         <span className="sr-only">{labels.contact}</span>
       </button>
