@@ -17,6 +17,35 @@ const fallbackReplies: Record<Locale, string> = {
   sw: 'Siwezi kukamilisha utafiti wa moja kwa moja mtandaoni kwa sasa. Tafadhali jaribu tena baada ya muda mfupi au wasiliana na timu ya Bahari Asili kwa jibu lililothibitishwa.',
 };
 
+function extractResponseText(data: unknown): string {
+  if (!data || typeof data !== 'object') return '';
+  const root = data as Record<string, unknown>;
+
+  if (typeof root.output_text === 'string' && root.output_text.trim()) {
+    return root.output_text.trim();
+  }
+
+  const output = Array.isArray(root.output) ? root.output : [];
+  const parts: string[] = [];
+
+  for (const item of output) {
+    if (!item || typeof item !== 'object') continue;
+    const record = item as Record<string, unknown>;
+    if (record.type !== 'message') continue;
+    const content = Array.isArray(record.content) ? record.content : [];
+
+    for (const part of content) {
+      if (!part || typeof part !== 'object') continue;
+      const value = part as Record<string, unknown>;
+      if (value.type === 'output_text' && typeof value.text === 'string' && value.text.trim()) {
+        parts.push(value.text.trim());
+      }
+    }
+  }
+
+  return parts.join('\n\n').trim();
+}
+
 function extractSources(data: unknown): Source[] {
   const found: Source[] = [];
   const visit = (value: unknown) => {
@@ -39,9 +68,11 @@ function extractSources(data: unknown): Source[] {
 }
 
 export async function POST(request: NextRequest) {
+  let locale: Locale = 'en';
+
   try {
     const body = await request.json();
-    const locale: Locale = locales.includes(body.locale) ? body.locale : 'en';
+    locale = locales.includes(body.locale) ? body.locale : 'en';
     const messages: Message[] = Array.isArray(body.messages)
       ? body.messages
           .filter((m: Message) => m && ['user', 'assistant'].includes(m.role) && typeof m.content === 'string')
@@ -126,15 +157,12 @@ CONVERSATION BEHAVIOUR
     }
 
     const data = await response.json();
-    const reply = typeof data.output_text === 'string' && data.output_text.trim()
-      ? data.output_text.trim()
-      : fallbackReplies[locale];
+    const reply = extractResponseText(data) || fallbackReplies[locale];
     const sources = extractSources(data);
 
     return NextResponse.json({ reply, mode: 'ai-research', sources });
   } catch (error) {
     console.error('Safari assistant error:', error);
-    const locale: Locale = 'en';
     return NextResponse.json({ reply: fallbackReplies[locale], mode: 'research-unavailable', sources: [] });
   }
 }
