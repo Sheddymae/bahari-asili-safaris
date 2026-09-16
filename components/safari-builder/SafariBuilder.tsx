@@ -14,7 +14,7 @@ import { type BookingCurrency } from '@/lib/managed-safari-pricing';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SafariBuilder() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const safariBuilder = t.safariBuilder ?? (translations.en as typeof t).safariBuilder;
   const STEP_LABELS = [
     safariBuilder.stepper.trip,
@@ -25,7 +25,12 @@ export default function SafariBuilder() {
   ];
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [currency, setCurrency] = useState<BookingCurrency>('KES');
+  // Default to USD for international visitors — the overwhelming majority of
+  // our traffic — since a first quote in KES reads as unfamiliar and adds
+  // friction. Swahili-locale visitors are more likely local/regional, so
+  // default them to KES instead. Either way it's a one-click switch in the
+  // result step.
+  const [currency, setCurrency] = useState<BookingCurrency>(locale === 'sw' ? 'KES' : 'USD');
   const [trip, setTrip] = useState<TripDetailsValue>({ arrivalDate: '', departureDate: '', startLocation: '', endLocation: '' });
   const [travellers, setTravellers] = useState<TravellersValue>({ adults: 2, children: 0, childrenAges: [] });
   const [interests, setInterests] = useState<string[]>([]);
