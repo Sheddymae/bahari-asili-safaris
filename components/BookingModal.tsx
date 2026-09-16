@@ -5,7 +5,7 @@ import { X, MessageCircle, Send, AlertCircle, UserPlus, ArrowLeft, ArrowRight, C
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { safaris, excursions } from '@/lib/tours-data';
-import { generateVoucherPDF } from '@/lib/voucher-generator';
+import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import type { Booking } from '@/lib/supabase';
 import AuthModal from '@/components/AuthModal';
 import InquiryStatusDisplay from '@/components/InquiryStatusDisplay';
@@ -126,11 +126,22 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
       const data = await res.json();
       if (!res.ok || !data.success || !data.bookingRef) throw new Error(data.error || 'Booking could not be saved.');
       setBookingRef(data.bookingRef); setEmailSent(data.emailSent === true); setShowAuthPrompt(!user); setStatus('success');
+
       try {
-        const voucherBooking: Booking = { booking_ref: data.bookingRef, first_name: form.firstName, last_name: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kids_ages: resolvedAges.length ? resolvedAges : null, arrival_date: form.arrivalDate, safari_name: form.safari, message: form.message, reservation_status: 'pending', booking_type: data.bookingType, locale };
-        const { dataUrl } = await generateVoucherPDF(voucherBooking);
-        const a = document.createElement('a'); a.href = dataUrl; a.download = `${data.bookingRef}.pdf`; a.click();
-      } catch (voucherError) { console.error('Voucher download failed after successful booking:', voucherError); }
+        const invoiceBooking: Booking = { booking_ref: data.bookingRef, first_name: form.firstName, last_name: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kids_ages: resolvedAges.length ? resolvedAges : null, arrival_date: form.arrivalDate, safari_name: form.safari, message: form.message, reservation_status: 'pending', booking_type: data.bookingType, locale };
+        const invoiceRes = await fetch('/api/booking/invoice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...invoiceBooking, bookingRef: data.bookingRef }) });
+        const invoiceData = await invoiceRes.json();
+        if (invoiceRes.ok && invoiceData.success && invoiceData.invoiceDataUrl) {
+          const a = document.createElement('a');
+          a.href = invoiceData.invoiceDataUrl;
+          a.download = invoiceData.invoiceFilename || `Bahari-Asili-Provisional-Invoice-${data.bookingRef}.pdf`;
+          a.click();
+        } else {
+          console.error('Automatic invoice generation failed:', invoiceData.error || 'Unknown invoice error');
+        }
+      } catch (invoiceError) {
+        console.error('Automatic invoice generation failed after successful booking:', invoiceError);
+      }
     } catch (error) { console.error('Booking error:', error); setErrorDetail(error instanceof Error ? error.message : ''); setStatus('error'); }
   };
 
