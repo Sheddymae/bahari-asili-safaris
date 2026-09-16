@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Clock, MapPin, Check, X, Info, Sparkles } from 'lucide-react';
+import { ArrowLeft, Clock, MapPin, Check, X, Info, Sparkles, BookOpen } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { type Excursion, excursions } from '@/lib/tours-data';
 import { getLocalizedExcursion, type SupportedLocale } from '@/lib/excursion-content-i18n';
+import { excursionExperienceContent } from '@/lib/excursion-experience-content';
 
 const ctaCopy: Record<Exclude<SupportedLocale, 'en'>, { title: string; description: string }> = {
   it: { title: 'Richiedi informazioni su questa escursione', description: 'Indicaci le date e il numero di partecipanti: confermeremo la disponibilità e potremo suggerire un safari da abbinare.' },
@@ -24,6 +25,9 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
   const { t, locale } = useLanguage();
   const content = getLocalizedExcursion(excursion, locale as SupportedLocale);
   const ee = t.excursions;
+  const rich = locale === 'en' ? excursionExperienceContent[excursion.id] : undefined;
+  const whatToExpect = rich?.whatToExpect ?? content.whatToExpect;
+  const goodToKnow = rich?.goodToKnow ?? content.goodToKnow;
   const cta = locale === 'en'
     ? { title: ee.askAboutExcursion.replace('this excursion', content.name), description: 'Tell us your dates and group size — we’ll confirm availability and, if useful, suggest a safari to pair it with.' }
     : ctaCopy[locale as Exclude<SupportedLocale, 'en'>];
@@ -50,9 +54,14 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
           {content.startingLocation && <div className="flex items-center gap-2 mb-8 text-muted-foreground font-inter text-sm"><MapPin className="w-4 h-4 text-safari-500" />{content.startingLocation}</div>}
           <div className="flex flex-wrap gap-2 mb-10">{content.highlights.map((h, i) => <span key={i} className="bg-sand-50 text-foreground font-inter text-sm px-3 py-1.5 rounded-full border border-sand-200">{h}</span>)}</div>
 
+          {rich?.story && <div className="mb-12 rounded-2xl border border-sand-200 bg-sand-50/60 p-6 sm:p-8">
+            <div className="flex items-center gap-2 mb-4"><BookOpen className="w-5 h-5 text-safari-500" /><h2 className="font-poppins font-bold text-xl text-foreground">The story behind the experience</h2></div>
+            <p className="font-inter text-foreground text-base leading-8">{rich.story}</p>
+          </div>}
+
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-4"><Sparkles className="w-5 h-5 text-safari-500" /><h2 className="font-poppins font-bold text-xl text-foreground">{ee.whatToExpect}</h2></div>
-            <ul className="space-y-3">{content.whatToExpect.map((line, i) => <li key={i} className="font-inter text-foreground text-base leading-relaxed flex gap-3"><span className="w-1.5 h-1.5 mt-2.5 bg-safari-500 rounded-full flex-shrink-0" />{line}</li>)}</ul>
+            <ul className="space-y-3">{whatToExpect.map((line, i) => <li key={i} className="font-inter text-foreground text-base leading-relaxed flex gap-3"><span className="w-1.5 h-1.5 mt-2.5 bg-safari-500 rounded-full flex-shrink-0" />{line}</li>)}</ul>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-5 mb-12">
@@ -60,7 +69,7 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
             <div className="bg-sand-50 rounded-2xl p-6"><h3 className="font-poppins font-bold text-base text-foreground mb-4">{ee.notIncludedTitle}</h3><ul className="space-y-2.5">{content.notIncluded.map((item, i) => <li key={i} className="flex items-start gap-2.5 font-inter text-sm text-muted-foreground"><X className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />{item}</li>)}</ul></div>
           </div>
 
-          <div className="mb-12 border border-safari-200 bg-safari-50/40 rounded-2xl p-6"><div className="flex items-center gap-2 mb-3"><Info className="w-5 h-5 text-safari-600" /><h3 className="font-poppins font-bold text-base text-foreground">{ee.goodToKnow}</h3></div><ul className="space-y-2">{content.goodToKnow.map((line, i) => <li key={i} className="font-inter text-sm text-foreground leading-relaxed">{line}</li>)}</ul></div>
+          <div className="mb-12 border border-safari-200 bg-safari-50/40 rounded-2xl p-6"><div className="flex items-center gap-2 mb-3"><Info className="w-5 h-5 text-safari-600" /><h3 className="font-poppins font-bold text-base text-foreground">{ee.goodToKnow}</h3></div><ul className="space-y-2">{goodToKnow.map((line, i) => <li key={i} className="font-inter text-sm text-foreground leading-relaxed">{line}</li>)}</ul></div>
 
           <div className="bg-foreground rounded-2xl p-8 sm:p-10 text-center"><h3 className="font-poppins font-bold text-2xl text-white mb-3">{cta.title}</h3><p className="font-inter text-white/70 text-sm mb-6 max-w-lg mx-auto">{cta.description}</p><Link href={`/?book=${excursion.id}`} className="inline-flex items-center justify-center gap-2 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-8 py-3.5 rounded-xl transition-all hover:shadow-md">{ee.requestThisExcursion}</Link></div>
 
