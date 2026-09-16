@@ -1,4 +1,4 @@
-name: Build Verification
+name: Quality Gate
 
 on:
   push:
@@ -7,17 +7,26 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - name: Install dependencies
         run: npm ci
-      - name: Build
+
+      - name: TypeScript check
+        run: npm run typecheck
+
+      - name: Translation fallback check
+        run: npm run check:i18n
+
+      - name: Production build
         run: npm run build
