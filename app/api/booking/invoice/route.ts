@@ -25,12 +25,12 @@ async function sendEmail(apiKey: string, sender: string, to: string, subject: st
       body: JSON.stringify(body),
     });
     if (!response.ok) {
-      console.error('Booking PDF email failed:', await response.text());
+      console.error('Booking invoice email failed:', await response.text());
       return false;
     }
     return true;
   } catch (error) {
-    console.error('Booking PDF email request failed:', error);
+    console.error('Booking invoice email request failed:', error);
     return false;
   }
 }
@@ -56,7 +56,7 @@ async function resolvePackage(safariName: string, locale: ReturnType<typeof norm
     const match = (data || []).find((row: any) => String(row.name || '').trim().toLowerCase() === normalizedName);
     if (match) return rowToSafari(match) as unknown as CustomerInvoicePackage;
   } catch (error) {
-    console.warn('Could not load admin-managed package content for booking PDF:', error);
+    console.warn('Could not load admin-managed package content for booking invoice:', error);
   }
 
   if (catalogueMatch) return catalogueMatch as unknown as CustomerInvoicePackage;
@@ -94,19 +94,15 @@ export async function POST(req: NextRequest) {
     const locale = normalizeLocale(body.locale);
 
     if (!bookingRef || !firstName || !lastName || !isValidEmail(email) || !safariName || !arrivalDate || !nationality) {
-      return NextResponse.json({ success: false, error: 'Complete booking information, including nationality, is required to generate the booking PDF.' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Complete booking information, including nationality, is required to generate the booking invoice.' }, { status: 400 });
     }
 
     const pkg = await resolvePackage(safariName, locale);
     const packageDays = Math.max(1, Number(pkg.days) || 1);
     const departureDate = String(body.departureDate || '').trim() || addDays(arrivalDate, packageDays);
 
-    // IMPORTANT BUSINESS RULE:
-    // The automatic customer PDF is a booking-request/itinerary document only.
-    // Do NOT calculate, infer, or expose any price, cost breakdown, tax, park fee,
-    // accommodation fee, transport fee, discount, or total here. Pricing is
-    // controlled by the admin and is sent later as the official quoted invoice
-    // and/or voucher after the booking has been reviewed.
+    // Customer booking invoice: use the exact booking reference returned by
+    // /api/booking. No pricing is inferred here; pricing remains admin-controlled.
     const invoiceInput = {
       booking_ref: bookingRef,
       first_name: firstName,
@@ -128,7 +124,7 @@ export async function POST(req: NextRequest) {
     };
 
     const { base64 } = await generateCustomerInvoicePDF(invoiceInput);
-    const invoiceFilename = `Bahari-Asili-Booking-Request-${bookingRef}.pdf`;
+    const invoiceFilename = `Bahari-Asili-Booking-Invoice-${bookingRef}.pdf`;
 
     try {
       const admin = getSupabaseAdmin();
@@ -140,9 +136,9 @@ export async function POST(req: NextRequest) {
         updated_at: new Date().toISOString(),
       };
       const { error: updateError } = await admin.from('bookings').update(bookingUpdate).eq('booking_ref', bookingRef);
-      if (updateError) console.error('Could not persist generated booking PDF details:', updateError.message);
+      if (updateError) console.error('Could not persist generated booking invoice details:', updateError.message);
     } catch (persistError) {
-      console.error('Booking PDF persistence failed:', persistError);
+      console.error('Booking invoice persistence failed:', persistError);
     }
 
     const emailApiKey = process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY;
@@ -152,8 +148,8 @@ export async function POST(req: NextRequest) {
     if (emailApiKey) {
       const fullName = escapeHtml(`${firstName} ${lastName}`);
       const safeTour = escapeHtml(safariName);
-      const html = `<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;color:#1f2937"><div style="background:#0e7490;padding:24px;border-radius:14px 14px 0 0;color:#fff"><h1 style="margin:0;font-size:22px">Your Booking Request</h1><p style="margin:6px 0 0;color:#dff7fb">Bahari Asili Safaris · ${escapeHtml(bookingRef)}</p></div><div style="padding:24px;background:#fff;border:1px solid #e2e8f0"><p style="margin-top:0">Dear ${fullName},</p><p>Thank you for your booking request for <strong>${safeTour}</strong>.</p><p>Your attached PDF contains your traveller information, selected package, package description, parks and destinations, accommodation information, complete day-by-day itinerary, highlights, inclusions, exclusions, packing and travel notes, dates, traveller numbers and special requests.</p><p><strong>Pricing is not included in this automatic document.</strong> Bahari Asili Safaris will review your request and send the official quoted invoice and/or voucher separately with the approved cost breakdown, taxes, fees, discounts and total.</p><p style="margin-bottom:0">Availability, accommodation, routing and final pricing are confirmed by Bahari Asili Safaris before payment.</p></div><div style="background:#1f2937;padding:18px;border-radius:0 0 14px 14px;text-align:center;color:#cbd5e1;font-size:12px">WhatsApp: +254 101 923 355 · sheddymae02@gmail.com</div></div>`;
-      invoiceEmailSent = await sendEmail(emailApiKey, emailSender, email, `Booking Request – ${bookingRef}`, html, { filename: invoiceFilename, content: base64 });
+      const html = `<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;color:#1f2937"><div style="background:#0e7490;padding:24px;border-radius:14px 14px 0 0;color:#fff"><h1 style="margin:0;font-size:22px">Your Booking Invoice</h1><p style="margin:6px 0 0;color:#dff7fb">Bahari Asili Safaris · ${escapeHtml(bookingRef)}</p></div><div style="padding:24px;background:#fff;border:1px solid #e2e8f0"><p style="margin-top:0">Dear ${fullName},</p><p>Thank you for your booking request for <strong>${safeTour}</strong>.</p><p>Your attached booking invoice contains your traveller information, selected package, package description, parks and destinations, accommodation information, complete day-by-day itinerary, highlights, inclusions, exclusions, packing and travel notes, dates, traveller numbers and special requests.</p><p><strong>This first booking invoice does not contain pricing.</strong> Bahari Asili Safaris will review your request and send the official quoted invoice separately with the approved accommodation, park fees, guide, transport, meals, other costs, discounts, taxes and total.</p><p style="margin-bottom:0">Availability, accommodation, routing and final pricing are confirmed by Bahari Asili Safaris before payment.</p></div><div style="background:#1f2937;padding:18px;border-radius:0 0 14px 14px;text-align:center;color:#cbd5e1;font-size:12px">WhatsApp: +254 101 923 355 · sheddymae02@gmail.com</div></div>`;
+      invoiceEmailSent = await sendEmail(emailApiKey, emailSender, email, `Your Booking Invoice – ${bookingRef}`, html, { filename: invoiceFilename, content: base64 });
     }
 
     const pdfBytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
@@ -166,10 +162,11 @@ export async function POST(req: NextRequest) {
         'Cache-Control': 'no-store, max-age=0',
         'X-Invoice-Generated': 'true',
         'X-Invoice-Email-Sent': String(invoiceEmailSent),
+        'X-Booking-Reference': bookingRef,
       },
     });
   } catch (error) {
-    console.error('Customer booking PDF generation failed:', error);
-    return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'The booking was saved, but the booking PDF could not be generated.' }, { status: 500 });
+    console.error('Customer booking invoice generation failed:', error);
+    return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'The booking was saved, but the booking invoice could not be generated.' }, { status: 500 });
   }
 }
