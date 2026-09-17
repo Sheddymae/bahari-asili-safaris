@@ -12,15 +12,27 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Validate required fields
     const locale = normalizeLocale(body.locale);
+
+    // ONE SOURCE OF TRUTH:
+    // The booking reference created by /api/booking is the customer's
+    // permanent reference. Admin quotations must carry that exact same
+    // string instead of creating a second customer-facing identifier.
+    const bookingRef = String(body.booking_ref || body.bookingRef || '').trim();
+    const quotationRef = bookingRef || String(body.quotation_ref || body.quotationRef || '').trim();
+
+    if (!quotationRef) {
+      return NextResponse.json({ success: false, error: 'A booking reference is required to generate the quotation.' }, { status: 400 });
+    }
+
     const quotation: Quotation = {
-      quotation_ref: body.quotation_ref,
-      booking_ref: body.booking_ref,
+      quotation_ref: quotationRef,
+      booking_ref: bookingRef || quotationRef,
       first_name: String(body.first_name || '').trim(),
       last_name: String(body.last_name || '').trim(),
       email: String(body.email || '').trim(),
       whatsapp: String(body.whatsapp || '').trim(),
+      nationality: body.nationality,
       adults: parseInt(body.adults) || 1,
       children: parseInt(body.children) || 0,
       kids_ages: body.kids_ages || [],
@@ -30,6 +42,11 @@ export async function POST(req: NextRequest) {
       destination: String(body.destination || '').trim(),
       activities: Array.isArray(body.activities) ? body.activities : [],
       accommodation_type: body.accommodation_type,
+      package_description: body.package_description,
+      itinerary: Array.isArray(body.itinerary) ? body.itinerary : [],
+      inclusions: Array.isArray(body.inclusions) ? body.inclusions : [],
+      exclusions: Array.isArray(body.exclusions) ? body.exclusions : [],
+      payment_instructions: body.payment_instructions,
       accommodation_cost: body.accommodation_cost,
       park_fees: body.park_fees,
       guide_cost: body.guide_cost,
@@ -50,10 +67,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Valid email is required.' }, { status: 400 });
     }
 
-    // Generate the actual downloadable/printable SAFARI QUOTATION document
-    // (previously the quotation only existed as an HTML email body — see
-    // lib/quotation-generator.ts). Never let a PDF-rendering hiccup block
-    // the email from going out.
     let quotationPdfBase64: string | undefined;
     try {
       const pdf = await generateQuotationPDF(quotation);
@@ -62,11 +75,15 @@ export async function POST(req: NextRequest) {
       console.error('Quotation PDF generation failed:', err);
     }
 
-    // Send quotation email (shared template/sender — see lib/quotation-email.ts,
-    // also used by /api/safari-builder so both flows send an identical-looking quote)
     const emailSent = await sendQuotationEmail(quotation, new Date().toISOString(), quotationPdfBase64);
 
-    return NextResponse.json({ success: true, quotation_ref: quotation.quotation_ref, emailSent, quotationPdfBase64 });
+    return NextResponse.json({
+      success: true,
+      quotation_ref: quotation.quotation_ref,
+      booking_ref: quotation.booking_ref,
+      emailSent,
+      quotationPdfBase64,
+    });
   } catch (err) {
     console.error('Quotation API error:', err);
     return NextResponse.json(
