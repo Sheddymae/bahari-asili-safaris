@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { normalizeLocale } from '@/lib/locale-content';
-import { safaris as safariCatalogue } from '@/lib/safari-catalogue';
-import { rowToSafari } from '@/lib/program-utils';
-import { generateCustomerInvoicePDF, type CustomerInvoicePackage } from '@/lib/customer-invoice-generator';
+import { resolveBookingPackage, addBookingDays } from '@/lib/booking-document';
+import { generateCustomerInvoicePDF } from '@/lib/customer-invoice-generator';
 
 const RESEND_API = 'https://api.resend.com/emails';
 
@@ -35,47 +34,6 @@ async function sendEmail(apiKey: string, sender: string, to: string, subject: st
   }
 }
 
-function addDays(dateString: string, days: number): string {
-  const date = new Date(`${dateString}T00:00:00Z`);
-  date.setUTCDate(date.getUTCDate() + Math.max(0, days));
-  return date.toISOString().slice(0, 10);
-}
-
-async function resolvePackage(safariName: string, locale: ReturnType<typeof normalizeLocale>): Promise<CustomerInvoicePackage> {
-  const normalizedName = safariName.trim().toLowerCase();
-  const catalogueMatch = safariCatalogue.find((s) => s.name.trim().toLowerCase() === normalizedName);
-  const slug = catalogueMatch?.id;
-
-  try {
-    const admin = getSupabaseAdmin();
-    if (slug) {
-      const { data } = await admin.from('safari_programs').select('*').eq('slug', slug).eq('locale', locale).maybeSingle();
-      if (data) return rowToSafari(data) as unknown as CustomerInvoicePackage;
-    }
-    const { data } = await admin.from('safari_programs').select('*').eq('locale', locale);
-    const match = (data || []).find((row: any) => String(row.name || '').trim().toLowerCase() === normalizedName);
-    if (match) return rowToSafari(match) as unknown as CustomerInvoicePackage;
-  } catch (error) {
-    console.warn('Could not load admin-managed package content for booking invoice:', error);
-  }
-
-  if (catalogueMatch) return catalogueMatch as unknown as CustomerInvoicePackage;
-
-  return {
-    name: safariName,
-    tagline: 'The selected service will be arranged according to your booking request and confirmed by Bahari Asili Safaris.',
-    days: 1,
-    nights: 0,
-    parks: [],
-    lodges: [],
-    highlights: [],
-    itinerary: [{ day: 1, title: safariName, location: 'Watamu, Kenya', description: 'Your requested service details, timing, route and final arrangements will be confirmed by Bahari Asili Safaris.', overnight: 'To be confirmed' }],
-    packingTips: [],
-    included: [],
-    excluded: [],
-  };
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -97,12 +55,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Complete booking information, including nationality, is required to generate the booking invoice.' }, { status: 400 });
     }
 
-    const pkg = await resolvePackage(safariName, locale);
+    const pkg = await resolveBookingPackage(safariName, locale);
     const packageDays = Math.max(1, Number(pkg.days) || 1);
-    const departureDate = String(body.departureDate || '').trim() || addDays(arrivalDate, packageDays);
+    const departureDate = String(body.departureDate || '').trim() || addBookingDays(arrivalDate, packageDays);
 
-    // Customer booking invoice: use the exact booking reference returned by
-    // /api/booking. No pricing is inferred here; pricing remains admin-controlled.
+    // Customer booking invoice: use the exact reference returned by /api/booking.
+    // No pricing is inferred here. The admin-controlled quoted invoice owns pricing.
     const invoiceInput = {
       booking_ref: bookingRef,
       first_name: firstName,
