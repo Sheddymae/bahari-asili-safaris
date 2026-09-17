@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { translations, RTL_LOCALES, type Locale, type TranslationKeys } from '@/lib/i18n'; 
 import { extraTranslations } from '@/lib/i18n-extra';
 import { homeEnhancementTranslations } from '@/lib/home-enhancements-i18n';
+import { safariDetailTranslations } from '@/lib/safari-detail-i18n';
 import { hardcodedUiTranslations } from '@/lib/auto-translations'; 
  
 const STORAGE_KEY = 'bahari-locale'; 
@@ -11,7 +12,7 @@ const STORAGE_KEY = 'bahari-locale';
 interface LanguageContextType { locale: Locale; setLocale: (locale: Locale) => void; t: TranslationKeys; isRTL: boolean; } 
 function isPlainObject(value: unknown): value is Record<string, unknown> { return !!value && typeof value === 'object' && !Array.isArray(value); } 
 function deepMerge<T extends Record<string, unknown>>(base: T, extra: Record<string, unknown>): T { const out: Record<string, unknown> = { ...base }; for (const key of Object.keys(extra)) { const baseVal = out[key]; const extraVal = extra[key]; if (isPlainObject(baseVal) && isPlainObject(extraVal)) out[key] = deepMerge(baseVal, extraVal); else out[key] = extraVal; } return out as T; } 
-const mergedTranslations: Record<Locale, TranslationKeys> = (Object.keys(translations) as Locale[]).reduce((acc, loc) => { acc[loc] = deepMerge(deepMerge(translations[loc] as unknown as Record<string, unknown>, extraTranslations[loc]), { homeEnhancements: homeEnhancementTranslations[loc] }) as unknown as TranslationKeys; return acc; }, {} as Record<Locale, TranslationKeys>); 
+const mergedTranslations: Record<Locale, TranslationKeys> = (Object.keys(translations) as Locale[]).reduce((acc, loc) => { acc[loc] = deepMerge(deepMerge(deepMerge(translations[loc] as unknown as Record<string, unknown>, extraTranslations[loc]), { homeEnhancements: homeEnhancementTranslations[loc] }), { safariDetail: safariDetailTranslations[loc] }) as unknown as TranslationKeys; return acc; }, {} as Record<Locale, TranslationKeys>); 
 const LanguageContext = createContext<LanguageContextType>({ locale: 'en', setLocale: () => {}, t: mergedTranslations.en, isRTL: false }); 
 function isValidLocale(value: string | null): value is Locale { return !!value && Object.prototype.hasOwnProperty.call(translations, value); } 
 function flattenStrings(value: unknown, out: Record<string, string> = {}) { if (!isPlainObject(value)) return out; for (const child of Object.values(value)) { if (typeof child === 'string') out[child] = child; else if (isPlainObject(child)) flattenStrings(child, out); } return out; }
@@ -36,6 +37,5 @@ export function LanguageProvider({ children, initialLocale = 'en' }: { children:
   useEffect(() => { if (!hydrated) return; document.documentElement.lang = locale; document.documentElement.dir = isRTL ? 'rtl' : 'ltr'; }, [locale, isRTL, hydrated]);
   useEffect(() => { if (!hydrated) return; return installCustomerAutoTranslator(locale); }, [locale, hydrated]);
   const setLocale = useCallback((next: Locale) => { setLocaleState(next); try { window.localStorage.setItem(STORAGE_KEY, next); document.cookie = `${STORAGE_KEY}=${encodeURIComponent(next)}; Path=/; Max-Age=31536000; SameSite=Lax`; } catch {} }, []);
-  const t = useMemo(() => mergedTranslations[locale], [locale]); return <LanguageContext.Provider value={{ locale, setLocale, t, isRTL }}>{children}</LanguageContext.Provider>;
-}
+  const t = useMemo(() => mergedTranslations[locale], [locale]); return <LanguageContext.Provider value={{ locale, setLocale, t, isRTL }}>{children}</LanguageContext.Provider>; }
 export function useLanguage() { return useContext(LanguageContext); }
