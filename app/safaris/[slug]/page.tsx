@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import { safaris } from '@/lib/safari-catalogue';
-import SafariDetailClient from '@/components/SafariDetailClient';
+import SafariDetailClient from '@/components/SafariDetailEnhanced';
 
 export function generateStaticParams() {
   return safaris.map((s) => ({ slug: s.id }));
@@ -9,10 +8,10 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const safari = safaris.find((s) => s.id === params.slug);
-  if (!safari) return { title: 'Safari not found — Bahari Asili Safaris' };
+  if (!safari) return { title: 'Safari not found | Bahari Asili Safaris' };
 
-  const title = `${safari.name} — ${safari.days} Day Safari | Bahari Asili Safaris`;
-  const description = `${safari.tagline}. ${safari.days} days / ${safari.nights} nights visiting ${safari.parks.join(', ')}. Day-by-day itinerary, what's included, and packing tips.`;
+  const title = `${safari.name} | ${safari.days} Day Safari | Bahari Asili Safaris`;
+  const description = `${safari.tagline}. ${safari.days} days / ${safari.nights} nights visiting ${safari.parks.join(', ')}. Day-by-day itinerary, what is included, and packing tips.`;
 
   return {
     title,
