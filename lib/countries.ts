@@ -44,20 +44,14 @@ const COUNTRY_CODES: Record<Country, string> = {
   Namibia: 'NA', Nauru: 'NR', Nepal: 'NP', Netherlands: 'NL', 'New Zealand': 'NZ', Nicaragua: 'NI', Niger: 'NE', Nigeria: 'NG', 'North Korea': 'KP', 'North Macedonia': 'MK', Norway: 'NO',
   Oman: 'OM',
   Pakistan: 'PK', Palau: 'PW', Palestine: 'PS', Panama: 'PA', 'Papua New Guinea': 'PG', Paraguay: 'PY', Peru: 'PE', Philippines: 'PH', Poland: 'PL', Portugal: 'PT',
-  Qatar: 'QA',
-  Romania: 'RO', Russia: 'RU', Rwanda: 'RW',
+  Qatar: 'QA', Romania: 'RO', Russia: 'RU', Rwanda: 'RW',
   'Saint Kitts and Nevis': 'KN', 'Saint Lucia': 'LC', 'Saint Vincent and the Grenadines': 'VC', Samoa: 'WS', 'San Marino': 'SM', 'Sao Tome and Principe': 'ST', 'Saudi Arabia': 'SA', Senegal: 'SN', Serbia: 'RS', Seychelles: 'SC', 'Sierra Leone': 'SL', Singapore: 'SG', Slovakia: 'SK', Slovenia: 'SI', 'Solomon Islands': 'SB', Somalia: 'SO', 'South Africa': 'ZA', 'South Korea': 'KR', 'South Sudan': 'SS', Spain: 'ES', 'Sri Lanka': 'LK', Sudan: 'SD', Suriname: 'SR', Sweden: 'SE', Switzerland: 'CH', Syria: 'SY',
   Taiwan: 'TW', Tajikistan: 'TJ', Tanzania: 'TZ', Thailand: 'TH', 'Timor-Leste': 'TL', Togo: 'TG', Tonga: 'TO', 'Trinidad and Tobago': 'TT', Tunisia: 'TN', Turkey: 'TR', Turkmenistan: 'TM', Tuvalu: 'TV',
   Uganda: 'UG', Ukraine: 'UA', 'United Arab Emirates': 'AE', 'United Kingdom': 'GB', 'United States': 'US', Uruguay: 'UY', Uzbekistan: 'UZ',
-  Vanuatu: 'VU', 'Vatican City': 'VA', Venezuela: 'VE', Vietnam: 'VN',
-  Yemen: 'YE', Zambia: 'ZM', Zimbabwe: 'ZW',
+  Vanuatu: 'VU', 'Vatican City': 'VA', Venezuela: 'VE', Vietnam: 'VN', Yemen: 'YE', Zambia: 'ZM', Zimbabwe: 'ZW',
 };
 
-export interface CountryOption {
-  name: Country;
-  code: string;
-}
-
+export interface CountryOption { name: Country; code: string; }
 export const COUNTRY_OPTIONS: readonly CountryOption[] = COUNTRIES.map((name) => ({ name, code: COUNTRY_CODES[name] }));
 
 export function countryCode(value: string): string | undefined {
@@ -68,16 +62,16 @@ export function countryCode(value: string): string | undefined {
 export function countryFromSearch(value: string): Country | undefined {
   const query = value.trim().toLocaleLowerCase();
   if (!query) return undefined;
-  const exactCode = COUNTRY_OPTIONS.find((country) => country.code.toLocaleLowerCase() === query);
-  if (exactCode) return exactCode.name;
-  const exactName = COUNTRY_OPTIONS.find((country) => country.name.toLocaleLowerCase() === query);
-  return exactName?.name;
+  return COUNTRY_OPTIONS.find(({ code, name }) => code.toLocaleLowerCase() === query || name.toLocaleLowerCase() === query)?.name;
 }
 
 export function searchCountries(value: string): readonly CountryOption[] {
   const query = value.trim().toLocaleLowerCase();
   if (!query) return COUNTRY_OPTIONS;
-  return COUNTRY_OPTIONS.filter(({ name, code }) => name.toLocaleLowerCase().includes(query) || code.toLocaleLowerCase().startsWith(query));
+  const codeMatches = COUNTRY_OPTIONS.filter(({ code }) => code.toLocaleLowerCase().startsWith(query));
+  const nameStarts = COUNTRY_OPTIONS.filter(({ name }) => name.toLocaleLowerCase().startsWith(query));
+  const nameContains = COUNTRY_OPTIONS.filter(({ name }) => name.toLocaleLowerCase().includes(query) && !name.toLocaleLowerCase().startsWith(query));
+  return [...codeMatches, ...nameStarts.filter((country) => !codeMatches.some((match) => match.name === country.name)), ...nameContains.filter((country) => !codeMatches.some((match) => match.name === country.name) && !nameStarts.some((match) => match.name === country.name))];
 }
 
 export function isCountry(value: string): value is Country {
