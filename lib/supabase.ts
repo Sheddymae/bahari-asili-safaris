@@ -62,7 +62,7 @@ export interface Booking {
 }
 
 export interface Payment {
-  id: number;
+  id?: number;
   booking_id: number;
   receipt_number: string;
   amount: number;
@@ -130,28 +130,43 @@ export interface Quotation {
 
 export async function getBookingRefSequence(dateStr: string): Promise<number> {
   try {
-    const { count } = await supabase.from('bookings').select('id', { count: 'exact', head: true }).eq('arrival_date', dateStr);
+    const { count } = await supabase
+      .from('bookings')
+      .select('id', { count: 'exact', head: true })
+      .eq('arrival_date', dateStr);
     return (count ?? 0) + 1;
-  } catch { return 1; }
+  } catch (error) {
+    // Return default sequence number if database is not available
+    return 1;
+  }
 }
 
 export function buildBookingRef(arrivalDate: string, seq: number): string {
   const d = new Date(arrivalDate);
-  const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const n = String(seq).padStart(3, '0');
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const n = String(seq).padStart(3, '0');
   return `BA-${y}${m}${day}-${n}`;
 }
 
 export async function saveBooking(booking: Booking): Promise<{ data: Booking | null; error: Error | null }> {
   try {
-    const { data, error } = await supabase.from('bookings').insert(booking).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('bookings')
+      .insert(booking)
+      .select()
+      .maybeSingle();
     return { data, error };
-  } catch {
+  } catch (error) {
+    // Return error if database is not available
     console.warn('Booking save attempted with placeholder Supabase instance');
     return { data: null, error: new Error('Database not configured') };
   }
 }
 
 // --- Phase 2: Group Joining safaris (/tours "Group Joining" tab) ---
+
 export interface GroupTour {
   id: number;
   safari_id: string;
@@ -164,13 +179,28 @@ export interface GroupTour {
   status: 'open' | 'full' | 'departed' | 'cancelled';
 }
 
+/**
+ * Fetch upcoming open group departures for the Group Joining tab. Never
+ * throws — returns an empty array if Supabase isn't configured yet or the
+ * table doesn't exist, so the tab degrades to an empty state instead of
+ * crashing the page.
+ */
 export async function getGroupTours(): Promise<GroupTour[]> {
   try {
-    const { data, error } = await supabase.from('group_tours').select('*').eq('status', 'open').gte('departure_date', new Date().toISOString().slice(0, 10)).order('departure_date', { ascending: true });
+    const { data, error } = await supabase
+      .from('group_tours')
+      .select('*')
+      .eq('status', 'open')
+      .gte('departure_date', new Date().toISOString().slice(0, 10))
+      .order('departure_date', { ascending: true });
     if (error || !data) return [];
     return data as GroupTour[];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
+
+// --- Phase 2: DB-backed gallery captions ---
 
 export interface GalleryImageRow {
   id: number;
@@ -181,10 +211,26 @@ export interface GalleryImageRow {
   sort_order: number;
 }
 
+/**
+ * Fetch active gallery images with their human captions. Returns an empty
+ * array (never throws) if Supabase isn't reachable — callers should fall
+ * back to a static image list so the gallery still renders.
+ */
 export async function getGalleryImages(): Promise<GalleryImageRow[]> {
   try {
-    const { data, error } = await supabase.from('gallery_images').select('id, src, alt, caption, category, sort_order').eq('active', true).order('sort_order', { ascending: true });
+    const { data, error } = await supabase
+      .from('gallery_images')
+      .select('id, src, alt, caption, category, sort_order')
+      .eq('active', true)
+      .order('sort_order', { ascending: true });
     if (error || !data) return [];
     return data as GalleryImageRow[];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
+
+// Note: quotation persistence (saveQuotation/getQuotationByRef/etc.) was removed —
+// /api/quotation only emails a quotation PDF, it never wrote to a `quotations` table,
+// and nothing else in the app called these. The `Quotation` interface above is still
+// used to type that route's request body.
