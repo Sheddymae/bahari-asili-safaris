@@ -5,8 +5,6 @@ import { X, MessageCircle, Send, AlertCircle, UserPlus, ArrowLeft, ArrowRight, C
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { safaris, excursions } from '@/lib/tours-data';
-import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
-import type { Booking } from '@/lib/supabase';
 import AuthModal from '@/components/AuthModal';
 import InquiryStatusDisplay from '@/components/InquiryStatusDisplay';
 
@@ -115,6 +113,54 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
     '*Bahari Asili Safaris booking*', ref ? `Ref: ${ref}` : '', `Name: ${form.firstName} ${form.lastName}`, `Adults: ${form.adults} | Children: ${form.children}${childCount ? ` (Ages: ${kidsAges.join(', ')})` : ''}`, `Safari: ${form.safari}`, `Date: ${form.arrivalDate}`, form.email ? `Email: ${form.email}` : '', form.whatsapp ? `WhatsApp: ${form.whatsapp}` : '', form.message ? `Notes: ${form.message}` : '',
   ].filter(Boolean).join('\n'));
 
+  const downloadInvoice = async (ref: string, bookingType?: string) => {
+    const invoiceRes = await fetch('/api/booking/invoice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/pdf' },
+      body: JSON.stringify({
+        bookingRef: ref,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        whatsapp: form.whatsapp,
+        nationality: form.nationality,
+        adults: parseInt(form.adults, 10),
+        children: childCount,
+        kidsAges: kidsAges.filter((a): a is number => a !== ''),
+        arrivalDate: form.arrivalDate,
+        safariName: form.safari,
+        message: form.message,
+        bookingType,
+        locale,
+      }),
+    });
+
+    if (!invoiceRes.ok) {
+      let detail = `Invoice generation failed (HTTP ${invoiceRes.status}).`;
+      try {
+        const errorData = await invoiceRes.json();
+        if (errorData?.error) detail = errorData.error;
+      } catch { /* non-JSON error response */ }
+      throw new Error(detail);
+    }
+
+    const contentType = invoiceRes.headers.get('content-type') || '';
+    if (!contentType.includes('application/pdf')) throw new Error('Invoice service returned an invalid PDF response.');
+
+    const blob = await invoiceRes.blob();
+    if (!blob.size) throw new Error('Invoice PDF is empty.');
+
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = invoiceRes.headers.get('content-disposition')?.match(/filename="?([^";]+)"?/i)?.[1] || `Bahari-Asili-Provisional-Invoice-${ref}.pdf`;
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 10000);
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateStep(3)) { setErrorDetail(!form.nationality.trim() ? 'Please enter your nationality.' : 'Please enter a valid email address.'); return; }
@@ -124,24 +170,21 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
       const res = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ firstName: form.firstName, lastName: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kidsAges: resolvedAges, arrivalDate: form.arrivalDate, safariName: form.safari, message: form.message, userId: user?.id || null, locale }) });
       const data = await res.json();
       if (!res.ok || !data.success || !data.bookingRef) throw new Error(data.error || 'Booking could not be saved.');
-      setBookingRef(data.bookingRef); setEmailSent(data.emailSent === true); setShowAuthPrompt(!user); setStatus('success');
 
-      try {
-        const invoiceBooking: Booking = { booking_ref: data.bookingRef, first_name: form.firstName, last_name: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kids_ages: resolvedAges.length ? resolvedAges : null, arrival_date: form.arrivalDate, safari_name: form.safari, message: form.message, reservation_status: 'pending', booking_type: data.bookingType, locale };
-        const invoiceRes = await fetch('/api/booking/invoice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...invoiceBooking, bookingRef: data.bookingRef }) });
-        const invoiceData = await invoiceRes.json();
-        if (invoiceRes.ok && invoiceData.success && invoiceData.invoiceDataUrl) {
-          const a = document.createElement('a');
-          a.href = invoiceData.invoiceDataUrl;
-          a.download = invoiceData.invoiceFilename || `Bahari-Asili-Provisional-Invoice-${data.bookingRef}.pdf`;
-          a.click();
-        } else {
-          console.error('Automatic invoice generation failed:', invoiceData.error || 'Unknown invoice error');
-        }
-      } catch (invoiceError) {
-        console.error('Automatic invoice generation failed after successful booking:', invoiceError);
-      }
-    } catch (error) { console.error('Booking error:', error); setErrorDetail(error instanceof Error ? error.message : ''); setStatus('error'); }
+      setBookingRef(data.bookingRef);
+      setEmailSent(data.emailSent === true);
+      setShowAuthPrompt(!user);
+
+      // Do not show the successful booking screen until the PDF has actually
+      // been generated. The PDF is returned as application/pdf and downloaded
+      // immediately from the user's Submit click flow.
+      await downloadInvoice(data.bookingRef, data.bookingType);
+      setStatus('success');
+    } catch (error) {
+      console.error('Booking/invoice error:', error);
+      setErrorDetail(error instanceof Error ? error.message : 'The booking was saved, but the invoice could not be generated.');
+      setStatus('error');
+    }
   };
 
   if (!isOpen) return null;
