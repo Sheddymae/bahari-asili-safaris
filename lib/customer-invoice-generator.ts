@@ -1,11 +1,22 @@
+import { jsPDF } from 'jspdf';
 import type { Locale } from './i18n';
 import { normalizeLocale, formatLocaleDate } from './locale-content';
 import { registerInvoiceFont } from './invoice-font';
-import { BRAND_TEAL, BRAND_ORANGE, BRAND_OFFWHITE, BRAND_TEXT, BRAND_LIGHT, COMPANY, loadBrandLogo, drawBrandLogo } from './pdf-brand';
+import {
+  BRAND_TEAL,
+  BRAND_ORANGE,
+  BRAND_OFFWHITE,
+  BRAND_TEXT,
+  BRAND_LIGHT,
+  COMPANY,
+  loadBrandLogo,
+  drawBrandLogo,
+} from './pdf-brand';
 
 export interface CustomerInvoicePackage {
   name: string;
   tagline?: string;
+  description?: string;
   days?: number;
   nights?: number;
   parks?: string[];
@@ -63,188 +74,476 @@ export interface CustomerInvoiceInput {
   costs?: CustomerInvoiceCostBreakdown | null;
 }
 
-const labels: Record<Locale, Record<string, string>> = {
-  en: { title: 'PROVISIONAL INVOICE / BOOKING QUOTE', client: 'TRAVELLER DETAILS', trip: 'TRIP DETAILS', package: 'SELECTED PACKAGE', itinerary: 'FULL DAY-BY-DAY ITINERARY', highlights: 'PACKAGE HIGHLIGHTS', included: 'INCLUDED', excluded: 'NOT INCLUDED', packing: 'PACKING & TRAVEL NOTES', costs: 'COST BREAKDOWN', subtotal: 'Subtotal', discount: 'Discount', tax: 'Tax / VAT', total: 'TOTAL', quoteOnly: 'Pricing to be confirmed', name: 'Name', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nationality', guests: 'Travellers', childrenAges: 'Children ages', arrival: 'Arrival / Start date', departure: 'Departure / End date', duration: 'Duration', parks: 'Parks / destinations', lodges: 'Accommodation', rating: 'Rating', category: 'Package type', activity: 'Activity level', comfort: 'Comfort level', requests: 'Special requests', status: 'Status', pending: 'Pending confirmation', morning: 'Morning', afternoon: 'Afternoon', overnight: 'Overnight', day: 'Day', notes: 'Notes', footer: 'This provisional invoice is based on the package and traveller information selected online. Final availability, accommodation, routing and pricing are confirmed by Bahari Asili Safaris before payment.' },
-  it: { title: 'FATTURA PROVVISORIA / PREVENTIVO DI PRENOTAZIONE', client: 'DATI DEL VIAGGIATORE', trip: 'DETTAGLI DEL VIAGGIO', package: 'PACCHETTO SELEZIONATO', itinerary: 'ITINERARIO COMPLETO GIORNO PER GIORNO', highlights: 'PUNTI SALIENTI', included: 'INCLUSO', excluded: 'NON INCLUSO', packing: 'NOTE DI VIAGGIO E BAGAGLIO', costs: 'DETTAGLIO DEI COSTI', subtotal: 'Subtotale', discount: 'Sconto', tax: 'Imposte / IVA', total: 'TOTALE', quoteOnly: 'Prezzo da confermare', name: 'Nome', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nazionalità', guests: 'Viaggiatori', childrenAges: 'Età bambini', arrival: 'Data di arrivo / inizio', departure: 'Data di partenza / fine', duration: 'Durata', parks: 'Parchi / destinazioni', lodges: 'Sistemazione', rating: 'Valutazione', category: 'Tipo di pacchetto', activity: 'Livello attività', comfort: 'Livello comfort', requests: 'Richieste speciali', status: 'Stato', pending: 'In attesa di conferma', morning: 'Mattina', afternoon: 'Pomeriggio', overnight: 'Pernottamento', day: 'Giorno', notes: 'Note', footer: 'Questa fattura provvisoria si basa sul pacchetto e sui dati dei viaggiatori selezionati online. Disponibilità, sistemazione, percorso e prezzo finale saranno confermati da Bahari Asili Safaris prima del pagamento.' },
-  fr: { title: 'FACTURE PROVISOIRE / DEVIS DE RÉSERVATION', client: 'INFORMATIONS VOYAGEUR', trip: 'DÉTAILS DU VOYAGE', package: 'FORFAIT SÉLECTIONNÉ', itinerary: 'ITINÉRAIRE COMPLET JOUR PAR JOUR', highlights: 'POINTS FORTS', included: 'INCLUS', excluded: 'NON INCLUS', packing: 'BAGAGES ET NOTES DE VOYAGE', costs: 'DÉTAIL DES COÛTS', subtotal: 'Sous-total', discount: 'Remise', tax: 'Taxes / TVA', total: 'TOTAL', quoteOnly: 'Prix à confirmer', name: 'Nom', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nationalité', guests: 'Voyageurs', childrenAges: 'Âges des enfants', arrival: 'Date d’arrivée / début', departure: 'Date de départ / fin', duration: 'Durée', parks: 'Parcs / destinations', lodges: 'Hébergement', rating: 'Note', category: 'Type de forfait', activity: 'Niveau d’activité', comfort: 'Niveau de confort', requests: 'Demandes spéciales', status: 'Statut', pending: 'En attente de confirmation', morning: 'Matin', afternoon: 'Après-midi', overnight: 'Nuit', day: 'Jour', notes: 'Notes', footer: 'Cette facture provisoire est basée sur le forfait et les informations voyageurs sélectionnés en ligne. La disponibilité, l’hébergement, le trajet et le prix final seront confirmés par Bahari Asili Safaris avant paiement.' },
-  es: { title: 'FACTURA PROVISIONAL / PRESUPUESTO DE RESERVA', client: 'DATOS DEL VIAJERO', trip: 'DETALLES DEL VIAJE', package: 'PAQUETE SELECCIONADO', itinerary: 'ITINERARIO COMPLETO DÍA A DÍA', highlights: 'DESTACADOS', included: 'INCLUIDO', excluded: 'NO INCLUIDO', packing: 'EQUIPAJE Y NOTAS DE VIAJE', costs: 'DESGLOSE DE COSTES', subtotal: 'Subtotal', discount: 'Descuento', tax: 'Impuestos / IVA', total: 'TOTAL', quoteOnly: 'Precio por confirmar', name: 'Nombre', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nacionalidad', guests: 'Viajeros', childrenAges: 'Edades de los niños', arrival: 'Fecha de llegada / inicio', departure: 'Fecha de salida / fin', duration: 'Duración', parks: 'Parques / destinos', lodges: 'Alojamiento', rating: 'Valoración', category: 'Tipo de paquete', activity: 'Nivel de actividad', comfort: 'Nivel de confort', requests: 'Solicitudes especiales', status: 'Estado', pending: 'Pendiente de confirmación', morning: 'Mañana', afternoon: 'Tarde', overnight: 'Alojamiento', day: 'Día', notes: 'Notas', footer: 'Esta factura provisional se basa en el paquete y los datos del viajero seleccionados en línea. Bahari Asili Safaris confirmará la disponibilidad, alojamiento, ruta y precio final antes del pago.' },
-  de: { title: 'VORLÄUFIGE RECHNUNG / BUCHUNGSANGEBOT', client: 'REISENDENDETAILS', trip: 'REISEDETAILS', package: 'AUSGEWÄHLTES PAKET', itinerary: 'VOLLSTÄNDIGER TAGESPLAN', highlights: 'HIGHLIGHTS', included: 'INKLUSIVE', excluded: 'NICHT INKLUSIVE', packing: 'GEPÄCK UND REISEHINWEISE', costs: 'KOSTENAUFSCHLÜSSELUNG', subtotal: 'Zwischensumme', discount: 'Rabatt', tax: 'Steuern / MwSt.', total: 'GESAMT', quoteOnly: 'Preis wird bestätigt', name: 'Name', email: 'E-Mail', whatsapp: 'WhatsApp', nationality: 'Nationalität', guests: 'Reisende', childrenAges: 'Kinderalter', arrival: 'Ankunft / Startdatum', departure: 'Abreise / Enddatum', duration: 'Dauer', parks: 'Parks / Reiseziele', lodges: 'Unterkunft', rating: 'Bewertung', category: 'Paketart', activity: 'Aktivitätsniveau', comfort: 'Komfortniveau', requests: 'Besondere Wünsche', status: 'Status', pending: 'Bestätigung ausstehend', morning: 'Morgen', afternoon: 'Nachmittag', overnight: 'Übernachtung', day: 'Tag', notes: 'Hinweise', footer: 'Diese vorläufige Rechnung basiert auf dem online ausgewählten Paket und den Reisedaten. Verfügbarkeit, Unterkunft, Route und endgültiger Preis werden vor der Zahlung von Bahari Asili Safaris bestätigt.' },
-  ar: { title: 'فاتورة مبدئية / عرض حجز', client: 'بيانات المسافر', trip: 'تفاصيل الرحلة', package: 'الباقة المختارة', itinerary: 'خط سير الرحلة الكامل يومًا بيوم', highlights: 'أبرز التجربة', included: 'يشمل', excluded: 'لا يشمل', packing: 'الأمتعة وملاحظات السفر', costs: 'تفصيل التكاليف', subtotal: 'المجموع الفرعي', discount: 'الخصم', tax: 'الضريبة', total: 'الإجمالي', quoteOnly: 'السعر قيد التأكيد', name: 'الاسم', email: 'البريد الإلكتروني', whatsapp: 'واتساب', nationality: 'الجنسية', guests: 'المسافرون', childrenAges: 'أعمار الأطفال', arrival: 'تاريخ الوصول / البداية', departure: 'تاريخ المغادرة / النهاية', duration: 'المدة', parks: 'المتنزهات / الوجهات', lodges: 'الإقامة', rating: 'التقييم', category: 'نوع الباقة', activity: 'مستوى النشاط', comfort: 'مستوى الراحة', requests: 'طلبات خاصة', status: 'الحالة', pending: 'بانتظار التأكيد', morning: 'الصباح', afternoon: 'بعد الظهر', overnight: 'المبيت', day: 'اليوم', notes: 'ملاحظات', footer: 'هذه الفاتورة المبدئية مبنية على الباقة وبيانات المسافر المختارة عبر الموقع. سيتم تأكيد التوفر والإقامة والمسار والسعر النهائي من Bahari Asili Safaris قبل الدفع.' },
-  zh: { title: '临时发票 / 预订报价', client: '旅客信息', trip: '行程详情', package: '已选套餐', itinerary: '完整逐日行程', highlights: '行程亮点', included: '包含', excluded: '不包含', packing: '行李与旅行提示', costs: '费用明细', subtotal: '小计', discount: '折扣', tax: '税费', total: '总计', quoteOnly: '价格待确认', name: '姓名', email: '邮箱', whatsapp: 'WhatsApp', nationality: '国籍', guests: '旅客', childrenAges: '儿童年龄', arrival: '抵达 / 开始日期', departure: '离开 / 结束日期', duration: '时长', parks: '公园 / 目的地', lodges: '住宿', rating: '评分', category: '套餐类型', activity: '活动等级', comfort: '舒适等级', requests: '特殊要求', status: '状态', pending: '等待确认', morning: '上午', afternoon: '下午', overnight: '住宿', day: '第', notes: '备注', footer: '此临时发票根据您在线选择的套餐和旅客信息生成。付款前，Bahari Asili Safaris 将确认最终可用性、住宿、路线和价格。' },
-  sw: { title: 'ANKARA YA MUDA / BEI YA UHIFADHI', client: 'TAARIFA ZA MSAFIRI', trip: 'MAELEZO YA SAFARI', package: 'KIFURUSHI KILICHOCHAGULIWA', itinerary: 'RATIBA KAMILI YA KILA SIKU', highlights: 'MAMBO MUHIMU', included: 'VINAVYOJUMUISHWA', excluded: 'VISIVYOJUMUISHWA', packing: 'VIFAA NA VIDOKEZO VYA SAFARI', costs: 'MGAWANYO WA GHARAMA', subtotal: 'Jumla ndogo', discount: 'Punguzo', tax: 'Kodi / VAT', total: 'JUMLA', quoteOnly: 'Bei itathibitishwa', name: 'Jina', email: 'Barua pepe', whatsapp: 'WhatsApp', nationality: 'Utaifa', guests: 'Wasafiri', childrenAges: 'Umri wa watoto', arrival: 'Tarehe ya kuwasili / kuanza', departure: 'Tarehe ya kuondoka / kumaliza', duration: 'Muda', parks: 'Mbuga / maeneo', lodges: 'Malazi', rating: 'Ukadiriaji', category: 'Aina ya kifurushi', activity: 'Kiwango cha shughuli', comfort: 'Kiwango cha starehe', requests: 'Maombi maalum', status: 'Hali', pending: 'Inasubiri uthibitisho', morning: 'Asubuhi', afternoon: 'Mchana', overnight: 'Malazi', day: 'Siku', notes: 'Maelezo', footer: 'Ankara hii ya muda inategemea kifurushi na taarifa za msafiri zilizochaguliwa mtandaoni. Upatikanaji, malazi, njia na bei ya mwisho vitathibitishwa na Bahari Asili Safaris kabla ya malipo.' },
+type Labels = Record<string, string>;
+
+const labels: Record<string, Labels> = {
+  en: {
+    title: 'BOOKING REQUEST / PROVISIONAL INVOICE',
+    subtitle: 'Your selected safari details',
+    client: 'TRAVELLER DETAILS',
+    trip: 'TRIP DETAILS',
+    package: 'SELECTED PACKAGE',
+    itinerary: 'DAY-BY-DAY ITINERARY',
+    highlights: 'PACKAGE HIGHLIGHTS',
+    included: 'WHAT IS INCLUDED',
+    excluded: 'WHAT IS NOT INCLUDED',
+    packing: 'PACKING & TRAVEL NOTES',
+    costs: 'PRICING STATUS',
+    name: 'Full name', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nationality',
+    guests: 'Travellers', childrenAges: 'Children ages', arrival: 'Arrival / start', departure: 'Departure / end',
+    duration: 'Duration', parks: 'Parks / destinations', lodges: 'Accommodation', status: 'Booking status',
+    rating: 'Rating', category: 'Package type', activity: 'Activity level', comfort: 'Comfort level', requests: 'Special requests',
+    morning: 'Morning', afternoon: 'Afternoon', overnight: 'Overnight', location: 'Location',
+    pending: 'Pending confirmation', confirmed: 'Confirmed', quoteOnly: 'Pricing to be confirmed',
+    quoteNote: 'This document confirms the safari package and traveller information submitted online. Final availability, accommodation, routing and pricing will be reviewed and confirmed by Bahari Asili Safaris before payment.',
+    reference: 'Booking reference',
+  },
+  it: {
+    title: 'RICHIESTA DI PRENOTAZIONE / FATTURA PROVVISORIA', subtitle: 'Dettagli del safari selezionato', client: 'DATI DEL VIAGGIATORE', trip: 'DETTAGLI DEL VIAGGIO', package: 'PACCHETTO SELEZIONATO', itinerary: 'ITINERARIO GIORNO PER GIORNO', highlights: 'PUNTI SALIENTI', included: 'COSA È INCLUSO', excluded: 'COSA NON È INCLUSO', packing: 'BAGAGLIO E NOTE DI VIAGGIO', costs: 'STATO DEL PREZZO', name: 'Nome completo', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nazionalità', guests: 'Viaggiatori', childrenAges: 'Età bambini', arrival: 'Arrivo / inizio', departure: 'Partenza / fine', duration: 'Durata', parks: 'Parchi / destinazioni', lodges: 'Sistemazione', status: 'Stato prenotazione', rating: 'Valutazione', category: 'Tipo di pacchetto', activity: 'Livello attività', comfort: 'Livello comfort', requests: 'Richieste speciali', morning: 'Mattina', afternoon: 'Pomeriggio', overnight: 'Pernottamento', location: 'Località', pending: 'In attesa di conferma', confirmed: 'Confermato', quoteOnly: 'Prezzo da confermare', quoteNote: 'Questo documento conferma il pacchetto safari e i dati dei viaggiatori inviati online. Disponibilità, sistemazione, percorso e prezzo finale saranno verificati e confermati da Bahari Asili Safaris prima del pagamento.', reference: 'Riferimento prenotazione',
+  },
+  fr: {
+    title: 'DEMANDE DE RÉSERVATION / FACTURE PROVISOIRE', subtitle: 'Détails du safari sélectionné', client: 'INFORMATIONS VOYAGEUR', trip: 'DÉTAILS DU VOYAGE', package: 'FORFAIT SÉLECTIONNÉ', itinerary: 'ITINÉRAIRE JOUR PAR JOUR', highlights: 'POINTS FORTS', included: 'CE QUI EST INCLUS', excluded: 'CE QUI N’EST PAS INCLUS', packing: 'BAGAGES ET NOTES DE VOYAGE', costs: 'ÉTAT DU PRIX', name: 'Nom complet', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nationalité', guests: 'Voyageurs', childrenAges: 'Âges des enfants', arrival: 'Arrivée / début', departure: 'Départ / fin', duration: 'Durée', parks: 'Parcs / destinations', lodges: 'Hébergement', status: 'Statut de réservation', rating: 'Note', category: 'Type de forfait', activity: 'Niveau d’activité', comfort: 'Niveau de confort', requests: 'Demandes spéciales', morning: 'Matin', afternoon: 'Après-midi', overnight: 'Nuit', location: 'Lieu', pending: 'En attente de confirmation', confirmed: 'Confirmé', quoteOnly: 'Prix à confirmer', quoteNote: 'Ce document confirme le forfait safari et les informations voyageurs soumis en ligne. La disponibilité, l’hébergement, le trajet et le prix final seront vérifiés et confirmés par Bahari Asili Safaris avant paiement.', reference: 'Référence de réservation',
+  },
+  es: {
+    title: 'SOLICITUD DE RESERVA / FACTURA PROVISIONAL', subtitle: 'Detalles del safari seleccionado', client: 'DATOS DEL VIAJERO', trip: 'DETALLES DEL VIAJE', package: 'PAQUETE SELECCIONADO', itinerary: 'ITINERARIO DÍA A DÍA', highlights: 'DESTACADOS', included: 'QUÉ ESTÁ INCLUIDO', excluded: 'QUÉ NO ESTÁ INCLUIDO', packing: 'EQUIPAJE Y NOTAS DE VIAJE', costs: 'ESTADO DEL PRECIO', name: 'Nombre completo', email: 'Email', whatsapp: 'WhatsApp', nationality: 'Nacionalidad', guests: 'Viajeros', childrenAges: 'Edades de los niños', arrival: 'Llegada / inicio', departure: 'Salida / fin', duration: 'Duración', parks: 'Parques / destinos', lodges: 'Alojamiento', status: 'Estado de la reserva', rating: 'Valoración', category: 'Tipo de paquete', activity: 'Nivel de actividad', comfort: 'Nivel de confort', requests: 'Solicitudes especiales', morning: 'Mañana', afternoon: 'Tarde', overnight: 'Alojamiento', location: 'Lugar', pending: 'Pendiente de confirmación', confirmed: 'Confirmado', quoteOnly: 'Precio por confirmar', quoteNote: 'Este documento confirma el paquete safari y los datos del viajero enviados en línea. Bahari Asili Safaris revisará y confirmará la disponibilidad, alojamiento, ruta y precio final antes del pago.', reference: 'Referencia de reserva',
+  },
+  de: {
+    title: 'BUCHUNGSANFRAGE / VORLÄUFIGE RECHNUNG', subtitle: 'Details des ausgewählten Safaris', client: 'REISENDENDETAILS', trip: 'REISEDETAILS', package: 'AUSGEWÄHLTES PAKET', itinerary: 'TAGESPLAN', highlights: 'HIGHLIGHTS', included: 'INKLUSIVE', excluded: 'NICHT INKLUSIVE', packing: 'GEPÄCK UND REISEHINWEISE', costs: 'PREISSTATUS', name: 'Vollständiger Name', email: 'E-Mail', whatsapp: 'WhatsApp', nationality: 'Nationalität', guests: 'Reisende', childrenAges: 'Kinderalter', arrival: 'Ankunft / Beginn', departure: 'Abreise / Ende', duration: 'Dauer', parks: 'Parks / Reiseziele', lodges: 'Unterkunft', status: 'Buchungsstatus', rating: 'Bewertung', category: 'Paketart', activity: 'Aktivitätsniveau', comfort: 'Komfortniveau', requests: 'Besondere Wünsche', morning: 'Morgen', afternoon: 'Nachmittag', overnight: 'Übernachtung', location: 'Ort', pending: 'Bestätigung ausstehend', confirmed: 'Bestätigt', quoteOnly: 'Preis wird bestätigt', quoteNote: 'Dieses Dokument bestätigt das ausgewählte Safari-Paket und die online übermittelten Reisedaten. Verfügbarkeit, Unterkunft, Route und Endpreis werden vor der Zahlung von Bahari Asili Safaris geprüft und bestätigt.', reference: 'Buchungsreferenz',
+  },
+  ar: {
+    title: 'طلب حجز / فاتورة مبدئية', subtitle: 'تفاصيل رحلة السفاري المختارة', client: 'بيانات المسافر', trip: 'تفاصيل الرحلة', package: 'الباقة المختارة', itinerary: 'خط سير الرحلة يومًا بيوم', highlights: 'أبرز التجربة', included: 'ما يشمله الحجز', excluded: 'ما لا يشمله الحجز', packing: 'الأمتعة وملاحظات السفر', costs: 'حالة السعر', name: 'الاسم الكامل', email: 'البريد الإلكتروني', whatsapp: 'واتساب', nationality: 'الجنسية', guests: 'المسافرون', childrenAges: 'أعمار الأطفال', arrival: 'الوصول / البداية', departure: 'المغادرة / النهاية', duration: 'المدة', parks: 'المتنزهات / الوجهات', lodges: 'الإقامة', status: 'حالة الحجز', rating: 'التقييم', category: 'نوع الباقة', activity: 'مستوى النشاط', comfort: 'مستوى الراحة', requests: 'طلبات خاصة', morning: 'الصباح', afternoon: 'بعد الظهر', overnight: 'المبيت', location: 'الموقع', pending: 'بانتظار التأكيد', confirmed: 'مؤكد', quoteOnly: 'السعر قيد التأكيد', quoteNote: 'يؤكد هذا المستند باقة السفاري وبيانات المسافر التي تم إرسالها عبر الموقع. ستقوم Bahari Asili Safaris بمراجعة وتأكيد التوفر والإقامة والمسار والسعر النهائي قبل الدفع.', reference: 'مرجع الحجز',
+  },
+  zh: {
+    title: '预订申请 / 临时发票', subtitle: '已选Safari行程详情', client: '旅客信息', trip: '行程详情', package: '已选套餐', itinerary: '逐日行程', highlights: '行程亮点', included: '包含项目', excluded: '不包含项目', packing: '行李与旅行提示', costs: '价格状态', name: '姓名', email: '邮箱', whatsapp: 'WhatsApp', nationality: '国籍', guests: '旅客', childrenAges: '儿童年龄', arrival: '抵达 / 开始', departure: '离开 / 结束', duration: '时长', parks: '公园 / 目的地', lodges: '住宿', status: '预订状态', rating: '评分', category: '套餐类型', activity: '活动等级', comfort: '舒适等级', requests: '特殊要求', morning: '上午', afternoon: '下午', overnight: '住宿', location: '地点', pending: '等待确认', confirmed: '已确认', quoteOnly: '价格待确认', quoteNote: '此文件确认您在线提交的Safari套餐和旅客信息。付款前，Bahari Asili Safaris将审核并确认最终可用性、住宿、路线和价格。', reference: '预订编号',
+  },
+  sw: {
+    title: 'OMBI LA UHIFADHI / ANKARA YA MUDA', subtitle: 'Maelezo ya safari iliyochaguliwa', client: 'TAARIFA ZA MSAFIRI', trip: 'MAELEZO YA SAFARI', package: 'KIFURUSHI KILICHOCHAGULIWA', itinerary: 'RATIBA YA KILA SIKU', highlights: 'MAMBO MUHIMU', included: 'VINAVYOJUMUISHWA', excluded: 'VISIVYOJUMUISHWA', packing: 'VIFAA NA VIDOKEZO VYA SAFARI', costs: 'HALI YA BEI', name: 'Jina kamili', email: 'Barua pepe', whatsapp: 'WhatsApp', nationality: 'Utaifa', guests: 'Wasafiri', childrenAges: 'Umri wa watoto', arrival: 'Kuwasili / kuanza', departure: 'Kuondoka / kumaliza', duration: 'Muda', parks: 'Mbuga / maeneo', lodges: 'Malazi', status: 'Hali ya uhifadhi', rating: 'Ukadiriaji', category: 'Aina ya kifurushi', activity: 'Kiwango cha shughuli', comfort: 'Kiwango cha starehe', requests: 'Maombi maalum', morning: 'Asubuhi', afternoon: 'Mchana', overnight: 'Malazi', location: 'Mahali', pending: 'Inasubiri uthibitisho', confirmed: 'Imethibitishwa', quoteOnly: 'Bei itathibitishwa', quoteNote: 'Hati hii inathibitisha kifurushi cha safari na taarifa za msafiri zilizowasilishwa mtandaoni. Upatikanaji, malazi, njia na bei ya mwisho vitakaguliwa na kuthibitishwa na Bahari Asili Safaris kabla ya malipo.', reference: 'Nambari ya uhifadhi',
+  },
 };
 
 function safe(value: unknown): string {
   return value == null ? '' : String(value).trim();
 }
 
+function cleanText(value: unknown): string {
+  return safe(value)
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*[!！][’'`´]\s*/g, ' → ')
+    .replace(/\s*[!！]\s*['’`´]\s*/g, ' → ')
+    .replace(/\s*→\s*/g, ' → ')
+    .trim();
+}
+
+function displayStatus(status: string | null | undefined, L: Labels): string {
+  return safe(status).toLowerCase() === 'confirmed' ? L.confirmed : L.pending;
+}
+
 function money(value: number | null | undefined, currency: string): string {
   const amount = Number(value);
   if (!Number.isFinite(amount)) return '';
   const code = currency || 'KES';
-  try { return new Intl.NumberFormat('en-KE', { style: 'currency', currency: code, maximumFractionDigits: code === 'KES' ? 0 : 2 }).format(amount); }
-  catch { return `${code} ${amount.toLocaleString('en-KE')}`; }
+  try {
+    return new Intl.NumberFormat('en-KE', {
+      style: 'currency', currency: code,
+      maximumFractionDigits: code === 'KES' ? 0 : 2,
+    }).format(amount);
+  } catch {
+    return `${code} ${amount.toLocaleString('en-KE')}`;
+  }
 }
 
-export async function generateCustomerInvoicePDF(input: CustomerInvoiceInput): Promise<{ dataUrl: string; base64: string }> {
-  const { jsPDF } = await import('jspdf');
+export async function generateCustomerInvoicePDF(input: CustomerInvoiceInput) {
   const locale = normalizeLocale(input.locale);
   const L = labels[locale] || labels.en;
-  const pkg = input.package;
+  const pkg = input.package || { name: input.safari_name };
   const costs = input.costs || {};
   const currency = safe(costs.currency) || 'KES';
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
   const font = await registerInvoiceFont(doc, locale);
   const logo = await loadBrandLogo();
+
   const W = 210;
-  const M = 14;
-  const TEXT: [number, number, number] = BRAND_TEXT;
-  const LIGHT: [number, number, number] = BRAND_LIGHT;
-  let y = 14;
+  const H = 297;
+  const M = 15;
+  const contentW = W - M * 2;
+  const footerY = 281;
+  const bottomY = 270;
+  let y = 15;
+  let pageNumber = 1;
 
-  const addFooter = () => {
-    const pages = doc.getNumberOfPages();
-    for (let p = 1; p <= pages; p++) {
-      doc.setPage(p);
+  const setFont = (size: number, color: [number, number, number] = BRAND_TEXT, style: 'normal' | 'bold' = 'normal') => {
+    doc.setFont(font, style);
+    doc.setFontSize(size);
+    doc.setTextColor(...color);
+  };
+
+  const wrap = (text: string, width: number, size = 8.2) => {
+    setFont(size);
+    return doc.splitTextToSize(cleanText(text), width) as string[];
+  };
+
+  const footer = () => {
+    doc.setDrawColor(...BRAND_TEAL);
+    doc.setLineWidth(0.35);
+    doc.line(M, footerY, W - M, footerY);
+    setFont(6.8, BRAND_LIGHT);
+    doc.text(`${COMPANY.website} · ${COMPANY.email} · ${COMPANY.phone}`, W / 2, 286, { align: 'center' });
+    doc.text(`© ${new Date().getFullYear()} ${COMPANY.name} · ${COMPANY.address}`, W / 2, 291, { align: 'center' });
+    doc.text(String(pageNumber), W - M, 291, { align: 'right' });
+  };
+
+  const header = (firstPage = false) => {
+    if (firstPage) {
+      doc.setFillColor(255, 255, 255);
+      doc.rect(0, 0, W, 42, 'F');
+      if (logo) drawBrandLogo(doc, logo, M, 8, 22);
+      setFont(8.2, BRAND_TEAL);
+      doc.text(`${COMPANY.address} · ${COMPANY.phone}`, W - M, 13, { align: 'right' });
+      doc.text(COMPANY.email, W - M, 19, { align: 'right' });
+      setFont(7, BRAND_LIGHT);
+      doc.text(COMPANY.founded, W - M, 25, { align: 'right' });
       doc.setDrawColor(...BRAND_TEAL);
-      doc.setLineWidth(0.35);
-      doc.line(M, 279, W - M, 279);
-      doc.setFont(font, 'normal');
-      doc.setFontSize(6.8);
-      doc.setTextColor(...LIGHT);
-      doc.text(`${COMPANY.website} · ${COMPANY.email} · ${COMPANY.phone}`, W / 2, 285, { align: 'center' });
-      doc.text(`© 2026 ${COMPANY.name}, ${COMPANY.address}`, W / 2, 290, { align: 'center' });
-      doc.text(String(p), W - M, 290, { align: 'right' });
+      doc.setLineWidth(0.45);
+      doc.line(0, 42, W, 42);
+
+      doc.setFillColor(...BRAND_ORANGE);
+      doc.rect(0, 42, W, 24, 'F');
+      setFont(8.2, [255, 255, 255], 'bold');
+      doc.text(L.title, M, 51);
+      setFont(16, [255, 255, 255], 'bold');
+      doc.text(cleanText(input.booking_ref), M, 60.5);
+      setFont(7.6, [255, 255, 255]);
+      doc.text(`${L.status}: ${displayStatus(input.reservation_status, L)}`, W - M, 58.5, { align: 'right' });
+      y = 76;
+    } else {
+      doc.setFillColor(...BRAND_TEAL);
+      doc.rect(0, 0, W, 15, 'F');
+      setFont(7.5, BRAND_OFFWHITE, 'bold');
+      doc.text(COMPANY.name, M, 9.5);
+      doc.text(`${L.reference}: ${cleanText(input.booking_ref)}`, W - M, 9.5, { align: 'right' });
+      y = 23;
     }
   };
 
-  const ensure = (height: number) => {
-    if (y + height > 273) { doc.addPage(); y = 18; }
+  const newPage = () => {
+    footer();
+    doc.addPage();
+    pageNumber += 1;
+    header(false);
   };
+
+  const ensure = (height: number, keepWithNext = false) => {
+    if (y + height > bottomY) {
+      newPage();
+      if (keepWithNext) y += 1;
+    }
+  };
+
   const section = (title: string) => {
-    ensure(12);
+    ensure(12, true);
     doc.setFillColor(...BRAND_TEAL);
-    doc.roundedRect(M, y - 4, W - 2 * M, 8, 1.5, 1.5, 'F');
-    doc.setFont(font, 'normal'); doc.setFontSize(8.2); doc.setTextColor(...BRAND_OFFWHITE);
-    doc.text(title, M + 3, y + 1.3);
-    y += 10;
+    doc.roundedRect(M, y, contentW, 8.5, 1.5, 1.5, 'F');
+    setFont(8.2, BRAND_OFFWHITE, 'bold');
+    doc.text(cleanText(title), M + 3.5, y + 5.7);
+    y += 12;
   };
-  const row = (label: string, value: string) => {
-    if (!value) return;
-    const lines = doc.splitTextToSize(value, W - M - 78);
-    ensure(Math.max(6, lines.length * 4.1));
-    doc.setFont(font, 'normal'); doc.setFontSize(7.7); doc.setTextColor(...LIGHT);
-    doc.text(label, M + 1, y);
-    doc.setTextColor(...TEXT);
-    doc.text(lines, M + 66, y);
-    y += Math.max(5, lines.length * 4.1);
-  };
-  const bullets = (items: string[]) => {
-    for (const raw of items || []) {
-      const item = safe(raw); if (!item) continue;
-      const lines = doc.splitTextToSize(`• ${item}`, W - 2 * M - 5);
-      ensure(lines.length * 3.8 + 2);
-      doc.setFont(font, 'normal'); doc.setFontSize(7.6); doc.setTextColor(...TEXT);
-      doc.text(lines, M + 2, y); y += lines.length * 3.8 + 1;
+
+  const infoRows = (rows: Array<[string, string]>) => {
+    const labelW = 38;
+    const valueX = M + labelW + 4;
+    const valueW = contentW - labelW - 4;
+    for (const [label, rawValue] of rows) {
+      const value = cleanText(rawValue);
+      if (!value) continue;
+      setFont(7.7, BRAND_LIGHT, 'bold');
+      const lines = wrap(value, valueW, 7.8);
+      const h = Math.max(6, lines.length * 4.1);
+      ensure(h);
+      setFont(7.7, BRAND_LIGHT, 'bold');
+      doc.text(cleanText(label), M, y);
+      setFont(8, BRAND_TEXT);
+      doc.text(lines, valueX, y);
+      y += h + 0.7;
     }
-    y += 2;
   };
 
-  doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, 38, 'F');
-  if (logo) drawBrandLogo(doc, logo, M, 8, 19);
-  doc.setFont(font, 'normal'); doc.setFontSize(8.5); doc.setTextColor(...BRAND_TEAL);
-  doc.text(`${COMPANY.address} · ${COMPANY.phone}`, W - M, 12, { align: 'right' });
-  doc.text(COMPANY.email, W - M, 18, { align: 'right' });
-  doc.setFontSize(7); doc.setTextColor(...LIGHT); doc.text(COMPANY.founded, W - M, 24, { align: 'right' });
-  doc.setDrawColor(...BRAND_TEAL); doc.setLineWidth(0.45); doc.line(0, 38, W, 38);
+  const twoColumnInfo = (left: Array<[string, string]>, right: Array<[string, string]>) => {
+    const gap = 7;
+    const colW = (contentW - gap) / 2;
+    const startY = y;
+    const drawCol = (rows: Array<[string, string]>, x: number) => {
+      let cy = startY;
+      for (const [label, rawValue] of rows) {
+        const value = cleanText(rawValue);
+        if (!value) continue;
+        setFont(7.2, BRAND_LIGHT, 'bold');
+        doc.text(cleanText(label).toUpperCase(), x, cy);
+        const lines = wrap(value, colW, 8);
+        setFont(8, BRAND_TEXT);
+        doc.text(lines, x, cy + 4);
+        cy += Math.max(10, lines.length * 4 + 5);
+      }
+      return cy;
+    };
+    const leftY = drawCol(left, M);
+    const rightY = drawCol(right, M + colW + gap);
+    y = Math.max(leftY, rightY) + 2;
+  };
 
-  doc.setFillColor(...BRAND_ORANGE); doc.rect(0, 38, W, 19, 'F');
-  doc.setFont(font, 'normal'); doc.setFontSize(8.2); doc.setTextColor(255, 255, 255); doc.text(L.title, M, 46);
-  doc.setFontSize(15); doc.text(safe(input.booking_ref), M, 53.5);
-  doc.setFontSize(7.8); doc.text(`${L.status}: ${input.reservation_status === 'confirmed' ? 'Confirmed' : L.pending}`, W - M, 52, { align: 'right' });
-  y = 65;
+  const bullets = (items: string[], columns = 1) => {
+    const usable = items.map(cleanText).filter(Boolean);
+    if (!usable.length) return;
+    const gap = 7;
+    const colW = columns === 2 ? (contentW - gap) / 2 : contentW;
+    let col = 0;
+    let colY = y;
+    const columnYs = [y, y];
+    for (const item of usable) {
+      const x = M + col * (colW + gap);
+      const lines = wrap(`• ${item}`, colW - 2, 7.8);
+      const h = lines.length * 4 + 1.5;
+      if (col === 0) ensure(h);
+      if (col === 1 && colY + h > bottomY) {
+        y = columnYs[0];
+        newPage();
+        col = 0;
+        colY = y;
+      }
+      setFont(7.8, BRAND_TEXT);
+      doc.text(lines, x + 1, colY);
+      colY += h;
+      columnYs[col] = colY;
+      if (columns === 2 && col === 0 && usable.indexOf(item) === Math.ceil(usable.length / 2) - 1) {
+        col = 1;
+        colY = y;
+      }
+    }
+    y = Math.max(...columnYs) + 2;
+  };
 
+  const itineraryDay = (d: NonNullable<CustomerInvoicePackage['itinerary']>[number]) => {
+    const title = cleanText(d.title || d.location || '');
+    const dayLabel = `${L.day || 'Day'} ${cleanText(d.day)}`;
+    const heading = title ? `${dayLabel} — ${title}` : dayLabel;
+    const blocks: Array<[string, string]> = [];
+    if (d.location && title !== cleanText(d.location)) blocks.push([L.location, cleanText(d.location)]);
+    if (d.description) blocks.push([L.notes || 'Details', cleanText(d.description)]);
+    if (d.morning) blocks.push([L.morning, cleanText(d.morning)]);
+    if (d.afternoon) blocks.push([L.afternoon, cleanText(d.afternoon)]);
+    if (d.overnight) blocks.push([L.overnight, cleanText(d.overnight)]);
+
+    const estimated = 13 + blocks.reduce((sum, [, value]) => sum + Math.max(5, wrap(value, contentW - 32, 7.9).length * 4.1 + 2), 0);
+    ensure(Math.min(estimated, 38), true);
+
+    const cardTop = y;
+    setFont(9.4, BRAND_ORANGE, 'bold');
+    doc.text(heading, M + 2, y + 4.5);
+    y += 9;
+
+    for (const [label, value] of blocks) {
+      const textLines = wrap(value, contentW - 34, 7.9);
+      const h = Math.max(5.5, textLines.length * 4.05 + 1);
+      ensure(h);
+      setFont(7.4, BRAND_LIGHT, 'bold');
+      doc.text(cleanText(label).toUpperCase(), M + 2, y);
+      setFont(7.9, BRAND_TEXT);
+      doc.text(textLines, M + 32, y);
+      y += h + 1.2;
+    }
+
+    doc.setDrawColor(220, 226, 230);
+    doc.setLineWidth(0.25);
+    doc.line(M + 2, y + 1, W - M - 2, y + 1);
+    y += 5;
+    void cardTop;
+  };
+
+  header(true);
+
+  // PAGE 1 — booking identity and package overview
   section(L.client);
-  row(L.name, `${safe(input.first_name)} ${safe(input.last_name)}`);
-  row(L.email, safe(input.email));
-  row(L.whatsapp, safe(input.whatsapp) || '—');
-  row(L.nationality, safe(input.nationality));
-  row(L.guests, `${Number(input.adults) || 0} adults${Number(input.children) ? ` + ${Number(input.children)} children` : ''}`);
-  if (input.children && input.kids_ages?.length) row(L.childrenAges, input.kids_ages.join(', '));
+  infoRows([
+    [L.name, `${safe(input.first_name)} ${safe(input.last_name)}`],
+    [L.email, input.email],
+    [L.whatsapp, safe(input.whatsapp) || '—'],
+    [L.nationality, safe(input.nationality)],
+    [L.guests, `${Math.max(0, Number(input.adults) || 0)} adult${Number(input.adults) === 1 ? '' : 's'}${Number(input.children) ? ` · ${Number(input.children)} child${Number(input.children) === 1 ? '' : 'ren'}` : ''}`],
+    ...(input.children && input.kids_ages?.length ? [[L.childrenAges, input.kids_ages.join(', ')]] as Array<[string, string]> : []),
+  ]);
   y += 3;
 
   section(L.trip);
-  row(L.arrival, formatLocaleDate(input.arrival_date, locale));
-  if (input.departure_date) row(L.departure, formatLocaleDate(input.departure_date, locale));
-  row(L.duration, `${Number(pkg.days) || 0} days / ${Number(pkg.nights) || 0} nights`);
-  row(L.parks, (pkg.parks || []).join(', '));
-  row(L.lodges, (pkg.lodges || []).join(', '));
-  row(L.status, input.reservation_status === 'confirmed' ? 'Confirmed' : L.pending);
-  if (input.message) row(L.requests, safe(input.message));
-  y += 3;
+  twoColumnInfo(
+    [
+      [L.arrival, formatLocaleDate(input.arrival_date, locale)],
+      [L.departure, input.departure_date ? formatLocaleDate(input.departure_date, locale) : '—'],
+      [L.duration, `${Number(pkg.days) || 1} days · ${Number(pkg.nights) || 0} nights`],
+    ],
+    [
+      [L.parks, (pkg.parks || []).join(', ')],
+      [L.lodges, (pkg.lodges || []).join(', ')],
+      [L.status, displayStatus(input.reservation_status, L)],
+    ],
+  );
 
   section(L.package);
-  doc.setFont(font, 'normal'); doc.setFontSize(13); doc.setTextColor(...BRAND_TEAL); doc.text(safe(pkg.name || input.safari_name), M + 2, y); y += 6;
-  if (pkg.tagline) { const lines = doc.splitTextToSize(safe(pkg.tagline), W - 2 * M - 4); ensure(lines.length * 4 + 3); doc.setFontSize(8); doc.setTextColor(...TEXT); doc.text(lines, M + 2, y); y += lines.length * 4 + 2; }
-  row(L.category, safe(pkg.category));
-  if (pkg.rating) row(L.rating, `${pkg.rating}/5${pkg.reviewCount ? ` (${pkg.reviewCount} reviews)` : ''}`);
-  if (pkg.activityLevel) row(L.activity, `${pkg.activityLevel}/5`);
-  if (pkg.comfortLevel) row(L.comfort, `${pkg.comfortLevel}/5`);
-  y += 2;
+  setFont(14, BRAND_TEAL, 'bold');
+  const packageNameLines = wrap(pkg.name || input.safari_name, contentW - 4, 14);
+  doc.text(packageNameLines, M + 2, y);
+  y += packageNameLines.length * 6 + 1;
+  if (pkg.tagline) {
+    const taglineLines = wrap(pkg.tagline, contentW - 4, 8.5);
+    setFont(8.5, BRAND_TEXT);
+    doc.text(taglineLines, M + 2, y);
+    y += taglineLines.length * 4.3 + 2;
+  }
+  if (pkg.description) {
+    const descriptionLines = wrap(pkg.description, contentW - 4, 8);
+    setFont(8, BRAND_TEXT);
+    doc.text(descriptionLines, M + 2, y);
+    y += descriptionLines.length * 4.1 + 2;
+  }
+  twoColumnInfo(
+    [
+      ...(pkg.category ? [[L.category, pkg.category] as [string, string]] : []),
+      ...(pkg.rating ? [[L.rating, `${pkg.rating}/5${pkg.reviewCount ? ` · ${pkg.reviewCount} reviews` : ''}`] as [string, string]] : []),
+    ],
+    [
+      ...(pkg.activityLevel ? [[L.activity, `${pkg.activityLevel}/5`] as [string, string]] : []),
+      ...(pkg.comfortLevel ? [[L.comfort, `${pkg.comfortLevel}/5`] as [string, string]] : []),
+    ],
+  );
 
-  if (pkg.highlights?.length) { section(L.highlights); bullets(pkg.highlights); }
+  if (pkg.highlights?.length) {
+    section(L.highlights);
+    bullets(pkg.highlights, 2);
+  }
 
+  if (input.message) {
+    section(L.requests);
+    const requestLines = wrap(input.message, contentW - 8, 8.2);
+    setFont(8.2, BRAND_TEXT);
+    doc.text(requestLines, M + 4, y);
+    y += requestLines.length * 4.2 + 3;
+  }
+
+  // PAGE 2+ — itinerary. A dedicated page keeps the itinerary readable instead of
+  // forcing headings and paragraphs into the bottom of the previous page.
   if (pkg.itinerary?.length) {
+    newPage();
     section(L.itinerary);
-    for (const d of pkg.itinerary) {
-      const heading = `${L.day} ${safe(d.day)}${d.title ? ` — ${safe(d.title)}` : ''}`;
-      ensure(12);
-      doc.setFont(font, 'normal'); doc.setFontSize(9); doc.setTextColor(...BRAND_ORANGE); doc.text(heading, M + 1, y); y += 5;
-      if (d.location) row(L.trip, safe(d.location));
-      if (d.description) row(L.notes, safe(d.description));
-      if (d.morning) row(L.morning, safe(d.morning));
-      if (d.afternoon) row(L.afternoon, safe(d.afternoon));
-      if (d.overnight) row(L.overnight, safe(d.overnight));
-      y += 2;
+    for (const day of pkg.itinerary) itineraryDay(day);
+  }
+
+  // Supporting information gets its own clean section after the itinerary.
+  if (pkg.included?.length || pkg.excluded?.length || pkg.packingTips?.length) {
+    newPage();
+    if (pkg.included?.length) {
+      section(L.included);
+      bullets(pkg.included, 2);
+    }
+    if (pkg.excluded?.length) {
+      section(L.excluded);
+      bullets(pkg.excluded, 2);
+    }
+    if (pkg.packingTips?.length) {
+      section(L.packing);
+      bullets(pkg.packingTips, 2);
     }
   }
 
-  if (pkg.included?.length) { section(L.included); bullets(pkg.included); }
-  if (pkg.excluded?.length) { section(L.excluded); bullets(pkg.excluded); }
-  if (pkg.packingTips?.length) { section(L.packing); bullets(pkg.packingTips); }
+  // Pricing is deliberately not inferred on a customer booking request. If costs
+  // are present, they can be rendered as a controlled quote; otherwise show a clear
+  // pricing-status panel rather than an empty "cost breakdown" table.
+  const values = [
+    costs.accommodation_cost, costs.park_fees, costs.guide_cost,
+    costs.transport_cost, costs.meals_cost, costs.other_costs,
+  ].map((v) => Number(v || 0));
+  const hasAnyCost = values.some((v) => v !== 0) || Number(costs.discount || 0) !== 0 || Number(costs.tax || 0) !== 0 || Number(costs.total_cost || 0) !== 0;
 
-  const vals = [costs.accommodation_cost, costs.park_fees, costs.guide_cost, costs.transport_cost, costs.meals_cost, costs.other_costs].map(v => Number(v || 0));
-  const hasAnyCost = vals.some(v => v !== 0) || Number(costs.discount || 0) !== 0 || Number(costs.tax || 0) !== 0 || Number(costs.total_cost || 0) !== 0;
+  if (hasAnyCost || !pkg.itinerary?.length) newPage();
   section(L.costs);
+
   if (!hasAnyCost) {
-    doc.setFont(font, 'normal'); doc.setFontSize(8); doc.setTextColor(...LIGHT); doc.text(L.quoteOnly, M + 2, y); y += 8;
+    doc.setFillColor(...BRAND_OFFWHITE);
+    doc.roundedRect(M, y, contentW, 28, 2, 2, 'F');
+    setFont(10, BRAND_TEAL, 'bold');
+    doc.text(L.quoteOnly, M + 6, y + 9);
+    setFont(7.9, BRAND_TEXT);
+    const noteLines = wrap(L.quoteNote, contentW - 12, 7.9);
+    doc.text(noteLines, M + 6, y + 16);
+    y += 34;
   } else {
-    const costRows: Array<[string, number | null | undefined]> = [[ 'Accommodation', costs.accommodation_cost ], ['Park / conservation fees', costs.park_fees], ['Guide & 4x4 vehicle', costs.guide_cost], ['Transport / transfers', costs.transport_cost], ['Meals / full board', costs.meals_cost], ['Other costs', costs.other_costs]];
+    const rows: Array<[string, number | null | undefined]> = [
+      ['Accommodation', costs.accommodation_cost],
+      ['Park / conservation fees', costs.park_fees],
+      ['Guide & 4x4 vehicle', costs.guide_cost],
+      ['Transport / transfers', costs.transport_cost],
+      ['Meals / full board', costs.meals_cost],
+      ['Other costs', costs.other_costs],
+    ];
+    setFont(7.4, BRAND_LIGHT, 'bold');
+    doc.text('DESCRIPTION', M + 4, y);
+    doc.text('AMOUNT', W - M - 4, y, { align: 'right' });
+    y += 5;
     let subtotal = 0;
-    for (const [label, value] of costRows) {
-      const n = Number(value || 0); if (!n) continue; subtotal += n; ensure(6); doc.setFont(font, 'normal'); doc.setFontSize(8); doc.setTextColor(...TEXT); doc.text(label, M + 2, y); doc.text(money(n, currency), W - M - 2, y, { align: 'right' }); y += 5;
+    for (const [label, value] of rows) {
+      const n = Number(value || 0);
+      if (!n) continue;
+      subtotal += n;
+      ensure(6);
+      setFont(8, BRAND_TEXT);
+      doc.text(label, M + 4, y);
+      doc.text(money(n, currency), W - M - 4, y, { align: 'right' });
+      y += 5.5;
     }
-    const providedSubtotal = vals.reduce((a, b) => a + b, 0);
-    subtotal = providedSubtotal;
-    ensure(8); doc.setDrawColor(...BRAND_TEAL); doc.line(M + 2, y, W - M - 2, y); y += 5;
-    doc.setFontSize(8); doc.setTextColor(...TEXT); doc.text(L.subtotal, M + 2, y); doc.text(money(subtotal, currency), W - M - 2, y, { align: 'right' }); y += 5;
+    subtotal = values.reduce((a, b) => a + b, 0);
+    doc.setDrawColor(...BRAND_TEAL);
+    doc.line(M + 4, y, W - M - 4, y);
+    y += 5;
+    setFont(8, BRAND_TEXT);
+    doc.text('Subtotal', M + 4, y);
+    doc.text(money(subtotal, currency), W - M - 4, y, { align: 'right' });
+    y += 5.5;
     const discount = Number(costs.discount || 0);
-    if (discount) { doc.setTextColor(...BRAND_TEAL); doc.text(L.discount, M + 2, y); doc.text(`-${money(discount, currency)}`, W - M - 2, y, { align: 'right' }); y += 5; }
     const tax = Number(costs.tax || 0);
-    if (tax) { doc.setTextColor(...TEXT); doc.text(L.tax, M + 2, y); doc.text(money(tax, currency), W - M - 2, y, { align: 'right' }); y += 5; }
+    if (discount) {
+      doc.text('Discount', M + 4, y);
+      doc.text(`-${money(discount, currency)}`, W - M - 4, y, { align: 'right' });
+      y += 5.5;
+    }
+    if (tax) {
+      doc.text('Tax / VAT', M + 4, y);
+      doc.text(money(tax, currency), W - M - 4, y, { align: 'right' });
+      y += 5.5;
+    }
     const calculated = subtotal - discount + tax;
-    const total = Number.isFinite(Number(costs.total_cost)) && Number(costs.total_cost) > 0 ? Number(costs.total_cost) : calculated;
-    ensure(11); doc.setFillColor(...BRAND_ORANGE); doc.roundedRect(M, y - 2, W - 2 * M, 9, 1.5, 1.5, 'F'); doc.setFontSize(10.5); doc.setTextColor(255, 255, 255); doc.text(L.total, M + 2, y + 4); doc.text(money(total, currency), W - M - 2, y + 4, { align: 'right' }); y += 14;
+    const total = Number(costs.total_cost) > 0 ? Number(costs.total_cost) : calculated;
+    ensure(14);
+    doc.setFillColor(...BRAND_ORANGE);
+    doc.roundedRect(M, y - 1, contentW, 11, 1.5, 1.5, 'F');
+    setFont(10.5, [255, 255, 255], 'bold');
+    doc.text('TOTAL', M + 4, y + 6.2);
+    doc.text(money(total, currency), W - M - 4, y + 6.2, { align: 'right' });
+    y += 17;
   }
 
-  ensure(25); doc.setFont(font, 'normal'); doc.setFontSize(7.2); doc.setTextColor(...LIGHT);
-  const note = doc.splitTextToSize(L.footer, W - 2 * M - 4); doc.text(note, M + 2, y); y += note.length * 3.7 + 4;
-  if (input.message) { doc.setFontSize(7.2); doc.setTextColor(...TEXT); doc.text(`${L.requests}: ${safe(input.message)}`, M + 2, y); }
+  if (hasAnyCost) {
+    ensure(24);
+    setFont(7.8, BRAND_LIGHT);
+    const noteLines = wrap(L.quoteNote, contentW - 8, 7.8);
+    doc.text(noteLines, M + 4, y);
+    y += noteLines.length * 4 + 3;
+  }
 
-  addFooter();
+  footer();
   if (locale === 'ar' && typeof (doc as any).setR2L === 'function') (doc as any).setR2L(true);
+
   const dataUrl = doc.output('dataurlstring') as string;
   const bytes = new Uint8Array(doc.output('arraybuffer') as ArrayBuffer);
-  let binary = ''; for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 1) binary += String.fromCharCode(bytes[i]);
   return { dataUrl, base64: btoa(binary) };
 }
