@@ -6,7 +6,6 @@ import { rowToSafari } from '@/lib/program-utils';
 import { getManagedPricingConfig } from '@/lib/safari-pricing-server';
 import { buildManagedSafariPlan, type BookingCurrency } from '@/lib/managed-safari-pricing';
 import { generateCustomerInvoicePDF, type CustomerInvoicePackage } from '@/lib/customer-invoice-generator';
-import type { Booking } from '@/lib/supabase';
 
 const RESEND_API = 'https://api.resend.com/emails';
 
@@ -67,9 +66,6 @@ async function resolvePackage(safariName: string, locale: ReturnType<typeof norm
   const catalogueMatch = safariCatalogue.find((s) => s.name.trim().toLowerCase() === normalizedName);
   const slug = catalogueMatch?.id;
 
-  // Admin-managed content is authoritative for customer documents. Try the
-  // customer's selected locale first, then only use the canonical English
-  // row when the requested locale itself is English.
   try {
     const admin = getSupabaseAdmin();
     if (slug) {
@@ -81,13 +77,6 @@ async function resolvePackage(safariName: string, locale: ReturnType<typeof norm
     if (match) return rowToSafari(match) as unknown as CustomerInvoicePackage;
   } catch (error) {
     console.warn('Could not load admin-managed package content for invoice:', error);
-  }
-
-  if (locale !== 'en') {
-    // Do not silently substitute an English CMS row for a non-English booking.
-    // The catalogue object is used only as a structural fallback for older
-    // packages that have no localized CMS row yet.
-    if (catalogueMatch) return catalogueMatch as unknown as CustomerInvoicePackage;
   }
 
   if (catalogueMatch) return catalogueMatch as unknown as CustomerInvoicePackage;
@@ -131,10 +120,9 @@ export async function POST(req: NextRequest) {
 
     const pkg = await resolvePackage(safariName, locale);
     const packageDays = Math.max(1, Number(pkg.days) || 1);
-    const packageNights = Math.max(0, Number(pkg.nights ?? packageDays - 1));
     const departureDate = String(body.departureDate || '').trim() || addDays(arrivalDate, packageDays);
 
-    let costs: any = {
+    let costs = {
       accommodation_cost: Number(body.accommodation_cost) || 0,
       park_fees: Number(body.park_fees) || 0,
       guide_cost: Number(body.guide_cost) || 0,
@@ -147,9 +135,6 @@ export async function POST(req: NextRequest) {
       currency: requestedCurrency,
     };
 
-    // Normal package bookings historically sent only the package name. Build
-    // the same server-authoritative itemized estimate used by Safari Trip
-    // Builder so the invoice never has to invent a flat total on the client.
     const destinationSlugs = destinationSlugsFromParks(pkg.parks || []);
     const catalogueMatch = safariCatalogue.find((s) => s.name.trim().toLowerCase() === safariName.toLowerCase());
     const catalogueSlugs = catalogueMatch?.tabs?.filter((s: string) => ['tsavo', 'amboseli', 'mara', 'taita'].includes(s)) || [];
@@ -211,11 +196,9 @@ export async function POST(req: NextRequest) {
       costs,
     };
 
-    const { base64, dataUrl } = await generateCustomerInvoicePDF(invoiceInput);
+    const { base64 } = await generateCustomerInvoicePDF(invoiceInput);
     const invoiceFilename = `Bahari-Asili-Provisional-Invoice-${bookingRef}.pdf`;
 
-    // Persist the exact package itinerary and itemized values onto the booking
-    // so the admin dashboard can reproduce the same document later.
     try {
       const admin = getSupabaseAdmin();
       const bookingUpdate: Record<string, unknown> = {
@@ -250,22 +233,22 @@ export async function POST(req: NextRequest) {
       const safeTour = escapeHtml(safariName);
       const html = `<div style="font-family:Arial,sans-serif;max-width:680px;margin:0 auto;color:#1f2937"><div style="background:#0e7490;padding:24px;border-radius:14px 14px 0 0;color:#fff"><h1 style="margin:0;font-size:22px">Your Provisional Invoice</h1><p style="margin:6px 0 0;color:#dff7fb">Bahari Asili Safaris · ${escapeHtml(bookingRef)}</p></div><div style="padding:24px;background:#fff;border:1px solid #e2e8f0"><p style="margin-top:0">Dear ${fullName},</p><p>Thank you for your booking request for <strong>${safeTour}</strong>.</p><p>Your attached PDF contains your traveller information, selected package, package description, parks and accommodation, complete day-by-day itinerary, highlights, inclusions, exclusions, packing notes and the available provisional cost breakdown.</p><p style="margin-bottom:0">Final availability, accommodation, routing and pricing are confirmed by Bahari Asili Safaris before payment.</p></div><div style="background:#1f2937;padding:18px;border-radius:0 0 14px 14px;text-align:center;color:#cbd5e1;font-size:12px">WhatsApp: +254 101 923 355 · sheddymae02@gmail.com</div></div>`;
       invoiceEmailSent = await sendEmail(emailApiKey, emailSender, email, `Provisional Invoice – ${bookingRef}`, html, { filename: invoiceFilename, content: base64 });
-    } else {
-      console.warn('EMAIL_API_KEY / RESEND_API_KEY is not configured. Invoice generated for download but not emailed.');
     }
 
-    return NextResponse.json({
-      success: true,
-      invoiceGenerated: true,
-      invoiceEmailSent,
-      invoiceFilename,
-      invoiceBase64: base64,
-      invoiceDataUrl: dataUrl,
-      package: pkg,
-      costs,
+    const pdfBytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
+    return new NextResponse(pdfBytes, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${invoiceFilename}"`,
+        'Content-Length': String(pdfBytes.byteLength),
+        'Cache-Control': 'no-store, max-age=0',
+        'X-Invoice-Generated': 'true',
+        'X-Invoice-Email-Sent': String(invoiceEmailSent),
+      },
     });
   } catch (error) {
     console.error('Customer invoice generation failed:', error);
-    return NextResponse.json({ success: false, error: 'The booking was saved, but the provisional invoice could not be generated.' }, { status: 500 });
+    return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'The booking was saved, but the provisional invoice could not be generated.' }, { status: 500 });
   }
 }
