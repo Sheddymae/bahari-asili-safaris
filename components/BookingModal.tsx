@@ -65,7 +65,6 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
   const [kidsAges, setKidsAges] = useState<(number | '')[]>([]);
   const [kidsAgesError, setKidsAgesError] = useState(false);
   const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', email: '', whatsapp: '', nationality: '', adults: '2', children: '0', arrivalDate: '', safari: selectedTour || '', message: '' });
-
   const childCount = Math.min(Math.max(parseInt(form.children) || 0, 0), 10);
   const allSafariNames = useMemo(() => safaris.map(s => ({ name: s.name, days: s.days })), []);
 
@@ -108,7 +107,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
       if (childCount > 0 && kidsAges.some(age => age === '')) { setKidsAgesError(true); return false; }
     }
     if (target === 2 && (!form.arrivalDate || !form.safari)) return false;
-    if (target === 3 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return false;
+    if (target === 3 && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) || !form.nationality.trim())) return false;
     return true;
   };
 
@@ -118,7 +117,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateStep(3)) { setErrorDetail('Please enter a valid email address.'); return; }
+    if (!validateStep(3)) { setErrorDetail(!form.nationality.trim() ? 'Please enter your nationality.' : 'Please enter a valid email address.'); return; }
     setStatus('loading'); setErrorDetail('');
     try {
       const resolvedAges = kidsAges.filter((a): a is number => a !== '');
@@ -186,7 +185,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
           {step === 3 && <div className="space-y-4">
             <div><label className="block text-sm font-medium mb-1.5">{t.booking.email} *</label><input required autoFocus type="email" name="email" value={form.email} onChange={handleChange} placeholder={t.booking.emailPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
             <div><label className="block text-sm font-medium mb-1.5">{t.booking.whatsapp}</label><input type="tel" name="whatsapp" value={form.whatsapp} onChange={handleChange} placeholder={t.booking.whatsappPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
-            <div><label className="block text-sm font-medium mb-1.5">{t.booking.nationality}</label><input type="text" name="nationality" value={form.nationality} onChange={handleChange} placeholder={t.booking.nationalityPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
+            <div><label className="block text-sm font-medium mb-1.5">{t.booking.nationality} *</label><input required type="text" name="nationality" value={form.nationality} onChange={handleChange} placeholder={t.booking.nationalityPlaceholder} className="w-full border border-border rounded-xl px-4 py-3 bg-muted" /></div>
             <button type="button" onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMsg()}`, '_blank')} className="w-full flex items-center justify-center gap-2 border border-[#25D366] text-[#168f45] rounded-xl py-3 font-semibold"><MessageCircle className="w-4 h-4" />{copy.whatsapp}</button>
           </div>}
 
