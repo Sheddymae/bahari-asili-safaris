@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const RESEND_API = 'https://api.resend.com/emails';
-const OWNER_EMAIL = process.env.OWNER_NOTIFICATION_EMAIL || 'sheddymae02@gmail.com';
-const SENDER = process.env.RESEND_FROM_EMAIL || 'Bahari Asili Safaris <onboarding@resend.dev>';
+const OWNER_EMAIL = process.env.OWNER_NOTIFICATION_EMAIL || 'bahariasilisafaris@gmail.com';
+const SENDER = process.env.RESEND_FROM_EMAIL || 'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
 
 function escapeHtml(value: string) {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');

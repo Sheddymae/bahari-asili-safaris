@@ -28,7 +28,7 @@ export function buildConfirmationEmailHtml(booking: Booking): string {
       <table style="width:100%;border-collapse:collapse;font-size:14px"><tr><td style="padding:10px 0;color:#64748b;font-weight:600;width:40%">${c.package}</td><td style="padding:10px 0;font-weight:600;color:#f97316">${booking.safari_name}</td></tr><tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.travel}</td><td style="padding:10px 0">${travelDate}</td></tr><tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.guests}</td><td style="padding:10px 0">${guests}</td></tr>${booking.hotel_name?`<tr><td style="padding:10px 0;color:#64748b;font-weight:600">Hotel</td><td style="padding:10px 0">${booking.hotel_name}</td></tr>`:''}${booking.pickup_location?`<tr><td style="padding:10px 0;color:#64748b;font-weight:600">Pickup</td><td style="padding:10px 0">${booking.pickup_location}</td></tr>`:''}<tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.amount}</td><td style="padding:10px 0;font-weight:700;color:#0e7490">${amount}</td></tr><tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.payment}</td><td style="padding:10px 0">${paymentStatus}</td></tr></table>
       <div style="background:#f1f5f9;border-radius:8px;padding:16px;margin-top:24px"><p style="margin:0;font-size:13.5px;color:#0e7490">${c.attachments}</p></div>
       <div style="margin-top:24px;padding-top:20px;border-top:1px dashed #e2e8f0"><p style="font-size:13px;color:#64748b;margin:0 0 4px"><strong style="color:#1f2937">${c.emergency}:</strong> +254 101 923 355 (WhatsApp)</p><p style="font-size:13px;color:#64748b;margin:0"><strong style="color:#1f2937">${c.terms}:</strong> ${c.termsText}</p></div>
-    </div><div style="background:#1f2937;padding:24px;border-radius:0 0 12px 12px;text-align:center"><p style="color:#e2e8f0;font-size:13px;margin:0 0 4px;font-weight:600">Bahari Asili Safaris · Watamu, Kenya</p><p style="color:#64748b;font-size:12px;margin:0">sheddymae02@gmail.com · +254 101 923 355</p></div></div>`;
+    </div><div style="background:#1f2937;padding:24px;border-radius:0 0 12px 12px;text-align:center"><p style="color:#e2e8f0;font-size:13px;margin:0 0 4px;font-weight:600">Bahari Asili Safaris · Watamu, Kenya</p><p style="color:#64748b;font-size:12px;margin:0">bahariasilisafaris@gmail.com · +254 101 923 355</p></div></div>`;
 }
 
 /** Internal admin notification, sent for every new submission across all booking types. */
@@ -120,7 +120,7 @@ function emailShell(bodyHtml: string, headerLabel: string, headerColor: string =
       </div>
       <div style="background: #1f2937; padding: 24px; border-radius: 0 0 12px 12px; text-align: center;">
         <p style="color: #e2e8f0; font-size: 13px; margin: 0 0 4px; font-weight: 600;">Bahari Asili Safaris · Watamu, Kenya</p>
-        <p style="color: #64748b; font-size: 12px; margin: 0;">sheddymae02@gmail.com · +254 101 923 355 · bahari-asili-safaris.vercel.app</p>
+        <p style="color: #64748b; font-size: 12px; margin: 0;">bahariasilisafaris@gmail.com · +254 101 923 355 · bahari-asili-safaris.vercel.app</p>
       </div>
     </div>
   `;

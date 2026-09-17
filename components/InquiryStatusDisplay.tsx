@@ -107,7 +107,7 @@ export default function InquiryStatusDisplay({
               {is.whatsAppBtn}
             </a>
             <button
-              onClick={() => window.location.href = `mailto:sheddymae02@gmail.com?subject=Re: Inquiry ${bookingRef}`}
+              onClick={() => window.location.href = `mailto:bahariasilisafaris@gmail.com?subject=Re: Inquiry ${bookingRef}`}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary transition-colors font-inter text-sm font-medium"
             >
               <Mail className="w-4 h-4" />

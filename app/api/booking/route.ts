@@ -231,7 +231,7 @@ function buildBookingEmailHtml(d: {
 
       <div style="background: #1f2937; padding: 20px; border-radius: 0 0 12px 12px; text-align: center;">
         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-          WhatsApp: +254101923355 · sheddymae02@gmail.com
+          WhatsApp: +254101923355 · bahariasilisafaris@gmail.com
         </p>
 
         <p style="color: #64748b; font-size: 11px; margin: 8px 0 0;">
@@ -343,7 +343,7 @@ function buildReviewEmailHtml(d: {
       <div style="background: #1f2937; padding: 20px; border-radius: 0 0 12px 12px; text-align: center;">
 
         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-          WhatsApp: +254101923355 · sheddymae02@gmail.com
+          WhatsApp: +254101923355 · bahariasilisafaris@gmail.com
         </p>
 
         <p style="color: #64748b; font-size: 11px; margin: 8px 0 0;">
@@ -802,12 +802,12 @@ export async function POST(req: NextRequest) {
 
     const emailSender =
       process.env.EMAIL_SENDER ||
-      'Bahari Asili Safaris <onboarding@resend.dev>';
+      'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
 
     const ownerEmail =
       process.env.EMAIL_TO;
 
-    // onboarding@resend.dev is Resend's SANDBOX sender — until a real
+    // bahariasilisafaris@gmail.com is Resend's SANDBOX sender — until a real
     // domain is verified in the Resend dashboard, it can only deliver to
     // the email address the Resend account itself was signed up with.
     // Every other recipient (every real customer, and EMAIL_TO unless it
@@ -815,9 +815,9 @@ export async function POST(req: NextRequest) {
     // by Resend's API. sendEmail() below already logs the real Resend
     // error, but this makes the single most common root cause of "nobody
     // got any email" impossible to miss in the logs.
-    if (emailSender.includes('onboarding@resend.dev')) {
+    if (emailSender.includes('bahariasilisafaris@gmail.com')) {
       console.warn(
-        'EMAIL_SENDER is still Resend\'s sandbox address (onboarding@resend.dev). ' +
+        'EMAIL_SENDER is still Resend\'s sandbox address (bahariasilisafaris@gmail.com). ' +
         'Resend will silently refuse to deliver to anyone except the email your Resend account was signed up with. ' +
         'Verify a domain at https://resend.com/domains, then set EMAIL_SENDER to an address on that domain.',
       );

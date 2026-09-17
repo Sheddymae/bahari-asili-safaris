@@ -52,7 +52,7 @@ export async function generateDetailedItineraryPDF(booking: Booking, requestedLo
   doc.setTextColor(14, 116, 144); doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
   doc.text(L.title, W - M, 13, { align: 'right', maxWidth: 110 });
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(100, 116, 139);
-  doc.text('Watamu, Kenya · +254 101 923 355 · sheddymae02@gmail.com', W - M, 19, { align: 'right', maxWidth: 110 });
+  doc.text('Watamu, Kenya · +254 101 923 355 · bahariasilisafaris@gmail.com', W - M, 19, { align: 'right', maxWidth: 110 });
   doc.setDrawColor(14, 116, 144); doc.setLineWidth(0.5); doc.line(0, 34, W, 34);
   y = 44;
 

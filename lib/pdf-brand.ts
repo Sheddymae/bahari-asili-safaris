@@ -24,7 +24,7 @@ export const COMPANY = {
   name: 'BAHARI ASILI SAFARIS',
   address: 'Watamu, Kenya',
   phone: '+254 101 923 355',
-  email: 'sheddymae02@gmail.com',
+  email: 'bahariasilisafaris@gmail.com',
   website: 'bahariasili.com',
   founded: 'Founded by Shadrack Safari',
 };

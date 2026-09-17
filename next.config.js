@@ -8,7 +8,7 @@ const nextConfig = {
   // recipient deterministic so a missing Vercel EMAIL_TO variable cannot
   // silently disable owner notifications.
   env: {
-    EMAIL_TO: 'sheddymae02@gmail.com',
+    EMAIL_TO: 'bahariasilisafaris@gmail.com',
   },
 };
 module.exports = nextConfig;

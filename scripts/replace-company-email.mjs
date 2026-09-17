@@ -4,9 +4,9 @@ import path from 'node:path';
 
 const OFFICIAL = 'bahariasilisafaris@gmail.com';
 const replacements = new Map([
-  ['info@bahariasili.com', OFFICIAL],
-  ['sheddymae02@gmail.com', OFFICIAL],
-  ['onboarding@resend.dev', OFFICIAL],
+  ['bahariasilisafaris@gmail.com', OFFICIAL],
+  ['bahariasilisafaris@gmail.com', OFFICIAL],
+  ['bahariasilisafaris@gmail.com', OFFICIAL],
 ]);
 
 const binaryExtensions = new Set([

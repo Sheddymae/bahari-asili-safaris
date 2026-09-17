@@ -100,7 +100,7 @@ export function buildQuotationEmailHtml(q: Quotation & { createdDate: string }):
       </div>
 
       <div style="background: #1f2937; padding: 24px; text-align: center; border-radius: 0 0 12px 12px;">
-        <p style="color: #64748b; font-size: 13px; margin: 0;">WhatsApp: +254101923355 | Email: sheddymae02@gmail.com</p>
+        <p style="color: #64748b; font-size: 13px; margin: 0;">WhatsApp: +254101923355 | Email: bahariasilisafaris@gmail.com</p>
         <p style="color: #64748b; font-size: 11px; margin: 12px 0 0;">© 2026 Bahari Asili Safaris, Watamu. All rights reserved.</p>
       </div>
     </div>
@@ -158,8 +158,8 @@ export async function sendQuotationEmail(quotation: Quotation, createdDate: stri
     console.warn('sendQuotationEmail: EMAIL_API_KEY is not configured — quotation email skipped for', quotation.quotation_ref);
     return false;
   }
-  const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <onboarding@resend.dev>';
-  if (sender.includes('onboarding@resend.dev')) {
+  const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
+  if (sender.includes('bahariasilisafaris@gmail.com')) {
     console.warn('sendQuotationEmail: EMAIL_SENDER is still Resend\'s sandbox address — it can only deliver to the Resend account\'s own signup email. Verify a domain at https://resend.com/domains and set EMAIL_SENDER to an address on it.');
   }
   const html = buildQuotationEmailHtml({ ...quotation, createdDate });
@@ -195,8 +195,8 @@ export async function sendAdminTripRequestEmail(quotation: Quotation, createdDat
       console.warn('sendAdminTripRequestEmail: EMAIL_TO is not configured — admin notification skipped for', quotation.quotation_ref);
       return false;
     }
-    const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <onboarding@resend.dev>';
-    if (sender.includes('onboarding@resend.dev')) {
+    const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
+    if (sender.includes('bahariasilisafaris@gmail.com')) {
       console.warn('sendAdminTripRequestEmail: EMAIL_SENDER is still Resend\'s sandbox address — it can only deliver to the Resend account\'s own signup email. Verify a domain at https://resend.com/domains and set EMAIL_SENDER to an address on it.');
     }
     const html = buildQuotationEmailHtml({ ...quotation, createdDate });

@@ -80,14 +80,14 @@ Deno.serve(async (req: Request) => {
           </div>
         </div>
         <div style="background: #1f2937; padding: 20px; border-radius: 0 0 12px 12px; text-align: center;">
-          <p style="color: #64748b; font-size: 12px; margin: 0;">WhatsApp: +254101923355 · sheddymae02@gmail.com</p>
+          <p style="color: #64748b; font-size: 12px; margin: 0;">WhatsApp: +254101923355 · bahariasilisafaris@gmail.com</p>
           <p style="color: #64748b; font-size: 11px; margin: 8px 0 0;">© 2026 Bahari Asili Safaris, Watamu. Founded by Shadrack Safari.</p>
         </div>
       </div>
     `;
 
     const recipients = [
-      { email: "sheddymae02@gmail.com", name: "Bahari Asili Safaris" },
+      { email: "bahariasilisafaris@gmail.com", name: "Bahari Asili Safaris" },
       { email, name: fullName },
     ];
 
@@ -105,7 +105,7 @@ Deno.serve(async (req: Request) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: "Bahari Asili Safaris <onboarding@resend.dev>",
+          from: "Bahari Asili Safaris <bahariasilisafaris@gmail.com>",
           to: [recipient.email],
           subject,
           html: htmlBody,
