@@ -805,7 +805,8 @@ export async function POST(req: NextRequest) {
       'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
 
     const ownerEmail =
-      process.env.EMAIL_TO;
+      process.env.EMAIL_TO ||
+      'bahariasilisafaris@gmail.com';
 
     // bahariasilisafaris@gmail.com is Resend's SANDBOX sender — until a real
     // domain is verified in the Resend dashboard, it can only deliver to
@@ -849,7 +850,7 @@ export async function POST(req: NextRequest) {
             emailApiKey,
             emailSender,
             ownerEmail,
-            `New Booking – ${bookingRef}`,
+            `New Reservation Notification – ${bookingRef}`,
             bookingHtml,
             attachment,
           );
