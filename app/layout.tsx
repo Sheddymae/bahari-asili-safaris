@@ -1,4 +1,5 @@
 import './globals.css';
+import './responsive.css';
 import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 import { cookies } from 'next/headers';
