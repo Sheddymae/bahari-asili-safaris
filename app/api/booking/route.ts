@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { normalizeLocale } from '@/lib/locale-content';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
+import { generateCustomerInvoicePDF } from '@/lib/customer-invoice-generator';
+import { resolveBookingPackage, addBookingDays } from '@/lib/booking-document';
 import type { Booking } from '@/lib/supabase';
 import { safaris, excursions } from '@/lib/tours-data';
 
@@ -704,6 +706,65 @@ export async function POST(req: NextRequest) {
     }
 
     // ----------------------------------------------
+    // AUTO-GENERATE CUSTOMER BOOKING INVOICE
+    // ----------------------------------------------
+    // Generate the customer booking document on the server as part of the
+    // booking transaction. This prevents invoice creation from depending on
+    // a second browser request.
+    let invoiceGenerated = false;
+    let invoiceEmailSent = false;
+    let invoiceBase64 = '';
+    let invoiceFilename = '';
+
+    try {
+      const packageDetails = await resolveBookingPackage(safariName, locale);
+      const packageDays = Math.max(1, Number(packageDetails.days) || 1);
+      const departureDate = addBookingDays(arrivalDate, packageDays);
+
+      const customerInvoice = {
+        booking_ref: bookingRef,
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        whatsapp,
+        nationality: nationality || null,
+        adults,
+        children,
+        kids_ages: children > 0 ? kidsAges : null,
+        arrival_date: arrivalDate,
+        departure_date: departureDate,
+        safari_name: safariName,
+        message,
+        reservation_status: 'pending',
+        locale,
+        package: packageDetails,
+        costs: null,
+      };
+
+      const generated = await generateCustomerInvoicePDF(customerInvoice);
+      invoiceBase64 = generated.base64;
+      invoiceFilename = `Bahari-Asili-Booking-Invoice-${bookingRef}.pdf`;
+      invoiceGenerated = Boolean(invoiceBase64);
+
+      const { error: invoiceUpdateError } = await supabase
+        .from('bookings')
+        .update({
+          itinerary: packageDetails.itinerary || [],
+          invoice_generated: invoiceGenerated,
+          invoice_status: invoiceGenerated ? 'sent' : 'draft',
+          invoice_number: bookingRef,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('booking_ref', bookingRef);
+
+      if (invoiceUpdateError) {
+        console.error('Booking invoice metadata update failed:', invoiceUpdateError.message);
+      }
+    } catch (invoiceError) {
+      console.error('Automatic booking invoice generation failed:', invoiceError);
+    }
+
+    // ----------------------------------------------
     // PREPARE EMAIL DATA
     // ----------------------------------------------
 
@@ -808,22 +869,6 @@ export async function POST(req: NextRequest) {
       process.env.EMAIL_TO ||
       'bahariasilisafaris@gmail.com';
 
-    // bahariasilisafaris@gmail.com is Resend's SANDBOX sender — until a real
-    // domain is verified in the Resend dashboard, it can only deliver to
-    // the email address the Resend account itself was signed up with.
-    // Every other recipient (every real customer, and EMAIL_TO unless it
-    // happens to match that exact signup address) gets silently rejected
-    // by Resend's API. sendEmail() below already logs the real Resend
-    // error, but this makes the single most common root cause of "nobody
-    // got any email" impossible to miss in the logs.
-    if (emailSender.includes('bahariasilisafaris@gmail.com')) {
-      console.warn(
-        'EMAIL_SENDER is still Resend\'s sandbox address (bahariasilisafaris@gmail.com). ' +
-        'Resend will silently refuse to deliver to anyone except the email your Resend account was signed up with. ' +
-        'Verify a domain at https://resend.com/domains, then set EMAIL_SENDER to an address on that domain.',
-      );
-    }
-
     let ownerEmailSent = false;
     let customerEmailSent = false;
 
@@ -843,6 +888,14 @@ export async function POST(req: NextRequest) {
         'EMAIL_API_KEY / RESEND_API_KEY is not configured. Booking saved without email notification.',
       );
     } else {
+      const emailAttachments = [...attachment];
+      if (invoiceGenerated && invoiceBase64 && invoiceFilename) {
+        emailAttachments.push({
+          filename: invoiceFilename,
+          content: invoiceBase64,
+        });
+      }
+
       // Owner notification
       if (ownerEmail) {
         ownerEmailSent =
@@ -852,7 +905,7 @@ export async function POST(req: NextRequest) {
             ownerEmail,
             `New Reservation Notification – ${bookingRef}`,
             bookingHtml,
-            attachment,
+            emailAttachments,
           );
 
         if (!ownerEmailSent) {
@@ -872,15 +925,17 @@ export async function POST(req: NextRequest) {
           emailApiKey,
           emailSender,
           email,
-          `Your Bahari Asili Voucher – ${bookingRef}`,
+          `Your Bahari Asili Booking Documents – ${bookingRef}`,
           bookingHtml,
-          attachment,
+          emailAttachments,
         );
 
       if (!customerEmailSent) {
         console.error(
-          `Customer voucher email FAILED for booking ${bookingRef}, recipient "${email}" — see "Resend email error" above for the exact reason.`,
+          `Customer booking documents email FAILED for booking ${bookingRef}, recipient "${email}" — see "Resend email error" above for the exact reason.`,
         );
+      } else if (invoiceGenerated) {
+        invoiceEmailSent = true;
       }
 
       // Review request
@@ -912,6 +967,8 @@ export async function POST(req: NextRequest) {
         email,
         customerEmailSent,
         ownerEmailSent,
+        invoiceGenerated,
+        invoiceEmailSent,
       },
     );
 
