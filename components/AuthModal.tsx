@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, Mail, Lock, User, Eye, EyeOff, AlertCircle, Loader2, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -130,6 +131,7 @@ const otpCopy = {
 
 export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModalProps) {
   const { t, locale } = useLanguage();
+  const router = useRouter();
   const copy = otpCopy[locale as keyof typeof otpCopy] || otpCopy.en;
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [email, setEmail] = useState('');
@@ -198,7 +200,8 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: A
         setTimeout(() => {
           reset();
           onClose();
-        }, 900);
+          router.push('/account');
+        }, 500);
         return;
       }
 
@@ -221,7 +224,8 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: A
           setTimeout(() => {
             reset();
             onClose();
-          }, 900);
+            router.push('/account');
+          }, 500);
         } else {
           beginVerification();
         }
@@ -252,6 +256,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: A
 
       reset();
       onClose();
+      router.push('/account');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : t.common.error;
       if (msg.includes('already registered') || msg.includes('already exists')) {
