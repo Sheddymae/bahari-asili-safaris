@@ -149,6 +149,7 @@ export async function POST(req: NextRequest) {
     destination: plan.destinations.map((d) => d.name).join(', '),
     activities: input.interests,
     accommodation_type: input.accommodationType,
+    package_description: `Custom safari designed by the client. Start: ${input.startLocation}. End: ${input.endLocation}. Destinations: ${plan.destinations.map((d) => d.name).join(', ')}. Accommodation: ${input.accommodationType}. Traveller ages: ${input.childrenAges.length ? input.childrenAges.join(', ') : 'None provided'}.`,
     accommodation_cost: plan.pricing.accommodation_cost,
     park_fees: plan.pricing.park_fees,
     guide_cost: plan.pricing.guide_cost,
@@ -167,7 +168,8 @@ export async function POST(req: NextRequest) {
 
   let quotationPdfBase64: string | undefined;
   try { quotationPdfBase64 = (await generateQuotationPDF(quotation)).base64; } catch (err) { console.error('Safari builder: quotation PDF generation failed:', err); }
-  const emailSent = await sendQuotationEmail(quotation, new Date().toISOString(), quotationPdfBase64);
+  const issuedAt = new Date().toISOString();
+  const emailSent = await sendQuotationEmail(quotation, issuedAt, quotationPdfBase64);
   if (emailSent) await admin.from('safari_trip_requests').update({ email_sent: true }).eq('quotation_ref', quotationRef);
 
   await sendAdminTripRequestEmail(quotation, new Date().toISOString()).catch((err) => { console.error('Admin trip-request email failed:', err); return false; });
@@ -198,6 +200,9 @@ export async function POST(req: NextRequest) {
       tax: plan.pricing.tax,
       currency: plan.pricing.currency,
       itinerary: plan.itinerary,
+      invoice_generated: Boolean(quotationPdfBase64),
+      invoice_status: quotationPdfBase64 ? 'sent' : 'draft',
+      invoice_number: quotationRef,
       message: specialRequests ? `${specialRequests}\n\n(Full itinerary & pricing: safari_trip_requests, ref ${quotationRef})` : `Full itinerary & pricing: safari_trip_requests, ref ${quotationRef}`,
       reservation_status: 'pending',
       payment_status: 'unpaid',
@@ -206,5 +211,15 @@ export async function POST(req: NextRequest) {
     if (mirrorError) console.error('Safari builder: mirroring into bookings failed:', mirrorError.message);
   } catch (err) { console.error('Safari builder: mirroring into bookings threw:', err); }
 
-  return NextResponse.json({ success: true, quotation_ref: quotationRef, emailSent, quotationPdfBase64, ...plan });
+  return NextResponse.json({
+    success: true,
+    quotation_ref: quotationRef,
+    emailSent,
+    invoiceGenerated: Boolean(quotationPdfBase64),
+    invoiceFilename: `Bahari-Asili-Safari-Estimate-Invoice-${quotationRef}.pdf`,
+    invoiceDataUrl: quotationPdfBase64 ? `data:application/pdf;base64,${quotationPdfBase64}` : null,
+    quotationPdfBase64,
+    issuedAt,
+    ...plan,
+  });
 }
