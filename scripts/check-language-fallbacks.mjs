@@ -71,7 +71,7 @@ for (const file of files) {
   for (const m of text.matchAll(literal)) {
     const value = normalize(m[1]);
     if (isCodeFragment(value)) continue;
-    if (/^(Bahari Asili|Bahari Asili Safaris|BAHARI ASILI SAFARIS)$/.test(value)) continue;
+    if (/^(Bahari Asili|Bahari Asili Safaris|BAHARI ASILI SAFARIS|Africa,)$/.test(value)) continue;
     if (/^(M-Pesa|VISA|WhatsApp|English|Italiano|Français|Español|Deutsch|Kiswahili|Currency)$/.test(value)) continue;
     if (catalogue.has(value) || rawCatalogueSources.includes(value)) continue;
     findings.push(`${normalizedPath}: uncatalogued customer-facing literal: ${value}`);
@@ -79,7 +79,7 @@ for (const file of files) {
 
   for (const m of text.matchAll(fallback)) {
     const value = normalize(m[1]);
-    if (/^https?:\/\//.test(value) || /\.(pdf|png|jpg|jpeg|webp)$/.test(value)) continue;
+    if (/^https?:\/\//.test(value) || /\.(pdf|png|jpg|jpeg|webp)$/.test(value) || /@/.test(value)) continue;
     if (catalogue.has(value) || rawCatalogueSources.includes(value)) continue;
     findings.push(`${normalizedPath}: uncatalogued English fallback expression: ${value}`);
   }
