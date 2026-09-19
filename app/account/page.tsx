@@ -85,8 +85,14 @@ export default function AccountPage() {
     const { data, error } = await supabase
       .from('bookings')
       .select('*')
+      .eq('user_id', user?.id)
       .order('created_at', { ascending: false });
-    if (!error && data) setBookings(data as Booking[]);
+    if (!error && data) {
+      setBookings(data as Booking[]);
+    } else if (error) {
+      console.error('Unable to load customer bookings:', error.message);
+      setBookings([]);
+    }
     setBookingsLoading(false);
   };
 
