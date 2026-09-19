@@ -923,6 +923,10 @@ export async function POST(req: NextRequest) {
         customerEmailSent,
         ownerEmailSent,
         bookingType,
+        invoiceGenerated,
+        invoiceEmailSent,
+        invoiceFilename: invoiceGenerated ? invoiceFilename : null,
+        invoiceDataUrl: invoiceGenerated ? `data:application/pdf;base64,${invoiceBase64}` : null,
       },
       { status: 200 },
     );
