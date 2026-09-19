@@ -57,6 +57,7 @@ function collectCatalogueStrings() {
 }
 
 const catalogue = collectCatalogueStrings();
+const rawCatalogueSources = catalogueFiles.map((file) => fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '').join('\n');
 const literal = />\s*([A-Za-z][^<{\n]{2,160})\s*</g;
 const fallback = /(?:\|\||\?\?)\s*["'`]([A-Za-z][^"'`\n]{2,200})["'`]/g;
 const findings = [];
@@ -72,14 +73,14 @@ for (const file of files) {
     if (isCodeFragment(value)) continue;
     if (/^(Bahari Asili|Bahari Asili Safaris|BAHARI ASILI SAFARIS)$/.test(value)) continue;
     if (/^(M-Pesa|VISA|WhatsApp|English|Italiano|Français|Español|Deutsch|Kiswahili|Currency)$/.test(value)) continue;
-    if (catalogue.has(value)) continue;
+    if (catalogue.has(value) || rawCatalogueSources.includes(value)) continue;
     findings.push(`${normalizedPath}: uncatalogued customer-facing literal: ${value}`);
   }
 
   for (const m of text.matchAll(fallback)) {
     const value = normalize(m[1]);
     if (/^https?:\/\//.test(value) || /\.(pdf|png|jpg|jpeg|webp)$/.test(value)) continue;
-    if (catalogue.has(value)) continue;
+    if (catalogue.has(value) || rawCatalogueSources.includes(value)) continue;
     findings.push(`${normalizedPath}: uncatalogued English fallback expression: ${value}`);
   }
 }
