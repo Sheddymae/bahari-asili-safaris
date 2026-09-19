@@ -55,7 +55,84 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
     if (!(invoiceRes.headers.get('content-type') || '').includes('application/pdf')) throw new Error('Invoice service returned an invalid PDF response.');
     const blob = await invoiceRes.blob(); if (!blob.size) throw new Error('Invoice PDF is empty.'); const url = URL.createObjectURL(blob); const anchor = document.createElement('a'); anchor.href = url; anchor.download = invoiceRes.headers.get('content-disposition')?.match(/filename="?([^";]+)"?/i)?.[1] || `Bahari-Asili-Provisional-Invoice-${ref}.pdf`; anchor.style.display = 'none'; document.body.appendChild(anchor); anchor.click(); anchor.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 10000);
   };
-  const submit = async (event: React.FormEvent) => { event.preventDefault(); if (!validateStep(3)) { setErrorDetail(!form.nationality.trim() || !isCountry(form.nationality.trim()) ? 'Please select your nationality from the country list.' : 'Please enter a valid email address.'); return; } setStatus('loading'); setErrorDetail(''); try { const resolvedAges = kidsAges.filter((age): age is number => age !== ''); const response = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ firstName: form.firstName, lastName: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kidsAges: resolvedAges, arrivalDate: form.arrivalDate, safariName: form.safari, message: form.message, userId: user?.id || null, locale }) }); const data = await response.json(); if (!response.ok || !data.success || !data.bookingRef) throw new Error(data.error || 'Booking could not be saved.'); setBookingRef(data.bookingRef); setEmailSent(data.emailSent === true); setShowAuthPrompt(!user); await downloadInvoice(data.bookingRef, data.bookingType); setStatus('success'); } catch (error) { console.error('Booking/invoice error:', error); setErrorDetail(error instanceof Error ? error.message : 'The booking was saved, but the invoice could not be generated.'); setStatus('error'); } };
+  const downloadInvoiceDataUrl = (dataUrl: string, filename: string) => {
+    const anchor = document.createElement('a');
+    anchor.href = dataUrl;
+    anchor.download = filename;
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  };
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!validateStep(3)) {
+      setErrorDetail(!form.nationality.trim() || !isCountry(form.nationality.trim()) ? 'Please select your nationality from the country list.' : 'Please enter a valid email address.');
+      return;
+    }
+
+    setStatus('loading');
+    setErrorDetail('');
+
+    try {
+      const resolvedAges = kidsAges.filter((age): age is number => age !== '');
+      const response = await fetch('/api/booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          whatsapp: form.whatsapp,
+          nationality: form.nationality,
+          adults: parseInt(form.adults, 10),
+          children: childCount,
+          kidsAges: resolvedAges,
+          arrivalDate: form.arrivalDate,
+          safariName: form.safari,
+          message: form.message,
+          userId: user?.id || null,
+          locale,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success || !data.bookingRef) {
+        throw new Error(data.error || 'Booking could not be saved.');
+      }
+
+      setBookingRef(data.bookingRef);
+      setEmailSent(data.emailSent === true);
+      setShowAuthPrompt(!user);
+
+      // The server now generates the booking invoice as part of every
+      // successful booking. Download that exact generated PDF instead of
+      // generating a second copy in the browser.
+      try {
+        if (data.invoiceDataUrl) {
+          downloadInvoiceDataUrl(
+            data.invoiceDataUrl,
+            data.invoiceFilename || `Bahari-Asili-Booking-Invoice-${data.bookingRef}.pdf`,
+          );
+        } else {
+          // Compatibility fallback for older deployments or a temporary
+          // server-side invoice generation failure.
+          await downloadInvoice(data.bookingRef, data.bookingType);
+        }
+      } catch (invoiceError) {
+        // The booking is already saved. Keep the success state and let the
+        // customer use the emailed invoice or request it again from support.
+        console.error('Booking invoice download failed:', invoiceError);
+      }
+
+      setStatus('success');
+    } catch (error) {
+      console.error('Booking submission error:', error);
+      setErrorDetail(error instanceof Error ? error.message : 'Booking could not be saved.');
+      setStatus('error');
+    }
+  };
 
   if (!isOpen) return null;
   const ageLabel = (index: number) => locale === 'it' ? `Età bambino ${index + 1}` : locale === 'fr' ? `Âge enfant ${index + 1}` : locale === 'es' ? `Edad niño ${index + 1}` : locale === 'de' ? `Alter Kind ${index + 1}` : locale === 'ar' ? `عمر الطفل ${index + 1}` : locale === 'zh' ? `儿童 ${index + 1} 年龄` : locale === 'sw' ? `Umri wa mtoto ${index + 1}` : `Child ${index + 1} age`;
