@@ -1,0 +1,75 @@
+/* Bahari Asili Safaris responsive layer
+ * Additive only. Existing component structure, classes and logic remain unchanged.
+ */
+
+/* Phones: 320px to 480px */
+@media only screen and (max-width: 480px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  *, *::before, *::after { box-sizing: border-box; max-width: 100%; }
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+  iframe, embed, object { max-width: 100%; }
+  main, section, header, footer, nav, article, aside { min-width: 0; max-width: 100%; }
+  .container, [class*="max-w-"] { width: 100%; max-width: 100%; min-width: 0; }
+  h1 { font-size: clamp(1.75rem, 8vw, 2.35rem); line-height: 1.08; overflow-wrap: anywhere; }
+  h2 { font-size: clamp(1.45rem, 6.5vw, 2rem); line-height: 1.15; overflow-wrap: anywhere; }
+  h3 { font-size: clamp(1.15rem, 5.2vw, 1.5rem); line-height: 1.2; overflow-wrap: anywhere; }
+  h4, h5, h6 { font-size: clamp(1rem, 4.5vw, 1.25rem); line-height: 1.25; }
+  p, li, label, input, select, textarea { overflow-wrap: anywhere; }
+  button, a[role="button"], input[type="button"], input[type="submit"], input[type="reset"] { min-height: 44px; }
+  button, a { touch-action: manipulation; }
+  table { display: block; width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  pre, code { max-width: 100%; overflow-x: auto; }
+  nav, nav > div, #mobile-menu { width: 100%; max-width: 100%; }
+  .homepage-main [class*="max-w-5xl"] { width: calc(100% - 0.5rem); max-width: calc(100% - 0.5rem); }
+  [class*="grid"] > *, [class*="flex"] > * { min-width: 0; }
+  [role="dialog"], [aria-modal="true"] { max-width: calc(100vw - 1rem); max-height: calc(100dvh - 1rem); }
+  [role="dialog"] form, [aria-modal="true"] form { max-width: 100%; }
+  input, select, textarea { width: 100%; min-width: 0; max-width: 100%; font-size: 16px; }
+  textarea { min-height: 120px; resize: vertical; }
+  footer form { width: 100%; max-width: 100%; }
+  footer form input { min-width: 0; }
+  [dir="rtl"] { overflow-x: hidden; }
+}
+
+/* Tablets: 481px to 1024px */
+@media only screen and (min-width: 481px) and (max-width: 1024px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+  iframe, embed, object { max-width: 100%; }
+  main, section, header, footer, nav, article, aside { min-width: 0; max-width: 100%; }
+  .container, [class*="max-w-"] { width: 100%; max-width: 100%; min-width: 0; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.1; overflow-wrap: anywhere; }
+  h2 { font-size: clamp(1.65rem, 4vw, 2.5rem); line-height: 1.15; }
+  h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); line-height: 1.2; }
+  p, li { overflow-wrap: anywhere; }
+  button, a[role="button"], input[type="button"], input[type="submit"], input[type="reset"] { min-height: 44px; }
+  table { display: block; width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  pre, code { max-width: 100%; overflow-x: auto; }
+  #mobile-menu { width: 100%; max-width: 100%; }
+  .homepage-main [class*="max-w-5xl"], .homepage-main [class*="max-w-6xl"], .homepage-main [class*="max-w-7xl"] { width: 100%; max-width: 100%; }
+  [class*="grid"] > *, [class*="flex"] > * { min-width: 0; }
+  input, select, textarea { min-width: 0; max-width: 100%; }
+  [role="dialog"], [aria-modal="true"] { max-width: calc(100vw - 2rem); max-height: calc(100dvh - 2rem); }
+  footer form { max-width: 100%; }
+  [dir="rtl"] { overflow-x: hidden; }
+}
+
+/* PC / laptops: 1025px to 1440px */
+@media only screen and (min-width: 1025px) and (max-width: 1440px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+  main, section, header, footer, nav, article, aside { min-width: 0; }
+  [class*="max-w-"] { min-width: 0; }
+  [class*="grid"] > *, [class*="flex"] > * { min-width: 0; }
+  table { max-width: 100%; }
+}
+
+/* Large PC screens: 1441px+ */
+@media only screen and (min-width: 1441px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  img, svg, video, canvas { max-width: 100%; height: auto; }
+  main, section, header, footer, nav, article, aside { min-width: 0; }
+  [class*="grid"] > *, [class*="flex"] > * { min-width: 0; }
+  table { max-width: 100%; }
+}
