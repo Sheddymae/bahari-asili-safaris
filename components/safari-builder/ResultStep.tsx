@@ -68,7 +68,21 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
       const res = await fetch('/api/safari-builder', { method: 'POST', headers, body: JSON.stringify({ action: 'submit', ...requestPayload, first_name: form.firstName, last_name: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, special_requests: form.specialRequests, locale }) });
       const data = await res.json();
       if (!res.ok || !data.success) { setSubmitError(data.error || t.common.error); setSubmitState('error'); return; }
-      setSubmitState('done'); onSubmitted(data.quotation_ref);
+      // The server generates the exact estimate invoice from the submitted
+      // client details and server-authoritative pricing. Download that PDF
+      // rather than creating a second client-side version.
+      if (data.invoiceDataUrl) {
+        const anchor = document.createElement('a');
+        anchor.href = data.invoiceDataUrl;
+        anchor.download = data.invoiceFilename || `Bahari-Asili-Safari-Estimate-Invoice-${data.quotation_ref}.pdf`;
+        anchor.style.display = 'none';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+      }
+
+      setSubmitState('done');
+      onSubmitted(data.quotation_ref);
     } catch { setSubmitError(t.common.error); setSubmitState('error'); }
   }
 
