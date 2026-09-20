@@ -6,8 +6,13 @@ export function generateStaticParams() {
   return safaris.map((s) => ({ slug: s.id }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const safari = safaris.find((s) => s.id === params.slug);
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const safari = safaris.find((s) => s.id === slug);
   if (!safari) return { title: 'Safari not found | Bahari Asili Safaris' };
 
   const title = `${safari.name} | ${safari.days} Day Safari | Bahari Asili Safaris`;
@@ -26,7 +31,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
 
 export const dynamicParams = true;
 
-export default function SafariDetailPage({ params }: { params: { slug: string } }) {
-  const safari = safaris.find((s) => s.id === params.slug);
-  return <SafariDetailClient safari={safari || null} slug={params.slug} />;
+export default async function SafariDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const safari = safaris.find((s) => s.id === slug);
+  return <SafariDetailClient safari={safari || null} slug={slug} />;
 }
