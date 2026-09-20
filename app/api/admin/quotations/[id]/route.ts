@@ -4,15 +4,19 @@ import { generateQuotationPDF } from '@/lib/quotation-generator';
 import { sendQuotationEmail } from '@/lib/quotation-email';
 import type { Quotation } from '@/lib/supabase';
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+type RouteContext = { params: Promise<{ id: string }> };
+
+export async function GET(_req: NextRequest, { params }: RouteContext) {
+  const { id } = await params;
   const admin = getSupabaseAdmin();
-  const { data, error } = await admin.from('safari_trip_requests').select('*').eq('id', params.id).maybeSingle();
+  const { data, error } = await admin.from('safari_trip_requests').select('*').eq('id', id).maybeSingle();
   if (error || !data) return NextResponse.json({ success: false, error: 'Quotation not found.' }, { status: 404 });
   return NextResponse.json({ success: true, quotation: data });
 }
 
 // PATCH body: { action: 'generate_pdf' | 'resend_email' | 'update_status', status?: Quotation['status'] }
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: RouteContext) {
+  const { id } = await params;
   const admin = getSupabaseAdmin();
   try {
     const body = await req.json();
@@ -21,7 +25,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const { data: quotation, error: fetchError } = await admin
       .from('safari_trip_requests')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .maybeSingle();
     if (fetchError || !quotation) {
       return NextResponse.json({ success: false, error: 'Quotation not found.' }, { status: 404 });
@@ -35,7 +39,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       const { data: updated, error: updateError } = await admin
         .from('safari_trip_requests')
         .update({ status })
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .maybeSingle();
       if (updateError) return NextResponse.json({ success: false, error: 'Failed to update status.' }, { status: 500 });
@@ -61,7 +65,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       return NextResponse.json({
         success: true,
         url,
-        dataUrl: url ? undefined : generated.dataUrl, // fall back to inline data URL if storage upload isn't configured
+        dataUrl: url ? undefined : generated.dataUrl,
         emailSent,
         emailConfigured: !!process.env.EMAIL_API_KEY,
       });
