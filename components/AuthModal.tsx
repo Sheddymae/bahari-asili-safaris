@@ -135,7 +135,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
   const { t, locale } = useLanguage();
   const router = useRouter();
   const copy = otpCopy[locale as keyof typeof otpCopy] || otpCopy.en;
-  const safeRedirect = (() => { try { const value = redirectTo || '/dashboard'; if (!value.startsWith('/') || value.startsWith('//')) return '/dashboard'; const url = new URL(value, window.location.origin); return url.origin === window.location.origin && !url.pathname.startsWith('/api/') ? `${url.pathname}${url.search}${url.hash}` : '/dashboard'; } catch { return '/dashboard'; } })();
+  const safeRedirect = (() => { try { const value = redirectTo || '/dashboard'; if (!value.startsWith('/') || value.startsWith('//')) return '/dashboard'; const url = new URL(value, 'https://bahari.local'); return url.origin === 'https://bahari.local' && !url.pathname.startsWith('/api/') ? `${url.pathname}${url.search}${url.hash}` : '/dashboard'; } catch { return '/dashboard'; } })();
   const callbackUrl = () => `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeRedirect)}`;
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [email, setEmail] = useState('');
