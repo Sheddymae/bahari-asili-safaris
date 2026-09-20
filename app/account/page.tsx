@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   User, BookOpen, Download, Settings, LogOut, Phone, Mail,
   Calendar, Users, CheckCircle, Clock, FileText, MessageCircle,
@@ -76,12 +77,6 @@ export default function AccountPage() {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (user && activeTab === 'bookings') {
-      fetchBookings();
-    }
-  }, [user, activeTab]);
-
   const fetchBookings = async () => {
     setBookingsLoading(true);
     const { data, error } = await supabase
@@ -97,6 +92,12 @@ export default function AccountPage() {
     }
     setBookingsLoading(false);
   };
+
+  useEffect(() => {
+    if (user && activeTab === 'bookings') {
+      fetchBookings();
+    }
+  }, [user, activeTab]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
@@ -169,9 +170,9 @@ export default function AccountPage() {
           >
             {t.account.signInSignUp}
           </button>
-          <a href="/" className="block mt-4 font-inter text-sm text-muted-foreground hover:text-foreground">
+          <Link href="/" className="block mt-4 font-inter text-sm text-muted-foreground hover:text-foreground">
             {t.authSession.exploreSite}
-          </a>
+          </Link>
         </div>
         <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} defaultMode="signin" />
       </div>
@@ -191,12 +192,12 @@ export default function AccountPage() {
       {/* Top nav */}
       <nav className="bg-white border-b border-border sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2" aria-label={t.authSession.backToWebsite}>
+          <Link href="/" className="flex items-center gap-2" aria-label={t.authSession.backToWebsite}>
             <div className="w-8 h-8 bg-safari-500 rounded-full flex items-center justify-center">
               <Anchor className="w-4 h-4 text-white" />
             </div>
             <span className="font-poppins font-bold text-ocean-700 text-base">Bahari Asili</span>
-          </a>
+          </Link>
           <div className="flex items-center gap-4">
             <span className="font-inter text-sm text-muted-foreground hidden sm:block">{user.email}</span>
             <button
@@ -227,10 +228,10 @@ export default function AccountPage() {
                   <BookOpen className="w-3.5 h-3.5" />
                   <span className="font-inter">{bookings.length} {bookings.length !== 1 ? t.account.bookingPlural : t.account.bookingSingular}</span>
                 </div>
-                <a href="/" className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm transition-colors">
+                <Link href="/" className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm transition-colors">
                   <ChevronRight className="w-3.5 h-3.5" />
                   <span className="font-inter">{t.account.backToHomepage}</span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -266,9 +267,9 @@ export default function AccountPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="font-poppins font-bold text-foreground text-xl">{t.account.tabBookings}</h2>
-              <a href="/" className="font-inter text-sm text-ocean-700 font-medium hover:text-ocean-800">
+              <Link href="/" className="font-inter text-sm text-ocean-700 font-medium hover:text-ocean-800">
                 {t.account.newBooking}
-              </a>
+              </Link>
             </div>
 
             {bookingsLoading ? (
@@ -283,9 +284,9 @@ export default function AccountPage() {
                 </div>
                 <h3 className="font-poppins font-semibold text-foreground text-lg mb-2">{t.account.noBookingsYet}</h3>
                 <p className="font-inter text-muted-foreground text-sm mb-4">{t.account.noBookingsDesc}</p>
-                <a href="/" className="inline-flex items-center gap-2 bg-ocean-700 hover:bg-ocean-800 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-all">
+                <Link href="/" className="inline-flex items-center gap-2 bg-ocean-700 hover:bg-ocean-800 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-all">
                   {t.authSession.exploreSite}
-                </a>
+                </Link>
               </div>
             ) : (
               <>
@@ -348,7 +349,7 @@ export default function AccountPage() {
                               >
                                 <MessageCircle className="w-3.5 h-3.5" />
                                 {t.account.whatsappBtn}
-                              </a>
+                              </Link>
                             </div>
                           </td>
                         </tr>
@@ -394,7 +395,7 @@ export default function AccountPage() {
                         >
                           <MessageCircle className="w-3.5 h-3.5" />
                           {t.account.chatBtn}
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   ))}
