@@ -39,13 +39,13 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
       <main className="overflow-x-hidden">
         <div className="relative h-[50vh] min-h-[360px]">
           <Image src={excursion.image} alt={content.name} fill priority className="object-cover" sizes="100vw" />
-          <div className="absolute inset-0 media-overlay-strong" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-slate-950/10" />
           <div className="absolute inset-0 flex flex-col justify-end">
             <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
-              <Link href="/excursions" prefetch className="inline-flex items-center gap-1.5 media-text-muted hover:text-white text-sm font-inter mb-4 transition-colors"><ArrowLeft className="w-4 h-4" /> {ee.backToAll}</Link>
-              <div className="flex items-center gap-3 mb-2"><span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 media-text text-xs font-inter font-semibold"><Clock className="w-3.5 h-3.5" /> {content.duration}</span></div>
-              <h1 className="font-poppins font-extrabold text-3xl sm:text-4xl lg:text-5xl media-text leading-tight">{content.name}</h1>
-              <p className="font-inter media-text-muted text-base mt-2 max-w-2xl">{content.description}</p>
+              <Link href="/excursions" prefetch className="inline-flex items-center gap-1.5 text-white/90 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] hover:text-white text-sm font-inter mb-4 transition-colors"><ArrowLeft className="w-4 h-4" /> {ee.backToAll}</Link>
+              <div className="flex items-center gap-3 mb-2"><span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 text-white text-xs drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] font-inter font-semibold"><Clock className="w-3.5 h-3.5" /> {content.duration}</span></div>
+              <h1 className="font-poppins font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]">{content.name}</h1>
+              <p className="font-inter text-white/90 text-base drop-shadow-[0_1px_3px_rgba(0,0,0,0.45)] mt-2 max-w-2xl">{content.description}</p>
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
 
           <div className="mb-12 border border-safari-200 bg-safari-50/40 rounded-2xl p-6"><div className="flex items-center gap-2 mb-3"><Info className="w-5 h-5 text-safari-600" /><h3 className="font-poppins font-bold text-base text-foreground">{ee.goodToKnow}</h3></div><ul className="space-y-2">{goodToKnow.map((line, i) => <li key={i} className="font-inter text-sm text-foreground leading-relaxed">{line}</li>)}</ul></div>
 
-          <div className="bg-foreground rounded-2xl p-8 sm:p-10 text-center"><h3 className="font-poppins font-bold text-2xl media-text mb-3">{cta.title}</h3><p className="font-inter media-text-muted text-sm mb-6 max-w-lg mx-auto">{cta.description}</p><Link href={`/booking?tour=${encodeURIComponent(excursion.id)}`} className="inline-flex items-center justify-center gap-2 bg-safari-500 hover:bg-safari-600 media-text font-poppins font-semibold text-sm px-8 py-3.5 rounded-xl transition-all hover:shadow-md">{ee.requestThisExcursion}</Link></div>
+          <div className="bg-foreground rounded-2xl p-8 sm:p-10 text-center"><h3 className="font-poppins font-bold text-2xl text-white mb-3">{cta.title}</h3><p className="font-inter text-white/90 text-sm drop-shadow-[0_1px_3px_rgba(0,0,0,0.45)] mb-6 max-w-lg mx-auto">{cta.description}</p><Link href={`/booking?tour=${encodeURIComponent(excursion.id)}`} className="inline-flex items-center justify-center gap-2 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-8 py-3.5 rounded-xl transition-all hover:shadow-md">{ee.requestThisExcursion}</Link></div>
 
           {related.length > 0 && <div className="mt-16"><h3 className="font-poppins font-bold text-xl text-foreground mb-6">{ee.moreLikeThis}</h3><div className="grid sm:grid-cols-3 gap-6">{related.map((r) => { const rc = getLocalizedExcursion(r, locale as SupportedLocale); return <Link key={r.id} href={`/excursions/${r.id}`} prefetch className="group rounded-2xl overflow-hidden border border-border shadow-card hover:shadow-card-hover transition-shadow bg-white"><div className="relative h-32 w-full overflow-hidden"><Image src={r.image} alt={rc.name} fill sizes="33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" /></div><div className="p-4"><p className="font-poppins font-semibold text-sm text-foreground">{rc.name}</p><p className="font-inter text-xs text-muted-foreground mt-1">{rc.duration}</p></div></Link>; })}</div></div>}
         </div>
