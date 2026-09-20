@@ -391,7 +391,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
                     key={m}
                     type="button"
                     onClick={() => switchMode(m)}
-                    className={\`rounded-xl py-2.5 font-inter text-sm font-semibold transition-all \${mode === m ? 'bg-white text-ocean-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}\`}
+                    className={`rounded-xl py-2.5 font-inter text-sm font-semibold transition-all ${mode === m ? 'bg-white text-ocean-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}
                   >
                     {m === 'signin' ? t.auth.signInTab : t.auth.signUpTab}
                   </button>
