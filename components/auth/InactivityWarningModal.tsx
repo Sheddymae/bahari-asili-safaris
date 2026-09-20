@@ -11,7 +11,30 @@ export default function InactivityWarningModal({ onStaySignedIn }: { onStaySigne
   useEffect(() => {
     buttonRef.current?.focus();
     const previous = document.activeElement as HTMLElement | null;
-    return () => previous?.focus?.();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        buttonRef.current?.focus();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(document.querySelectorAll<HTMLElement>('[role="alertdialog"] button, [role="alertdialog"] a, [role="alertdialog"] input, [role="alertdialog"] [tabindex]:not([tabindex="-1"])')).filter(el => !el.hasAttribute('disabled'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      previous?.focus?.();
+    };
   }, []);
 
   return (
