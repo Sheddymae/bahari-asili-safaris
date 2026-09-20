@@ -35,10 +35,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(nextSession?.user ?? null);
       setLoading(false);
       if (nextSession) {
-        fetch('/api/auth/session', {
+        fetch('/api/auth/activity', {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ accessToken: nextSession.access_token }),
+          headers: { 'x-auth-activity-force': '1' },
+          keepalive: true,
         }).catch(() => undefined);
       }
     });
@@ -49,11 +49,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(nextSession?.user ?? null);
       setLoading(false);
 
-      if (nextSession && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
-        fetch('/api/auth/session', {
+      if (nextSession && event === 'SIGNED_IN') {
+        fetch('/api/auth/activity', {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ accessToken: nextSession.access_token }),
+          headers: { 'x-auth-activity-force': '1' },
+          keepalive: true,
         }).catch(() => undefined);
       }
     });
@@ -81,7 +81,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    try { localStorage.setItem(SIGNOUT_KEY, String(Date.now())); } catch {}
+    try {
+      localStorage.removeItem('bahari-auth-last-activity');
+      localStorage.setItem(SIGNOUT_KEY, String(Date.now()));
+    } catch {}
     try {
       const channel = new BroadcastChannel(AUTH_CHANNEL);
       channel.postMessage({ type: 'signout' });
