@@ -8,7 +8,10 @@ import type { Booking } from '@/lib/supabase';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { logAdminAction } from '@/lib/audit-log';
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+type RouteContext = { params: Promise<{ id: string }> };
+
+export async function POST(req: NextRequest, { params }: RouteContext) {
+  const { id } = await params;
   const ip = getClientIp(req);
   const limit = checkRateLimit(`admin-resend:${ip}`, 20, 10 * 60 * 1000);
   if (!limit.allowed) {
@@ -20,7 +23,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const { data: booking, error } = await admin
       .from('bookings')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .maybeSingle<Booking>();
 
     if (error || !booking) {
@@ -47,7 +50,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       role: (req.headers.get('x-admin-role') as 'owner' | 'staff') || null,
       action: 'resend_email',
       targetType: 'booking',
-      targetId: params.id,
+      targetId: id,
       ip,
       userAgent: req.headers.get('user-agent') || undefined,
       metadata: { booking_ref: booking.booking_ref, emailSent },
