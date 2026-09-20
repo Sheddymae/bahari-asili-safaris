@@ -233,7 +233,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
           setTimeout(() => {
             reset();
             onClose();
-            router.push('/account');
+            router.push(safeRedirect);
           }, 500);
         } else {
           beginVerification();
@@ -252,7 +252,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
             type: 'signup',
             email,
             options: {
-              emailRedirectTo: `${window.location.origin}/account`,
+              emailRedirectTo: callbackUrl(),
             },
           });
           if (resendError) throw resendError;
@@ -265,7 +265,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
 
       reset();
       onClose();
-      router.push('/account');
+      router.push(safeRedirect);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : t.common.error;
       if (msg.includes('already registered') || msg.includes('already exists')) {
@@ -293,7 +293,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
         type: 'signup',
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/account`,
+          emailRedirectTo: callbackUrl(),
         },
       });
       if (resendError) throw resendError;
