@@ -495,8 +495,8 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
                     </button>
                   )}
                 </div>
-                <div className="relative">
-                  <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <div className="relative flex h-[52px] items-center rounded-2xl border border-slate-200 bg-slate-50 transition focus-within:border-ocean-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-ocean-100">
+                  <Lock className="pointer-events-none ml-3.5 h-4 w-4 shrink-0 text-slate-400" />
                   <input
                     id="auth-password"
                     type={showPassword ? 'text' : 'password'}
@@ -506,14 +506,14 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={mode === 'signup' ? t.auth.passwordMin : t.auth.passwordPlaceholder}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-14 font-inter text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-ocean-600 focus:bg-white focus:ring-4 focus:ring-ocean-100"
+                    className="min-w-0 flex-1 border-0 bg-transparent px-3 py-3.5 font-inter text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((visible) => !visible)}
                     aria-label={showPassword ? t.auth.hidePassword : t.auth.showPassword}
                     title={showPassword ? t.auth.hidePassword : t.auth.showPassword}
-                    className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ocean-200"
+                    className="mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-200/70 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ocean-200"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
