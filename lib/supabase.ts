@@ -1,10 +1,13 @@
 import { createBrowserClient } from '@supabase/ssr';
+import { createClient as createBaseClient } from '@supabase/supabase-js';
 
 // Use environment variables with fallback to placeholder values for development
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key_for_development';
 
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
+export const supabase = typeof window !== 'undefined'
+  ? createBrowserClient(supabaseUrl, supabaseAnonKey)
+  : createBaseClient(supabaseUrl, supabaseAnonKey);
 
 export interface Booking {
   id?: number;
