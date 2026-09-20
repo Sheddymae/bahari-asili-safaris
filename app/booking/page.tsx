@@ -2,11 +2,12 @@ import BookingPageClient from './BookingPageClient';
 import { safaris, excursions } from '@/lib/tours-data';
 
 interface BookingPageProps {
-  searchParams: { tour?: string };
+  searchParams: Promise<{ tour?: string }>;
 }
 
-export default function BookingPage({ searchParams }: BookingPageProps) {
-  const tourId = String(searchParams?.tour || '').trim();
+export default async function BookingPage({ searchParams }: BookingPageProps) {
+  const { tour } = await searchParams;
+  const tourId = String(tour || '').trim();
   const safari = safaris.find((item) => item.id === tourId);
   const excursion = excursions.find((item) => item.id === tourId);
   const selectedTour = safari?.name || excursion?.name || tourId || '';
