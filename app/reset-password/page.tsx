@@ -56,7 +56,7 @@ export default function ResetPasswordPage() {
     setSuccess('');
 
     if (password.length < 6) {
-      setError(t.auth.passwordTooShort);
+      setError(t.account.passwordTooShort);
       return;
     }
 
