@@ -52,10 +52,10 @@ export default function AboutPageClient() {
     <PageShell>
       <section className="relative h-[60vh] min-h-[420px] flex items-end overflow-hidden">
         <Image src="/images/gallery/safari-gamedrive.png" alt={aboutPage.heroImageAlt} fill priority className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 media-overlay-strong" />
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 w-full">
           <span className="font-inter text-safari-300 font-semibold text-sm tracking-widest uppercase block mb-3">{aboutPage.label}</span>
-          <h1 className="font-poppins font-black text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">{aboutPage.heroTitle}</h1>
+          <h1 className="font-poppins font-black text-4xl sm:text-5xl lg:text-6xl media-text leading-tight">{aboutPage.heroTitle}</h1>
         </div>
       </section>
 
@@ -105,7 +105,7 @@ export default function AboutPageClient() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
             {whyTravel.map(({ icon: Icon, titleKey, bodyKey }) => (
               <article key={titleKey} className="rounded-2xl border border-sand-200 bg-sand-50 p-6 shadow-card">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-safari-500 text-white"><Icon className="h-6 w-6" /></div>
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-safari-500 media-text"><Icon className="h-6 w-6" /></div>
                 <h3 className="mb-2 font-poppins text-lg font-bold leading-snug text-foreground">{t.about[titleKey as keyof typeof t.about] as string}</h3>
                 <p className="font-inter text-sm leading-6 text-foreground/75">{t.about[bodyKey as keyof typeof t.about] as string}</p>
               </article>
