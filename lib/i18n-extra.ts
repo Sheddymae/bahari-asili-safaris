@@ -6,6 +6,14 @@ import type { Locale } from './i18n';
 // blog, inquiry status, extra footer labels, and common UI strings).
 export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   en: {
+    authSession_inactivityTitle: "Session timeout",
+    authSession_inactivityWarning: "You'll be signed out in 30 seconds due to inactivity.",
+    authSession_staySignedIn: "Stay signed in",
+    authSession_exploreSite: "Explore Site",
+    authSession_backToWebsite: "Back to Website",
+    authSession_myDashboard: "My Dashboard",
+    authSession_signedOutInactive: "You were signed out due to inactivity.",
+    authSession_authError: "We could not complete sign in. Please try again.",
     nav: {
       register: 'Sign Up',
       signIn: 'Sign In',
@@ -289,6 +297,14 @@ export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   },
 
   it: {
+    authSession_inactivityTitle: "Scadenza della sessione",
+    authSession_inactivityWarning: "Verrai disconnesso tra 30 secondi per inattività.",
+    authSession_staySignedIn: "Rimani connesso",
+    authSession_exploreSite: "Esplora il sito",
+    authSession_backToWebsite: "Torna al sito",
+    authSession_myDashboard: "La mia dashboard",
+    authSession_signedOutInactive: "Sei stato disconnesso per inattività.",
+    authSession_authError: "Non è stato possibile completare l'accesso. Riprova.",
     nav: { register: 'Registrati', signIn: 'Accedi', buildSafari: 'Crea il Tuo Safari', myAccount: 'Il Mio Account', signOut: 'Esci' },
     excursions: {
       popular: 'Popolare',
@@ -400,6 +416,14 @@ export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   },
 
   fr: {
+    authSession_inactivityTitle: "Expiration de session",
+    authSession_inactivityWarning: "Vous serez déconnecté dans 30 secondes pour cause d'inactivité.",
+    authSession_staySignedIn: "Rester connecté",
+    authSession_exploreSite: "Explorer le site",
+    authSession_backToWebsite: "Retour au site",
+    authSession_myDashboard: "Mon tableau de bord",
+    authSession_signedOutInactive: "Vous avez été déconnecté pour cause d'inactivité.",
+    authSession_authError: "La connexion n'a pas pu être terminée. Veuillez réessayer.",
     nav: { register: "S'inscrire", signIn: 'Connexion', buildSafari: 'Créer Votre Safari', myAccount: 'Mon Compte', signOut: 'Se Déconnecter' },
     excursions: { popular: 'Populaire', whatToExpect: "Ce qu'il faut attendre", includedTitle: 'Inclus', notIncludedTitle: 'Non inclus', goodToKnow: 'Bon à savoir', askAboutExcursion: 'Renseignez-vous sur cette excursion', backToAll: 'Retour à toutes les excursions', requestThisExcursion: 'Demander cette excursion', moreLikeThis: 'Similaires', marineCategory: 'Marin', natureCategory: 'Nature', cultureCategory: 'Culture', viewExcursion: "Voir l'excursion" },
     destinations: { label: 'Destinations', title: 'Explorer le Kenya', subtitle: 'Quatre régions sauvages, un voyage inoubliable', guideLabel: 'Guide de Destination', safarisToPrefix: 'Safaris vers', readyToExplore: 'Prêt à explorer', exploreDest: 'Explorer la destination', highlightsTitle: 'Points Forts Faune', bestSeasonTitle: 'Meilleure Saison', faqsTitle: 'Questions Fréquentes', exploreMore: 'Explorer plus', viewAll: 'Voir toutes les destinations' },
@@ -441,6 +465,14 @@ export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   },
 
   es: {
+    authSession_inactivityTitle: "Fin de sesión",
+    authSession_inactivityWarning: "Se cerrará tu sesión en 30 segundos por inactividad.",
+    authSession_staySignedIn: "Seguir conectado",
+    authSession_exploreSite: "Explorar el sitio",
+    authSession_backToWebsite: "Volver al sitio",
+    authSession_myDashboard: "Mi panel",
+    authSession_signedOutInactive: "Tu sesión se cerró por inactividad.",
+    authSession_authError: "No se pudo completar el inicio de sesión. Inténtalo de nuevo.",
     nav: { register: 'Registrarse', signIn: 'Iniciar Sesión', buildSafari: 'Crea Tu Safari', myAccount: 'Mi Cuenta', signOut: 'Cerrar Sesión' },
     excursions: { popular: 'Popular', whatToExpect: 'Qué esperar', includedTitle: 'Incluido', notIncludedTitle: 'No incluido', goodToKnow: 'Bueno saber', askAboutExcursion: 'Pregunta sobre esta excursión', backToAll: 'Volver a todas las excursiones', requestThisExcursion: 'Solicitar esta excursión', moreLikeThis: 'Más similares', marineCategory: 'Marina', natureCategory: 'Naturaleza', cultureCategory: 'Cultura', viewExcursion: 'Ver excursión' },
     destinations: { label: 'Destinos', title: 'Explorar Kenia', subtitle: 'Cuatro regiones salvajes, un viaje inolvidable', guideLabel: 'Guía de Destino', safarisToPrefix: 'Safaris a', readyToExplore: '¿Listo para explorar', exploreDest: 'Explorar destino', highlightsTitle: 'Fauna Destacada', bestSeasonTitle: 'Mejor Temporada', faqsTitle: 'Preguntas Frecuentes', exploreMore: 'Explorar más', viewAll: 'Ver todos los destinos' },
@@ -482,6 +514,14 @@ export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   },
 
   de: {
+    authSession_inactivityTitle: "Sitzungsablauf",
+    authSession_inactivityWarning: "Sie werden wegen Inaktivität in 30 Sekunden abgemeldet.",
+    authSession_staySignedIn: "Angemeldet bleiben",
+    authSession_exploreSite: "Website erkunden",
+    authSession_backToWebsite: "Zur Website",
+    authSession_myDashboard: "Mein Dashboard",
+    authSession_signedOutInactive: "Sie wurden wegen Inaktivität abgemeldet.",
+    authSession_authError: "Die Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
     nav: { register: 'Registrieren', signIn: 'Anmelden', buildSafari: 'Safari Planen', myAccount: 'Mein Konto', signOut: 'Abmelden' },
     excursions: { popular: 'Beliebt', whatToExpect: 'Was erwartet Sie', includedTitle: 'Inbegriffen', notIncludedTitle: 'Nicht inbegriffen', goodToKnow: 'Gut zu wissen', askAboutExcursion: 'Nach diesem Ausflug fragen', backToAll: 'Zurück zu allen Ausflügen', requestThisExcursion: 'Diesen Ausflug anfragen', moreLikeThis: 'Ähnliche Ausflüge', marineCategory: 'Meeresausflüge', natureCategory: 'Natur', cultureCategory: 'Kultur', viewExcursion: 'Ausflug ansehen' },
     destinations: { label: 'Reiseziele', title: 'Kenia Erkunden', subtitle: 'Vier wilde Regionen, eine unvergessliche Reise', guideLabel: 'Reiseziel-Guide', safarisToPrefix: 'Safaris nach', readyToExplore: 'Bereit zu erkunden', exploreDest: 'Reiseziel erkunden', highlightsTitle: 'Tierwelt-Highlights', bestSeasonTitle: 'Beste Saison', faqsTitle: 'Häufige Fragen', exploreMore: 'Mehr entdecken', viewAll: 'Alle Reiseziele ansehen' },
@@ -523,6 +563,14 @@ export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   },
 
   ar: {
+    authSession_inactivityTitle: "انتهاء الجلسة",
+    authSession_inactivityWarning: "سيتم تسجيل خروجك خلال 30 ثانية بسبب عدم النشاط.",
+    authSession_staySignedIn: "البقاء مسجلاً للدخول",
+    authSession_exploreSite: "استكشف الموقع",
+    authSession_backToWebsite: "العودة إلى الموقع",
+    authSession_myDashboard: "لوحة التحكم الخاصة بي",
+    authSession_signedOutInactive: "تم تسجيل خروجك بسبب عدم النشاط.",
+    authSession_authError: "تعذر إكمال تسجيل الدخول. يرجى المحاولة مرة أخرى.",
     nav: { register: 'إنشاء حساب', signIn: 'تسجيل الدخول', buildSafari: 'بنِ رحلتك', myAccount: 'حسابي', signOut: 'تسجيل الخروج' },
     excursions: { popular: 'شائع', whatToExpect: 'ماذا تتوقع', includedTitle: 'مشمول', notIncludedTitle: 'غير مشمول', goodToKnow: 'جيد أن تعرف', askAboutExcursion: 'استفسر عن هذه الرحلة', backToAll: 'العودة إلى جميع الرحلات', requestThisExcursion: 'اطلب هذه الرحلة', moreLikeThis: 'المزيد من هذا القبيل', marineCategory: 'بحري', natureCategory: 'طبيعة', cultureCategory: 'ثقافة', viewExcursion: 'عرض الرحلة' },
     destinations: { label: 'الوجهات', title: 'استكشف كينيا', subtitle: 'أربع مناطق برية، رحلة لا تُنسى', guideLabel: 'دليل الوجهة', safarisToPrefix: 'رحلات إلى', readyToExplore: 'مستعد للاستكشاف', exploreDest: 'استكشف الوجهة', highlightsTitle: 'أبرز الحياة البرية', bestSeasonTitle: 'أفضل موسم', faqsTitle: 'الأسئلة الشائعة', exploreMore: 'استكشف المزيد', viewAll: 'عرض جميع الوجهات' },
@@ -564,6 +612,14 @@ export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   },
 
   zh: {
+    authSession_inactivityTitle: "会话即将结束",
+    authSession_inactivityWarning: "由于长时间无活动，您将在 30 秒后退出登录。",
+    authSession_staySignedIn: "保持登录",
+    authSession_exploreSite: "探索网站",
+    authSession_backToWebsite: "返回网站",
+    authSession_myDashboard: "我的控制面板",
+    authSession_signedOutInactive: "由于长时间无活动，您已退出登录。",
+    authSession_authError: "无法完成登录，请重试。",
     nav: { register: '注册', signIn: '登录', buildSafari: '定制Safari', myAccount: '我的账户', signOut: '退出登录' },
     excursions: { popular: '热门', whatToExpect: '行程体验', includedTitle: '包含', notIncludedTitle: '不包含', goodToKnow: '温馨提示', askAboutExcursion: '咨询此游览', backToAll: '返回所有游览', requestThisExcursion: '申请此游览', moreLikeThis: '更多类似游览', marineCategory: '海洋', natureCategory: '自然', cultureCategory: '文化', viewExcursion: '查看游览' },
     destinations: { label: '目的地', title: '探索肯尼亚', subtitle: '四大野生区域，一段难忘旅程', guideLabel: '目的地指南', safarisToPrefix: '前往', readyToExplore: '准备好探索', exploreDest: '探索目的地', highlightsTitle: '野生动物亮点', bestSeasonTitle: '最佳季节', faqsTitle: '常见问题', exploreMore: '探索更多', viewAll: '查看所有目的地' },
@@ -605,6 +661,14 @@ export const extraTranslations: Record<Locale, Record<string, unknown>> = {
   },
 
   sw: {
+    authSession_inactivityTitle: "Muda wa kikao unaisha",
+    authSession_inactivityWarning: "Utaondolewa kwenye akaunti baada ya sekunde 30 kwa sababu ya kutotumia akaunti.",
+    authSession_staySignedIn: "Endelea kuwa umeingia",
+    authSession_exploreSite: "Tembelea Tovuti",
+    authSession_backToWebsite: "Rudi kwenye Tovuti",
+    authSession_myDashboard: "Dashibodi Yangu",
+    authSession_signedOutInactive: "Umetolewa kwenye akaunti kwa sababu ya kutotumia akaunti.",
+    authSession_authError: "Hatukuweza kukamilisha kuingia. Tafadhali jaribu tena.",
     nav: { register: 'Jiandikishe', signIn: 'Ingia', buildSafari: 'Jenga Safari Yako', myAccount: 'Akaunti Yangu', signOut: 'Toka' },
     excursions: { popular: 'Maarufu', whatToExpect: 'Unachoweza Kutarajia', includedTitle: 'Imejumuishwa', notIncludedTitle: 'Haijajumuishwa', goodToKnow: 'Nzuri Kujua', askAboutExcursion: 'Uliza kuhusu matembezi haya', backToAll: 'Rudi kwa matembezi yote', requestThisExcursion: 'Omba matembezi haya', moreLikeThis: 'Zaidi kama hii', marineCategory: 'Baharini', natureCategory: 'Asili', cultureCategory: 'Utamaduni', viewExcursion: 'Tazama matembezi' },
     destinations: { label: 'Maeneo', title: 'Gundua Kenya', subtitle: 'Maeneo manne ya porini, safari moja isiyosahaulika', guideLabel: 'Mwongozo wa Eneo', safarisToPrefix: 'Safari za kwenda', readyToExplore: 'Uko tayari kugundua', exploreDest: 'Gundua eneo', highlightsTitle: 'Wanyamapori Bora', bestSeasonTitle: 'Msimu Bora', faqsTitle: 'Maswali Yanayoulizwa Mara kwa Mara', exploreMore: 'Gundua zaidi', viewAll: 'Ona maeneo yote' },
