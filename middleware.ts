@@ -96,18 +96,23 @@ export async function middleware(req: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  const activityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || (user ? crypto.randomUUID() : '');
+  const existingActivityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || '';
   const activityValue = req.cookies.get(AUTH_ACTIVITY_COOKIE)?.value;
+  const activityKey = existingActivityKey || (user ? crypto.randomUUID() : '');
   let activity = activityKey ? await verifyActivityValue(activityValue, activityKey) : null;
+  let activityIntegrityFailure = Boolean(user && existingActivityKey && !activity);
 
-  if (user && !activity) {
+  // A completely new authenticated browser session has no activity cookies yet.
+  // Once the key cookie exists, a missing or invalid activity cookie is treated
+  // as an integrity failure instead of silently starting a new five minute window.
+  if (user && !existingActivityKey && !activity) {
     activity = Date.now();
     const value = await buildActivityCookie(activityKey, activity);
     supabaseResponse.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, activityKey, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
     supabaseResponse.cookies.set(AUTH_ACTIVITY_COOKIE, value, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
   }
 
-  const inactive = Boolean(user && activity && Date.now() - activity >= INACTIVITY_LIMIT_MS);
+  const inactive = Boolean(user && (activityIntegrityFailure || (activity && Date.now() - activity >= INACTIVITY_LIMIT_MS)));
   const isCustomerRoute = CUSTOMER_PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));
 
   if (inactive) {
