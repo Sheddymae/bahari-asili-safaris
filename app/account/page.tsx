@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -168,7 +170,7 @@ export default function AccountPage() {
             {t.account.signInSignUp}
           </button>
           <a href="/" className="block mt-4 font-inter text-sm text-muted-foreground hover:text-foreground">
-            {t.account.backToHomepage}
+            {t.authSession.exploreSite}
           </a>
         </div>
         <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} defaultMode="signin" />
@@ -189,7 +191,7 @@ export default function AccountPage() {
       {/* Top nav */}
       <nav className="bg-white border-b border-border sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
+          <a href="/" className="flex items-center gap-2" aria-label={t.authSession.backToWebsite}>
             <div className="w-8 h-8 bg-safari-500 rounded-full flex items-center justify-center">
               <Anchor className="w-4 h-4 text-white" />
             </div>
@@ -282,7 +284,7 @@ export default function AccountPage() {
                 <h3 className="font-poppins font-semibold text-foreground text-lg mb-2">{t.account.noBookingsYet}</h3>
                 <p className="font-inter text-muted-foreground text-sm mb-4">{t.account.noBookingsDesc}</p>
                 <a href="/" className="inline-flex items-center gap-2 bg-ocean-700 hover:bg-ocean-800 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-all">
-                  {t.account.exploreSafaris}
+                  {t.authSession.exploreSite}
                 </a>
               </div>
             ) : (

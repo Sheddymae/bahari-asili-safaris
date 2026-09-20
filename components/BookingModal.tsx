@@ -31,6 +31,7 @@ export function formatKidsAges(ages: number[] | null | undefined, locale: string
 
 export default function BookingModal({ isOpen, onClose, selectedTour }: BookingModalProps) {
   const { t, locale } = useLanguage(); const { user } = useAuth(); const copy = stepCopy[locale as keyof typeof stepCopy] || stepCopy.en;
+  const { session } = useAuth();
   const [step, setStep] = useState<Step>(1); const [status, setStatus] = useState<Status>('idle'); const [errorDetail, setErrorDetail] = useState(''); const [bookingRef, setBookingRef] = useState(''); const [emailSent, setEmailSent] = useState(false); const [showAuthPrompt, setShowAuthPrompt] = useState(false); const [authModalOpen, setAuthModalOpen] = useState(false); const [kidsAges, setKidsAges] = useState<(number | '')[]>([]); const [kidsAgesError, setKidsAgesError] = useState(false);
   const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', email: '', whatsapp: '', nationality: '', adults: '2', children: '0', arrivalDate: '', safari: selectedTour || '', message: '' });
   const childCount = Math.min(Math.max(parseInt(form.children, 10) || 0, 0), 10); const allSafariNames = useMemo(() => safaris.map((s) => ({ name: s.name, days: s.days })), []);
@@ -79,7 +80,10 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
       const resolvedAges = kidsAges.filter((age): age is number => age !== '');
       const response = await fetch('/api/booking', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
         body: JSON.stringify({
           firstName: form.firstName,
           lastName: form.lastName,

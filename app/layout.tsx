@@ -11,6 +11,7 @@ import LanguageFloatingSelector from '@/components/LanguageFloatingSelector';
 import CookieConsent from '@/components/CookieConsent';
 import Analytics from '@/components/Analytics';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import SessionGuard from '@/components/auth/SessionGuard';
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ocean-600">Skip to main content</a>
         <AuthProvider>
           <LanguageProvider initialLocale={initialLocale}>
+            <SessionGuard />
             {children}
             <LanguageFloatingSelector />
             <WhatsAppButton />

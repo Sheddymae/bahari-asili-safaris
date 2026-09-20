@@ -452,11 +452,16 @@ export async function POST(req: NextRequest) {
 
     const message = String(body.message || '').trim();
 
-    const userId =
-      typeof body.userId === 'string' &&
-      body.userId.trim()
-        ? body.userId.trim()
-        : null;
+    const authHeader = req.headers.get('authorization') || '';
+    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+    const authClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key_for_development',
+    );
+    const { data: authData } = bearerToken
+      ? await authClient.auth.getUser(bearerToken)
+      : { data: { user: null } };
+    const userId = authData.user?.id || null;
 
     const locale = normalizeLocale(body.locale);
 
