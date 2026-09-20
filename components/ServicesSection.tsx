@@ -56,7 +56,7 @@ export default function ServicesSection() {
             <Link
               href="/tours"
               prefetch
-              className="absolute bottom-6 right-6 bg-safari-500 hover:bg-safari-600 text-white font-inter font-semibold text-sm px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all hover:shadow-lg"
+              className="absolute bottom-6 right-6 bg-safari-500 hover:bg-safari-600 media-text font-inter font-semibold text-sm px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all hover:shadow-lg"
             >
               {t.services.seeAll}
               <ArrowRight className="w-4 h-4" />
