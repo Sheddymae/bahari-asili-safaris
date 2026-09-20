@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { randomUUID } from 'crypto';
 import { createServerClient } from '@supabase/ssr';
 import {
   ADMIN_COOKIE_NAME,
@@ -54,6 +53,7 @@ export async function middleware(req: NextRequest) {
 
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);
+  if (adminSession && (pathname === '/dashboard' || pathname === '/login' || pathname === '/signup')) return NextResponse.redirect(new URL(ADMIN_PAGE_PREFIX, req.url));
   const isAdminRoute = pathname.startsWith(ADMIN_PAGE_PREFIX) || pathname.startsWith(PROTECTED_API_PREFIX);
 
   if (isAdminRoute) {
@@ -95,7 +95,7 @@ export async function middleware(req: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  const activityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || (user ? randomUUID() : '');
+  const activityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || (user ? crypto.randomUUID() : '');
   const activityValue = req.cookies.get(AUTH_ACTIVITY_COOKIE)?.value;
   let activity = activityKey ? await verifyActivityValue(activityValue, activityKey) : null;
 
