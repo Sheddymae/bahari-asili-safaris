@@ -61,7 +61,7 @@ export async function middleware(req: NextRequest) {
     if (!adminSession) {
       if (pathname.startsWith('/api/')) return applySecurityHeaders(NextResponse.json({ success: false, error: 'Unauthorized' }), true);
       const url = new URL(ADMIN_LOGIN, req.url);
-      url.searchParams.set('redirect', pathname);
+      url.searchParams.set('redirect', pathname + req.nextUrl.search);
       return applySecurityHeaders(NextResponse.redirect(url), true);
     }
     const requestHeaders = new Headers(req.headers);
