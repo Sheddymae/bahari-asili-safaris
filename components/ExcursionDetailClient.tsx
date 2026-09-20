@@ -42,7 +42,7 @@ export default function ExcursionDetailClient({ excursion }: { excursion: Excurs
           <div className="absolute inset-0 media-overlay-strong" />
           <div className="absolute inset-0 flex flex-col justify-end">
             <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
-              <Link href="/excursions" prefetch className="inline-flex items-center gap-1.5 media-text-muted hover:media-text text-sm font-inter mb-4 transition-colors"><ArrowLeft className="w-4 h-4" /> {ee.backToAll}</Link>
+              <Link href="/excursions" prefetch className="inline-flex items-center gap-1.5 media-text-muted hover:text-white text-sm font-inter mb-4 transition-colors"><ArrowLeft className="w-4 h-4" /> {ee.backToAll}</Link>
               <div className="flex items-center gap-3 mb-2"><span className="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-3 py-1 media-text text-xs font-inter font-semibold"><Clock className="w-3.5 h-3.5" /> {content.duration}</span></div>
               <h1 className="font-poppins font-extrabold text-3xl sm:text-4xl lg:text-5xl media-text leading-tight">{content.name}</h1>
               <p className="font-inter media-text-muted text-base mt-2 max-w-2xl">{content.description}</p>
