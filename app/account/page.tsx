@@ -395,7 +395,7 @@ export default function AccountPage() {
                         >
                           <MessageCircle className="w-3.5 h-3.5" />
                           {t.account.chatBtn}
-                        </Link>
+                        </a>
                       </div>
                     </div>
                   ))}
