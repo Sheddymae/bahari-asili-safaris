@@ -1,1 +1,139 @@
-import { NextRequest, NextResponse } from 'next/server';\nimport { ADMIN_COOKIE_NAME, verifyAdminSession, refreshAdminSession, adminCookieOptions, ADMIN_IDLE_SECONDS } from '@/lib/admin-auth';\nimport { supabase } from '@/lib/supabase';\nimport { AUTH_ACTIVITY_COOKIE, AUTH_SESSION_COOKIE } from '@/lib/auth-config';\nimport { verifyActivityValue } from '@/lib/auth-server';\n\nconst PROTECTED_API_PREFIX = '/api/admin';\nconst ADMIN_PAGE_PREFIX = '/auth/dashboard';\nconst ADMIN_LOGIN = '/auth/login';\nconst CUSTOMER_LOGIN = '/login';\nconst CUSTOMER_PROTECTED_PREFIXES = ['/dashboard', '/account'];\nconst bookingHits = new Map<string, { count: number; resetAt: number }>();\nconst BOOKING_WINDOW_MS = 10 * 60 * 1000;\nconst BOOKING_MAX = 8;\n\nfunction getClientKey(req: NextRequest) {\n  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';\n}\n\nfunction applySecurityHeaders(res: NextResponse, protectedRoute = false) {\n  res.headers.set('X-Content-Type-Options', 'nosniff');\n  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');\n  res.headers.set('X-Frame-Options', 'SAMEORIGIN');\n  res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');\n  if (protectedRoute) res.headers.set('Cache-Control', 'private, no-store, max-age=0, must-revalidate');\n  return res;\n}\n\nasync function getCustomerSession(req: NextRequest) {\n  const token = req.cookies.get(AUTH_SESSION_COOKIE)?.value;\n  if (!token) return null;\n  const { data, error } = await supabase.auth.getUser(token);\n  if (error || !data.user) return null;\n  const activity = await verifyActivityValue(req.cookies.get(AUTH_ACTIVITY_COOKIE)?.value, token);\n  if (!activity || Date.now() - activity >= 5 * 60 * 1000) return { expired: true as const, token, user: data.user };\n  return { expired: false as const, token, user: data.user };\n}\n\nexport async function middleware(req: NextRequest) {\n  const { pathname } = req.nextUrl;\n  const host = req.headers.get('host') || '';\n  const isPreviewHost = host.includes('vercel.app');\n\n  if (pathname === '/api/booking' && req.method === 'POST') {\n    const key = getClientKey(req);\n    const now = Date.now();\n    const existing = bookingHits.get(key);\n    const hit = !existing || existing.resetAt <= now ? { count: 1, resetAt: now + BOOKING_WINDOW_MS } : { count: existing.count + 1, resetAt: existing.resetAt };\n    bookingHits.set(key, hit);\n    if (hit.count > BOOKING_MAX) return applySecurityHeaders(new NextResponse(JSON.stringify({ success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' }), { status: 429, headers: { 'content-type': 'application/json', 'Retry-After': String(Math.ceil((hit.resetAt - now) / 1000)) } }));\n  }\n\n  const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;\n  const adminSession = await verifyAdminSession(adminToken);\n  const isAdminRoute = pathname.startsWith(ADMIN_PAGE_PREFIX) || pathname.startsWith(PROTECTED_API_PREFIX);\n  const isCustomerRoute = CUSTOMER_PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));\n\n  if (isAdminRoute) {\n    if (!adminSession) {\n      if (pathname.startsWith('/api/')) return applySecurityHeaders(NextResponse.json({ success: false, error: 'Unauthorized' }), true);\n      const url = new URL(ADMIN_LOGIN, req.url);\n      url.searchParams.set('redirect', pathname);\n      return applySecurityHeaders(NextResponse.redirect(url), true);\n    }\n    const requestHeaders = new Headers(req.headers);\n    requestHeaders.set('x-admin-username', adminSession.username);\n    requestHeaders.set('x-admin-role', adminSession.role);\n    const res = NextResponse.next({ request: { headers: requestHeaders } });\n    const idleElapsed = Date.now() - adminSession.lastActivity;\n    if (idleElapsed > (ADMIN_IDLE_SECONDS * 1000) / 4) {\n      const refreshed = await refreshAdminSession(adminSession);\n      res.cookies.set(ADMIN_COOKIE_NAME, refreshed, adminCookieOptions(ADMIN_IDLE_SECONDS));\n    }\n    if (isPreviewHost) res.headers.set('x-robots-tag', 'noindex, nofollow');\n    return applySecurityHeaders(res, true);\n  }\n\n  const customer = await getCustomerSession(req);\n  if ((pathname === CUSTOMER_LOGIN || pathname === '/signup') && customer && !customer.expired) return NextResponse.redirect(new URL('/dashboard', req.url));\n  if (pathname === ADMIN_LOGIN && adminSession) return NextResponse.redirect(new URL(ADMIN_PAGE_PREFIX, req.url));\n\n  if (isCustomerRoute) {\n    if (!customer || customer.expired) {\n      const url = new URL(CUSTOMER_LOGIN, req.url);\n      url.searchParams.set('redirect', pathname);\n      if (customer?.expired) url.searchParams.set('reason', 'inactive');\n      const res = NextResponse.redirect(url);\n      res.cookies.set(AUTH_SESSION_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });\n      res.cookies.set(AUTH_ACTIVITY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });\n      return applySecurityHeaders(res, true);\n    }\n    const res = NextResponse.next();\n    if (isPreviewHost) res.headers.set('x-robots-tag', 'noindex, nofollow');\n    return applySecurityHeaders(res, true);\n  }\n\n  const res = NextResponse.next();\n  if (isPreviewHost) res.headers.set('x-robots-tag', 'noindex, nofollow');\n  return applySecurityHeaders(res);\n}\n\nexport const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico|images/|videos/).*)'] };
+import { NextRequest, NextResponse } from 'next/server';
+import { randomUUID } from 'crypto';
+import { createServerClient } from '@supabase/ssr';
+import {
+  ADMIN_COOKIE_NAME,
+  verifyAdminSession,
+  refreshAdminSession,
+  adminCookieOptions,
+  ADMIN_IDLE_SECONDS,
+} from '@/lib/admin-auth';
+import { AUTH_ACTIVITY_COOKIE, AUTH_ACTIVITY_KEY_COOKIE, INACTIVITY_LIMIT_MS } from '@/lib/auth-config';
+import { buildActivityCookie, verifyActivityValue } from '@/lib/auth-server';
+
+const PROTECTED_API_PREFIX = '/api/admin';
+const ADMIN_PAGE_PREFIX = '/auth/dashboard';
+const ADMIN_LOGIN = '/auth/login';
+const CUSTOMER_LOGIN = '/login';
+const CUSTOMER_PROTECTED_PREFIXES = ['/dashboard', '/account'];
+const bookingHits = new Map<string, { count: number; resetAt: number }>();
+const BOOKING_WINDOW_MS = 10 * 60 * 1000;
+const BOOKING_MAX = 8;
+
+function getClientKey(req: NextRequest) {
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+}
+
+function applySecurityHeaders(res: NextResponse, protectedRoute = false) {
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  if (protectedRoute) res.headers.set('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+  return res;
+}
+
+function copyCookies(from: NextResponse, to: NextResponse) {
+  from.cookies.getAll().forEach(cookie => to.cookies.set(cookie));
+  return to;
+}
+
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const host = req.headers.get('host') || '';
+  const isPreviewHost = host.includes('vercel.app');
+
+  if (pathname === '/api/booking' && req.method === 'POST') {
+    const key = getClientKey(req);
+    const now = Date.now();
+    const existing = bookingHits.get(key);
+    const hit = !existing || existing.resetAt <= now ? { count: 1, resetAt: now + BOOKING_WINDOW_MS } : { count: existing.count + 1, resetAt: existing.resetAt };
+    bookingHits.set(key, hit);
+    if (hit.count > BOOKING_MAX) return applySecurityHeaders(new NextResponse(JSON.stringify({ success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' }), { status: 429, headers: { 'content-type': 'application/json', 'Retry-After': String(Math.ceil((hit.resetAt - now) / 1000)) } }));
+  }
+
+  const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
+  const adminSession = await verifyAdminSession(adminToken);
+  const isAdminRoute = pathname.startsWith(ADMIN_PAGE_PREFIX) || pathname.startsWith(PROTECTED_API_PREFIX);
+
+  if (isAdminRoute) {
+    if (!adminSession) {
+      if (pathname.startsWith('/api/')) return applySecurityHeaders(NextResponse.json({ success: false, error: 'Unauthorized' }), true);
+      const url = new URL(ADMIN_LOGIN, req.url);
+      url.searchParams.set('redirect', pathname);
+      return applySecurityHeaders(NextResponse.redirect(url), true);
+    }
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-admin-username', adminSession.username);
+    requestHeaders.set('x-admin-role', adminSession.role);
+    const res = NextResponse.next({ request: { headers: requestHeaders } });
+    const idleElapsed = Date.now() - adminSession.lastActivity;
+    if (idleElapsed > (ADMIN_IDLE_SECONDS * 1000) / 4) {
+      const refreshed = await refreshAdminSession(adminSession);
+      res.cookies.set(ADMIN_COOKIE_NAME, refreshed, adminCookieOptions(ADMIN_IDLE_SECONDS));
+    }
+    if (isPreviewHost) res.headers.set('x-robots-tag', 'noindex, nofollow');
+    return applySecurityHeaders(res, true);
+  }
+
+  let supabaseResponse = NextResponse.next({ request: req });
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key_for_development',
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({ request: req });
+          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
+        },
+      },
+    },
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  const activityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || (user ? randomUUID() : '');
+  const activityValue = req.cookies.get(AUTH_ACTIVITY_COOKIE)?.value;
+  let activity = activityKey ? await verifyActivityValue(activityValue, activityKey) : null;
+
+  if (user && !activity) {
+    activity = Date.now();
+    const value = await buildActivityCookie(activityKey, activity);
+    supabaseResponse.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, activityKey, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
+    supabaseResponse.cookies.set(AUTH_ACTIVITY_COOKIE, value, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
+  }
+
+  const inactive = Boolean(user && activity && Date.now() - activity >= INACTIVITY_LIMIT_MS);
+  const isCustomerRoute = CUSTOMER_PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));
+
+  if (inactive) {
+    const url = new URL(CUSTOMER_LOGIN, req.url);
+    url.searchParams.set('reason', 'inactive');
+    if (isCustomerRoute) url.searchParams.set('redirect', pathname);
+    const redirect = copyCookies(supabaseResponse, NextResponse.redirect(url));
+    redirect.cookies.set(AUTH_ACTIVITY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
+    redirect.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
+    return applySecurityHeaders(redirect, isCustomerRoute);
+  }
+
+  if ((pathname === CUSTOMER_LOGIN || pathname === '/signup') && user) {
+    return NextResponse.redirect(new URL('/dashboard', req.url));
+  }
+
+  if (isCustomerRoute && !user) {
+    const url = new URL(CUSTOMER_LOGIN, req.url);
+    url.searchParams.set('redirect', pathname);
+    const redirect = copyCookies(supabaseResponse, NextResponse.redirect(url));
+    return applySecurityHeaders(redirect, true);
+  }
+
+  if (isPreviewHost) supabaseResponse.headers.set('x-robots-tag', 'noindex, nofollow');
+  return applySecurityHeaders(supabaseResponse, isCustomerRoute);
+}
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|images/|videos/).*)'],
+};
