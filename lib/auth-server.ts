@@ -3,13 +3,13 @@ import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { AUTH_ACTIVITY_COOKIE, AUTH_ACTIVITY_KEY_COOKIE, INACTIVITY_LIMIT_MS } from '@/lib/auth-config';
 
 export async function getServerUser() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   return user || null;
 }
 
 export async function getServerSession() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
   const { data: { session } } = await supabase.auth.getSession();
