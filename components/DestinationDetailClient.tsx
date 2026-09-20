@@ -38,7 +38,7 @@ export default function DestinationDetailClient({ destination }: { destination: 
           <div className="absolute inset-0 media-overlay-strong" />
           <div className="absolute inset-0 flex flex-col justify-end">
             <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10">
-              <Link href="/destinations" prefetch className="inline-flex items-center gap-1.5 media-text-muted hover:media-text text-sm font-inter mb-4 transition-colors"><ArrowLeft className="w-4 h-4" /> {tt.backToAll}</Link>
+              <Link href="/destinations" prefetch className="inline-flex items-center gap-1.5 media-text-muted hover:text-white text-sm font-inter mb-4 transition-colors"><ArrowLeft className="w-4 h-4" /> {tt.backToAll}</Link>
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-safari-400" /><span className="font-inter text-xs font-semibold text-safari-300 uppercase tracking-wider">{ee.destGuideLabel}</span></div>
                 {destination.country && <span className="media-text-muted text-xs font-inter">• {destination.country}</span>}
