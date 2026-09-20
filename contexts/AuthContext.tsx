@@ -18,31 +18,76 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
+const AUTH_CHANNEL = 'bahari-auth-activity';
+const SIGNOUT_KEY = 'bahari-auth-signout';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    let mounted = true;
+
+    supabase.auth.getSession().then(({ data: { session: nextSession } }) => {
+      if (!mounted) return;
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
       setLoading(false);
+      if (nextSession) {
+        fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ accessToken: nextSession.access_token }),
+        }).catch(() => undefined);
+      }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      (async () => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      })();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      if (!mounted) return;
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+      setLoading(false);
+
+      if (nextSession && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
+        fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ accessToken: nextSession.access_token }),
+        }).catch(() => undefined);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    const channel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(AUTH_CHANNEL) : null;
+    const handleCrossTabSignOut = (event: MessageEvent) => {
+      if (event.data?.type !== 'signout') return;
+      void supabase.auth.signOut();
+    };
+    channel?.addEventListener('message', handleCrossTabSignOut);
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === SIGNOUT_KEY && event.newValue) void supabase.auth.signOut();
+    };
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+      channel?.removeEventListener('message', handleCrossTabSignOut);
+      channel?.close();
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    try { localStorage.setItem(SIGNOUT_KEY, String(Date.now())); } catch {}
+    try {
+      const channel = new BroadcastChannel(AUTH_CHANNEL);
+      channel.postMessage({ type: 'signout' });
+      channel.close();
+    } catch {}
+    await fetch('/api/auth/signout', { method: 'POST', keepalive: true }).catch(() => undefined);
   };
 
   return (
