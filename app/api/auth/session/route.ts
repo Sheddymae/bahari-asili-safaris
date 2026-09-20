@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
 import { AUTH_ACTIVITY_COOKIE, AUTH_ACTIVITY_KEY_COOKIE } from '@/lib/auth-config';
-import { buildActivityCookie } from '@/lib/auth-server';
+import { buildActivityCookie } from '@/lib/auth-activity';
 import { supabase } from '@/lib/supabase';
 
 export async function POST(req: NextRequest) {
