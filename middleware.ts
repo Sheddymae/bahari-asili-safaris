@@ -111,6 +111,11 @@ export async function middleware(req: NextRequest) {
   const isCustomerRoute = CUSTOMER_PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));
 
   if (inactive) {
+    // Inactivity is enforced server-side as well as in the browser. Sign the
+    // Supabase session out before returning the redirect so a stale browser
+    // session cannot immediately recreate an active dashboard session.
+    await supabase.auth.signOut();
+
     const clearCookies = (response: NextResponse) => {
       response.cookies.set(AUTH_ACTIVITY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
       response.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
