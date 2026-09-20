@@ -77,7 +77,7 @@ export async function middleware(req: NextRequest) {
     return applySecurityHeaders(res, true);
   }
 
-  let supabaseResponse = NextResponse.next({ request: req });
+  let supabaseResponse = NextResponse.next({ request: { headers: req.headers } });
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key_for_development',
@@ -88,7 +88,7 @@ export async function middleware(req: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request: req });
+          supabaseResponse = NextResponse.next({ request: { headers: req.headers } });
           cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
         },
       },
