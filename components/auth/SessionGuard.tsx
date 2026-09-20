@@ -14,23 +14,7 @@ export default function SessionGuard() {
   const { t } = useLanguage();
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-  useEffect(() => {
-    if (!loading && user && session) {
-      fetch('/api/auth/session', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ accessToken: session.access_token }),
-      }).catch(() => undefined);
-    }
-  }, [loading, user, session]);
-
-
-  const signOut = async () => {
     await authSignOut();
-    try { localStorage.setItem('bahari-auth-signout', String(Date.now())); } catch {}
-    try { const channel = new BroadcastChannel('bahari-auth-activity'); channel.postMessage({ type: 'signout' }); channel.close(); } catch {}
-    await fetch('/api/auth/signout', { method: 'POST', keepalive: true }).catch(() => undefined);
     router.replace('/login?reason=inactive');
   };
 
