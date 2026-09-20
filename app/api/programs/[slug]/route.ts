@@ -19,10 +19,13 @@ const getCachedProgramRow = unstable_cache(
   { revalidate: 300, tags: ['programs'] }
 );
 
-export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
+type RouteContext = { params: Promise<{ slug: string }> };
+
+export async function GET(req: NextRequest, { params }: RouteContext) {
+  const { slug } = await params;
   const locale = normalizeLocale(new URL(req.url).searchParams.get('locale'));
-  const base = safaris.find((s) => s.id === params.slug);
-  const data = await getCachedProgramRow(params.slug, locale);
+  const base = safaris.find((s) => s.id === slug);
+  const data = await getCachedProgramRow(slug, locale);
 
   if (data) {
     return NextResponse.json({ success: true, program: base ? { ...base, ...rowToSafari(data) } : rowToSafari(data) });
