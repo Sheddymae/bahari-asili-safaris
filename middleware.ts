@@ -8,7 +8,7 @@ import {
   ADMIN_IDLE_SECONDS,
 } from '@/lib/admin-auth';
 import { AUTH_ACTIVITY_COOKIE, AUTH_ACTIVITY_KEY_COOKIE, INACTIVITY_LIMIT_MS } from '@/lib/auth-config';
-import { buildActivityCookie, verifyActivityValue } from '@/lib/auth-server';
+import { buildActivityCookie, verifyActivityValue } from '@/lib/auth-activity';
 
 const PROTECTED_API_PREFIX = '/api/admin';
 const ADMIN_PAGE_PREFIX = '/auth/dashboard';
