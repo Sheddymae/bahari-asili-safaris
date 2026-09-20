@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useInactivityTimeout } from '@/hooks/useInactivityTimeout';
 import InactivityWarningModal from './InactivityWarningModal';
-import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SessionGuard() {
@@ -13,25 +12,6 @@ export default function SessionGuard() {
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useLanguage();
-
-  useEffect(() => {
-    if (!loading && user && session) {
-      fetch('/api/auth/session', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ accessToken: session.access_token }),
-      }).catch(() => undefined);
-    }
-  }, [loading, user, session]);
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (event === 'TOKEN_REFRESHED' && nextSession) {
-        fetch('/api/auth/session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ accessToken: nextSession.access_token }) }).catch(() => undefined);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, []);
 
   const signOut = async () => {
     await supabase.auth.signOut();
