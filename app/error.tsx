@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { RefreshCw, MessageCircle } from 'lucide-react';
 
 export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
@@ -12,7 +13,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
         <button onClick={() => reset()} className="inline-flex items-center gap-2 rounded-xl bg-ocean-700 px-5 py-3 font-semibold text-white hover:bg-ocean-800">
           <RefreshCw className="h-4 w-4" /> Try again
         </button>
-        <a href="/" className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold hover:bg-slate-50">Back home</a>
+        <Link href="/" className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold hover:bg-slate-50">Back home</Link>
         <a href="https://wa.me/254101923355" className="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-5 py-3 font-semibold text-green-800">
           <MessageCircle className="h-4 w-4" /> WhatsApp us
         </a>
