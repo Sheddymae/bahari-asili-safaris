@@ -15,6 +15,8 @@ import type { Booking } from '@/lib/supabase';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 import { logAdminAction } from '@/lib/audit-log';
 
+type RouteContext = { params: Promise<{ id: string }> };
+
 const SUBJECTS: Record<string, (b: Booking) => string> = {
   confirmation: (b) => 'Your Bahari Asili Safaris Booking is Confirmed',
   quote: (b) => `Your Safari Quote — ${b.booking_ref}`,
@@ -24,13 +26,14 @@ const SUBJECTS: Record<string, (b: Booking) => string> = {
 };
 
 // GET /api/admin/reservations/[id]/send-email — email send history for this reservation
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: RouteContext) {
+  const { id } = await params;
   try {
     const admin = getSupabaseAdmin();
     const { data, error } = await admin
       .from('email_logs')
       .select('*')
-      .eq('booking_id', params.id)
+      .eq('booking_id', id)
       .order('sent_at', { ascending: false });
     if (error) {
       return NextResponse.json({ success: false, error: 'Failed to load email history.' }, { status: 500 });
@@ -43,7 +46,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 }
 
 // POST body: { type: 'confirmation'|'quote'|'payment_reminder'|'pre_departure_reminder'|'review_request'|'custom', subject?, message? }
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: RouteContext) {
+  const { id } = await params;
   const ip = getClientIp(req);
   const limit = checkRateLimit(`admin-send-email:${ip}`, 30, 10 * 60 * 1000);
   if (!limit.allowed) {
@@ -78,7 +82,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const { data: booking, error: fetchError } = await admin
       .from('bookings')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .maybeSingle<Booking>();
 
     if (fetchError || !booking) {
@@ -143,7 +147,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       role: (req.headers.get('x-admin-role') as 'owner' | 'staff') || null,
       action: 'send_email',
       targetType: 'booking',
-      targetId: params.id,
+      targetId: id,
       ip,
       userAgent: req.headers.get('user-agent') || undefined,
       metadata: { booking_ref: booking.booking_ref, type, success },
