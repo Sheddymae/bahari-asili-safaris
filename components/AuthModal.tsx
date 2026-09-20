@@ -10,6 +10,8 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultMode?: 'signin' | 'signup';
+  redirectTo?: string | null;
+  reason?: string | null;
 }
 
 type Mode = 'signin' | 'signup' | 'verify';
@@ -129,10 +131,12 @@ const otpCopy = {
   },
 } as const;
 
-export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', redirectTo, reason }: AuthModalProps) {
   const { t, locale } = useLanguage();
   const router = useRouter();
   const copy = otpCopy[locale as keyof typeof otpCopy] || otpCopy.en;
+  const safeRedirect = (() => { try { const value = redirectTo || '/dashboard'; if (!value.startsWith('/') || value.startsWith('//')) return '/dashboard'; const url = new URL(value, window.location.origin); return url.origin === window.location.origin && !url.pathname.startsWith('/api/') ? `${url.pathname}${url.search}${url.hash}` : '/dashboard'; } catch { return '/dashboard'; } })();
+  const callbackUrl = () => `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeRedirect)}`;
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -147,6 +151,11 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: A
   useEffect(() => {
     if (isOpen) setMode(defaultMode);
   }, [isOpen, defaultMode]);
+
+  useEffect(() => {
+    if (isOpen && reason === 'inactive') setError(t.authSession.signedOutInactive);
+    if (isOpen && reason === 'auth_error') setError(t.authSession.authError);
+  }, [isOpen, reason, t]);
 
   const reset = () => {
     setEmail('');
@@ -200,7 +209,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: A
         setTimeout(() => {
           reset();
           onClose();
-          router.push('/account');
+          router.push(safeRedirect);
         }, 500);
         return;
       }
@@ -211,7 +220,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: A
           password,
           options: {
             data: { full_name: fullName },
-            emailRedirectTo: `${window.location.origin}/account`,
+            emailRedirectTo: callbackUrl(),
           },
         });
 
@@ -301,7 +310,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }: A
     setError('');
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/account` },
+      options: { redirectTo: callbackUrl() },
     });
     if (error) {
       setError(error.message);
