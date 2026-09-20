@@ -16,9 +16,12 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   return {
     title,
     description,
+    alternates: { canonical: `/safaris/${safari.id}` },
     openGraph: {
       title,
       description,
+      type: 'website',
+      url: `/safaris/${safari.id}`,
       images: safari.image ? [safari.image] : undefined,
     },
   };

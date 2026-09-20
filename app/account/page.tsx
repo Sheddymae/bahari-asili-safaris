@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   User, BookOpen, Download, Settings, LogOut, Phone, Mail,
   Calendar, Users, CheckCircle, Clock, FileText, MessageCircle,
@@ -227,10 +228,10 @@ export default function AccountPage() {
                   <BookOpen className="w-3.5 h-3.5" />
                   <span className="font-inter">{bookings.length} {bookings.length !== 1 ? t.account.bookingPlural : t.account.bookingSingular}</span>
                 </div>
-                <a href="/" className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm transition-colors">
+                <Link href="/" className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm transition-colors">
                   <ChevronRight className="w-3.5 h-3.5" />
-                  <span className="font-inter">{t.account.backToHomepage}</span>
-                </a>
+                  <span className="font-inter">{t.authSession.exploreSite}</span>
+                </Link>
               </div>
             </div>
           </div>

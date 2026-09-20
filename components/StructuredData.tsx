@@ -1,5 +1,5 @@
 export default function StructuredData() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
+  const siteUrl = 'https://bahariasilisafaris.vercel.app';
   const data = {
     '@context': 'https://schema.org',
     '@graph': [

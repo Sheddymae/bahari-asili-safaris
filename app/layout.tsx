@@ -14,7 +14,7 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import SessionGuard from '@/components/auth/SessionGuard';
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
+const siteUrl = 'https://bahariasilisafaris.vercel.app';
 
 export const viewport = { width: 'device-width', initialScale: 1, colorScheme: 'light' } as const;
 

@@ -16,6 +16,7 @@ const ADMIN_LEGACY_PREFIX = '/admin';
 const ADMIN_LOGIN = '/auth/login';
 const CUSTOMER_LOGIN = '/login';
 const CUSTOMER_PROTECTED_PREFIXES = ['/dashboard', '/account'];
+const LIVE_VERCEL_HOST = 'bahariasilisafaris.vercel.app';
 const bookingHits = new Map<string, { count: number; resetAt: number }>();
 const BOOKING_WINDOW_MS = 10 * 60 * 1000;
 const BOOKING_MAX = 8;
@@ -40,26 +41,40 @@ function copyCookies(from: NextResponse, to: NextResponse) {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const host = req.headers.get('host') || '';
-  const isPreviewHost = host.includes('vercel.app');
+  const host = req.nextUrl.hostname;
+  const isPreviewHost = host.endsWith('.vercel.app') && host !== LIVE_VERCEL_HOST;
 
   if (pathname === '/api/booking' && req.method === 'POST') {
     const key = getClientKey(req);
     const now = Date.now();
     const existing = bookingHits.get(key);
-    const hit = !existing || existing.resetAt <= now ? { count: 1, resetAt: now + BOOKING_WINDOW_MS } : { count: existing.count + 1, resetAt: existing.resetAt };
+    const hit = !existing || existing.resetAt <= now
+      ? { count: 1, resetAt: now + BOOKING_WINDOW_MS }
+      : { count: existing.count + 1, resetAt: existing.resetAt };
     bookingHits.set(key, hit);
-    if (hit.count > BOOKING_MAX) return applySecurityHeaders(new NextResponse(JSON.stringify({ success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' }), { status: 429, headers: { 'content-type': 'application/json', 'Retry-After': String(Math.ceil((hit.resetAt - now) / 1000)) } }));
+    if (hit.count > BOOKING_MAX) {
+      return applySecurityHeaders(new NextResponse(
+        JSON.stringify({ success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' }),
+        { status: 429, headers: { 'content-type': 'application/json', 'Retry-After': String(Math.ceil((hit.resetAt - now) / 1000)) } },
+      ));
+    }
   }
 
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);
-  if (adminSession && (pathname === '/dashboard' || pathname === '/login' || pathname === '/signup')) return NextResponse.redirect(new URL(ADMIN_PAGE_PREFIX, req.url));
-  const isAdminRoute = pathname.startsWith(ADMIN_PAGE_PREFIX) || pathname === ADMIN_LEGACY_PREFIX || pathname.startsWith(ADMIN_LEGACY_PREFIX + '/') || pathname.startsWith(PROTECTED_API_PREFIX);
+  if (adminSession && (pathname === '/dashboard' || pathname === '/login' || pathname === '/signup')) {
+    return NextResponse.redirect(new URL(ADMIN_PAGE_PREFIX, req.url));
+  }
+  const isAdminRoute = pathname.startsWith(ADMIN_PAGE_PREFIX)
+    || pathname === ADMIN_LEGACY_PREFIX
+    || pathname.startsWith(ADMIN_LEGACY_PREFIX + '/')
+    || pathname.startsWith(PROTECTED_API_PREFIX);
 
   if (isAdminRoute) {
     if (!adminSession) {
-      if (pathname.startsWith('/api/')) return applySecurityHeaders(NextResponse.json({ success: false, error: 'Unauthorized' }), true);
+      if (pathname.startsWith('/api/')) {
+        return applySecurityHeaders(NextResponse.json({ success: false, error: 'Unauthorized' }), true);
+      }
       const url = new URL(ADMIN_LOGIN, req.url);
       url.searchParams.set('redirect', pathname + req.nextUrl.search);
       return applySecurityHeaders(NextResponse.redirect(url), true);
@@ -87,7 +102,7 @@ export async function middleware(req: NextRequest) {
           return req.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value }) => req.cookies.set(name, value));
           supabaseResponse = NextResponse.next({ request: req });
           cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
         },
@@ -96,33 +111,53 @@ export async function middleware(req: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  const activityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || (user ? crypto.randomUUID() : '');
+  const existingActivityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || '';
   const activityValue = req.cookies.get(AUTH_ACTIVITY_COOKIE)?.value;
-  let activity = activityKey ? await verifyActivityValue(activityValue, activityKey) : null;
+  const activityKey = existingActivityKey || (user ? crypto.randomUUID() : '');
+  const activity = activityKey ? await verifyActivityValue(activityValue, activityKey) : null;
+  const activityIntegrityFailure = Boolean(user && existingActivityKey && !activity);
 
-  if (user && !activity) {
-    activity = Date.now();
-    const value = await buildActivityCookie(activityKey, activity);
-    supabaseResponse.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, activityKey, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
-    supabaseResponse.cookies.set(AUTH_ACTIVITY_COOKIE, value, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
+  if (user && !existingActivityKey && activityKey) {
+    const value = await buildActivityCookie(activityKey);
+    supabaseResponse.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, activityKey, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+    supabaseResponse.cookies.set(AUTH_ACTIVITY_COOKIE, value, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
   }
 
-  const inactive = Boolean(user && activity && Date.now() - activity >= INACTIVITY_LIMIT_MS);
+  const inactive = Boolean(user && (activityIntegrityFailure || (activity && Date.now() - activity >= INACTIVITY_LIMIT_MS)));
   const isCustomerRoute = CUSTOMER_PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));
 
   if (inactive) {
+    await supabase.auth.signOut();
     const clearCookies = (response: NextResponse) => {
       response.cookies.set(AUTH_ACTIVITY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
       response.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
       return response;
     };
     if (pathname.startsWith('/api/')) {
-      return applySecurityHeaders(clearCookies(copyCookies(supabaseResponse, NextResponse.json({ success: false, reason: 'inactive' }, { status: 401 }))), true);
+      return applySecurityHeaders(
+        clearCookies(copyCookies(supabaseResponse, NextResponse.json({ success: false, reason: 'inactive' }, { status: 401 }))),
+        true,
+      );
     }
     const url = new URL(CUSTOMER_LOGIN, req.url);
     url.searchParams.set('reason', 'inactive');
     if (isCustomerRoute) url.searchParams.set('redirect', pathname);
-    return applySecurityHeaders(clearCookies(copyCookies(supabaseResponse, NextResponse.redirect(url))), isCustomerRoute);
+    return applySecurityHeaders(
+      clearCookies(copyCookies(supabaseResponse, NextResponse.redirect(url))),
+      isCustomerRoute,
+    );
   }
 
   if ((pathname === CUSTOMER_LOGIN || pathname === '/signup') && user) {

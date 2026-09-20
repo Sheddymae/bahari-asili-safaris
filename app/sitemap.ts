@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { safaris, excursions } from '@/lib/tours-data';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
+const siteUrl = 'https://bahariasilisafaris.vercel.app';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

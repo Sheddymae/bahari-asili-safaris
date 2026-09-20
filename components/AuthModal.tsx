@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Mail, Lock, User, Eye, EyeOff, AlertCircle, Loader2, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { X, Mail, Lock, User, Eye, EyeOff, AlertCircle, Loader2, ShieldCheck, ArrowLeft, KeyRound, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -14,7 +14,7 @@ interface AuthModalProps {
   reason?: string | null;
 }
 
-type Mode = 'signin' | 'signup' | 'verify';
+type Mode = 'signin' | 'signup' | 'forgot' | 'verify';
 
 const otpCopy = {
   en: {
@@ -137,6 +137,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
   const copy = otpCopy[locale as keyof typeof otpCopy] || otpCopy.en;
   const safeRedirect = (() => { try { const value = redirectTo || '/dashboard'; if (!value.startsWith('/') || value.startsWith('//')) return '/dashboard'; const url = new URL(value, 'https://bahari.local'); return url.origin === 'https://bahari.local' && !url.pathname.startsWith('/api/') ? `${url.pathname}${url.search}${url.hash}` : '/dashboard'; } catch { return '/dashboard'; } })();
   const callbackUrl = () => `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeRedirect)}`;
+  const resetPasswordUrl = () => `${window.location.origin}/reset-password`;
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -160,6 +161,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
   const reset = () => {
     setEmail('');
     setPassword('');
+    setShowPassword(false);
     setFullName('');
     setOtp('');
     setError('');
@@ -171,6 +173,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
   const switchMode = (nextMode: 'signin' | 'signup') => {
     setMode(nextMode);
     setPassword('');
+    setShowPassword(false);
     setOtp('');
     setError('');
     setSuccess('');
@@ -183,8 +186,28 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
     setSuccess(copy.sent);
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: resetPasswordUrl(),
+      });
+      if (resetError) throw resetError;
+      setSuccess(t.auth.resetSent);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : t.common.error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === 'forgot') return handleForgotPassword(e);
     setLoading(true);
     setError('');
     setSuccess('');
@@ -320,38 +343,70 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
 
   if (!isOpen) return null;
 
+  const isAuthForm = mode === 'signin' || mode === 'signup';
+  const title =
+    mode === 'verify' ? copy.title :
+    mode === 'forgot' ? t.auth.forgotTitle :
+    mode === 'signin' ? t.auth.signInTitle : t.auth.signUpTitle;
+  const description =
+    mode === 'verify' ? copy.desc :
+    mode === 'forgot' ? t.auth.forgotDesc :
+    mode === 'signin' ? t.auth.signInDesc : t.auth.signUpDesc;
+
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden z-10">
-        <div className="bg-gradient-to-br from-ocean-700 to-ocean-900 px-8 pt-8 pb-6 text-white relative">
-          <button onClick={onClose} aria-label="Close" className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
-            <X className="w-4 h-4" />
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-5">
+      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-md" onClick={onClose} />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+        className="relative z-10 w-full max-w-[500px] max-h-[calc(100vh-24px)] overflow-y-auto rounded-[28px] bg-white shadow-[0_30px_90px_rgba(15,23,42,0.35)] ring-1 ring-black/5"
+      >
+        <div className="relative overflow-hidden bg-gradient-to-br from-ocean-800 via-ocean-700 to-[#12384d] px-6 pb-7 pt-6 text-white sm:px-8 sm:pt-7">
+          <div className="absolute -right-16 -top-20 h-44 w-44 rounded-full bg-white/10" />
+          <div className="absolute -bottom-28 -left-20 h-48 w-48 rounded-full bg-cyan-300/10" />
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t.common.close}
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60"
+          >
+            <X className="h-5 w-5" />
           </button>
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
-            {mode === 'verify' ? <ShieldCheck className="w-6 h-6 text-white" /> : <User className="w-6 h-6 text-white" />}
+          <div className="relative flex items-center gap-4 pr-10">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/20 backdrop-blur-sm">
+              {mode === 'forgot' ? <KeyRound className="h-6 w-6" /> : mode === 'verify' ? <ShieldCheck className="h-6 w-6" /> : <User className="h-6 w-6" />}
+            </div>
+            <div>
+              <h2 id="auth-modal-title" className="font-poppins text-[25px] font-bold leading-tight sm:text-[28px]">{title}</h2>
+              <p className="mt-1.5 max-w-sm font-inter text-sm leading-5 text-white/75">{description}</p>
+            </div>
           </div>
-          <h2 className="font-poppins font-bold text-2xl">
-            {mode === 'verify' ? copy.title : mode === 'signin' ? t.auth.signInTitle : t.auth.signUpTitle}
-          </h2>
-          <p className="font-inter text-white/70 text-sm mt-1">
-            {mode === 'verify' ? copy.desc : mode === 'signin' ? t.auth.signInDesc : t.auth.signUpDesc}
-          </p>
         </div>
 
-        <div className="px-8 py-6">
-          {mode !== 'verify' && (
+        <div className="px-5 py-5 sm:px-8 sm:py-7">
+          {isAuthForm && (
             <>
-              <div className="flex bg-muted rounded-xl p-1 mb-6">
+              <div className="mb-6 grid grid-cols-2 rounded-2xl bg-slate-100 p-1.5">
                 {(['signin', 'signup'] as const).map((m) => (
-                  <button key={m} type="button" onClick={() => switchMode(m)} className={`flex-1 py-2 font-inter font-medium text-sm rounded-lg transition-all ${mode === m ? 'bg-white text-ocean-700 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => switchMode(m)}
+                    className={`rounded-xl py-2.5 font-inter text-sm font-semibold transition-all ${mode === m ? 'bg-white text-ocean-800 shadow-sm ring-1 ring-slate-200' : 'text-slate-500 hover:text-slate-800'}`}
+                  >
                     {m === 'signin' ? t.auth.signInTab : t.auth.signUpTab}
                   </button>
                 ))}
               </div>
 
-              <button onClick={handleGoogle} disabled={loading} className="w-full flex items-center justify-center gap-3 border border-border rounded-xl py-3 font-inter font-medium text-foreground hover:bg-muted transition-all mb-4 disabled:opacity-50">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-3.5 font-inter text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 hover:shadow disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -360,84 +415,148 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
                 {t.auth.googleBtn}
               </button>
 
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex-1 h-px bg-muted" />
-                <span className="font-inter text-xs text-muted-foreground">{t.auth.orDivider}</span>
-                <div className="flex-1 h-px bg-muted" />
+              <div className="my-5 flex items-center gap-3">
+                <div className="h-px flex-1 bg-slate-200" />
+                <span className="font-inter text-xs font-medium text-slate-400">{t.auth.orDivider}</span>
+                <div className="h-px flex-1 bg-slate-200" />
               </div>
             </>
           )}
 
-          {mode === 'verify' ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="rounded-2xl bg-ocean-50 border border-ocean-100 p-4">
-                <p className="text-sm text-ocean-900 break-all"><strong>{email}</strong></p>
+          {mode === 'forgot' ? (
+            <form onSubmit={handleForgotPassword} className="space-y-5">
+              <div className="rounded-2xl border border-ocean-100 bg-ocean-50/70 p-4">
+                <div className="flex gap-3">
+                  <Mail className="mt-0.5 h-5 w-5 shrink-0 text-ocean-700" />
+                  <p className="font-inter text-sm leading-5 text-ocean-900">{t.auth.forgotDesc}</p>
+                </div>
               </div>
               <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{copy.code}</label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  required
-                  maxLength={8}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 8))}
-                  placeholder={copy.codePlaceholder}
-                  className="w-full text-center tracking-[0.35em] text-xl font-semibold border border-border rounded-xl px-4 py-3 bg-muted outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100"
-                />
+                <label htmlFor="forgot-email" className="mb-2 block font-inter text-sm font-semibold text-slate-800">{t.auth.email}</label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input id="forgot-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.auth.emailPlaceholder} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 font-inter text-sm text-slate-900 outline-none transition focus:border-ocean-600 focus:bg-white focus:ring-4 focus:ring-ocean-100" />
+                </div>
               </div>
-              {error && <div className="flex items-start gap-2 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-xl px-4 py-3"><AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" /><p className="font-inter text-sm text-destructive">{error}</p></div>}
-              {success && <div className="bg-[#0e7490]/10 border border-[#0e7490]/30 rounded-xl px-4 py-3"><p className="font-inter text-sm text-primary">{success}</p></div>}
-              <button type="submit" disabled={loading} className="w-full bg-ocean-700 hover:bg-ocean-800 disabled:opacity-60 text-white font-poppins font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2">
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> {t.auth.processing}</> : <><ShieldCheck className="w-4 h-4" /> {copy.verify}</>}
+              {error && <Message type="error" text={error} />}
+              {success && <Message type="success" text={success} />}
+              <button type="submit" disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-ocean-700 py-3.5 font-poppins text-sm font-semibold text-white shadow-lg shadow-ocean-700/20 transition hover:bg-ocean-800 disabled:cursor-not-allowed disabled:opacity-60">
+                {loading ? <><Loader2 className="h-4 w-4 animate-spin" />{t.auth.processing}</> : <><Mail className="h-4 w-4" />{t.auth.sendResetLink}</>}
+              </button>
+              <button type="button" onClick={() => switchMode('signin')} className="mx-auto flex items-center gap-2 font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-900">
+                <ArrowLeft className="h-4 w-4" />{t.auth.backToSignIn}
+              </button>
+            </form>
+          ) : mode === 'verify' ? (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="rounded-2xl border border-ocean-100 bg-ocean-50 p-4">
+                <p className="font-inter text-sm text-ocean-900 break-all"><strong>{email}</strong></p>
+              </div>
+              <div>
+                <label htmlFor="verification-code" className="mb-2 block font-inter text-sm font-semibold text-slate-800">{copy.code}</label>
+                <input id="verification-code" type="text" inputMode="numeric" autoComplete="one-time-code" required maxLength={8} value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 8))} placeholder={copy.codePlaceholder} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-center font-inter text-xl font-semibold tracking-[0.35em] text-slate-900 outline-none transition focus:border-ocean-600 focus:bg-white focus:ring-4 focus:ring-ocean-100" />
+              </div>
+              {error && <Message type="error" text={error} />}
+              {success && <Message type="success" text={success} />}
+              <button type="submit" disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-ocean-700 py-3.5 font-poppins text-sm font-semibold text-white shadow-lg shadow-ocean-700/20 transition hover:bg-ocean-800 disabled:opacity-60">
+                {loading ? <><Loader2 className="h-4 w-4 animate-spin" />{t.auth.processing}</> : <><ShieldCheck className="h-4 w-4" />{copy.verify}</>}
               </button>
               <div className="grid grid-cols-2 gap-3">
-                <button type="button" onClick={() => switchMode('signin')} className="rounded-xl border border-border py-3 font-medium flex items-center justify-center gap-2"><ArrowLeft className="w-4 h-4" />{copy.back}</button>
-                <button type="button" onClick={resendCode} disabled={resending} className="rounded-xl border border-ocean-200 text-ocean-700 py-3 font-medium disabled:opacity-60">{resending ? t.auth.processing : copy.resend}</button>
+                <button type="button" onClick={() => switchMode('signin')} className="flex items-center justify-center gap-2 rounded-2xl border border-slate-200 py-3 font-inter text-sm font-semibold text-slate-700 hover:bg-slate-50"><ArrowLeft className="h-4 w-4" />{copy.back}</button>
+                <button type="button" onClick={resendCode} disabled={resending} className="rounded-2xl border border-ocean-200 py-3 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 disabled:opacity-60">{resending ? t.auth.processing : copy.resend}</button>
               </div>
             </form>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               {mode === 'signup' && (
                 <div>
-                  <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.auth.fullName}</label>
+                  <label htmlFor="auth-name" className="mb-2 block font-inter text-sm font-semibold text-slate-800">{t.auth.fullName}</label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={t.auth.fullNamePlaceholder} className="w-full pl-10 pr-4 py-3 border border-border rounded-xl font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
+                    <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <input id="auth-name" type="text" required autoComplete="name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={t.auth.fullNamePlaceholder} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 font-inter text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-ocean-600 focus:bg-white focus:ring-4 focus:ring-ocean-100" />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.auth.email}</label>
+                <label htmlFor="auth-email" className="mb-2 block font-inter text-sm font-semibold text-slate-800">{t.auth.email}</label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.auth.emailPlaceholder} className="w-full pl-10 pr-4 py-3 border border-border rounded-xl font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
+                  <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                  <input id="auth-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.auth.emailPlaceholder} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-4 font-inter text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-ocean-600 focus:bg-white focus:ring-4 focus:ring-ocean-100" />
                 </div>
               </div>
 
               <div>
-                <label className="font-inter text-sm font-medium text-foreground block mb-1.5">{t.auth.password}</label>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <input type={showPassword ? 'text' : 'password'} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={mode === 'signup' ? t.auth.passwordMin : t.auth.passwordPlaceholder} className="w-full pl-10 pr-11 py-3 border border-border rounded-xl font-inter text-sm text-foreground outline-none focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100 transition-all bg-muted" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <label htmlFor="auth-password" className="font-inter text-sm font-semibold text-slate-800">{t.auth.password}</label>
+                  {mode === 'signin' && (
+                    <button type="button" onClick={() => { setError(''); setSuccess(''); setMode('forgot'); }} className="font-inter text-xs font-semibold text-ocean-700 hover:text-ocean-900 sm:text-sm">
+                      {t.auth.forgotPassword}
+                    </button>
+                  )}
+                </div>
+                <div className="relative flex h-[52px] items-center rounded-2xl border border-slate-200 bg-slate-50 transition focus-within:border-ocean-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-ocean-100">
+                  <Lock className="pointer-events-none ml-3.5 h-4 w-4 shrink-0 text-slate-400" />
+                  <input
+                    id="auth-password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    minLength={6}
+                    autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={mode === 'signup' ? t.auth.passwordMin : t.auth.passwordPlaceholder}
+                    className="min-w-0 flex-1 border-0 bg-transparent px-3 py-3.5 font-inter text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? t.auth.hidePassword : t.auth.showPassword}
+                    title={showPassword ? t.auth.hidePassword : t.auth.showPassword}
+                    className="mr-1.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-200/70 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ocean-200"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              {error && <div className="flex items-start gap-2 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-xl px-4 py-3"><AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" /><p className="font-inter text-sm text-destructive">{error}</p></div>}
-              {success && <div className="bg-[#0e7490]/10 border border-[#0e7490]/30 rounded-xl px-4 py-3"><p className="font-inter text-sm text-primary">{success}</p></div>}
+              {error && <Message type="error" text={error} />}
+              {success && <Message type="success" text={success} />}
 
-              <button type="submit" disabled={loading} className="w-full bg-ocean-700 hover:bg-ocean-800 disabled:opacity-60 text-white font-poppins font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2">
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> {t.auth.processing}</> : mode === 'signin' ? t.auth.signInTab : t.auth.signUpTitle}
+              <button type="submit" disabled={loading} className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-ocean-700 py-3.5 font-poppins text-sm font-semibold text-white shadow-lg shadow-ocean-700/20 transition hover:bg-ocean-800 disabled:cursor-not-allowed disabled:opacity-60">
+                {loading ? <><Loader2 className="h-4 w-4 animate-spin" />{t.auth.processing}</> : mode === 'signin' ? <><KeyRound className="h-4 w-4" />{t.auth.signInTab}</> : <><User className="h-4 w-4" />{t.auth.signUpTitle}</>}
               </button>
             </form>
           )}
+
+          {isAuthForm && (
+            <p className="mt-5 text-center font-inter text-xs leading-5 text-slate-400">
+              {mode === 'signin' ? t.auth.signUpPrompt : t.auth.signInPrompt}{' '}
+              <button type="button" onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')} className="font-semibold text-ocean-700 hover:text-ocean-900">
+                {mode === 'signin' ? t.auth.signUpTab : t.auth.signInTab}
+              </button>
+            </p>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function Message({ type, text }: { type: 'error' | 'success'; text: string }) {
+  if (type === 'success') {
+    return (
+      <div role="status" className="flex items-start gap-2.5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-emerald-800">
+        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+        <p className="font-inter text-sm leading-5">{text}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div role="alert" className="flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+      <p className="font-inter text-sm leading-5">{text}</p>
     </div>
   );
 }
