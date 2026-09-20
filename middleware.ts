@@ -16,6 +16,7 @@ const ADMIN_LEGACY_PREFIX = '/admin';
 const ADMIN_LOGIN = '/auth/login';
 const CUSTOMER_LOGIN = '/login';
 const CUSTOMER_PROTECTED_PREFIXES = ['/dashboard', '/account'];
+const LIVE_VERCEL_HOST = 'bahariasilisafaris.vercel.app';
 const bookingHits = new Map<string, { count: number; resetAt: number }>();
 const BOOKING_WINDOW_MS = 10 * 60 * 1000;
 const BOOKING_MAX = 8;
@@ -40,8 +41,8 @@ function copyCookies(from: NextResponse, to: NextResponse) {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const host = req.headers.get('host') || '';
-  const isPreviewHost = host.includes('vercel.app');
+  const host = req.nextUrl.hostname;
+  const isPreviewHost = host.endsWith('.vercel.app') && host !== LIVE_VERCEL_HOST;
 
   if (pathname === '/api/booking' && req.method === 'POST') {
     const key = getClientKey(req);
