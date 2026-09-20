@@ -19,7 +19,7 @@ export async function getServerSession() {
 import { verifyActivityValue } from '@/lib/auth-activity';
 
 export async function readActivityTimestamp() {
-  const store = cookies();
+  const store = await cookies();
   const secret = store.get(AUTH_ACTIVITY_KEY_COOKIE)?.value;
   return verifyActivityValue(store.get(AUTH_ACTIVITY_COOKIE)?.value, secret || '');
 }
