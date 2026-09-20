@@ -452,11 +452,12 @@ export async function POST(req: NextRequest) {
 
     const message = String(body.message || '').trim();
 
-    const userId =
-      typeof body.userId === 'string' &&
-      body.userId.trim()
-        ? body.userId.trim()
-        : null;
+    const authHeader = req.headers.get('authorization') || '';
+    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+    const { data: authData } = bearerToken
+      ? await supabase.auth.getUser(bearerToken)
+      : { data: { user: null } };
+    const userId = authData.user?.id || null;
 
     const locale = normalizeLocale(body.locale);
 
