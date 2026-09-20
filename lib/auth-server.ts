@@ -30,8 +30,7 @@ export async function buildActivityCookie(token: string, timestamp = Date.now())
   return `${timestamp}.${await activitySignature(timestamp, token)}`;
 }
 
-export async function readActivityTimestamp(token: string) {
-  const value = cookies().get(AUTH_ACTIVITY_COOKIE)?.value;
+export async function verifyActivityValue(value: string | null | undefined, token: string) {
   if (!value) return null;
   const [raw, signature] = value.split('.');
   const timestamp = Number(raw);
@@ -41,6 +40,10 @@ export async function readActivityTimestamp(token: string) {
   let mismatch = 0;
   for (let i = 0; i < expected.length; i++) mismatch |= signature.charCodeAt(i) ^ expected.charCodeAt(i);
   return mismatch === 0 ? timestamp : null;
+}
+
+export async function readActivityTimestamp(token: string) {
+  return verifyActivityValue(cookies().get(AUTH_ACTIVITY_COOKIE)?.value, token);
 }
 
 export async function isInactive(token: string) {
