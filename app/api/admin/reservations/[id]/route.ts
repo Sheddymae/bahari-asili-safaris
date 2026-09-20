@@ -15,17 +15,20 @@ import type { Booking } from '@/lib/supabase';
 import { logAdminAction } from '@/lib/audit-log';
 import { getClientIp } from '@/lib/rate-limit';
 
+type RouteContext = { params: Promise<{ id: string }> };
+
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteContext
 ) {
+  const { id } = await params;
   try {
     const admin = getSupabaseAdmin();
 
     const { data, error } = await admin
       .from('bookings')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .maybeSingle();
 
     if (error || !data) {
@@ -72,6 +75,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   let admin;
 
   try {
@@ -98,7 +102,7 @@ export async function PATCH(
     const { data: booking, error: fetchError } = await admin
       .from('bookings')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .maybeSingle<Booking>();
 
     if (fetchError || !booking) {
@@ -118,7 +122,7 @@ export async function PATCH(
       role: (req.headers.get('x-admin-role') as 'owner' | 'staff') || null,
       action: 'reservation_status_change',
       targetType: 'booking',
-      targetId: params.id,
+      targetId: id,
       ip: getClientIp(req),
       userAgent: req.headers.get('user-agent') || undefined,
       metadata: { action, booking_ref: booking.booking_ref },
@@ -213,7 +217,7 @@ export async function PATCH(
       const { data: updated, error: updateError } = await admin
         .from('bookings')
         .update(updates)
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .maybeSingle();
 
@@ -281,7 +285,7 @@ export async function PATCH(
       const { data: updated, error: updateError } = await admin
         .from('bookings')
         .update(updates)
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .maybeSingle();
 
@@ -332,7 +336,7 @@ export async function PATCH(
         .update({
           reservation_status: 'completed',
         })
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .maybeSingle();
 
@@ -370,7 +374,7 @@ export async function PATCH(
         const { data: history } = await admin
           .from('payments')
           .select('*')
-          .eq('booking_id', params.id)
+          .eq('booking_id', id)
           .order('created_at', { ascending: true });
         paymentHistoryForReceipt = (history as import('@/lib/supabase').Payment[]) || undefined;
         latestPaymentForReceipt = paymentHistoryForReceipt?.[paymentHistoryForReceipt.length - 1];
@@ -424,7 +428,7 @@ export async function PATCH(
       const { data: updated, error: updateError } = await admin
         .from('bookings')
         .update(updates)
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .maybeSingle();
 
@@ -547,7 +551,7 @@ export async function PATCH(
       };
 
       console.log('Recording payment:', {
-        bookingId: params.id,
+        bookingId: id,
         bookingRef: booking.booking_ref,
         amount,
         total,
@@ -564,14 +568,14 @@ export async function PATCH(
       } = await admin
         .from('bookings')
         .update(paymentUpdates)
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .maybeSingle();
 
       if (updateError) {
         console.error('========================================');
         console.error('RECORD PAYMENT FAILED');
-        console.error('Booking ID:', params.id);
+        console.error('Booking ID:', id);
         console.error('Updates:', paymentUpdates);
         console.error('Supabase error:', updateError);
         console.error('========================================');
@@ -614,7 +618,7 @@ export async function PATCH(
         const { data: insertedPayment, error: paymentInsertError } = await admin
           .from('payments')
           .insert({
-            booking_id: params.id,
+            booking_id: id,
             receipt_number: receiptNumber,
             amount,
             currency: booking.currency || 'KES',
@@ -637,7 +641,7 @@ export async function PATCH(
       const { data: paymentHistory } = await admin
         .from('payments')
         .select('*')
-        .eq('booking_id', params.id)
+        .eq('booking_id', id)
         .order('created_at', { ascending: true });
 
       /*
@@ -651,7 +655,7 @@ export async function PATCH(
         const receipt = await generatePaymentReceiptPDF(updated as Booking, newPaymentRecord || undefined, (paymentHistory as import('@/lib/supabase').Payment[]) || undefined, undefined, receiptQrUrl);
         const receiptUrl = await uploadDocumentPDF(admin, receiptPath, receipt.base64);
         if (receiptUrl) {
-          const { data: withReceipt } = await admin.from('bookings').update({ payment_receipt_url: receiptUrl } as any).eq('id', params.id).select().maybeSingle();
+          const { data: withReceipt } = await admin.from('bookings').update({ payment_receipt_url: receiptUrl } as any).eq('id', id).select().maybeSingle();
           if (withReceipt) (updated as any).payment_receipt_url = receiptUrl;
         }
       } catch (receiptError) {
@@ -915,14 +919,14 @@ export async function PATCH(
       } = await admin
         .from('bookings')
         .update(fieldUpdates)
-        .eq('id', params.id)
+        .eq('id', id)
         .select()
         .maybeSingle();
 
       if (updateError) {
         console.error('========================================');
         console.error('SAVE CHANGES FAILED');
-        console.error('Booking ID:', params.id);
+        console.error('Booking ID:', id);
         console.error('Updates:', fieldUpdates);
         console.error('Supabase error:', updateError);
         console.error('========================================');
@@ -1012,6 +1016,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const { id } = await params;
   try {
     // Defense in depth: middleware already requires a valid session for any
     // /api/admin/* route and forwards the caller's role in this header —
@@ -1027,7 +1032,7 @@ export async function DELETE(
     const { error } = await admin
       .from('bookings')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
 
     if (error) {
       console.error('Delete reservation error:', error);
@@ -1046,7 +1051,7 @@ export async function DELETE(
       role: 'owner',
       action: 'reservation_delete',
       targetType: 'booking',
-      targetId: params.id,
+      targetId: id,
       ip: getClientIp(req),
       userAgent: req.headers.get('user-agent') || undefined,
     });
