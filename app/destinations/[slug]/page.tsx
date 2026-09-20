@@ -7,8 +7,13 @@ export function generateStaticParams() {
   return destinations.map((d) => ({ slug: d.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const destination = destinations.find((d) => d.slug === params.slug);
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const destination = destinations.find((d) => d.slug === slug);
   if (!destination) return { title: 'Destination not found — Bahari Asili Safaris' };
 
   const title = `${destination.name} Safaris — Bahari Asili Safaris`;
@@ -22,8 +27,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function DestinationPage({ params }: { params: { slug: string } }) {
-  const destination = destinations.find((d) => d.slug === params.slug);
+export default async function DestinationPage({ params }: PageProps) {
+  const { slug } = await params;
+  const destination = destinations.find((d) => d.slug === slug);
   if (!destination) notFound();
 
   return <DestinationDetailClient destination={destination} />;
