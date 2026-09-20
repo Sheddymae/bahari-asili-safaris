@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const next = getSafeRedirect(req.nextUrl.searchParams.get('next'));
   if (!code) return NextResponse.redirect(new URL('/login?reason=auth_error', req.url));
 
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) return NextResponse.redirect(new URL('/login?reason=auth_error', req.url));
 
