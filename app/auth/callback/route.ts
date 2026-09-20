@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSafeRedirect } from '@/lib/auth-config';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { AUTH_ACTIVITY_COOKIE, AUTH_ACTIVITY_KEY_COOKIE } from '@/lib/auth-config';
-import { buildActivityCookie } from '@/lib/auth-server';
+import { buildActivityCookie } from '@/lib/auth-activity';
 import { randomUUID } from 'crypto';
 
 export async function GET(req: NextRequest) {
