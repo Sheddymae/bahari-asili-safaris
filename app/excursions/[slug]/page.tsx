@@ -10,18 +10,24 @@ export function generateStaticParams() {
   return excursions.map((e) => ({ slug: e.id }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
   const all = await getPublicExcursions();
-  const excursion = all.find((e) => e.id === params.slug);
+  const excursion = all.find((e) => e.id === slug);
   if (!excursion) return { title: 'Excursion not found — Bahari Asili Safaris' };
   const title = `${excursion.name} — Watamu Excursion`;
   const description = `${excursion.description} Duration: ${excursion.duration}. Book this excursion with Bahari Asili Safaris.`;
   return { title, description, alternates: { canonical: `/excursions/${excursion.id}` }, openGraph: { title, description, images: excursion.image ? [excursion.image] : undefined, type: 'website', url: `/excursions/${excursion.id}` } };
 }
 
-export default async function ExcursionPage({ params }: { params: { slug: string } }) {
+export default async function ExcursionPage({ params }: PageProps) {
+  const { slug } = await params;
   const all = await getPublicExcursions();
-  const excursion = all.find((e) => e.id === params.slug);
+  const excursion = all.find((e) => e.id === slug);
   if (!excursion) notFound();
   return <ExcursionDetailClient excursion={excursion} />;
 }
