@@ -161,6 +161,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
   const reset = () => {
     setEmail('');
     setPassword('');
+    setShowPassword(false);
     setFullName('');
     setOtp('');
     setError('');
@@ -172,6 +173,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
   const switchMode = (nextMode: 'signin' | 'signup') => {
     setMode(nextMode);
     setPassword('');
+    setShowPassword(false);
     setOtp('');
     setError('');
     setSuccess('');
@@ -504,14 +506,14 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={mode === 'signup' ? t.auth.passwordMin : t.auth.passwordPlaceholder}
-                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-12 font-inter text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-ocean-600 focus:bg-white focus:ring-4 focus:ring-ocean-100"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3.5 pl-11 pr-14 font-inter text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-ocean-600 focus:bg-white focus:ring-4 focus:ring-ocean-100"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((visible) => !visible)}
                     aria-label={showPassword ? t.auth.hidePassword : t.auth.showPassword}
                     title={showPassword ? t.auth.hidePassword : t.auth.showPassword}
-                    className="absolute right-2.5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-ocean-200"
+                    className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-slate-400 transition hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ocean-200"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
