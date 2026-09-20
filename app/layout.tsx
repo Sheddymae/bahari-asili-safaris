@@ -30,8 +30,9 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', title: 'Bahari Asili Safaris | Kenya Safaris from Watamu', description: 'Private Kenya safaris, coastal experiences and transfers planned from Watamu.', images: ['/images/logo/icon-512.png'] },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieLocale = cookies().get('bahari-locale')?.value as Locale | undefined;
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const cookieLocale = cookieStore.get('bahari-locale')?.value as Locale | undefined;
   const initialLocale = cookieLocale && Object.prototype.hasOwnProperty.call(translations, cookieLocale) ? cookieLocale : 'en';
   return (
     <html lang={initialLocale} dir={initialLocale === 'ar' ? 'rtl' : 'ltr'} className={`scroll-smooth bg-sand-50 ${manrope.variable}`}>
