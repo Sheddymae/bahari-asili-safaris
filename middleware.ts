@@ -12,6 +12,7 @@ import { buildActivityCookie, verifyActivityValue } from '@/lib/auth-server';
 
 const PROTECTED_API_PREFIX = '/api/admin';
 const ADMIN_PAGE_PREFIX = '/auth/dashboard';
+const ADMIN_LEGACY_PREFIX = '/admin';
 const ADMIN_LOGIN = '/auth/login';
 const CUSTOMER_LOGIN = '/login';
 const CUSTOMER_PROTECTED_PREFIXES = ['/dashboard', '/account'];
@@ -54,7 +55,7 @@ export async function middleware(req: NextRequest) {
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);
   if (adminSession && (pathname === '/dashboard' || pathname === '/login' || pathname === '/signup')) return NextResponse.redirect(new URL(ADMIN_PAGE_PREFIX, req.url));
-  const isAdminRoute = pathname.startsWith(ADMIN_PAGE_PREFIX) || pathname.startsWith(PROTECTED_API_PREFIX);
+  const isAdminRoute = pathname.startsWith(ADMIN_PAGE_PREFIX) || pathname === ADMIN_LEGACY_PREFIX || pathname.startsWith(ADMIN_LEGACY_PREFIX + '/') || pathname.startsWith(PROTECTED_API_PREFIX);
 
   if (isAdminRoute) {
     if (!adminSession) {
