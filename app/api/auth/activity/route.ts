@@ -15,12 +15,12 @@ export async function POST(req: NextRequest) {
   }
 
   const force = req.headers.get('x-auth-activity-force') === '1';
-  if (!force && isInactive(token)) {
+  if (!force && await isInactive(token)) {
     return NextResponse.json({ success: false, reason: 'inactive' }, { status: 440 });
   }
 
   const response = NextResponse.json({ success: true });
-  response.cookies.set(AUTH_ACTIVITY_COOKIE, buildActivityCookie(token), {
+  response.cookies.set(AUTH_ACTIVITY_COOKIE, await buildActivityCookie(token), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
