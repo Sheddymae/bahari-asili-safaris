@@ -78,6 +78,8 @@ export async function middleware(req: NextRequest) {
   }
 
   let supabaseResponse = NextResponse.next({ request: { headers: req.headers } });
+=======
+  let supabaseResponse = NextResponse.next({ request: req });
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key_for_development',
@@ -89,6 +91,8 @@ export async function middleware(req: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value));
           supabaseResponse = NextResponse.next({ request: { headers: req.headers } });
+
+          supabaseResponse = NextResponse.next({ request: req });
           cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
         },
       },
@@ -106,6 +110,12 @@ export async function middleware(req: NextRequest) {
   // Once the key cookie exists, a missing or invalid activity cookie is treated
   // as an integrity failure instead of silently starting a new five minute window.
   if (user && !existingActivityKey && !activity) {
+
+  const activityKey = req.cookies.get(AUTH_ACTIVITY_KEY_COOKIE)?.value || (user ? crypto.randomUUID() : '');
+  const activityValue = req.cookies.get(AUTH_ACTIVITY_COOKIE)?.value;
+  let activity = activityKey ? await verifyActivityValue(activityValue, activityKey) : null;
+
+  if (user && !activity) {
     activity = Date.now();
     const value = await buildActivityCookie(activityKey, activity);
     supabaseResponse.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, activityKey, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 60 * 60 * 24 * 30 });
@@ -121,6 +131,11 @@ export async function middleware(req: NextRequest) {
     // session cannot immediately recreate an active dashboard session.
     await supabase.auth.signOut();
 
+
+  const inactive = Boolean(user && activity && Date.now() - activity >= INACTIVITY_LIMIT_MS);
+  const isCustomerRoute = CUSTOMER_PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));
+
+  if (inactive) {
     const clearCookies = (response: NextResponse) => {
       response.cookies.set(AUTH_ACTIVITY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
       response.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
