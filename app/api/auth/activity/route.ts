@@ -5,7 +5,7 @@ import { buildActivityCookie, verifyActivityValue } from '@/lib/auth-activity';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 export async function POST(req: NextRequest) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ success: false }, { status: 401 });
 
