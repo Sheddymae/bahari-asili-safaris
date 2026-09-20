@@ -110,13 +110,18 @@ export async function middleware(req: NextRequest) {
   const isCustomerRoute = CUSTOMER_PROTECTED_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(prefix + '/'));
 
   if (inactive) {
+    const clearCookies = (response: NextResponse) => {
+      response.cookies.set(AUTH_ACTIVITY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
+      response.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
+      return response;
+    };
+    if (pathname.startsWith('/api/')) {
+      return applySecurityHeaders(clearCookies(copyCookies(supabaseResponse, NextResponse.json({ success: false, reason: 'inactive' }, { status: 401 }))), true);
+    }
     const url = new URL(CUSTOMER_LOGIN, req.url);
     url.searchParams.set('reason', 'inactive');
     if (isCustomerRoute) url.searchParams.set('redirect', pathname);
-    const redirect = copyCookies(supabaseResponse, NextResponse.redirect(url));
-    redirect.cookies.set(AUTH_ACTIVITY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
-    redirect.cookies.set(AUTH_ACTIVITY_KEY_COOKIE, '', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', path: '/', maxAge: 0 });
-    return applySecurityHeaders(redirect, isCustomerRoute);
+    return applySecurityHeaders(clearCookies(copyCookies(supabaseResponse, NextResponse.redirect(url))), isCustomerRoute);
   }
 
   if ((pathname === CUSTOMER_LOGIN || pathname === '/signup') && user) {
