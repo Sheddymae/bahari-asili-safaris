@@ -19,19 +19,19 @@ export default function BuildSafariPromo() {
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/35" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-xl">
-          <span className="inline-flex items-center gap-2 font-inter text-safari-400 font-semibold text-sm tracking-widest uppercase mb-4">
+          <span className="inline-flex items-center gap-2 font-inter text-orange-400 font-semibold text-sm tracking-widest uppercase mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             <Sparkles className="w-4 h-4" />
             {e.buildLabel}
           </span>
-          <h2 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight mb-5">
+          <h2 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight mb-5 drop-shadow-[0_3px_8px_rgba(0,0,0,0.9)]">
             {e.buildTitle}
           </h2>
-          <p className="font-inter text-white/85 text-base leading-relaxed mb-8">
+          <p className="font-inter text-white text-base leading-relaxed mb-8 max-w-2xl drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)]">
             {e.buildSubtitle}
           </p>
           <Link
