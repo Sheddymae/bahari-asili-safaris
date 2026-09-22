@@ -54,10 +54,13 @@ export async function generateQuotationPDF(quotation: Quotation, requestedLocale
   const section = (label: string) => { ensure(13); doc.setFillColor(...SOFT); doc.roundedRect(M, y, W - 2 * M, 8, 1.5, 1.5, 'F'); setFont('bold', 8.5, PRIMARY); doc.text(label.toUpperCase(), M + 3, y + 5.2); y += 12; };
   const paragraph = (value: string, size = 8.2, color = TEXT, lineHeight = 4.1) => { const lines = doc.splitTextToSize(safe(value), W - 2 * M); setFont('normal', size, color); for (const line of lines) { ensure(lineHeight + 1); doc.text(line, M, y); y += lineHeight; } };
 
-  // Header: clean accounting-document hierarchy, natural full-colour brand logo and restrained safari accents.
-  drawBrandLogo(doc, logo, M, 7, 30);
-  setFont('bold', 13, PRIMARY); doc.text('BAHARI ASILI SAFARIS', 48, 15);
-  setFont('normal', 7.5, MUTED); doc.text(safe(COMPANY.address), 48, 20); doc.text(safe(COMPANY.phone), 48, 24); doc.text(safe(COMPANY.email), 48, 28);
+  // Header: the official full-colour logo is the single brand mark.
+  // The logo already contains the complete BAHARI ASILI SAFARIS wordmark,
+  // so no second text copy is drawn beside it.
+  const logoHeight = 25;
+  const logoWidth = drawBrandLogo(doc, logo, M, 8, logoHeight);
+  const contactX = M + logoWidth + 5;
+  setFont('normal', 7.5, MUTED); doc.text(safe(COMPANY.address), contactX, 14); doc.text(safe(COMPANY.phone), contactX, 19); doc.text(safe(COMPANY.email), contactX, 24);
   setFont('bold', 21, TEXT); doc.text(Q.title, W - M, 15, { align: 'right' });
   setFont('bold', 8, PRIMARY); doc.text(`${Q.ref}  ${safe(quotation.quotation_ref)}`, W - M, 22, { align: 'right' });
   setFont('normal', 7.5, MUTED); doc.text(`${Q.issueDate}: ${formatLocaleDate(quotation.created_at || new Date().toISOString(), locale)}`, W - M, 27, { align: 'right' });
