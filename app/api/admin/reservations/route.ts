@@ -127,6 +127,7 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>): Promise
       admin
         .from('bookings')
         .select('id', { count: 'exact', head: true })
+        .eq('is_deleted', false)
         .gte('created_at', `${todayStr}T00:00:00.000Z`)
         .lte('created_at', `${todayStr}T23:59:59.999Z`)
     ),
