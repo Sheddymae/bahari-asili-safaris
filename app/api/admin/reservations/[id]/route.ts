@@ -103,7 +103,6 @@ export async function PATCH(
       .from('bookings')
       .select('*')
       .eq('id', id)
-      .eq('is_deleted', false)
       .maybeSingle<Booking>();
 
     if (fetchError || !booking) {
@@ -207,6 +206,12 @@ export async function PATCH(
       });
 
       return NextResponse.json({ success: true });
+    }
+
+    // Deleted reservations are only actionable through the dedicated
+    // Recycle Bin restore/permanent-delete actions above.
+    if (booking.is_deleted) {
+      return NextResponse.json({ success: false, error: 'This reservation is in the Recycle Bin.' }, { status: 410 });
     }
 
     /*
