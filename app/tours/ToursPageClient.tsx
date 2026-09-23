@@ -37,6 +37,7 @@ function ToursPageInner() {
   const { t, locale } = useLanguage();
   const groupLabels = groupDepartureLabels[locale];
   const [programs, setPrograms] = useState<typeof safaris>([]);
+  const [managedExcursions, setManagedExcursions] = useState<typeof excursions>(excursions);
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'day' ? 'day' : searchParams.get('tab') === 'group' ? 'group' : 'private';
   const [groupTours, setGroupTours] = useState<GroupTour[] | null>(null);
@@ -44,6 +45,14 @@ function ToursPageInner() {
   const [programsLoading, setProgramsLoading] = useState(true);
 
   useEffect(() => { getGroupTours().then(setGroupTours); }, []);
+  useEffect(() => {
+    let active = true;
+    fetch('/api/excursions', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => { if (active && d.success && Array.isArray(d.excursions)) setManagedExcursions(d.excursions); })
+      .catch(() => { /* static catalogue remains available */ });
+    return () => { active = false; };
+  }, []);
   useEffect(() => {
     let active = true;
     setProgramsLoading(true);
@@ -55,7 +64,7 @@ function ToursPageInner() {
     return () => { active = false; };
   }, [locale]);
 
-  const dayTrips = useMemo(() => excursions.filter((e) => isDayTrip(e.duration)), []);
+  const dayTrips = useMemo(() => managedExcursions.filter((e) => isDayTrip(e.duration)), [managedExcursions]);
   const openBooking = useCallback((name: string) => setSelectedTour(name), []);
   const closeBooking = useCallback(() => setSelectedTour(null), []);
 
