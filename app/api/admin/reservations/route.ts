@@ -25,7 +25,9 @@ export async function GET(req: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1);
     const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('page_size') || '25', 10) || 25));
 
-    let query = admin.from('bookings').select('*', { count: 'exact' }).order('created_at', { ascending: false });
+    // The main reservations workspace only shows active bookings. Soft-deleted
+    // records are retained in the Recycle Bin and are never mixed into totals.
+    let query = admin.from('bookings').select('*', { count: 'exact' }).eq('is_deleted', false).order('created_at', { ascending: false });
 
     if (status) query = query.eq('reservation_status', status);
     if (bookingType) query = query.eq('booking_type', bookingType);
@@ -120,7 +122,7 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>): Promise
   };
 
   const [total, today, pending, confirmed, cancelled, completed, revenue, quotedRevenue, confirmedRevenue, outstandingBalance] = await Promise.all([
-    safeCount(() => admin.from('bookings').select('id', { count: 'exact', head: true })),
+    safeCount(() => admin.from('bookings').select('id', { count: 'exact', head: true }).eq('is_deleted', false)),
     safeCount(() =>
       admin
         .from('bookings')
@@ -134,7 +136,7 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>): Promise
     safeCount(() => admin.from('bookings').select('id', { count: 'exact', head: true }).eq('reservation_status', 'completed')),
     (async () => {
       try {
-        const { data, error } = await admin.from('bookings').select('total_price').eq('payment_status', 'paid');
+        const { data, error } = await admin.from('bookings').select('total_price').eq('is_deleted', false).eq('payment_status', 'paid');
         if (error) {
           console.error('Revenue query error:', error.message);
           return 0;
@@ -147,7 +149,7 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>): Promise
     })(),
     (async () => {
       try {
-        const { data, error } = await admin.from('bookings').select('total_price').in('invoice_status', ['quoted', 'sent']);
+        const { data, error } = await admin.from('bookings').select('total_price').eq('is_deleted', false).in('invoice_status', ['quoted', 'sent']);
         if (error) return 0;
         return (data || []).reduce((sum: number, row: any) => sum + (Number(row.total_price) || 0), 0);
       } catch {
@@ -156,7 +158,7 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>): Promise
     })(),
     (async () => {
       try {
-        const { data, error } = await admin.from('bookings').select('total_price').in('invoice_status', ['confirmed', 'paid', 'partially_paid']);
+        const { data, error } = await admin.from('bookings').select('total_price').eq('is_deleted', false).in('invoice_status', ['confirmed', 'paid', 'partially_paid']);
         if (error) return 0;
         return (data || []).reduce((sum: number, row: any) => sum + (Number(row.total_price) || 0), 0);
       } catch {
@@ -165,7 +167,7 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>): Promise
     })(),
     (async () => {
       try {
-        const { data, error } = await admin.from('bookings').select('balance_due').gt('balance_due', 0);
+        const { data, error } = await admin.from('bookings').select('balance_due').eq('is_deleted', false).gt('balance_due', 0);
         if (error) return 0;
         return (data || []).reduce((sum: number, row: any) => sum + (Number(row.balance_due) || 0), 0);
       } catch {
