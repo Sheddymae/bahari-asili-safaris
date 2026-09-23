@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, MapPin, Star, ChevronDown, ChevronUp, Check, X, Backpack, Building2, Sun, Sunset, MoonStar, MessageCircle } from 'lucide-react';
@@ -59,10 +59,22 @@ function CompactSafariCard({ safari, t, locale }: { safari: Safari; t: any; loca
 export default function ToursSection({ onBook, variant = 'full' }: { onBook: (tourName?: string) => void; variant?: ToursVariant }) {
   const { t, locale } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabKey>('tsavo');
+  const [managedSafaris, setManagedSafaris] = useState<Safari[]>(safaris);
   const safariLocale: SafariLocale = (['en','it','fr','es','de','ar','zh','sw'].includes(locale) ? locale : 'en') as SafariLocale;
   const tabs = (t.tours?.tabLabels ?? {}) as Record<string, string>;
-  const currentSafaris = useMemo(() => activeTab === 'multiday' ? safaris.filter(s => s.category === 'long') : safaris.filter(s => s.tabs.includes(activeTab as SafariTab) && s.category !== 'long'), [activeTab]);
-  const homeSafaris = useMemo(() => { const popular = safaris.filter(s => s.popular); const fallback = safaris.filter(s => !s.popular).sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)); return [...popular, ...fallback].slice(0, 4); }, []);
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/programs?locale=${safariLocale}`, { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (!active || !data?.success || !Array.isArray(data.programs) || data.programs.length === 0) return;
+        setManagedSafaris(data.programs as Safari[]);
+      })
+      .catch(() => { /* keep the static catalogue as a resilient fallback */ });
+    return () => { active = false; };
+  }, [safariLocale]);
+  const currentSafaris = useMemo(() => activeTab === 'multiday' ? managedSafaris.filter(s => s.category === 'long') : managedSafaris.filter(s => s.tabs.includes(activeTab as SafariTab) && s.category !== 'long'), [activeTab, managedSafaris]);
+  const homeSafaris = useMemo(() => { const popular = managedSafaris.filter(s => s.popular); const fallback = managedSafaris.filter(s => !s.popular).sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)); return [...popular, ...fallback].slice(0, 4); }, [managedSafaris]);
   if (variant === 'home') return <section id="tours" className="py-16 lg:py-20 bg-sand-50"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8"><div><span className="font-inter text-safari-500 font-semibold text-xs tracking-widest uppercase block mb-3">{t.tours?.label}</span><h2 className="font-poppins font-extrabold text-3xl sm:text-4xl lg:text-5xl text-foreground leading-tight">{t.tours?.packagesLabel}</h2><p className="font-inter text-muted-foreground mt-3 max-w-2xl">{t.tours?.subtitle}</p></div><Link href="/tours" className="shrink-0 font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800">{t.nav.tours} →</Link></div><div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">{homeSafaris.map(safari => <CompactSafariCard key={safari.id} safari={safari} t={t.tours} locale={safariLocale} />)}</div><div className="mt-8 text-center"><Link href="/tours" className="inline-flex items-center font-poppins font-semibold text-sm text-ocean-700 hover:text-ocean-800">{t.nav.tours} →</Link></div></div></section>;
   return <section id="tours" className="py-24 lg:py-32 bg-sand-50"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div className="mb-12"><span className="font-inter text-safari-500 font-semibold text-xs tracking-widest uppercase block mb-4">{t.tours?.label}</span><h2 className="font-poppins font-extrabold text-4xl sm:text-5xl lg:text-6xl text-foreground leading-tight">{t.tours?.packagesLabel}</h2><p className="font-inter text-muted-foreground mt-4 max-w-2xl">{t.tours?.subtitle}</p></div><div className="flex items-center gap-2 mb-10 overflow-x-auto pb-2 scrollbar-hide">{TABS.map(tab => <button type="button" key={tab.key} onClick={() => setActiveTab(tab.key)} className={`flex items-center gap-1.5 font-inter font-semibold text-sm px-5 py-2.5 rounded-full border whitespace-nowrap flex-shrink-0 ${activeTab === tab.key ? 'bg-ocean-700 text-white border-ocean-700' : 'bg-white text-foreground border-border'}`}><span>{tab.emoji}</span><span>{tabs[tab.key] || tab.label}</span></button>)}</div>{currentSafaris.length ? <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{currentSafaris.map(safari => <SafariCard key={safari.id} safari={safari} t={t.tours} locale={safariLocale} onBook={onBook} />)}</div> : <div className="text-center py-16 text-muted-foreground">{t.tours?.noSafarisInCategory}</div>}</div></section>;
 }
