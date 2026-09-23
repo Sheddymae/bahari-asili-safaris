@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Clock, ChevronRight, ArrowRight, MessageCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { excursions } from '@/lib/tours-data';
 import { getLocalizedExcursion, type SupportedLocale } from '@/lib/excursion-content-i18n';
@@ -13,7 +14,18 @@ const whatsappHref = (name: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${
 
 export default function ExcursionsSection({ onBook, variant = 'full' }: { onBook: (name?: string) => void; variant?: ExcursionsVariant }) {
   const { t, locale } = useLanguage();
-  const homeExcursions = variant === 'home' ? [...excursions.filter(exc => exc.popular), ...excursions.filter(exc => !exc.popular)].slice(0, 6) : excursions;
+  const [managedExcursions, setManagedExcursions] = useState(excursions);
+  useEffect(() => {
+    let active = true;
+    fetch('/api/excursions', { cache: 'no-store' })
+      .then((response) => response.json())
+      .then((data) => {
+        if (active && data?.success && Array.isArray(data.excursions) && data.excursions.length > 0) setManagedExcursions(data.excursions);
+      })
+      .catch(() => { /* keep static catalogue as fallback */ });
+    return () => { active = false; };
+  }, []);
+  const homeExcursions = variant === 'home' ? [...managedExcursions.filter(exc => exc.popular), ...managedExcursions.filter(exc => !exc.popular)].slice(0, 6) : managedExcursions;
   return <section id="excursions" className={`${variant === 'home' ? 'py-16 lg:py-20' : 'py-20 lg:py-28'} bg-white`}><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 lg:mb-12"><div><span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.excursions.label}</span><h2 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground">{t.excursions.title}{' '}<span className="text-safari-500">{t.excursions.titleHighlight}</span></h2></div><div className="flex flex-col items-start lg:items-end gap-3"><p className="font-inter text-muted-foreground text-base max-w-md lg:text-right">{t.excursions.subtitle}</p>{variant === 'home' && <Link href="/excursions" className="font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800">{t.nav.excursions} →</Link>}</div></div>
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">{homeExcursions.map(exc => { const localized = getLocalizedExcursion(exc, locale as SupportedLocale); return <div key={exc.id} className="tour-card bg-white border border-border rounded-2xl overflow-hidden shadow-card flex flex-col group">
