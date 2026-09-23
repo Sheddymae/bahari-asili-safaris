@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { ADMIN_COOKIE_NAME, verifyAdminSession } from '@/lib/admin-auth';
 
 export async function GET(_req: NextRequest) {
   try {
-    if (_req.headers.get('x-admin-role') !== 'owner') {
+    const token = _req.cookies.get(ADMIN_COOKIE_NAME)?.value;
+    const session = await verifyAdminSession(token);
+    if (!session || session.role !== 'owner') {
       return NextResponse.json({ success: false, error: 'Only owner accounts can access the Recycle Bin.' }, { status: 403 });
     }
 
