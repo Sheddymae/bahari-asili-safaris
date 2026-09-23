@@ -9,7 +9,7 @@ export type Booking = {
   reservation_status?: string; payment_status?: string; payment_method?: string; amount_paid?: number | string | null;
   balance_due?: number | string | null; hotel_name?: string; pickup_location?: string; message?: string; admin_notes?: string;
   created_at?: string; invoice_number?: string; invoice_status?: string; invoice_url?: string; voucher_url?: string; payment_receipt_url?: string; visa_itinerary_url?: string; itinerary_url?: string; booking_type?: string;
-  accommodation_cost?: number | string | null; park_fees?: number | string | null; guide_cost?: number | string | null; transport_cost?: number | string | null; meals_cost?: number | string | null; other_costs?: number | string | null; discount?: number | string | null; tax?: number | string | null; currency?: string | null;
+  accommodation_cost?: number | string | null; park_fees?: number | string | null; guide_cost?: number | string | null; transport_cost?: number | string | null; meals_cost?: number | string | null; other_costs?: number | string | null; discount?: number | string | null; tax?: number | string | null; currency?: string | null; is_deleted?: boolean; deleted_at?: string | null;
   [key: string]: unknown;
 };
 
