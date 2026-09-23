@@ -1,5 +1,7 @@
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { excursions, type Excursion } from '@/lib/tours-data';
+import { safaris } from '@/lib/safari-catalogue';
+import { normalizeLocale } from '@/lib/locale-content';
 
 type CmsRow = any;
 
@@ -57,5 +59,22 @@ export async function getPublicSafariBlu(): Promise<Excursion[]> {
     return merged.concat((data || []).filter((row: CmsRow) => !existing.has(row.slug)).map((row: CmsRow) => toExcursion(row)));
   } catch {
     return staticItems;
+  }
+}
+
+
+export async function getPublicSafaris(locale: string = 'en') {
+  const normalized = normalizeLocale(locale);
+  try {
+    const admin = getSupabaseAdmin();
+    const { data, error } = await admin.from('safari_programs').select('*').eq('locale', normalized);
+    if (error) throw error;
+    const rows = data || [];
+    const map = new Map(rows.map((r: any) => [r.slug, r]));
+    if (normalized === 'en') return safaris.map((s) => map.has(s.id) ? { ...s, ...map.get(s.id) } : s);
+    return rows;
+
+  } catch {
+    return [];
   }
 }
