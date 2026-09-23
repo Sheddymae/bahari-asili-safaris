@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { safaris } from '@/lib/safari-catalogue';
+import { getPublicSafaris } from '@/lib/public-content';
 import SafariDetailClient from '@/components/SafariDetailEnhanced';
 
 export function generateStaticParams() {
@@ -12,7 +13,8 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const safari = safaris.find((s) => s.id === slug);
+  const managed = await getPublicSafaris('en');
+  const safari = managed.find((s) => s.id === slug) || safaris.find((s) => s.id === slug);
   if (!safari) return { title: 'Safari not found | Bahari Asili Safaris' };
 
   const title = `${safari.name} | ${safari.days} Day Safari | Bahari Asili Safaris`;
@@ -33,6 +35,7 @@ export const dynamicParams = true;
 
 export default async function SafariDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const safari = safaris.find((s) => s.id === slug);
+  const managed = await getPublicSafaris('en');
+  const safari = managed.find((s) => s.id === slug) || safaris.find((s) => s.id === slug);
   return <SafariDetailClient safari={safari || null} slug={slug} />;
 }
