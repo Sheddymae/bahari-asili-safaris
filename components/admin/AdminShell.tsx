@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Anchor, BarChart3, Bell, BookOpen, CalendarCheck2, CalendarDays, ChevronDown, ChevronRight, CircleDollarSign, FileSpreadsheet, FileText, Image as ImageIcon, LayoutDashboard, LogOut, Menu, MapPinned, Newspaper, Package, PanelLeftClose, PanelLeftOpen, ReceiptText, ScrollText, Users, WalletCards, Waves, X } from 'lucide-react';
+import { Anchor, ArchiveRestore, BarChart3, Bell, BookOpen, CalendarCheck2, CalendarDays, ChevronDown, ChevronRight, CircleDollarSign, FileSpreadsheet, FileText, Image as ImageIcon, LayoutDashboard, LogOut, Menu, MapPinned, Newspaper, Package, PanelLeftClose, PanelLeftOpen, ReceiptText, ScrollText, Users, WalletCards, Waves, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 const nav = [
   { section: 'Workspace', href: '/auth/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { section: 'Workspace', href: '/auth/dashboard/bookings', label: 'Bookings', icon: CalendarCheck2 },
+  { section: 'Workspace', href: '/auth/dashboard/bin', label: 'Recycle Bin', icon: ArchiveRestore },
   { section: 'Workspace', href: '/auth/dashboard/calendar', label: 'Calendar', icon: CalendarDays },
   { section: 'Workspace', href: '/auth/dashboard/travelers', label: 'Travelers', icon: Users },
   { section: 'Workspace', href: '/auth/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
