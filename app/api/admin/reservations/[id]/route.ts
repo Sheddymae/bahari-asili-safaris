@@ -103,6 +103,7 @@ export async function PATCH(
       .from('bookings')
       .select('*')
       .eq('id', id)
+      .eq('is_deleted', false)
       .maybeSingle<Booking>();
 
     if (fetchError || !booking) {
@@ -141,6 +142,71 @@ export async function PATCH(
       console.error(
         'EMAIL_TO not set — internal admin notifications will be skipped.'
       );
+    }
+
+    /*
+     * ============================================================
+     * RESTORE / PERMANENTLY DELETE FROM RECYCLE BIN
+     * ============================================================
+     */
+    if (action === 'restore' || action === 'permanent_delete') {
+      if (req.headers.get('x-admin-role') !== 'owner') {
+        return NextResponse.json({ success: false, error: 'Only owner accounts can restore or permanently delete reservations.' }, { status: 403 });
+      }
+
+      const { data: deletedBooking, error: deletedFetchError } = await admin
+        .from('bookings')
+        .select('*')
+        .eq('id', id)
+        .eq('is_deleted', true)
+        .maybeSingle<Booking>();
+
+      if (deletedFetchError || !deletedBooking) {
+        return NextResponse.json({ success: false, error: 'Deleted reservation not found in the Recycle Bin.' }, { status: 404 });
+      }
+
+      if (action === 'restore') {
+        const { data: restored, error: restoreError } = await admin
+          .from('bookings')
+          .update({ is_deleted: false, deleted_at: null })
+          .eq('id', id)
+          .select()
+          .maybeSingle();
+
+        if (restoreError) {
+          console.error('Restore reservation error:', restoreError);
+          return NextResponse.json({ success: false, error: restoreError.message || 'Failed to restore reservation.' }, { status: 500 });
+        }
+
+        await logAdminAction({
+          username: req.headers.get('x-admin-username') || 'unknown',
+          role: 'owner', action: 'reservation_restore', targetType: 'booking', targetId: id,
+          ip: getClientIp(req), userAgent: req.headers.get('user-agent') || undefined,
+          metadata: { booking_ref: deletedBooking.booking_ref },
+        });
+
+        return NextResponse.json({ success: true, reservation: restored });
+      }
+
+      const { error: permanentDeleteError } = await admin
+        .from('bookings')
+        .delete()
+        .eq('id', id)
+        .eq('is_deleted', true);
+
+      if (permanentDeleteError) {
+        console.error('Permanent delete reservation error:', permanentDeleteError);
+        return NextResponse.json({ success: false, error: permanentDeleteError.message || 'Failed to permanently delete reservation.' }, { status: 500 });
+      }
+
+      await logAdminAction({
+        username: req.headers.get('x-admin-username') || 'unknown',
+        role: 'owner', action: 'reservation_permanent_delete', targetType: 'booking', targetId: id,
+        ip: getClientIp(req), userAgent: req.headers.get('user-agent') || undefined,
+        metadata: { booking_ref: deletedBooking.booking_ref },
+      });
+
+      return NextResponse.json({ success: true });
     }
 
     /*
@@ -1029,21 +1095,27 @@ export async function DELETE(
 
     const admin = getSupabaseAdmin();
 
-    const { error } = await admin
+    const { data: deleted, error } = await admin
       .from('bookings')
-      .delete()
-      .eq('id', id);
+      .update({
+        is_deleted: true,
+        deleted_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .eq('is_deleted', false)
+      .select()
+      .maybeSingle();
 
     if (error) {
-      console.error('Delete reservation error:', error);
-
+      console.error('Move reservation to Recycle Bin error:', error);
       return NextResponse.json(
-        {
-          success: false,
-          error: error.message || 'Failed to delete reservation.',
-        },
+        { success: false, error: error.message || 'Failed to move reservation to the Recycle Bin.' },
         { status: 500 }
       );
+    }
+
+    if (!deleted) {
+      return NextResponse.json({ success: false, error: 'Reservation not found or already in the Recycle Bin.' }, { status: 404 });
     }
 
     await logAdminAction({
@@ -1054,10 +1126,13 @@ export async function DELETE(
       targetId: id,
       ip: getClientIp(req),
       userAgent: req.headers.get('user-agent') || undefined,
+      metadata: { booking_ref: deleted.booking_ref, deleted_at: deleted.deleted_at },
     });
 
     return NextResponse.json({
       success: true,
+      softDeleted: true,
+      deletedAt: deleted.deleted_at,
     });
   } catch (err) {
     console.error('Delete reservation error:', err);
