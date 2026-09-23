@@ -2,6 +2,7 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { excursions, type Excursion } from '@/lib/tours-data';
 import { safaris } from '@/lib/safari-catalogue';
 import { normalizeLocale } from '@/lib/locale-content';
+import { mergeProgram, rowToSafari } from '@/lib/program-utils';
 
 type CmsRow = any;
 
@@ -71,8 +72,8 @@ export async function getPublicSafaris(locale: string = 'en') {
     if (error) throw error;
     const rows = data || [];
     const map = new Map(rows.map((r: any) => [r.slug, r]));
-    if (normalized === 'en') return safaris.map((s) => map.has(s.id) ? { ...s, ...map.get(s.id) } : s);
-    return rows;
+    if (normalized === 'en') return safaris.map((s) => map.has(s.id) ? mergeProgram(s, map.get(s.id)) : s);
+    return rows.map(rowToSafari);
 
   } catch {
     return [];
