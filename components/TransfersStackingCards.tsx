@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { ArrowUpRight, CalendarDays, CarFront, MapPin, Plane } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type TransferCard = {
   eyebrow: string;
@@ -143,12 +144,12 @@ function PeakViewingCard({ onBook, index }: { onBook: (value: string) => void; i
                 Peak viewing
               </span>
               <span className="font-inter text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:text-xs">
-                Seasonal guide
+                {wildlife.label}
               </span>
             </div>
 
             <h2 className="font-poppins text-xl font-bold leading-tight text-ocean-700 sm:text-3xl lg:text-4xl">
-              Peak Viewing + Transfers
+              {wildlife.legendPeak} + {t.nav.transfers}
             </h2>
 
             <div className="mt-4 space-y-2.5 font-inter text-[10px] text-muted-foreground sm:text-xs">
@@ -177,7 +178,7 @@ function PeakViewingCard({ onBook, index }: { onBook: (value: string) => void; i
             className="inline-flex w-fit items-center gap-2 rounded-xl border border-ocean-700 px-3.5 py-2.5 font-poppins text-[10px] font-semibold text-ocean-700 hover:bg-ocean-700 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-400 sm:px-4 sm:py-3 sm:text-xs"
           >
             <CarFront className="h-3.5 w-3.5" />
-            Plan transfer
+            {tr.cta}
           </button>
         </div>
 
@@ -200,6 +201,10 @@ export default function TransfersStackingCards({
 }: {
   onBook: (value: string) => void;
 }) {
+  const { t } = useLanguage();
+  const tr = t.transfers;
+  const wildlife = t.wildlifeCalendar;
+
   return (
     <section className="bg-sand-100 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1.35fr] lg:gap-16">
@@ -207,14 +212,14 @@ export default function TransfersStackingCards({
           <div className="max-w-xl">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sand-300 bg-white px-3 py-1.5 font-poppins text-[10px] font-bold uppercase tracking-[0.14em] text-ocean-700 sm:text-xs">
               <MapPin className="h-3.5 w-3.5 text-safari-500" />
-              Kenya transfers
+              {tr.label}
             </div>
             <h1 className="font-poppins text-4xl font-bold leading-[1.02] text-ocean-700 sm:text-5xl lg:text-6xl">
-              Move smoothly.
-              <span className="mt-1 block text-safari-500">Explore further.</span>
+              {tr.title}
+              <span className="mt-1 block text-safari-500">{tr.titleHighlight}</span>
             </h1>
             <p className="mt-5 max-w-lg font-inter text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-              Private airport and safari transfers from Malindi, Mombasa and Nairobi, arranged around your itinerary.
+              {tr.subtitle}
             </p>
           </div>
         </div>
