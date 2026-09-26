@@ -234,15 +234,15 @@ export default function WildlifeCalendarSection({ onBook }: { onBook?: (transfer
                       title={`Show what's in season in ${MONTH_NAMES[i]}`}
                       className={`relative text-center font-inter text-[11px] font-bold tracking-wide rounded-full py-1.5 transition-colors duration-150 ${
                         isSelected
-                          ? 'bg-safari-500 text-white shadow-sm shadow-safari-500/40'
+                          ? 'bg-[#FF7A00] text-white shadow-sm shadow-[#FF7A00]/30'
                           : isToday
-                          ? 'bg-safari-50 text-safari-700'
+                          ? 'bg-[#FF7A00]/10 text-[#0E7482]'
                           : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
                       }`}
                     >
                       {m}
                       {isToday && (
-                        <span className="absolute -top-1 -right-0.5 w-1.5 h-1.5 rounded-full bg-safari-500" />
+                        <span className="absolute -top-1 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
                       )}
                     </button>
                   );
