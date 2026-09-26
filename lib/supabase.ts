@@ -62,6 +62,8 @@ export interface Booking {
   currency?: string;
   itinerary?: { day: number | string; title: string; location?: string; description?: string; morning?: string; afternoon?: string; overnight?: string }[] | null;
   itinerary_url?: string | null;
+  is_deleted?: boolean;
+  deleted_at?: string | null;
 }
 
 export interface Payment {

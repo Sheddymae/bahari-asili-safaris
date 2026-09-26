@@ -8,8 +8,9 @@ import TrustStrip from '@/components/TrustStrip';
 import AboutSection from '@/components/AboutSection';
 import HomeConversionSection from '@/components/HomeConversionSection';
 import StructuredData from '@/components/StructuredData';
-import AnimateOnScroll from '@/components/AnimateOnScroll';
+import ScrollReveal from '@/components/ScrollReveal';
 import HowToBook from '@/components/HowToBook';
+import TravelerEssentials from '@/components/TravelerEssentials';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
 
@@ -41,22 +42,23 @@ export default function Home() {
       <StructuredData />
       <Navbar />
       <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
-        <HeroSection onBook={openHeroBooking} />
-        <TrustStrip />
-        <HowToBook />
-        <HomeConversionSection onBook={() => openHeroBooking()} />
-        <AnimateOnScroll direction="up"><AboutSection variant="home" /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><ToursSection variant="home" onBook={openBooking} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><HomeDestinationsSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><ExcursionsSection variant="home" onBook={openBooking} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><WildlifeCalendarSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><TransfersSection variant="home" onBook={openBooking} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><GallerySection variant="home" /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><ReviewsSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><FinalCtaSection onBook={() => openHeroBooking()} /></AnimateOnScroll>
+        <ScrollReveal direction="up"><HeroSection onBook={openHeroBooking} /></ScrollReveal>
+        <ScrollReveal direction="up"><TrustStrip /></ScrollReveal>
+        <ScrollReveal direction="up"><HowToBook /></ScrollReveal>
+        <ScrollReveal direction="left"><HomeConversionSection onBook={() => openHeroBooking()} /></ScrollReveal>
+        <ScrollReveal direction="right"><AboutSection variant="home" /></ScrollReveal>
+        <ScrollReveal direction="up"><ToursSection variant="home" onBook={openBooking} /></ScrollReveal>
+        <ScrollReveal direction="left"><HomeDestinationsSection /></ScrollReveal>
+        <ScrollReveal direction="right"><BuildSafariPromo /></ScrollReveal>
+        <ScrollReveal direction="up"><TravelerEssentials /></ScrollReveal>
+        <ScrollReveal direction="left"><ExcursionsSection variant="home" onBook={openBooking} /></ScrollReveal>
+        <ScrollReveal direction="right"><WildlifeCalendarSection /></ScrollReveal>
+        <ScrollReveal direction="left"><TransfersSection variant="home" onBook={openBooking} /></ScrollReveal>
+        <ScrollReveal direction="right"><GallerySection variant="home" /></ScrollReveal>
+        <ScrollReveal direction="up"><ReviewsSection /></ScrollReveal>
+        <ScrollReveal direction="right"><FinalCtaSection onBook={() => openHeroBooking()} /></ScrollReveal>
       </main>
-      <Footer />
+      <ScrollReveal direction="up"><Footer /></ScrollReveal>
       {isBookingOpen && <BookingModal isOpen={isBookingOpen} onClose={closeBooking} selectedTour={selectedTour} />}
       <HeroBookingModal isOpen={isHeroBookingOpen} onClose={closeHeroBooking} initialSelection={heroBookingSelection} />
       {/* Safari Assistant intentionally disabled. Re-enable by restoring <SafariAssistant onRequestQuote={() => openHeroBooking()} /> here. */}

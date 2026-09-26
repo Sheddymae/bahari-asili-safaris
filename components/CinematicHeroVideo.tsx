@@ -33,6 +33,26 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
   const [hasReducedMotion, setHasReducedMotion] = useState(false);
   const [videoSrc, setVideoSrc] = useState<string>('');
 
+  // Subtle scroll parallax. It is intentionally tiny and disabled for reduced-motion users.
+  useEffect(() => {
+    if (hasReducedMotion) return;
+    const node = containerRef.current;
+    const video = videoRef.current;
+    if (!node || !video) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = node.getBoundingClientRect();
+      const progress = Math.max(-1, Math.min(1, -rect.top / Math.max(1, rect.height)));
+      video.style.transform = \`translate3d(0, \\${progress * 18}px, 0) scale(1.03)\`;
+    };
+    const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); if (frame) window.cancelAnimationFrame(frame); };
+  }, [hasReducedMotion, videoSrc]);
+
   // Initialize video source and reduced motion preference
   useEffect(() => {
     const prefersReduced = prefersReducedMotion();
@@ -118,6 +138,8 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
           style={{
             WebkitTouchCallout: 'none',
             WebkitUserSelect: 'none',
+            transform: 'translate3d(0, 0, 0) scale(1.03)',
+            willChange: 'transform',
           } as React.CSSProperties}
         />
       </div>
