@@ -167,7 +167,7 @@ const CALENDAR_ROWS: CalendarRow[] = [
   },
 ];
 
-export default function WildlifeCalendarSection({ onBook }: { onBook?: (transferType: string) => void }) {
+export default function WildlifeCalendarSection() {
   const { t, locale } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hoverCell, setHoverCell] = useState<{ row: number; month: number } | null>(null);
