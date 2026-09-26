@@ -19,7 +19,6 @@ const HomeDestinationsSection = dynamic(() => import('@/components/HomeDestinati
 const BuildSafariPromo = dynamic(() => import('@/components/BuildSafariPromo'), { loading: () => <div className="h-64 bg-foreground animate-pulse" /> });
 const ExcursionsSection = dynamic(() => import('@/components/ExcursionsSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const WildlifeCalendarSection = dynamic(() => import('@/components/WildlifeCalendarSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
-const TransfersSection = dynamic(() => import('@/components/TransfersSection'), { loading: () => <div className="h-64 bg-sand-50 animate-pulse" /> });
 const GallerySection = dynamic(() => import('@/components/GallerySection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const ReviewsSection = dynamic(() => import('@/components/ReviewsSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), { loading: () => <div className="h-48 bg-ocean-700 animate-pulse" /> });
@@ -52,9 +51,8 @@ export default function Home() {
         <ScrollReveal direction="right"><BuildSafariPromo /></ScrollReveal>
         <ScrollReveal direction="up"><TravelerEssentials /></ScrollReveal>
         <ScrollReveal direction="left"><ExcursionsSection variant="home" onBook={openBooking} /></ScrollReveal>
-        <ScrollReveal direction="right"><WildlifeCalendarSection /></ScrollReveal>
-        <ScrollReveal direction="left"><TransfersSection variant="home" onBook={openBooking} /></ScrollReveal>
-        <ScrollReveal direction="right"><GallerySection variant="home" /></ScrollReveal>
+        <ScrollReveal direction="right"><WildlifeCalendarSection onBook={openBooking} /></ScrollReveal>
+                <ScrollReveal direction="right"><GallerySection variant="home" /></ScrollReveal>
         <ScrollReveal direction="up"><ReviewsSection /></ScrollReveal>
         <ScrollReveal direction="right"><FinalCtaSection onBook={() => openHeroBooking()} /></ScrollReveal>
       </main>
