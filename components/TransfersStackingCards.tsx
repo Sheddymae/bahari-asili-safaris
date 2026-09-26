@@ -114,7 +114,6 @@ function StackingCard({
             className="object-cover"
             priority={index === 0}
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black/5" />
         </div>
       </div>
     </motion.article>
@@ -190,7 +189,6 @@ function PeakViewingCard({ onBook, index }: { onBook: (value: string) => void; i
             sizes="(max-width: 767px) 55vw, (max-width: 1279px) 38vw, 35vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black/5" />
         </div>
       </div>
     </motion.article>
