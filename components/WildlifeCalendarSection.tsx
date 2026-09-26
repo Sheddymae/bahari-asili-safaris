@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { prefersReducedMotion } from '@/lib/video-config';
+import StickyRevealInfoCard from '@/components/StickyRevealInfoCard';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -163,7 +164,7 @@ const CALENDAR_ROWS: CalendarRow[] = [
   },
 ];
 
-export default function WildlifeCalendarSection() {
+export default function WildlifeCalendarSection({ onBook }: { onBook?: (transferType: string) => void }) {
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hoverCell, setHoverCell] = useState<{ row: number; month: number } | null>(null);
@@ -211,7 +212,9 @@ export default function WildlifeCalendarSection() {
           </p>
         </div>
 
-        {/* Card */}
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:gap-8">
+          <div className="min-w-0">
+        {/* Calendar card */}
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] border border-sand-100 p-5 sm:p-8">
           <div className="overflow-x-auto -mx-2 px-2">
             <div className="min-w-[760px]">
@@ -352,29 +355,10 @@ export default function WildlifeCalendarSection() {
           )}
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center justify-center gap-6 mt-5">
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-2.5 rounded-full bg-gradient-to-r from-safari-400 to-safari-600" />
-            <span className="font-inter text-xs text-muted-foreground">
-              {t.wildlifeCalendar?.legendPeak || 'Peak viewing window'}
-            </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-1.5 rounded-full bg-slate-200" />
-            <span className="font-inter text-xs text-muted-foreground">
-              {t.wildlifeCalendar?.legendOff || 'Off-peak'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-safari-500" />
-            <span className="font-inter text-xs text-muted-foreground">{t.wildlifeCalendar?.currentMonth || 'Current month'}</span>
-          </div>
-        </div>
 
-        <p className="font-inter text-xs text-muted-foreground text-center mt-3">
-          {t.wildlifeCalendar?.footnote || 'Highlighted months = peak viewing window. Wildlife sightings can never be 100% guaranteed.'}
-        </p>
+          <StickyRevealInfoCard onBook={onBook} />
+        </div>
       </div>
     </section>
   );
