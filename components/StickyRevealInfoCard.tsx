@@ -178,7 +178,7 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
 
                       <p className="mt-3 font-inter text-sm leading-6 text-slate-500">
                         {activeItem.kind === 'current-month'
-                          ? `It is ${activeItem.description} — explore the wildlife calendar for the best seasonal windows.`
+                          ? `${activeItem.description} is the current month — explore the wildlife calendar for the best seasonal windows.`
                           : activeItem.description}
                       </p>
                     </div>
@@ -206,7 +206,27 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
               </AnimatePresence>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-5 rounded-2xl border border-slate-100 bg-white/70 p-3.5">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-slate-600">
+                  <span className="h-2.5 w-5 rounded-full bg-[#FF7A00]" />
+                  {wildlife?.legendPeak || 'Peak viewing window'}
+                </span>
+                <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-slate-500">
+                  <span className="h-2 w-5 rounded-full bg-slate-200" />
+                  {wildlife?.legendOff || 'Off-peak'}
+                </span>
+                <span className="inline-flex items-center gap-2 text-[11px] font-semibold text-slate-600">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="absolute inset-0 animate-ping rounded-full bg-[#FF7A00]/40" />
+                    <span className="relative h-2.5 w-2.5 rounded-full bg-[#FF7A00]" />
+                  </span>
+                  {wildlife?.currentMonth || 'Current month'}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4">
               <div className="mb-3 flex items-center justify-between gap-4">
                 <p className="max-w-[280px] font-inter text-xs italic leading-5 text-slate-500">
                   {wildlife?.footnote || 'Highlighted = best sighting chance. Nature can never be 100% guaranteed.'}
