@@ -6,11 +6,14 @@ import { ArrowRight, CalendarDays, Plane } from 'lucide-react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { Locale } from '@/lib/i18n';
 import { prefersReducedMotion } from '@/lib/video-config';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MONTHS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+const NOW_LABELS: Record<Locale, string> = { en: 'Right now:', it: 'In questo momento:', fr: 'En ce moment :', es: 'Ahora mismo:', de: 'Gerade jetzt:', ar: 'الآن:', zh: '现在：', sw: 'Sasa:' };
+
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -165,12 +168,13 @@ const CALENDAR_ROWS: CalendarRow[] = [
 ];
 
 export default function WildlifeCalendarSection({ onBook }: { onBook?: (transferType: string) => void }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hoverCell, setHoverCell] = useState<{ row: number; month: number } | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   const currentMonth = useMemo(() => new Date().getMonth() + 1, []);
+  const localizedMonth = useMemo(() => new Intl.DateTimeFormat(locale, { month: 'long' }).format(new Date(2026, (selectedMonth ?? currentMonth) - 1, 1)), [locale, selectedMonth, currentMonth]);
 
   useEffect(() => {
     if (prefersReducedMotion() || !sectionRef.current) return;
@@ -338,7 +342,7 @@ export default function WildlifeCalendarSection({ onBook }: { onBook?: (transfer
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#FF7A00] px-3 py-1.5 font-inter text-xs font-semibold text-white"><span className="h-1.5 w-1.5 rounded-full bg-white" />{t.wildlifeCalendar?.legendPeak || 'Peak viewing window'}</span>
             <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 font-inter text-xs font-semibold text-slate-500"><span className="h-1.5 w-1.5 rounded-full bg-slate-400" />{t.wildlifeCalendar?.legendOff || 'Off-peak'}</span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#FF7A00]/20 bg-[#FF7A00]/5 px-3 py-1.5 font-inter text-xs font-semibold text-[#0E7482]"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>{selectedMonth ? MONTH_NAMES[selectedMonth - 1] : MONTH_NAMES[currentMonth - 1]}</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#FF7A00]/20 bg-[#FF7A00]/5 px-3 py-1.5 font-inter text-xs font-semibold text-[#0E7482]"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>{localizedMonth}</span>
           </div>
           <p className="mt-3 font-inter text-xs italic leading-5 text-slate-400">{t.wildlifeCalendar?.footnote || 'Highlighted months = peak viewing window. Wildlife sightings can never be 100% guaranteed.'}</p>
         </div>
@@ -346,7 +350,7 @@ export default function WildlifeCalendarSection({ onBook }: { onBook?: (transfer
         {/* Live "in season" summary — reflects the selected month, or today by default */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-center">
           <span className="font-inter text-sm text-muted-foreground">
-            {selectedMonth ? `In ${MONTH_NAMES[selectedMonth - 1]}:` : 'Right now:'}
+            {NOW_LABELS[locale] ?? NOW_LABELS.en}
           </span>
           {inSeasonNow.length > 0 ? (
             inSeasonNow.map((row) => (
@@ -354,6 +358,7 @@ export default function WildlifeCalendarSection({ onBook }: { onBook?: (transfer
                 key={row.name}
                 className="inline-flex items-center gap-1.5 bg-safari-50 border border-safari-200 text-safari-700 text-xs font-inter font-semibold rounded-full px-3 py-1"
               >
+                <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>
                 <row.Icon className="w-3.5 h-3.5" />
                 {row.name}
               </span>
