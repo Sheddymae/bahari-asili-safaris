@@ -42,6 +42,8 @@ export interface Booking {
   visa_itinerary_url?: string | null;
   confirmed_at?: string | null;
   updated_at?: string;
+  is_deleted?: boolean;
+  deleted_at?: string | null;
   invoice_status?: 'draft' | 'quoted' | 'sent' | 'confirmed' | 'paid' | 'partially_paid' | 'overdue' | 'cancelled';
   invoice_number?: string | null;
   deposit_amount?: number | null;
