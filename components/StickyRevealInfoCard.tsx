@@ -105,7 +105,7 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
                   {tr.label || 'Transfers & Services'}
                 </div>
                 <h3 className="font-poppins text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
-                  Seamless Transfers
+                  {tr.title} <span className="text-[#0E7482]">{tr.titleHighlight}</span>
                 </h3>
               </div>
               <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#FF7A00]/10 text-[#FF7A00] sm:flex">
@@ -166,7 +166,7 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
                           </span>
                         )}
                         <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
-                          {activeItem.kind === 'airport' ? 'Airport transfer' : 'Safari insight'}
+                          {activeItem.kind === 'airport' ? tr.label : wildlife?.label}
                         </span>
                       </div>
 
@@ -189,7 +189,7 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
                         onClick={() => onBook(`Airport Transfer – ${activeItem.code}`)}
                         className="mt-4 inline-flex w-fit items-center gap-2 text-sm font-semibold text-[#0E7482] transition-colors hover:text-[#095a66]"
                       >
-                        Request this transfer
+                        {tr.cta}
                         <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                       </button>
                     ) : (
@@ -197,7 +197,7 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
                         href="/transfers"
                         className="mt-4 inline-flex w-fit items-center gap-2 text-sm font-semibold text-[#0E7482] transition-colors hover:text-[#095a66]"
                       >
-                        Explore transfers
+                        {t.nav.transfers}
                         <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                       </Link>
                     )}
@@ -253,9 +253,7 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
                     />
                   ))}
                 </div>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
-                  {started ? (isPaused ? 'Paused' : 'Auto reveal') : 'Starting'}
-                </span>
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#FF7A00]/70" />
               </div>
             </div>
           </div>
