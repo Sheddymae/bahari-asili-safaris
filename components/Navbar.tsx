@@ -52,6 +52,7 @@ export default function Navbar() {
     { label: t.nav.excursions, href: '/excursions' },
     { label: t.nav.destinations, href: '/destinations' },
     { label: t.nav.services, href: '/services' },
+    { label: t.nav.transfers, href: '/transfers' },
     { label: t.homeExtras.buildCta, href: '/build-your-safari' },
     { label: t.nav.about, href: '/about' },
     { label: t.nav.contact, href: '/contact' },

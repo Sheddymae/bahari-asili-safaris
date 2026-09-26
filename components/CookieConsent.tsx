@@ -36,8 +36,8 @@ export default function CookieConsent({ locale = 'en' }: { locale?: string }) {
   };
 
   return (
-    <div role="dialog" aria-modal="false" aria-labelledby="cookie-title" className="fixed inset-x-0 bottom-0 z-[200] p-3 sm:p-5">
-      <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-white/95 p-4 shadow-2xl backdrop-blur-md sm:p-5">
+    <div role="dialog" aria-modal="false" aria-labelledby="cookie-title" className="pointer-events-none fixed inset-x-0 bottom-4 z-50 p-3 sm:p-5">
+      <div className="pointer-events-auto mx-auto max-w-5xl rounded-2xl border border-border bg-white/95 p-4 shadow-2xl backdrop-blur-md sm:p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="max-w-3xl">
             <h2 id="cookie-title" className="font-poppins font-bold text-base text-foreground">{copy.title}</h2>

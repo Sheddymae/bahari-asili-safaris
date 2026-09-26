@@ -1,15 +1,19 @@
 'use client';
 
 import { useRef, useEffect, useMemo, useState } from 'react';
-import { CalendarDays } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, CalendarDays, Plane } from 'lucide-react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { Locale } from '@/lib/i18n';
 import { prefersReducedMotion } from '@/lib/video-config';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MONTHS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+const NOW_LABELS: Record<Locale, string> = { en: 'Right now:', it: 'In questo momento:', fr: 'En ce moment :', es: 'Ahora mismo:', de: 'Gerade jetzt:', ar: 'الآن:', zh: '现在：', sw: 'Sasa:' };
+
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -164,12 +168,13 @@ const CALENDAR_ROWS: CalendarRow[] = [
 ];
 
 export default function WildlifeCalendarSection() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hoverCell, setHoverCell] = useState<{ row: number; month: number } | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   const currentMonth = useMemo(() => new Date().getMonth() + 1, []);
+  const localizedMonth = useMemo(() => new Intl.DateTimeFormat(locale, { month: 'long' }).format(new Date(2026, (selectedMonth ?? currentMonth) - 1, 1)), [locale, selectedMonth, currentMonth]);
 
   useEffect(() => {
     if (prefersReducedMotion() || !sectionRef.current) return;
@@ -211,7 +216,9 @@ export default function WildlifeCalendarSection() {
           </p>
         </div>
 
-        {/* Card */}
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:gap-8">
+          <div className="min-w-0">
+        {/* Calendar card */}
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] border border-sand-100 p-5 sm:p-8">
           <div className="overflow-x-auto -mx-2 px-2">
             <div className="min-w-[760px]">
@@ -231,15 +238,15 @@ export default function WildlifeCalendarSection() {
                       title={`Show what's in season in ${MONTH_NAMES[i]}`}
                       className={`relative text-center font-inter text-[11px] font-bold tracking-wide rounded-full py-1.5 transition-colors duration-150 ${
                         isSelected
-                          ? 'bg-safari-500 text-white shadow-sm shadow-safari-500/40'
+                          ? 'bg-[#FF7A00] text-white shadow-sm shadow-[#FF7A00]/30'
                           : isToday
-                          ? 'bg-safari-50 text-safari-700'
+                          ? 'bg-[#FF7A00]/10 text-[#0E7482]'
                           : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
                       }`}
                     >
                       {m}
                       {isToday && (
-                        <span className="absolute -top-1 -right-0.5 w-1.5 h-1.5 rounded-full bg-safari-500" />
+                        <span className="absolute -top-1 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
                       )}
                     </button>
                   );
@@ -330,10 +337,20 @@ export default function WildlifeCalendarSection() {
           </div>
         </div>
 
+        {/* Calendar legend and note stay inside the calendar card. */}
+        <div className="mt-7 border-t border-slate-100 pt-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#FF7A00] px-3 py-1.5 font-inter text-xs font-semibold text-white"><span className="h-1.5 w-1.5 rounded-full bg-white" />{t.wildlifeCalendar?.legendPeak || 'Peak viewing window'}</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 font-inter text-xs font-semibold text-slate-500"><span className="h-1.5 w-1.5 rounded-full bg-slate-400" />{t.wildlifeCalendar?.legendOff || 'Off-peak'}</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#FF7A00]/20 bg-[#FF7A00]/5 px-3 py-1.5 font-inter text-xs font-semibold text-[#0E7482]"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>{`${NOW_LABELS[locale] ?? NOW_LABELS.en} ${localizedMonth}`}</span>
+          </div>
+          <p className="mt-3 font-inter text-xs italic leading-5 text-slate-400">{t.wildlifeCalendar?.footnote || 'Highlighted months = peak viewing window. Wildlife sightings can never be 100% guaranteed.'}</p>
+        </div>
+
         {/* Live "in season" summary — reflects the selected month, or today by default */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-center">
           <span className="font-inter text-sm text-muted-foreground">
-            {selectedMonth ? `In ${MONTH_NAMES[selectedMonth - 1]}:` : 'Right now:'}
+            {NOW_LABELS[locale] ?? NOW_LABELS.en}
           </span>
           {inSeasonNow.length > 0 ? (
             inSeasonNow.map((row) => (
@@ -341,6 +358,7 @@ export default function WildlifeCalendarSection() {
                 key={row.name}
                 className="inline-flex items-center gap-1.5 bg-safari-50 border border-safari-200 text-safari-700 text-xs font-inter font-semibold rounded-full px-3 py-1"
               >
+                <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>
                 <row.Icon className="w-3.5 h-3.5" />
                 {row.name}
               </span>
@@ -352,29 +370,22 @@ export default function WildlifeCalendarSection() {
           )}
         </div>
 
-        {/* Legend */}
-        <div className="flex items-center justify-center gap-6 mt-5">
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-2.5 rounded-full bg-gradient-to-r from-safari-400 to-safari-600" />
-            <span className="font-inter text-xs text-muted-foreground">
-              {t.wildlifeCalendar?.legendPeak || 'Peak viewing window'}
-            </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-1.5 rounded-full bg-slate-200" />
-            <span className="font-inter text-xs text-muted-foreground">
-              {t.wildlifeCalendar?.legendOff || 'Off-peak'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-safari-500" />
-            <span className="font-inter text-xs text-muted-foreground">{t.wildlifeCalendar?.currentMonth || 'Current month'}</span>
-          </div>
-        </div>
 
-        <p className="font-inter text-xs text-muted-foreground text-center mt-3">
-          {t.wildlifeCalendar?.footnote || 'Highlighted months = peak viewing window. Wildlife sightings can never be 100% guaranteed.'}
-        </p>
+          <aside className="lg:sticky lg:top-28">
+            <div className="overflow-hidden rounded-3xl border border-white/70 bg-white/90 p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-7">
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#0E7482]/8 px-3 py-1.5 font-inter text-[11px] font-bold uppercase tracking-[0.14em] text-[#0E7482]"><Plane className="h-3.5 w-3.5" />{t.transfers?.label || 'Transfers & Services'}</span>
+                <span className="h-2 w-2 rounded-full bg-[#FF7A00] shadow-[0_0_0_5px_rgba(255,122,0,0.08)]" />
+              </div>
+              <h3 className="mt-5 font-poppins text-2xl font-bold leading-tight text-slate-900">{t.transfers?.title || 'We take care of'} <span className="text-[#0E7482]">{t.transfers?.titleHighlight || 'everything'}</span></h3>
+              <p className="mt-3 font-inter text-sm leading-6 text-slate-500">{t.transfers?.subtitle || 'From the moment you land to the moment you leave — we are with you.'}</p>
+              <div className="mt-6 flex flex-wrap gap-2">{(t.transfers?.airports || []).map((airport) => <Link key={airport.code} href="/transfers" className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-inter text-xs font-bold text-slate-600 transition hover:border-[#0E7482]/30 hover:text-[#0E7482]"><Plane className="h-3 w-3 text-[#FF7A00]" />{airport.code}</Link>)}</div>
+              <div className="mt-6 rounded-2xl bg-[#0E7482]/5 p-4"><p className="font-inter text-xs font-bold uppercase tracking-[0.14em] text-[#0E7482]">MYD · MBA · NBO</p><p className="mt-2 font-poppins text-lg font-semibold text-slate-900">{t.transfers?.subtitle || 'From the moment you land to the moment you leave — we are with you.'}</p></div>
+              <Link href="/transfers" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0E7482] px-5 py-3.5 font-inter text-sm font-bold text-white transition hover:bg-[#0b6370] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7A00] focus-visible:ring-offset-2">{t.transfers?.cta || t.nav.transfers}<ArrowRight className="h-4 w-4" /></Link>
+            </div>
+          </aside>
+        </div>
       </div>
     </section>
   );
