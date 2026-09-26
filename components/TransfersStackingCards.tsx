@@ -24,7 +24,7 @@ const TRANSFER_CARDS: TransferCard[] = [
     description: 'The nearest airport to Watamu, with a smooth private transfer to your safari start point.',
     image: '/images/gallery/coast-beach.png',
     imageAlt: 'Kenyan coast near Watamu',
-    action: 'Arrange MYD transfer',
+    action: 'MYD transfer',
     actionValue: 'Airport Transfer – MYD (Malindi)',
   },
   {
@@ -34,7 +34,7 @@ const TRANSFER_CARDS: TransferCard[] = [
     description: 'A comfortable private road transfer from Mombasa to Watamu, with your journey planned around your arrival.',
     image: '/images/home/services-safari-jeep.jpg',
     imageAlt: 'Safari vehicle ready for a private transfer',
-    action: 'Arrange MBA transfer',
+    action: 'MBA transfer',
     actionValue: 'Airport Transfer – MBA (Mombasa)',
   },
   {
@@ -44,7 +44,7 @@ const TRANSFER_CARDS: TransferCard[] = [
     description: 'Connect your international arrival with a coordinated flight and private transfer towards the Kenyan coast.',
     image: '/images/safaris/safari-4day-naivasha-nakuru-mara.jpg',
     imageAlt: 'Kenyan safari landscape',
-    action: 'Arrange NBO transfer',
+    action: 'NBO transfer',
     actionValue: 'Airport Transfer – NBO (Nairobi)',
   },
 ];
@@ -72,7 +72,7 @@ function StackingCard({
       className="sticky z-10 mb-10 h-[390px] w-full overflow-hidden rounded-[28px] bg-white shadow-[0_25px_80px_-15px_rgba(0,0,0,0.2)] ring-1 ring-slate-200/80 sm:h-[430px] lg:h-[470px]"
     >
       <div className="grid h-full grid-cols-[45%_55%]">
-        <div className="flex min-w-0 flex-col justify-between p-5 sm:p-7 lg:p-10">
+        <div className="flex min-w-0 flex-col justify-between p-4 sm:p-7 lg:p-10">
           <div>
             <div className="mb-5 flex flex-wrap items-center gap-2">
               {card.code ? (
@@ -177,7 +177,7 @@ function PeakViewingCard({ onBook, index }: { onBook: (value: string) => void; i
             className="inline-flex w-fit items-center gap-2 rounded-xl border border-ocean-700 px-3.5 py-2.5 font-poppins text-[10px] font-semibold text-ocean-700 hover:bg-ocean-700 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-400 sm:px-4 sm:py-3 sm:text-xs"
           >
             <CarFront className="h-3.5 w-3.5" />
-            Plan your transfer
+            Plan transfer
           </button>
         </div>
 
