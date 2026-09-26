@@ -51,7 +51,7 @@ export default function Home() {
         <ScrollReveal direction="right"><BuildSafariPromo /></ScrollReveal>
         <ScrollReveal direction="up"><TravelerEssentials /></ScrollReveal>
         <ScrollReveal direction="left"><ExcursionsSection variant="home" onBook={openBooking} /></ScrollReveal>
-        <ScrollReveal direction="right"><WildlifeCalendarSection onBook={openBooking} /></ScrollReveal>
+        <ScrollReveal direction="right"><WildlifeCalendarSection /></ScrollReveal>
                 <ScrollReveal direction="right"><GallerySection variant="home" /></ScrollReveal>
         <ScrollReveal direction="up"><ReviewsSection /></ScrollReveal>
         <ScrollReveal direction="right"><FinalCtaSection onBook={() => openHeroBooking()} /></ScrollReveal>
