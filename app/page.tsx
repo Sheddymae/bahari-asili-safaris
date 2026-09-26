@@ -18,7 +18,7 @@ const HomeDestinationsSection = dynamic(() => import('@/components/HomeDestinati
 const BuildSafariPromo = dynamic(() => import('@/components/BuildSafariPromo'), { loading: () => <div className="h-64 bg-foreground animate-pulse" /> });
 const ExcursionsSection = dynamic(() => import('@/components/ExcursionsSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const WildlifeCalendarSection = dynamic(() => import('@/components/WildlifeCalendarSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
-const TransfersSection = dynamic(() => import('@/components/TransfersSection'), { loading: () => <div className="h-64 bg-sand-50 animate-pulse" /> });
+const HomeTransfersInfiniteStack = dynamic(() => import('@/components/HomeTransfersInfiniteStack'), { loading: () => <div className="h-64 bg-sand-50 animate-pulse" /> });
 const GallerySection = dynamic(() => import('@/components/GallerySection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const ReviewsSection = dynamic(() => import('@/components/ReviewsSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
 const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), { loading: () => <div className="h-48 bg-ocean-700 animate-pulse" /> });
@@ -51,7 +51,7 @@ export default function Home() {
         <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ExcursionsSection variant="home" onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><WildlifeCalendarSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><TransfersSection variant="home" onBook={openBooking} /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><HomeTransfersInfiniteStack onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><GallerySection variant="home" /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ReviewsSection /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><FinalCtaSection onBook={() => openHeroBooking()} /></AnimateOnScroll>
