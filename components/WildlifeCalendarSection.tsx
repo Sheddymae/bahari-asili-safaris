@@ -1,12 +1,12 @@
 'use client';
 
 import { useRef, useEffect, useMemo, useState } from 'react';
-import { CalendarDays } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, CalendarDays, Plane } from 'lucide-react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { prefersReducedMotion } from '@/lib/video-config';
-import StickyRevealInfoCard from '@/components/StickyRevealInfoCard';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -333,6 +333,16 @@ export default function WildlifeCalendarSection({ onBook }: { onBook?: (transfer
           </div>
         </div>
 
+        {/* Calendar legend and note stay inside the calendar card. */}
+        <div className="mt-7 border-t border-slate-100 pt-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#FF7A00] px-3 py-1.5 font-inter text-xs font-semibold text-white"><span className="h-1.5 w-1.5 rounded-full bg-white" />{t.wildlifeCalendar?.legendPeak || 'Peak viewing window'}</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 font-inter text-xs font-semibold text-slate-500"><span className="h-1.5 w-1.5 rounded-full bg-slate-400" />{t.wildlifeCalendar?.legendOff || 'Off-peak'}</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#FF7A00]/20 bg-[#FF7A00]/5 px-3 py-1.5 font-inter text-xs font-semibold text-[#0E7482]"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>{selectedMonth ? MONTH_NAMES[selectedMonth - 1] : MONTH_NAMES[currentMonth - 1]}</span>
+          </div>
+          <p className="mt-3 font-inter text-xs italic leading-5 text-slate-400">{t.wildlifeCalendar?.footnote || 'Highlighted months = peak viewing window. Wildlife sightings can never be 100% guaranteed.'}</p>
+        </div>
+
         {/* Live "in season" summary — reflects the selected month, or today by default */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-center">
           <span className="font-inter text-sm text-muted-foreground">
@@ -357,7 +367,19 @@ export default function WildlifeCalendarSection({ onBook }: { onBook?: (transfer
 
           </div>
 
-          <StickyRevealInfoCard onBook={onBook} />
+          <aside className="lg:sticky lg:top-28">
+            <div className="overflow-hidden rounded-3xl border border-white/70 bg-white/90 p-6 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:p-7">
+              <div className="flex items-center justify-between gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full bg-[#0E7482]/8 px-3 py-1.5 font-inter text-[11px] font-bold uppercase tracking-[0.14em] text-[#0E7482]"><Plane className="h-3.5 w-3.5" />{t.transfers?.label || 'Transfers & Services'}</span>
+                <span className="h-2 w-2 rounded-full bg-[#FF7A00] shadow-[0_0_0_5px_rgba(255,122,0,0.08)]" />
+              </div>
+              <h3 className="mt-5 font-poppins text-2xl font-bold leading-tight text-slate-900">{t.transfers?.title || 'We take care of'} <span className="text-[#0E7482]">{t.transfers?.titleHighlight || 'everything'}</span></h3>
+              <p className="mt-3 font-inter text-sm leading-6 text-slate-500">{t.transfers?.subtitle || 'From the moment you land to the moment you leave — we are with you.'}</p>
+              <div className="mt-6 flex flex-wrap gap-2">{(t.transfers?.airports || []).map((airport) => <Link key={airport.code} href="/transfers" className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 font-inter text-xs font-bold text-slate-600 transition hover:border-[#0E7482]/30 hover:text-[#0E7482]"><Plane className="h-3 w-3 text-[#FF7A00]" />{airport.code}</Link>)}</div>
+              <div className="mt-6 rounded-2xl bg-[#0E7482]/5 p-4"><p className="font-inter text-xs font-bold uppercase tracking-[0.14em] text-[#0E7482]">MYD · MBA · NBO</p><p className="mt-2 font-poppins text-lg font-semibold text-slate-900">Seamless airport transfers included</p></div>
+              <Link href="/transfers" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0E7482] px-5 py-3.5 font-inter text-sm font-bold text-white transition hover:bg-[#0b6370] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7A00] focus-visible:ring-offset-2">Explore Transfers<ArrowRight className="h-4 w-4" /></Link>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
