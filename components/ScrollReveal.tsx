@@ -1,75 +1,90 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Children, isValidElement, type ReactNode } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
-type RevealType = 'fade-up' | 'fade-in' | 'slide-in-right';
-
-// Full literal class names so Tailwind's JIT content scanner keeps them —
-// `animate-${type}` would not survive a production build.
-const ANIMATION_CLASS: Record<RevealType, string> = {
-  'fade-up': 'animate-fade-up',
-  'fade-in': 'animate-fade-in',
-  'slide-in-right': 'animate-slide-in-right',
-};
+type Direction = 'up' | 'down' | 'left' | 'right';
 
 interface ScrollRevealProps {
   children: ReactNode;
-  type?: RevealType;
-  delay?: number; // ms
+  delay?: number;
+  direction?: Direction;
+  stagger?: number;
   className?: string;
-  /** Re-trigger every time the element enters the viewport instead of only once */
   once?: boolean;
+  distance?: number;
 }
 
-/**
- * Wraps children in a div that animates in via the existing tailwind
- * `fade-up` / `fade-in` / `slide-in-right` keyframes once it enters the
- * viewport. No animation library required — one IntersectionObserver per
- * element, disconnected after the first reveal to keep things cheap.
- */
+const offsets: Record<Direction, { x: number; y: number }> = {
+  up: { x: 0, y: 32 },
+  down: { x: 0, y: -32 },
+  left: { x: -32, y: 0 },
+  right: { x: 32, y: 0 },
+};
+
 export default function ScrollReveal({
   children,
-  type = 'fade-up',
   delay = 0,
+  direction = 'up',
+  stagger = 0,
   className = '',
   once = true,
+  distance = 32,
 }: ScrollRevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const reducedMotion = useReducedMotion();
+  const offset = offsets[direction];
+  const x = direction === 'left' ? -distance : direction === 'right' ? distance : 0;
+  const y = direction === 'up' ? distance : direction === 'down' ? -distance : 0;
+  const items = Children.toArray(children);
+  const shouldStagger = !reducedMotion && stagger > 0 && items.length > 1;
 
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
+  const transition = {
+    duration: 0.65,
+    ease: [0.22, 1, 0.36, 1] as const,
+    delay,
+  };
 
-    // Respect reduced-motion preference: show immediately, no animation.
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setVisible(true);
-      return;
-    }
+  if (reducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          if (once) observer.disconnect();
-        } else if (!once) {
-          setVisible(false);
-        }
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' },
+  if (shouldStagger) {
+    return (
+      <motion.div
+        className={className}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once, margin: '-100px' }}
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: stagger, delayChildren: delay } },
+        }}
+      >
+        {items.map((child, index) => (
+          <motion.div
+            key={isValidElement(child) && child.key != null ? String(child.key) : index}
+            variants={{
+              hidden: { opacity: 0, x, y },
+              visible: { opacity: 1, x: 0, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
+            }}
+          >
+            {child}
+          </motion.div>
+        ))}
+      </motion.div>
     );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [once]);
+  }
 
   return (
-    <div
-      ref={ref}
-      className={`${visible ? ANIMATION_CLASS[type] : 'opacity-0'} ${className}`}
-      style={visible ? { animationDelay: `${delay}ms` } : undefined}
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, x, y }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once, margin: '-100px' }}
+      transition={transition}
+      style={{ willChange: 'transform, opacity' }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

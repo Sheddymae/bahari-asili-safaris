@@ -11,6 +11,8 @@ export type AuditAction =
   | 'logout'
   | 'reservation_status_change'
   | 'reservation_delete'
+  | 'reservation_restore'
+  | 'reservation_permanent_delete'
   | 'export'
   | 'resend_email'
   | 'send_email';
