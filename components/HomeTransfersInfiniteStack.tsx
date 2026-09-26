@@ -66,7 +66,7 @@ export default function HomeTransfersInfiniteStack({
   useEffect(() => {
     if (isHovered || cards.length < 2) return;
 
-    let interval: ReturnType<typeof setInterval> | undefined;
+    let interval: number | undefined;
     const delay = window.setTimeout(() => {
       interval = window.setInterval(advance, 3500);
     }, 2000);
