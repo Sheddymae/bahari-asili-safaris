@@ -64,13 +64,13 @@ function StackingCard({
   const y = useTransform(scrollYProgress, [0, 1], [0, -10]);
 
   return (
-    <div ref={wrapperRef} className="relative h-[calc(75vh+120px)] min-h-[660px]">
+    <div ref={wrapperRef} className="relative h-[calc(78vh+120px)] min-h-[740px] md:h-[calc(75vh+120px)] md:min-h-[680px]">
       <motion.article
         style={reducedMotion ? undefined : { scale, filter: brightness, y }}
-        className="sticky top-[120px] z-10 mx-auto grid h-[75vh] min-h-[560px] w-full max-w-6xl overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.3)]"
+        className="sticky top-[120px] z-10 mx-auto grid h-[78vh] min-h-[620px] w-full max-w-6xl md:h-[75vh] md:min-h-[560px] overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.3)]"
       >
-        <div className="grid min-h-0 md:grid-cols-2">
-          <div className="flex min-h-0 flex-col justify-between p-7 sm:p-10 lg:p-14">
+        <div className="grid min-h-0 grid-rows-[1.35fr_0.65fr] md:grid-cols-2 md:grid-rows-1">
+          <div className="flex min-h-0 flex-col justify-between p-5 sm:p-8 lg:p-14">
             <div>
               <div className="mb-7 flex items-center justify-between gap-4">
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#0E7482]/8 px-4 py-2 font-inter text-xs font-bold uppercase tracking-[0.16em] text-[#0E7482]">
