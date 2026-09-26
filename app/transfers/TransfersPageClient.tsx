@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import PageShell from '@/components/PageShell';
-import TransfersSection from '@/components/TransfersSection';
+import TransfersStackingCards from '@/components/TransfersStackingCards';
 
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
 
@@ -15,13 +15,18 @@ export default function TransfersPageClient() {
     setSelectedTransfer(transferType);
     setIsBookingOpen(true);
   }, []);
+
   const closeBooking = useCallback(() => setIsBookingOpen(false), []);
 
   return (
     <PageShell>
-      <TransfersSection onBook={openBooking} />
+      <TransfersStackingCards onBook={openBooking} />
       {isBookingOpen && (
-        <BookingModal isOpen={isBookingOpen} onClose={closeBooking} selectedTour={selectedTransfer} />
+        <BookingModal
+          isOpen={isBookingOpen}
+          onClose={closeBooking}
+          selectedTour={selectedTransfer}
+        />
       )}
     </PageShell>
   );
