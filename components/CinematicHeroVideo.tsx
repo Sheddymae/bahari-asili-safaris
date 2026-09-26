@@ -44,7 +44,7 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
       frame = 0;
       const rect = node.getBoundingClientRect();
       const progress = Math.max(-1, Math.min(1, -rect.top / Math.max(1, rect.height)));
-      video.style.transform = \`translate3d(0, \\${progress * 18}px, 0) scale(1.03)\`;
+      video.style.transform = 'translate3d(0, ' + (progress * 18) + 'px, 0) scale(1.03)';
     };
     const onScroll = () => { if (!frame) frame = window.requestAnimationFrame(update); };
     update();
