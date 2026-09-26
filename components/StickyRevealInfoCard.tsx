@@ -177,7 +177,7 @@ export default function StickyRevealInfoCard({ onBook }: StickyRevealInfoCardPro
                       </h4>
 
                       <p className="mt-3 font-inter text-sm leading-6 text-slate-500">
-                        {activeItem.kind === 'current-month'
+                        {activeItem.id === 'current-month'
                           ? `${activeItem.description} is the current month — explore the wildlife calendar for the best seasonal windows.`
                           : activeItem.description}
                       </p>
