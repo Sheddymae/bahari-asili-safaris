@@ -122,6 +122,9 @@ function StackingCard({
 }
 
 function PeakViewingCard({ onBook, index }: { onBook: (value: string) => void; index: number }) {
+  const { t } = useLanguage();
+  const wildlife = t.wildlifeCalendar;
+  const tr = t.transfers;
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
