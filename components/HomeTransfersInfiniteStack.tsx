@@ -124,12 +124,16 @@ export default function HomeTransfersInfiniteStack({
                 initial={{ opacity: 0, x: offset * 80, scale: isActive ? 0.96 : 0.88 }}
                 animate={{
                   opacity: isActive ? 1 : 0.7,
-                  x: offset * (isMobile ? 112 : 350),
+                  x: offset * (isMobile ? 108 : 350),
                   scale: isActive ? 1 : 0.88,
                   y: isActive ? 0 : 26,
                 }}
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-                className={`absolute left-1/2 top-0 h-[480px] w-[min(92%,680px)] max-w-[680px] -translate-x-1/2 overflow-hidden rounded-[32px] border border-white/50 bg-white/30 shadow-[0_30px_90px_rgba(14,95,107,0.20)] backdrop-blur-2xl sm:h-[500px] sm:w-[620px] ${isActive ? 'z-30' : 'z-10 pointer-events-none'}`}
+                style={{
+                  left: isMobile ? '4%' : 'calc(50% - 310px)',
+                  width: isMobile ? '92%' : '620px',
+                }}
+                className={`absolute top-0 h-[480px] overflow-hidden rounded-[32px] border border-white/50 bg-white/30 shadow-[0_30px_90px_rgba(14,95,107,0.20)] backdrop-blur-2xl sm:h-[500px] ${isActive ? 'z-30' : 'z-10 pointer-events-none'}`}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/65 via-white/25 to-ocean-700/10" />
                 <div className="relative grid h-full grid-rows-[42%_58%]">
@@ -190,7 +194,7 @@ export default function HomeTransfersInfiniteStack({
             type="button"
             onClick={previous}
             aria-label="Previous transfer"
-            className="absolute left-3 top-1/2 z-40 hidden -translate-y-1/2 rounded-full border border-white/60 bg-white/45 p-4 text-ocean-700 shadow-xl backdrop-blur-xl transition hover:scale-105 hover:bg-white/70 md:flex"
+            className="absolute left-2 top-1/2 z-40 hidden -translate-y-1/2 rounded-full border border-white/60 bg-white/45 p-4 text-ocean-700 shadow-xl backdrop-blur-xl transition hover:scale-105 hover:bg-white/70 md:flex"
           >
             <ArrowRight className="h-5 w-5 rotate-180" />
           </button>
@@ -198,7 +202,7 @@ export default function HomeTransfersInfiniteStack({
             type="button"
             onClick={advance}
             aria-label="Next transfer"
-            className="absolute right-3 top-1/2 z-40 hidden -translate-y-1/2 rounded-full border border-white/60 bg-white/45 p-4 text-ocean-700 shadow-xl backdrop-blur-xl transition hover:scale-105 hover:bg-white/70 md:flex"
+            className="absolute right-2 top-1/2 z-40 hidden -translate-y-1/2 rounded-full border border-white/60 bg-white/45 p-4 text-ocean-700 shadow-xl backdrop-blur-xl transition hover:scale-105 hover:bg-white/70 md:flex"
           >
             <ArrowRight className="h-5 w-5" />
           </button>
