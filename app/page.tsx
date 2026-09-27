@@ -51,7 +51,37 @@ export default function Home() {
         <ScrollReveal direction="right"><BuildSafariPromo /></ScrollReveal>
         <ScrollReveal direction="up"><TravelerEssentials /></ScrollReveal>
         <ScrollReveal direction="left"><ExcursionsSection variant="home" onBook={openBooking} /></ScrollReveal>
-        <ScrollReveal direction="right"><WildlifeCalendarSection /></ScrollReveal>
+        <ScrollReveal direction="up">
+          <section className="bg-sand-50/60 py-20 lg:py-28">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col lg:flex-row gap-8 items-start">
+                <div className="w-full lg:w-[62%] min-w-0">
+                  <WildlifeCalendarSection embedded />
+                </div>
+
+                <div className="w-full lg:w-[38%] min-w-0">
+                  <aside className="rounded-3xl bg-[#FFFBEB] p-8 border border-orange-100 shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
+                    <p className="text-[#FF7A18] text-xs tracking-widest uppercase font-bold">
+                      Transfers &amp; Services
+                    </p>
+                    <h2 className="mt-3 text-[#0E5F6B] text-3xl sm:text-4xl font-black leading-tight">
+                      We take care of everything
+                    </h2>
+                    <p className="mt-4 text-slate-600 text-sm leading-6">
+                      From the moment you land to the moment you leave, we are with you.
+                    </p>
+                    <a
+                      href="/transfers"
+                      className="mt-7 inline-flex items-center rounded-full bg-[#0E5F6B] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#0E5F6B] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7A18] focus-visible:ring-offset-2"
+                    >
+                      Explore Transfers →
+                    </a>
+                  </aside>
+                </div>
+              </div>
+            </div>
+          </section>
+        </ScrollReveal>
                 <ScrollReveal direction="right"><GallerySection variant="home" /></ScrollReveal>
         <ScrollReveal direction="up"><ReviewsSection /></ScrollReveal>
         <ScrollReveal direction="right"><FinalCtaSection onBook={() => openHeroBooking()} /></ScrollReveal>
