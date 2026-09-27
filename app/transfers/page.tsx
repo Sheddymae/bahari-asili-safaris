@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import TransfersPageClient from './TransfersPageClient';
+import TransfersHoverTabs from '@/components/TransfersHoverTabs';
 
 export const metadata: Metadata = {
   title: 'Airport & Safari Transfers — Watamu, Malindi, Mombasa',
@@ -15,5 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function TransfersPage() {
-  return <TransfersPageClient />;
+  return <TransfersHoverTabs />;
 }
