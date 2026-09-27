@@ -13,7 +13,6 @@ import {
   ShieldCheck,
   HeartHandshake,
   ListChecks,
-  Users,
   MapPin,
   Clock3,
   Instagram,
