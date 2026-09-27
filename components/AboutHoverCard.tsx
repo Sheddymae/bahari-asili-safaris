@@ -30,7 +30,9 @@ export default function AboutHoverCard({
   return (
     <motion.article
       onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => {\n        if (typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches) setActive(false);\n      }}
+      onMouseLeave={() => {
+        if (typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches) setActive(false);
+      }}
       onClick={() => setActive((current) => !current)}
       animate={
         reducedMotion
