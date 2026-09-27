@@ -1,19 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Car, CheckCircle2, Plane, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-
-type TransferCard = {
-  code: string;
-  title: string;
-  description: string;
-  route: string;
-  details: string[];
-  bookingValue: string;
-  image: string;
-};
 
 const TRANSFERS = [
   { code: 'MYD', image: '/images/gallery/coast-beach.png', bookingValue: 'Airport Transfer – MYD (Malindi)' },
@@ -103,10 +94,12 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
 
                 <div className="relative grid h-full grid-rows-[42%_58%]">
                   <div className="relative overflow-hidden">
-                    <img
+                    <Image
                       src={card.image}
                       alt={airport.name}
-                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 767px) 96vw, 580px"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-ocean-950/75 via-ocean-900/10 to-transparent" />
                     <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/20 to-transparent" />
