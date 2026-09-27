@@ -122,7 +122,7 @@ function PlatformCard({
         <div className="flex items-center gap-2">
           <Stars rating={info.rating} />
           <span className="font-inter text-sm font-bold text-foreground">{info.rating.toFixed(1)}</span>
-          <span className="font-inter text-xs text-muted-foreground">({info.totalReviews} reviews)</span>
+          <span className="font-inter text-xs text-muted-foreground">({info.totalReviews} {t.reviews?.label})</span>
         </div>
       </div>
     </a>
@@ -187,14 +187,14 @@ export default function ReviewsSection() {
           <div className="inline-flex items-center gap-2 bg-safari-50 border border-safari-200 rounded-full px-4 py-1.5 mb-4">
             <MessageSquare className="w-3.5 h-3.5 text-safari-600" />
             <span className="font-inter text-xs font-semibold text-safari-700 uppercase tracking-wider">
-              {t.reviews?.label || 'Reviews'}
+              {t.reviews?.label}
             </span>
           </div>
           <h2 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-3">
-            {t.reviews?.title || 'What our travelers say'}
+            {t.reviews?.title}
           </h2>
           <p className="font-inter text-muted-foreground text-base max-w-2xl mx-auto">
-            {t.reviews?.subtitle || 'Real reviews from real travelers on Google and TripAdvisor'}
+            {t.reviews?.subtitle}
           </p>
         </div>
 
@@ -219,10 +219,10 @@ export default function ReviewsSection() {
           <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-white p-8 text-center shadow-card sm:p-10">
             <MessageSquare className="mx-auto mb-4 h-8 w-8 text-ocean-700" aria-hidden="true" />
             <h3 className="font-poppins text-xl font-bold text-foreground">
-              {t.reviews?.comingSoon || 'Reviews from our guests'}
+              {t.reviews?.comingSoon}
             </h3>
             <p className="mx-auto mt-2 max-w-xl font-inter text-sm leading-6 text-muted-foreground">
-              {t.reviews?.comingSoonDesc || 'Guest reviews will appear here once connected to a verified review source.'}
+              {t.reviews?.comingSoonDesc}
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               {googleInfo?.url && (
