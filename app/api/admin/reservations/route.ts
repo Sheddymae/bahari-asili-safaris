@@ -143,76 +143,62 @@ interface Stats {
 // Computed defensively: any single failed count (e.g. a column not yet migrated)
 // falls back to 0 instead of taking down the whole stats block / the route.
 async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>, recycleBinAvailable = true): Promise<Stats> {
-  const todayStr = new Date().toISOString().slice(0, 10);
+  if (recycleBinAvailable) {
+    try {
+      const { data, error } = await admin.rpc('get_admin_booking_stats');
+      if (!error && data) {
+        return {
+          total: Number(data.total) || 0,
+          today: Number(data.today) || 0,
+          pending: Number(data.pending) || 0,
+          confirmed: Number(data.confirmed) || 0,
+          cancelled: Number(data.cancelled) || 0,
+          completed: Number(data.completed) || 0,
+          revenue: Number(data.revenue) || 0,
+          quotedRevenue: Number(data.quotedRevenue) || 0,
+          confirmedRevenue: Number(data.confirmedRevenue) || 0,
+          outstandingBalance: Number(data.outstandingBalance) || 0,
+        };
+      }
+      if (error) console.warn('Fast admin stats RPC unavailable; using compatibility fallback:', error.message);
+    } catch (err) {
+      console.warn('Fast admin stats RPC failed; using compatibility fallback:', err);
+    }
+  }
 
+  const todayStr = new Date().toISOString().slice(0, 10);
   const safeCount = async (build: () => PromiseLike<{ count: number | null; error: any }>): Promise<number> => {
     try {
       const { count, error } = await build();
-      if (error) {
-        console.error('Stats count error:', error.message);
-        return 0;
-      }
-      return count ?? 0;
-    } catch (err) {
-      console.error('Stats count exception:', err);
+      return error ? 0 : count ?? 0;
+    } catch {
       return 0;
     }
   };
-
   const active = (query: any) => recycleBinAvailable ? query.eq('is_deleted', false) : query;
 
   const [total, today, pending, confirmed, cancelled, completed, revenue, quotedRevenue, confirmedRevenue, outstandingBalance] = await Promise.all([
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true }))),
-    safeCount(() =>
-      active(admin.from('bookings').select('id', { count: 'exact', head: true }))
-        .gte('created_at', `${todayStr}T00:00:00.000Z`)
-        .lte('created_at', `${todayStr}T23:59:59.999Z`)
-    ),
+    safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).gte('created_at', todayStr + 'T00:00:00.000Z').lte('created_at', todayStr + 'T23:59:59.999Z')),
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).eq('reservation_status', 'pending')),
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).eq('reservation_status', 'confirmed')),
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).eq('reservation_status', 'cancelled')),
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).eq('reservation_status', 'completed')),
-    (async () => {
-      try {
-        const { data, error } = await active(admin.from('bookings').select('total_price')).eq('payment_status', 'paid');
-        if (error) {
-          console.error('Revenue query error:', error.message);
-          return 0;
-        }
-        return (data || []).reduce((sum: number, row: any) => sum + (Number(row.total_price) || 0), 0);
-      } catch (err) {
-        console.error('Revenue query exception:', err);
-        return 0;
-      }
-    })(),
-    (async () => {
-      try {
-        const { data, error } = await active(admin.from('bookings').select('total_price')).in('invoice_status', ['quoted', 'sent']);
-        if (error) return 0;
-        return (data || []).reduce((sum: number, row: any) => sum + (Number(row.total_price) || 0), 0);
-      } catch {
-        return 0;
-      }
-    })(),
-    (async () => {
-      try {
-        const { data, error } = await active(admin.from('bookings').select('total_price')).in('invoice_status', ['confirmed', 'paid', 'partially_paid']);
-        if (error) return 0;
-        return (data || []).reduce((sum: number, row: any) => sum + (Number(row.total_price) || 0), 0);
-      } catch {
-        return 0;
-      }
-    })(),
-    (async () => {
-      try {
-        const { data, error } = await active(admin.from('bookings').select('balance_due')).gt('balance_due', 0);
-        if (error) return 0;
-        return (data || []).reduce((sum: number, row: any) => sum + (Number(row.balance_due) || 0), 0);
-      } catch {
-        return 0;
-      }
-    })(),
+    sumField(active(admin.from('bookings').select('total_price')).eq('payment_status', 'paid'), 'total_price'),
+    sumField(active(admin.from('bookings').select('total_price')).in('invoice_status', ['quoted', 'sent']), 'total_price'),
+    sumField(active(admin.from('bookings').select('total_price')).in('invoice_status', ['confirmed', 'paid', 'partially_paid']), 'total_price'),
+    sumField(active(admin.from('bookings').select('balance_due')).gt('balance_due', 0), 'balance_due'),
   ]);
 
   return { total, today, pending, confirmed, cancelled, completed, revenue, quotedRevenue, confirmedRevenue, outstandingBalance };
+}
+
+async function sumField(query: any, field: string): Promise<number> {
+  try {
+    const { data, error } = await query;
+    if (error) return 0;
+    return (data || []).reduce((sum: number, row: any) => sum + (Number(row[field]) || 0), 0);
+  } catch {
+    return 0;
+  }
 }
