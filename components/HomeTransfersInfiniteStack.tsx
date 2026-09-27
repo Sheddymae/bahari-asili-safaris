@@ -63,6 +63,7 @@ export default function HomeTransfersInfiniteStack({
   const tr = t.transfers;
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const cards = useMemo(() => TRANSFERS, []);
 
@@ -73,6 +74,13 @@ export default function HomeTransfersInfiniteStack({
   const previous = useCallback(() => {
     setActiveIndex((current) => (current - 1 + cards.length) % cards.length);
   }, [cards.length]);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth < 768);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   useEffect(() => {
     if (paused || cards.length < 2) return;
@@ -116,7 +124,7 @@ export default function HomeTransfersInfiniteStack({
                 initial={{ opacity: 0, x: offset * 80, scale: isActive ? 0.96 : 0.88 }}
                 animate={{
                   opacity: isActive ? 1 : 0.7,
-                  x: offset * (typeof window !== 'undefined' && window.innerWidth < 768 ? 145 : 390),
+                  x: offset * (isMobile ? 145 : 390),
                   scale: isActive ? 1 : 0.88,
                   y: isActive ? 0 : 26,
                 }}
