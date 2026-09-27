@@ -20,35 +20,14 @@ interface PlatformInfo {
   url: string;
 }
 
-async function fetchGoogleReviews(): Promise<{ reviews: Review[]; info: PlatformInfo | null }> {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BUSINESS_API_KEY;
-  if (!apiKey) return { reviews: [], info: null };
+async function fetchReviews(): Promise<{ reviews: Review[]; google: PlatformInfo | null; tripadvisor: PlatformInfo | null }> {
   try {
-    const placeId = process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || '';
-    if (!placeId) return { reviews: [], info: null };
-    const res = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews,rating,user_ratings_total,url&key=${apiKey}`);
-    if (!res.ok) return { reviews: [], info: null };
-    const data = await res.json();
-    if (!data.result) return { reviews: [], info: null };
-    const info: PlatformInfo = { rating: data.result.rating || 0, totalReviews: data.result.user_ratings_total || 0, url: data.result.url || '#' };
-    const reviews: Review[] = (data.result.reviews || []).slice(0, 5).map((r: any) => ({ author: r.author_name, rating: r.rating, text: r.text, source: 'google' as const, date: r.time ? new Date(r.time * 1000).toLocaleDateString() : undefined, avatar: r.profile_photo_url }));
-    return { reviews, info };
-  } catch { return { reviews: [], info: null }; }
-}
-
-async function fetchTripAdvisorReviews(): Promise<{ reviews: Review[]; info: PlatformInfo | null }> {
-  const apiKey = process.env.NEXT_PUBLIC_TRIPADVISOR_API_KEY;
-  if (!apiKey) return { reviews: [], info: null };
-  try {
-    const locationId = process.env.NEXT_PUBLIC_TRIPADVISOR_LOCATION_ID || '';
-    if (!locationId) return { reviews: [], info: null };
-    const res = await fetch(`https://api.tripadvisor.com/api/partner/2.0/location/${locationId}/reviews?key=${apiKey}`);
-    if (!res.ok) return { reviews: [], info: null };
-    const data = await res.json();
-    const info: PlatformInfo = { rating: data.rating || 0, totalReviews: data.num_reviews || 0, url: data.web_url || '#' };
-    const reviews: Review[] = (data.reviews || []).slice(0, 5).map((r: any) => ({ author: r.author, rating: r.rating, text: r.text, source: 'tripadvisor' as const, date: r.published_date ? new Date(r.published_date).toLocaleDateString() : undefined }));
-    return { reviews, info };
-  } catch { return { reviews: [], info: null }; }
+    const response = await fetch('/api/reviews', { cache: 'no-store' });
+    if (!response.ok) return { reviews: [], google: null, tripadvisor: null };
+    return await response.json();
+  } catch {
+    return { reviews: [], google: null, tripadvisor: null };
+  }
 }
 
 export function Stars({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'md' }) {
