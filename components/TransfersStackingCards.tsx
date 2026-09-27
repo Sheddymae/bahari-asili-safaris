@@ -47,7 +47,17 @@ const TRANSFER_CARDS: TransferCard[] = [
     imageAlt: 'Kenyan safari landscape',
     action: 'NBO transfer',
     actionValue: 'Airport Transfer – NBO (Nairobi)',
+  },  {
+    eyebrow: 'Southern coast',
+    code: 'UKD',
+    title: 'Diani / Ukunda',
+    description: 'Private transfers for Ukunda Airstrip arrivals and departures, with comfortable connections between Diani Beach, Mombasa and other coastal stays.',
+    image: '/images/gallery/coast-beach.png',
+    imageAlt: 'Kenyan coast near Diani',
+    action: 'UKD / Diani transfer',
+    actionValue: 'Diani / Ukunda Transfer',
   },
+
 ];
 
 function StackingCard({
@@ -70,7 +80,7 @@ function StackingCard({
     <motion.article
       ref={ref}
       style={{ scale, top: `calc(90px + ${index * 40}px)` }}
-      className="sticky z-10 mb-10 h-[390px] w-full overflow-hidden rounded-[28px] bg-white shadow-[0_25px_80px_-15px_rgba(0,0,0,0.2)] ring-1 ring-slate-200/80 sm:h-[430px] lg:h-[470px]"
+      className="sticky z-10 mb-10 h-[390px] w-full overflow-hidden rounded-[28px] border border-white/50 bg-white/35 shadow-[0_25px_80px_-15px_rgba(14,95,107,0.20)] backdrop-blur-2xl ring-1 ring-white/60 sm:h-[430px] lg:h-[470px]"
     >
       <div className="grid h-full grid-cols-[45%_55%]">
         <div className="flex min-w-0 flex-col justify-between p-4 sm:p-7 lg:p-10">
@@ -209,11 +219,12 @@ export default function TransfersStackingCards({
   const wildlife = t.wildlifeCalendar;
 
   return (
-    <section className="bg-sand-100 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1.35fr] lg:gap-16">
+    <section className="relative overflow-hidden bg-sand-100 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_65%_35%,rgba(14,95,107,0.14),transparent_42%)]" />
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1.35fr] lg:gap-16">
         <div className="self-start lg:sticky lg:top-[90px]">
           <div className="max-w-xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sand-300 bg-white px-3 py-1.5 font-poppins text-[10px] font-bold uppercase tracking-[0.14em] text-ocean-700 sm:text-xs">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/50 px-3 py-1.5 font-poppins text-[10px] font-bold uppercase tracking-[0.14em] text-ocean-700 sm:text-xs">
               <MapPin className="h-3.5 w-3.5 text-safari-500" />
               {tr.label}
             </div>
@@ -227,7 +238,7 @@ export default function TransfersStackingCards({
           </div>
         </div>
 
-        <div className="relative min-h-[1550px]">
+        <div className="relative min-h-[1950px]">
           {TRANSFER_CARDS.map((card, index) => (
             <StackingCard key={card.code} card={card} index={index} onBook={onBook} />
           ))}
