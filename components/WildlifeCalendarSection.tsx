@@ -7,7 +7,6 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Locale } from '@/lib/i18n';
 import { prefersReducedMotion } from '@/lib/video-config';
-import HomeTransfersCardSlider from '@/components/HomeTransfersCardSlider';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -167,7 +166,7 @@ const CALENDAR_ROWS: CalendarRow[] = [
   },
 ];
 
-export default function WildlifeCalendarSection() {
+export default function WildlifeCalendarSection({ embedded = false }: { embedded?: boolean }) {
   const { t, locale } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hoverCell, setHoverCell] = useState<{ row: number; month: number } | null>(null);
@@ -199,8 +198,8 @@ export default function WildlifeCalendarSection() {
   const inSeasonNow = CALENDAR_ROWS.filter((r) => r.bestMonths.includes(selectedMonth ?? currentMonth));
 
   return (
-    <section ref={sectionRef} className="py-20 lg:py-28 bg-sand-50/60">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} className={embedded ? "w-full" : "py-20 lg:py-28 bg-sand-50/60"}>
+      <div className={embedded ? "w-full" : "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"}>
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-white border border-safari-200 rounded-full px-4 py-1.5 mb-4 shadow-sm">
             <CalendarDays className="w-3.5 h-3.5 text-safari-600" />
@@ -216,8 +215,6 @@ export default function WildlifeCalendarSection() {
           </p>
         </div>
 
-        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:gap-8">
-          <div className="min-w-0">
         {/* Calendar card */}
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] border border-sand-100 p-5 sm:p-8">
           <div className="overflow-x-auto -mx-2 px-2">
@@ -238,15 +235,15 @@ export default function WildlifeCalendarSection() {
                       title={`Show what's in season in ${MONTH_NAMES[i]}`}
                       className={`relative text-center font-inter text-[11px] font-bold tracking-wide rounded-full py-1.5 transition-colors duration-150 ${
                         isSelected
-                          ? 'bg-[#FF7A00] text-white shadow-sm shadow-[#FF7A00]/30'
+                          ? 'bg-[#FF7A18] text-white shadow-sm shadow-[#FF7A18]/30'
                           : isToday
-                          ? 'bg-[#FF7A00]/10 text-[#0E7482]'
+                          ? 'bg-[#FF7A18]/10 text-[#0E5F6B]'
                           : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
                       }`}
                     >
                       {m}
                       {isToday && (
-                        <span className="absolute -top-1 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#FF7A00]" />
+                        <span className="absolute -top-1 -right-0.5 w-1.5 h-1.5 rounded-full bg-[#FF7A18]" />
                       )}
                     </button>
                   );
@@ -340,9 +337,9 @@ export default function WildlifeCalendarSection() {
         {/* Calendar legend and note stay inside the calendar card. */}
         <div className="mt-7 border-t border-slate-100 pt-6">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#FF7A00] px-3 py-1.5 font-inter text-xs font-semibold text-white"><span className="h-1.5 w-1.5 rounded-full bg-white" />{t.wildlifeCalendar?.legendPeak || 'Peak viewing window'}</span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#FF7A18] px-3 py-1.5 font-inter text-xs font-semibold text-white"><span className="h-1.5 w-1.5 rounded-full bg-white" />{t.wildlifeCalendar?.legendPeak || 'Peak viewing window'}</span>
             <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 font-inter text-xs font-semibold text-slate-500"><span className="h-1.5 w-1.5 rounded-full bg-slate-400" />{t.wildlifeCalendar?.legendOff || 'Off-peak'}</span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#FF7A00]/20 bg-[#FF7A00]/5 px-3 py-1.5 font-inter text-xs font-semibold text-[#0E7482]"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>{`${NOW_LABELS[locale] ?? NOW_LABELS.en} ${localizedMonth}`}</span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#FF7A18]/20 bg-[#FF7A18]/5 px-3 py-1.5 font-inter text-xs font-semibold text-[#0E5F6B]"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A18] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A18]" /></span>{`${NOW_LABELS[locale] ?? NOW_LABELS.en} ${localizedMonth}`}</span>
           </div>
           <p className="mt-3 font-inter text-xs italic leading-5 text-slate-400">{t.wildlifeCalendar?.footnote || 'Highlighted months = peak viewing window. Wildlife sightings can never be 100% guaranteed.'}</p>
         </div>
@@ -358,7 +355,7 @@ export default function WildlifeCalendarSection() {
                 key={row.name}
                 className="inline-flex items-center gap-1.5 bg-safari-50 border border-safari-200 text-safari-700 text-xs font-inter font-semibold rounded-full px-3 py-1"
               >
-                <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A00] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A00]" /></span>
+                <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#FF7A18] opacity-60" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF7A18]" /></span>
                 <row.Icon className="w-3.5 h-3.5" />
                 {row.name}
               </span>
@@ -370,10 +367,6 @@ export default function WildlifeCalendarSection() {
           )}
         </div>
 
-          </div>
-
-          <HomeTransfersCardSlider />
-        </div>
       </div>
     </section>
   );
