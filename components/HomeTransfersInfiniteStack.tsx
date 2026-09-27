@@ -190,22 +190,7 @@ export default function HomeTransfersInfiniteStack({
             );
           })}
 
-          <button
-            type="button"
-            onClick={previous}
-            aria-label="Previous transfer"
-            className="absolute left-2 top-1/2 z-40 hidden -translate-y-1/2 rounded-full border border-white/60 bg-white/45 p-4 text-ocean-700 shadow-xl backdrop-blur-xl transition hover:scale-105 hover:bg-white/70 md:flex"
-          >
-            <ArrowRight className="h-5 w-5 rotate-180" />
-          </button>
-          <button
-            type="button"
-            onClick={advance}
-            aria-label="Next transfer"
-            className="absolute right-2 top-1/2 z-40 hidden -translate-y-1/2 rounded-full border border-white/60 bg-white/45 p-4 text-ocean-700 shadow-xl backdrop-blur-xl transition hover:scale-105 hover:bg-white/70 md:flex"
-          >
-            <ArrowRight className="h-5 w-5" />
-          </button>
+
         </div>
 
         <div className="mt-2 flex items-center justify-center gap-2">
