@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: { default: 'Bahari Asili Safaris | Kenya Safaris from Watamu', template: '%s | Bahari Asili Safaris' },
   description: 'Plan Kenya safaris from Watamu to Tsavo, Amboseli, Masai Mara and Taita Hills, plus Indian Ocean experiences, transfers and private excursions.',
   keywords: ['Watamu safaris', 'Kenya safaris', 'Tsavo safari', 'Amboseli safari', 'Masai Mara safari', 'Taita Hills safari', 'Kenya coast', 'safari from Watamu', 'private Kenya safari'],
-  alternates: { canonical: '/', languages: { en: '/', it: '/', fr: '/', es: '/', de: '/', ar: '/', zh: '/', sw: '/' } },
+  alternates: { canonical: '/' },
   robots: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
   icons: { icon: [{ url: '/images/logo/icon-192.png', sizes: '192x192', type: 'image/png' }, { url: '/images/logo/icon-512.png', sizes: '512x512', type: 'image/png' }], apple: '/images/logo/apple-touch-icon.png' },
   openGraph: { type: 'website', locale: 'en_KE', alternateLocale: ['it_IT', 'fr_FR', 'es_ES', 'de_DE', 'ar', 'zh_CN', 'sw_KE'], url: siteUrl, siteName: 'Bahari Asili Safaris', title: 'Bahari Asili Safaris | Kenya Safaris from Watamu', description: 'Private Kenya safaris, coastal experiences and transfers planned from Watamu with local support.', images: [{ url: '/images/logo/icon-512.png', width: 512, height: 512, alt: 'Bahari Asili Safaris' }] },
