@@ -122,7 +122,7 @@ function PlatformCard({
         <div className="flex items-center gap-2">
           <Stars rating={info.rating} />
           <span className="font-inter text-sm font-bold text-foreground">{info.rating.toFixed(1)}</span>
-          <span className="font-inter text-xs text-muted-foreground">({info.totalReviews} {t.reviews?.label})</span>
+          <span className="font-inter text-xs text-muted-foreground">({info.totalReviews})</span>
         </div>
       </div>
     </a>
