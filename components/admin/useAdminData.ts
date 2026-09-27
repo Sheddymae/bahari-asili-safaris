@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export type Booking = {
@@ -25,16 +25,22 @@ export function useAdminData() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const requestRef = useRef<AbortController | null>(null);
+  const mountedRef = useRef(true);
 
   const reload = useCallback(async (params?: URLSearchParams, options?: { silent?: boolean }) => {
     if (!options?.silent) setLoading(true);
     setError('');
     try {
+      requestRef.current?.abort();
+      const controller = new AbortController();
+      requestRef.current = controller;
       const query = params ? new URLSearchParams(params.toString()) : new URLSearchParams();
       query.set('page', '1'); query.set('page_size', '100');
       const response = await fetch(`/api/admin/reservations?${query.toString()}`, {
         cache: 'no-store',
         headers: { 'Cache-Control': 'no-cache' },
+        signal: controller.signal,
       });
       if (response.status === 401) { router.push('/auth/login'); return; }
       const data = await response.json();
@@ -42,18 +48,22 @@ export function useAdminData() {
       setReservations(Array.isArray(data.reservations) ? data.reservations : []);
       setStats(data.stats || null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load reservations');
+      if (e instanceof DOMException && e.name === 'AbortError') return;
+      if (e instanceof Error && e.name === 'AbortError') return;
+      if (mountedRef.current) setError(e instanceof Error ? e.message : 'Failed to load reservations');
     } finally {
-      if (!options?.silent) setLoading(false);
+      if (!options?.silent && mountedRef.current) setLoading(false);
     }
   }, [router]);
 
   useEffect(() => {
     reload();
-    const interval = window.setInterval(() => reload(undefined, { silent: true }), 15000);
+    const interval = window.setInterval(() => reload(undefined, { silent: true }), 60000);
     const handleFocus = () => reload(undefined, { silent: true });
     window.addEventListener('focus', handleFocus);
     return () => {
+      mountedRef.current = false;
+      requestRef.current?.abort();
       window.clearInterval(interval);
       window.removeEventListener('focus', handleFocus);
     };
