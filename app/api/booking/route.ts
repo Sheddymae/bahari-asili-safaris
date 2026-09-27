@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { normalizeLocale } from '@/lib/locale-content';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { generateCustomerInvoicePDF } from '@/lib/customer-invoice-generator';
@@ -416,6 +417,32 @@ async function sendEmail(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+    const userAgent = req.headers.get('user-agent') || 'unknown';
+    const digestInput = new TextEncoder().encode(`booking:${clientIp}:${userAgent}`);
+    const digest = await crypto.subtle.digest('SHA-256', digestInput);
+    const rateKey = Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
+
+    try {
+      const adminForRateLimit = getSupabaseAdmin();
+      const { data: rateLimit, error: rateLimitError } = await adminForRateLimit.rpc('check_api_rate_limit', {
+        p_rate_key: rateKey,
+        p_window_seconds: 600,
+        p_max_hits: 8,
+      }).maybeSingle();
+
+      if (!rateLimitError && rateLimit && !rateLimit.allowed) {
+        return NextResponse.json(
+          { success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' },
+          { status: 429, headers: { 'Retry-After': String(rateLimit.retry_after || 60) } },
+        );
+      }
+    } catch (rateLimitError) {
+      console.error('Booking rate-limit check failed:', rateLimitError);
+    }
+
+
 
     // ----------------------------------------------
     // READ FORM DATA
