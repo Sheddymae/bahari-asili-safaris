@@ -217,7 +217,7 @@ export default function WildlifeCalendarSection({ embedded = false }: { embedded
 
         {/* Calendar card */}
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] border border-sand-100 p-5 sm:p-8">
-          <div className="overflow-x-auto -mx-2 px-2">
+          <div className="overflow-x-auto">
             <div className="min-w-[760px]">
               {/* Month header — clickable to filter the whole calendar */}
               <div className="grid grid-cols-[230px_repeat(12,1fr)] gap-1 mb-4 px-1">
@@ -237,8 +237,8 @@ export default function WildlifeCalendarSection({ embedded = false }: { embedded
                         isSelected
                           ? 'bg-[#FF7A18] text-white shadow-sm shadow-[#FF7A18]/30'
                           : isToday
-                          ? 'bg-[#FF7A18]/10 text-[#0E5F6B]'
-                          : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
+                          ? 'bg-[#FFFBEB] text-[#0E5F6B]'
+                          : 'bg-[#E5E7EB] text-slate-600 hover:bg-[#E5E7EB]'
                       }`}
                     >
                       {m}
