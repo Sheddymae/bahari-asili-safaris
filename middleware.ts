@@ -16,14 +16,6 @@ const ADMIN_LEGACY_PREFIX = '/admin';
 const ADMIN_LOGIN = '/auth/login';
 const CUSTOMER_LOGIN = '/login';
 const CUSTOMER_PROTECTED_PREFIXES = ['/dashboard', '/account'];
-const bookingHits = new Map<string, { count: number; resetAt: number }>();
-const BOOKING_WINDOW_MS = 10 * 60 * 1000;
-const BOOKING_MAX = 8;
-
-function getClientKey(req: NextRequest) {
-  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
-}
-
 function applySecurityHeaders(res: NextResponse, protectedRoute = false) {
   res.headers.set('X-Content-Type-Options', 'nosniff');
   res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -42,15 +34,6 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const host = req.headers.get('host') || '';
   const isPreviewHost = host.includes('vercel.app');
-
-  if (pathname === '/api/booking' && req.method === 'POST') {
-    const key = getClientKey(req);
-    const now = Date.now();
-    const existing = bookingHits.get(key);
-    const hit = !existing || existing.resetAt <= now ? { count: 1, resetAt: now + BOOKING_WINDOW_MS } : { count: existing.count + 1, resetAt: existing.resetAt };
-    bookingHits.set(key, hit);
-    if (hit.count > BOOKING_MAX) return applySecurityHeaders(new NextResponse(JSON.stringify({ success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' }), { status: 429, headers: { 'content-type': 'application/json', 'Retry-After': String(Math.ceil((hit.resetAt - now) / 1000)) } }));
-  }
 
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);

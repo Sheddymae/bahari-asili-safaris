@@ -44,14 +44,16 @@ export default function SafariBuilder() {
   const validateStep = useCallback((): boolean => {
     const e: Record<string, string> = {};
     if (step === 0) {
+      const today = new Date().toISOString().slice(0, 10);
       if (!trip.arrivalDate) e.dates = safariBuilder.validation.arrivalRequired;
+      else if (trip.arrivalDate < today) e.dates = safariBuilder.validation.arrivalRequired;
       else if (!trip.departureDate) e.dates = safariBuilder.validation.departureRequired;
       else if (new Date(trip.departureDate) <= new Date(trip.arrivalDate)) e.dates = safariBuilder.validation.departureAfterArrival;
       if (!trip.startLocation) e.locations = safariBuilder.validation.startRequired;
       else if (!trip.endLocation) e.locations = safariBuilder.validation.endRequired;
     }
     if (step === 1) {
-      if (travellers.adults < 1) e.adults = safariBuilder.validation.adultRequired;
+      if (travellers.adults < 1 || travellers.adults > 30) e.adults = safariBuilder.validation.adultRequired; e.adults = safariBuilder.validation.adultRequired;
       if (travellers.children > 0 && travellers.childrenAges.length !== travellers.children) e.childrenAges = safariBuilder.validation.childAgesRequired;
     }
     if (step === 3 && destinationSlugs.length === 0) e.destinations = safariBuilder.validation.destinationRequired;

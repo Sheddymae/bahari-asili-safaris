@@ -43,13 +43,13 @@ export default function Home() {
       <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
         <HeroSection onBook={openHeroBooking} />
         <TrustStrip />
-        <HowToBook />
-        <HomeConversionSection onBook={() => openHeroBooking()} />
-        <AnimateOnScroll direction="up"><AboutSection variant="home" /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ToursSection variant="home" onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeDestinationsSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><AboutSection variant="home" /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ExcursionsSection variant="home" onBook={openBooking} /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
+        <HowToBook />
+        <HomeConversionSection onBook={() => openHeroBooking()} />
         <AnimateOnScroll direction="up"><WildlifeCalendarSection /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeTransfersInfiniteStack onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><GallerySection variant="home" /></AnimateOnScroll>

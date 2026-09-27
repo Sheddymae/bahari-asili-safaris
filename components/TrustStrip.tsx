@@ -6,7 +6,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export default function TrustStrip() {
   const { t } = useLanguage();
   const e = t.homeExtras;
-
   const points = [
     { icon: Compass, label: e.trust1 },
     { icon: MapPin, label: e.trust2 },
@@ -16,24 +15,14 @@ export default function TrustStrip() {
   ];
 
   return (
-    <section className="relative -mt-px overflow-hidden border-b border-border bg-white" aria-label="Why travel with Bahari Asili Safaris">
-      <div className="trust-marquee-mask">
-        <div className="trust-marquee-track" tabIndex={0} aria-label="Safari service highlights">
-          {[0, 1].map((copy) => (
-            <div
-              key={copy}
-              className="trust-marquee-group flex shrink-0 items-center justify-center gap-x-10 px-5 py-6 sm:gap-x-14 sm:px-7 lg:gap-x-16 lg:px-8"
-              aria-hidden={copy === 1}
-            >
-              {points.map(({ icon: Icon, label }, i) => (
-                <div key={`${copy}-${i}`} className="flex shrink-0 items-center gap-2.5">
-                  <Icon className="h-4 w-4 shrink-0 text-safari-500 sm:h-[18px] sm:w-[18px]" />
-                  <span className="whitespace-nowrap font-inter text-sm font-medium text-foreground sm:text-[15px]">{label}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
+    <section className="border-b border-border bg-white" aria-label={e.trust1}>
+      <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-border sm:grid-cols-3 lg:grid-cols-5 lg:divide-y-0">
+        {points.map(({ icon: Icon, label }) => (
+          <div key={label} className="flex min-h-20 items-center justify-center gap-2.5 px-4 py-4 text-center">
+            <Icon className="h-[18px] w-[18px] shrink-0 text-safari-500" aria-hidden="true" />
+            <span className="font-inter text-sm font-medium leading-5 text-foreground">{label}</span>
+          </div>
+        ))}
       </div>
     </section>
   );

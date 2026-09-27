@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { normalizeLocale } from '@/lib/locale-content';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { generateCustomerInvoicePDF } from '@/lib/customer-invoice-generator';
@@ -417,6 +418,32 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown';
+    const userAgent = req.headers.get('user-agent') || 'unknown';
+    const digestInput = new TextEncoder().encode(`booking:${clientIp}:${userAgent}`);
+    const digest = await crypto.subtle.digest('SHA-256', digestInput);
+    const rateKey = Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
+
+    try {
+      const adminForRateLimit = getSupabaseAdmin();
+      const { data: rateLimit, error: rateLimitError } = await adminForRateLimit.rpc('check_api_rate_limit', {
+        p_rate_key: rateKey,
+        p_window_seconds: 600,
+        p_max_hits: 8,
+      }).maybeSingle();
+
+      if (!rateLimitError && rateLimit && !rateLimit.allowed) {
+        return NextResponse.json(
+          { success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' },
+          { status: 429, headers: { 'Retry-After': String(rateLimit.retry_after || 60) } },
+        );
+      }
+    } catch (rateLimitError) {
+      console.error('Booking rate-limit check failed:', rateLimitError);
+    }
+
+
+
     // ----------------------------------------------
     // READ FORM DATA
     // ----------------------------------------------
@@ -510,6 +537,8 @@ export async function POST(req: NextRequest) {
     }
 
     const parsedArrivalDate = new Date(`${arrivalDate}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     if (Number.isNaN(parsedArrivalDate.getTime())) {
       return NextResponse.json(
@@ -519,6 +548,18 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 },
       );
+    }
+
+    if (parsedArrivalDate < today) {
+      return NextResponse.json({ success: false, error: 'Please choose an arrival date that has not passed.' }, { status: 400 });
+    }
+
+    if (adults > 30 || children > 10) {
+      return NextResponse.json({ success: false, error: 'Please check the number of travellers and children.' }, { status: 400 });
+    }
+
+    if (children !== kidsAges.length) {
+      return NextResponse.json({ success: false, error: 'Please provide the age of each child travelling.' }, { status: 400 });
     }
 
     // ----------------------------------------------
