@@ -13,7 +13,7 @@ export type Booking = {
   [key: string]: unknown;
 };
 
-export type Stats = { total: number; today: number; pending: number; confirmed: number; cancelled: number; completed: number; revenue: number; quotedRevenue: number; confirmedRevenue: number; outstandingBalance: number };
+export type Stats = { total: number; guests: number; today: number; pending: number; confirmed: number; cancelled: number; completed: number; revenue: number; quotedRevenue: number; confirmedRevenue: number; outstandingBalance: number };
 
 export function formatKES(value: number | string | null | undefined) { return `KES ${Number(value || 0).toLocaleString('en-KE')}`; }
 export function safeDate(value?: string) { if (!value) return '—'; const d = new Date(value); return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('en-GB'); }
