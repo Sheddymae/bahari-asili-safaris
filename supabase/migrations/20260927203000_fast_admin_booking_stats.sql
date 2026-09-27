@@ -19,6 +19,7 @@ AS $$
     'confirmed', COUNT(*) FILTER (WHERE is_deleted = false AND reservation_status = 'confirmed'),
     'cancelled', COUNT(*) FILTER (WHERE is_deleted = false AND reservation_status = 'cancelled'),
     'completed', COUNT(*) FILTER (WHERE is_deleted = false AND reservation_status = 'completed'),
+    'guests', COALESCE(SUM(COALESCE(adults, 0) + COALESCE(children, 0)) FILTER (WHERE is_deleted = false), 0),
     'revenue', COALESCE(SUM(total_price) FILTER (WHERE is_deleted = false AND payment_status = 'paid'), 0),
     'quotedRevenue', COALESCE(SUM(total_price) FILTER (WHERE is_deleted = false AND invoice_status IN ('quoted', 'sent')), 0),
     'confirmedRevenue', COALESCE(SUM(total_price) FILTER (WHERE is_deleted = false AND invoice_status IN ('confirmed', 'paid', 'partially_paid')), 0),
