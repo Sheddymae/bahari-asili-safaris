@@ -54,7 +54,7 @@ function ReviewCard({ review }: { review: Review }) {
   const sourceLabel = review.source === 'google' ? 'Google' : 'TripAdvisor';
 
   return (
-    <div className="bg-white rounded-2xl border border-border p-5 shadow-card hover:shadow-card-hover transition-shadow flex flex-col">
+    <div className="rounded-2xl border border-white/70 bg-white/55 p-5 shadow-[0_18px_55px_rgba(14,95,107,0.10)] backdrop-blur-2xl transition-shadow hover:shadow-[0_24px_70px_rgba(14,95,107,0.15)] flex flex-col">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           {review.avatar ? (
@@ -111,9 +111,9 @@ function PlatformCard({
       href={info.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-4 bg-white rounded-2xl border border-border px-5 py-4 shadow-card transition-all hover:shadow-card-hover hover:border-[#0e7490]/30"
+      className="flex items-center gap-4 rounded-2xl border border-white/70 bg-white/55 px-5 py-4 shadow-[0_18px_55px_rgba(14,95,107,0.10)] backdrop-blur-2xl transition-all hover:shadow-[0_24px_70px_rgba(14,95,107,0.15)] hover:border-[#0e7490]/30"
     >
-      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">{icon}</div>
+      <div className="w-10 h-10 rounded-xl border border-white/70 bg-white/50 flex items-center justify-center flex-shrink-0 backdrop-blur-xl">{icon}</div>
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
           <span className="font-poppins font-semibold text-foreground text-sm">{label}</span>
@@ -181,8 +181,8 @@ export default function ReviewsSection() {
   const tripadvisorInfo = reviewData.tripadvisor;
 
   return (
-    <section className="py-20 lg:py-28 bg-sand-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden py-20 lg:py-28 bg-sand-50">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.75),transparent_30%),radial-gradient(circle_at_80%_70%,rgba(14,95,107,0.08),transparent_38%)]" /><div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 bg-safari-50 border border-safari-200 rounded-full px-4 py-1.5 mb-4">
             <MessageSquare className="w-3.5 h-3.5 text-safari-600" />
@@ -216,7 +216,7 @@ export default function ReviewsSection() {
             ))}
           </div>
         ) : !hasAny ? (
-          <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-white p-8 text-center shadow-card sm:p-10">
+          <div className="mx-auto max-w-3xl rounded-3xl border border-white/75 bg-white/55 p-8 text-center shadow-[0_22px_70px_rgba(14,95,107,0.12)] backdrop-blur-2xl sm:p-10">
             <MessageSquare className="mx-auto mb-4 h-8 w-8 text-ocean-700" aria-hidden="true" />
             <h3 className="font-poppins text-xl font-bold text-foreground">
               {t.reviews?.comingSoon}
