@@ -26,6 +26,7 @@ const AIRPORTS: AirportOption[] = [
   { code: 'MYD', name: 'Malindi Airport', blurbEn: 'Closest airport to Watamu — 30 min transfer', blurbIt: "Aeroporto più vicino a Watamu — 30 min di trasferimento", bookingValue: 'Airport Transfer – MYD (Malindi)', featured: true },
   { code: 'MBA', name: 'Mombasa Moi Airport', blurbEn: 'Major coastal hub — 2h transfer to Watamu', blurbIt: 'Principale hub costiero — 2h di trasferimento a Watamu', bookingValue: 'Airport Transfer – MBA (Mombasa)' },
   { code: 'NBO', name: 'Nairobi JKIA', blurbEn: 'International gateway — flight + transfer arranged', blurbIt: 'Porta internazionale — volo + trasferimento organizzati', bookingValue: 'Airport Transfer – NBO (Nairobi)' },
+  { code: 'UKD', name: 'Diani / Ukunda', blurbEn: 'Ukunda Airstrip and Diani Beach — private coastal transfer', blurbIt: 'Aeroporto di Ukunda e Diani Beach — transfer costiero privato', bookingValue: 'Diani / Ukunda Transfer' },
 ];
 
 const SERVICES = [
