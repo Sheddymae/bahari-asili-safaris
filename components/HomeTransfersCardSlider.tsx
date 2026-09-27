@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, CarFront, Check, Facebook, Globe2, Instagram, Plane } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
-import ScrollReveal from '@/components/ScrollReveal';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Locale } from '@/lib/i18n';
 
@@ -27,20 +26,17 @@ type SliderCopy = {
   previous: string;
   next: string;
   request: string;
-  privateTransfer: string;
-  vehicle: string;
-  includes: string;
 };
 
 const COPY: Record<Locale, SliderCopy> = {
-  en: { unique: 'UNIQUE DESTINATIONS', previous: 'Previous transfer', next: 'Next transfer', request: 'Request your transfer', privateTransfer: 'PRIVATE TRANSFER', vehicle: 'Vehicle', includes: 'Includes' },
-  it: { unique: 'DESTINAZIONI UNICHE', previous: 'Trasferimento precedente', next: 'Trasferimento successivo', request: 'Richiedi il trasferimento', privateTransfer: 'TRASFERIMENTO PRIVATO', vehicle: 'Veicolo', includes: 'Include' },
-  fr: { unique: 'DESTINATIONS UNIQUES', previous: 'Transfert précédent', next: 'Transfert suivant', request: 'Demander le transfert', privateTransfer: 'TRANSFERT PRIVÉ', vehicle: 'Véhicule', includes: 'Comprend' },
-  es: { unique: 'DESTINOS ÚNICOS', previous: 'Traslado anterior', next: 'Siguiente traslado', request: 'Solicitar traslado', privateTransfer: 'TRASLADO PRIVADO', vehicle: 'Vehículo', includes: 'Incluye' },
-  de: { unique: 'EINZIGARTIGE ZIELE', previous: 'Vorheriger Transfer', next: 'Nächster Transfer', request: 'Transfer anfragen', privateTransfer: 'PRIVATER TRANSFER', vehicle: 'Fahrzeug', includes: 'Inklusive' },
-  ar: { unique: 'وجهات فريدة', previous: 'النقل السابق', next: 'النقل التالي', request: 'اطلب خدمة النقل', privateTransfer: 'نقل خاص', vehicle: 'المركبة', includes: 'يشمل' },
-  zh: { unique: '独特目的地', previous: '上一个接送', next: '下一个接送', request: '申请接送', privateTransfer: '私人接送', vehicle: '车辆', includes: '包含' },
-  sw: { unique: 'MAENEO YA KIPEKEE', previous: 'Usafiri uliopita', next: 'Usafiri unaofuata', request: 'Omba usafiri wako', privateTransfer: 'USAFIRI BINAFSI', vehicle: 'Gari', includes: 'Inajumuisha' },
+  en: { unique: 'UNIQUE DESTINATIONS', previous: 'Previous transfer', next: 'Next transfer', request: 'Request your transfer' },
+  it: { unique: 'DESTINAZIONI UNICHE', previous: 'Trasferimento precedente', next: 'Trasferimento successivo', request: 'Richiedi il trasferimento' },
+  fr: { unique: 'DESTINATIONS UNIQUES', previous: 'Transfert précédent', next: 'Transfert suivant', request: 'Demander le transfert' },
+  es: { unique: 'DESTINOS ÚNICOS', previous: 'Traslado anterior', next: 'Siguiente traslado', request: 'Solicitar traslado' },
+  de: { unique: 'EINZIGARTIGE ZIELE', previous: 'Vorheriger Transfer', next: 'Nächster Transfer', request: 'Transfer anfragen' },
+  ar: { unique: 'وجهات فريدة', previous: 'النقل السابق', next: 'النقل التالي', request: 'اطلب خدمة النقل' },
+  zh: { unique: '独特目的地', previous: '上一个接送', next: '下一个接送', request: '申请接送' },
+  sw: { unique: 'MAENEO YA KIPEKEE', previous: 'Usafiri uliopita', next: 'Usafiri unaofuata', request: 'Omba usafiri wako' },
 };
 
 const CARD_DATA: Record<Locale, CardData[]> = {
@@ -105,7 +101,7 @@ function getWindow(cards: CardData[], page: number) {
 
 function TransferCard({ card, copy }: { card: CardData; copy: SliderCopy }) {
   return (
-    <article className="group relative h-[430px] w-[82vw] max-w-[360px] shrink-0 overflow-hidden rounded-[1.75rem] border border-white/70 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:w-[360px] lg:h-[440px] lg:w-[calc((100%-2.5rem)/3)] lg:max-w-none">
+    <article className="group relative h-[430px] w-[82vw] max-w-[360px] shrink-0 overflow-hidden rounded-[1.75rem] border border-white/70 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.12)] sm:w-[360px] lg:h-[440px] lg:w-auto lg:flex-1 lg:max-w-none">
       <Image src={card.image} alt="" fill sizes="(max-width: 1023px) 82vw, 24vw" className="object-cover transition duration-700 ease-out group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/5" />
       <div className="absolute left-5 right-5 top-5 flex items-start justify-between gap-3">
