@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { normalizeLocale } from '@/lib/locale-content';
 import { resolveBookingPackage, addBookingDays } from '@/lib/booking-document';
@@ -37,6 +38,33 @@ async function sendEmail(apiKey: string, sender: string, to: string, subject: st
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const authHeader = req.headers.get('authorization') || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+    if (!token) {
+      return NextResponse.json({ success: false, error: 'Please sign in to download a booking invoice again.' }, { status: 401 });
+    }
+
+    const authClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      { auth: { autoRefreshToken: false, persistSession: false } },
+    );
+    const { data: authUser } = await authClient.auth.getUser(token);
+    if (!authUser.user) {
+      return NextResponse.json({ success: false, error: 'Your session has expired. Please sign in again.' }, { status: 401 });
+    }
+
+    const admin = getSupabaseAdmin();
+    const { data: ownedBooking, error: ownedBookingError } = await admin
+      .from('bookings')
+      .select('booking_ref,user_id')
+      .eq('booking_ref', String(body.bookingRef || '').trim())
+      .maybeSingle();
+
+    if (ownedBookingError || !ownedBooking || ownedBooking.user_id !== authUser.user.id) {
+      return NextResponse.json({ success: false, error: 'We could not verify this booking for your account.' }, { status: 403 });
+    }
+
     const bookingRef = String(body.bookingRef || '').trim();
     const firstName = String(body.firstName || '').trim();
     const lastName = String(body.lastName || '').trim();
