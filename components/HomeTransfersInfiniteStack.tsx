@@ -82,7 +82,8 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
 
         <div className="relative mx-auto flex h-[510px] w-full max-w-[1180px] items-start justify-center overflow-visible sm:h-[535px]">
           {visibleCards.map(({ card, offset }) => {
-            const isActive = offset === 0;\n            const airport = tr.airports.find((item: { code: string }) => item.code === card.code) ?? tr.airports[0];
+            const isActive = offset === 0;
+            const airport = tr.airports.find((item: { code: string }) => item.code === card.code) ?? tr.airports[0];
             return (
               <motion.article
                 key={`${card.code}-${activeIndex}`}
@@ -115,7 +116,7 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
                           <Plane className="h-3.5 w-3.5" />
                           {card.code}
                         </span>
-                        <h3 className="mt-2 font-poppins text-2xl font-bold text-white drop-shadow-md sm:text-3xl">{card.title}</h3>
+                        <h3 className="mt-2 font-poppins text-2xl font-bold text-white drop-shadow-md sm:text-3xl">{airport.name}</h3>
                       </div>
                       <MapPin className="absolute bottom-1 right-1 hidden h-7 w-7 text-white/90 sm:block" />
                     </div>
@@ -123,7 +124,7 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
 
                   <div className="flex flex-col justify-between p-4 sm:p-5">
                     <div>
-                      <p className="font-poppins text-xs font-bold uppercase tracking-[0.12em] text-safari-500">{airport.desc}</p>
+                      <p className="font-poppins text-xs font-bold uppercase tracking-[0.12em] text-safari-500">{airport.name}</p>
                       <p className="mt-2 font-inter text-[13px] leading-5 text-ocean-700/80">{airport.desc}</p>
                       <div className="mx-auto mt-3 grid w-full max-w-[540px] grid-cols-1 gap-1.5 sm:grid-cols-3">
                         {tr.services.slice(0, 3).map((service) => (
