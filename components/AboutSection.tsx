@@ -87,10 +87,6 @@ export default function AboutSection({ variant = 'full' }: { variant?: AboutVari
               <p className="font-inter text-sm leading-7 text-foreground sm:text-base">{t.about.bodyText}</p>
               <p className="font-inter text-sm leading-7 text-foreground sm:text-base">{t.about.bodyTextSecondary}</p>
             </div>
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <div className="rounded-xl border border-sand-200 bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:border-safari-300 hover:shadow-lg sm:p-6"><div className="font-poppins text-2xl font-black text-safari-500 sm:text-3xl">{t.about.stats1}</div><p className="mt-1.5 font-inter text-xs text-foreground sm:text-sm">{t.about.stats1Label}</p></div>
-              <div className="rounded-xl border border-sand-200 bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:border-ocean-300 hover:shadow-lg sm:p-6"><div className="font-poppins text-2xl font-black text-ocean-700 sm:text-3xl">{t.about.stats2}</div><p className="mt-1.5 font-inter text-xs text-foreground sm:text-sm">{t.about.stats2Label}</p></div>
-            </div>
             <Link href="/about" prefetch className="inline-flex items-center gap-2 font-inter text-sm font-semibold text-ocean-700 transition-all duration-300 hover:gap-3 hover:text-ocean-800">{t.homeExtras.learnMore} <span aria-hidden="true">→</span></Link>
           </div>
 
