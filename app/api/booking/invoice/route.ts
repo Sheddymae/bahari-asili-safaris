@@ -113,7 +113,6 @@ export async function POST(req: NextRequest) {
     const invoiceFilename = `Bahari-Asili-Booking-Invoice-${bookingRef}.pdf`;
 
     try {
-      const admin = getSupabaseAdmin();
       const bookingUpdate: Record<string, unknown> = {
         itinerary: pkg.itinerary || [],
         invoice_generated: true,
