@@ -15,43 +15,10 @@ type TransferCard = {
   image: string;
 };
 
-const TRANSFERS: TransferCard[] = [
-  {
-    code: 'MYD',
-    title: 'Malindi Airport',
-    description: 'A smooth private connection from Malindi Airport to Watamu hotels, beach resorts and safari starting points.',
-    route: 'Malindi Airport → Watamu',
-    details: ['Private air-conditioned vehicle', 'Meet & greet on arrival', 'Approx. 30 min to Watamu'],
-    bookingValue: 'Airport Transfer – MYD (Malindi)',
-    image: '/images/gallery/coast-beach.png',
-  },
-  {
-    code: 'MBA',
-    title: 'Mombasa Moi Airport',
-    description: 'Comfortable door-to-door coastal transfer from Mombasa to Watamu, planned around your arrival or departure time.',
-    route: 'Mombasa Airport → Watamu',
-    details: ['Private road transfer', 'Luggage assistance', 'Approx. 2 hours to Watamu'],
-    bookingValue: 'Airport Transfer – MBA (Mombasa)',
-    image: '/images/home/services-safari-jeep.jpg',
-  },
-  {
-    code: 'NBO',
-    title: 'Nairobi JKIA',
-    description: 'Connect an international Nairobi arrival with your coast holiday or safari using a coordinated flight and private transfer.',
-    route: 'JKIA → Kenya Coast',
-    details: ['Airport coordination', 'Private transfer option', 'Safari + coast connections'],
-    bookingValue: 'Airport Transfer – NBO (Nairobi)',
-    image: '/images/safaris/safari-4day-naivasha-nakuru-mara.jpg',
-  },
-  {
-    code: 'UKD',
-    title: 'Diani / Ukunda',
-    description: 'Private transfers for travellers arriving at Ukunda Airstrip or moving between Diani Beach, Mombasa and other coastal destinations.',
-    route: 'Ukunda / Diani → Coast',
-    details: ['Ukunda Airstrip pickup', 'Diani hotel transfers', 'Private air-conditioned vehicle'],
-    bookingValue: 'Diani / Ukunda Transfer',
-    image: '/images/gallery/coast-beach.png',
-  },
+const TRANSFERS = [
+  { code: 'MYD', image: '/images/gallery/coast-beach.png', bookingValue: 'Airport Transfer – MYD (Malindi)' },
+  { code: 'MBA', image: '/images/home/services-safari-jeep.jpg', bookingValue: 'Airport Transfer – MBA (Mombasa)' },
+  { code: 'NBO', image: '/images/safaris/safari-4day-naivasha-nakuru-mara.jpg', bookingValue: 'Airport Transfer – NBO (Nairobi)' },
 ];
 
 export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transferType: string) => void }) {
@@ -115,7 +82,7 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
 
         <div className="relative mx-auto flex h-[510px] w-full max-w-[1180px] items-start justify-center overflow-visible sm:h-[535px]">
           {visibleCards.map(({ card, offset }) => {
-            const isActive = offset === 0;
+            const isActive = offset === 0;\n            const airport = tr.airports.find((item: { code: string }) => item.code === card.code) ?? tr.airports[0];
             return (
               <motion.article
                 key={`${card.code}-${activeIndex}`}
@@ -137,7 +104,7 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
                   <div className="relative overflow-hidden">
                     <img
                       src={card.image}
-                      alt={card.title}
+                      alt={airport.name}
                       className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-ocean-950/75 via-ocean-900/10 to-transparent" />
@@ -156,13 +123,13 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
 
                   <div className="flex flex-col justify-between p-4 sm:p-5">
                     <div>
-                      <p className="font-poppins text-xs font-bold uppercase tracking-[0.12em] text-safari-500">{card.route}</p>
-                      <p className="mt-2 font-inter text-[13px] leading-5 text-ocean-700/80">{card.description}</p>
+                      <p className="font-poppins text-xs font-bold uppercase tracking-[0.12em] text-safari-500">{airport.desc}</p>
+                      <p className="mt-2 font-inter text-[13px] leading-5 text-ocean-700/80">{airport.desc}</p>
                       <div className="mx-auto mt-3 grid w-full max-w-[540px] grid-cols-1 gap-1.5 sm:grid-cols-3">
-                        {card.details.map((detail) => (
-                          <div key={detail} className="flex items-center justify-center gap-1.5 rounded-xl border border-white/80 bg-white/40 px-2.5 py-2 text-center shadow-sm backdrop-blur-xl transition-all duration-300 group-hover:bg-white/55">
+                        {tr.services.slice(0, 3).map((service) => (
+                          <div key={service.title} className="flex items-center justify-center gap-1.5 rounded-xl border border-white/80 bg-white/40 px-2.5 py-2 text-center shadow-sm backdrop-blur-xl transition-all duration-300 group-hover:bg-white/55">
                             <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-safari-500" />
-                            <span className="font-inter text-[11px] leading-4 text-ocean-700/80">{detail}</span>
+                            <span className="font-inter text-[11px] leading-4 text-ocean-700/80">{service.title}</span>
                           </div>
                         ))}
                       </div>
@@ -171,7 +138,7 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
                     <div className="flex flex-wrap items-center justify-center gap-2.5">
                       <span className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/35 px-3 py-1.5 font-inter text-xs font-semibold text-ocean-700/70 shadow-sm backdrop-blur-xl">
                         <Car className="h-4 w-4 text-safari-500" />
-                        {tr.services?.[1]?.title || tr.title}
+                        {tr.services?.[1]?.title}
                       </span>
                       <button
                         type="button"
@@ -195,7 +162,7 @@ export default function HomeTransfersInfiniteStack({ onBook }: { onBook: (transf
           </button>
           <div className="flex items-center justify-center gap-2">
             {cards.map((card, index) => (
-              <button key={card.code} type="button" onClick={() => setActiveIndex(index)} aria-label={card.title} className={`h-1.5 rounded-full transition-all duration-500 ${index === activeIndex ? 'w-10 bg-safari-500' : 'w-2 bg-ocean-700/20'}`} />
+              <button key={card.code} type="button" onClick={() => setActiveIndex(index)} aria-label={airport.name} className={`h-1.5 rounded-full transition-all duration-500 ${index === activeIndex ? 'w-10 bg-safari-500' : 'w-2 bg-ocean-700/20'}`} />
             ))}
           </div>
           <button type="button" onClick={advance} aria-label={tr.titleHighlight || tr.title} className="flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/45 text-ocean-700 transition hover:bg-white/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-500">
