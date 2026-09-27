@@ -129,6 +129,7 @@ export async function GET(req: NextRequest) {
 
 interface Stats {
   total: number;
+  guests: number;
   today: number;
   pending: number;
   confirmed: number;
@@ -149,6 +150,7 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>, recycleB
       if (!error && data) {
         return {
           total: Number(data.total) || 0,
+          guests: Number(data.guests) || 0,
           today: Number(data.today) || 0,
           pending: Number(data.pending) || 0,
           confirmed: Number(data.confirmed) || 0,
@@ -177,8 +179,9 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>, recycleB
   };
   const active = (query: any) => recycleBinAvailable ? query.eq('is_deleted', false) : query;
 
-  const [total, today, pending, confirmed, cancelled, completed, revenue, quotedRevenue, confirmedRevenue, outstandingBalance] = await Promise.all([
+  const [total, guests, today, pending, confirmed, cancelled, completed, revenue, quotedRevenue, confirmedRevenue, outstandingBalance] = await Promise.all([
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true }))),
+    sumGuests(active(admin.from('bookings').select('adults, children'))),
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).gte('created_at', todayStr + 'T00:00:00.000Z').lte('created_at', todayStr + 'T23:59:59.999Z')),
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).eq('reservation_status', 'pending')),
     safeCount(() => active(admin.from('bookings').select('id', { count: 'exact', head: true })).eq('reservation_status', 'confirmed')),
@@ -190,7 +193,17 @@ async function computeStats(admin: ReturnType<typeof getSupabaseAdmin>, recycleB
     sumField(active(admin.from('bookings').select('balance_due')).gt('balance_due', 0), 'balance_due'),
   ]);
 
-  return { total, today, pending, confirmed, cancelled, completed, revenue, quotedRevenue, confirmedRevenue, outstandingBalance };
+  return { total, guests, today, pending, confirmed, cancelled, completed, revenue, quotedRevenue, confirmedRevenue, outstandingBalance };
+}
+
+async function sumGuests(query: any): Promise<number> {
+  try {
+    const { data, error } = await query;
+    if (error) return 0;
+    return (data || []).reduce((sum: number, row: any) => sum + (Number(row.adults) || 0) + (Number(row.children) || 0), 0);
+  } catch {
+    return 0;
+  }
 }
 
 async function sumField(query: any, field: string): Promise<number> {
