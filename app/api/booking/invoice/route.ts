@@ -152,6 +152,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('Customer booking invoice generation failed:', error);
-    return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'The booking was saved, but the booking invoice could not be generated.' }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'The booking was saved, but the booking invoice could not be generated. Please contact us if you need another copy.' }, { status: 500 });
   }
 }
