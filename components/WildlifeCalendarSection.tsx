@@ -215,8 +215,6 @@ export default function WildlifeCalendarSection({ embedded = false }: { embedded
           </p>
         </div>
 
-        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(320px,0.75fr)] lg:gap-8">
-          <div className="min-w-0">
         {/* Calendar card */}
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] border border-sand-100 p-5 sm:p-8">
           <div className="overflow-x-auto -mx-2 px-2">
@@ -369,10 +367,6 @@ export default function WildlifeCalendarSection({ embedded = false }: { embedded
           )}
         </div>
 
-          </div>
-
-          <HomeTransfersCardSlider />
-        </div>
       </div>
     </section>
   );
