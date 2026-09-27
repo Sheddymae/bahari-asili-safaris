@@ -115,7 +115,7 @@ export default function HomeTransfersInfiniteStack({
           </p>
         </div>
 
-        <div className="relative mx-auto flex h-[540px] w-full max-w-[1180px] items-start justify-center overflow-visible sm:h-[565px]">
+        <div className="relative mx-auto flex h-[485px] w-full max-w-[1180px] items-start justify-center overflow-visible sm:h-[505px]">
           {visibleCards.map(({ card, offset }) => {
             const isActive = offset === 0;
             return (
@@ -130,18 +130,18 @@ export default function HomeTransfersInfiniteStack({
                 }}
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                  left: isMobile ? '4%' : 'calc(50% - 310px)',
-                  width: isMobile ? '92%' : '620px',
+                  left: isMobile ? '4%' : 'calc(50% - 280px)',
+                  width: isMobile ? '92%' : '560px',
                 }}
-                className={`absolute top-0 h-[480px] overflow-hidden rounded-[32px] border border-white/50 bg-white/30 shadow-[0_30px_90px_rgba(14,95,107,0.20)] backdrop-blur-2xl sm:h-[500px] ${isActive ? 'z-30' : 'z-10 pointer-events-none'}`}
+                className={`group absolute top-0 h-[430px] overflow-hidden rounded-[28px] border border-white/60 bg-white/30 shadow-[0_24px_70px_rgba(14,95,107,0.18)] backdrop-blur-2xl transition-shadow duration-500 hover:shadow-[0_30px_85px_rgba(14,95,107,0.24)] sm:h-[450px] ${isActive ? 'z-30' : 'z-10 pointer-events-none'}`}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-white/65 via-white/25 to-ocean-700/10" />
-                <div className="relative grid h-full grid-rows-[42%_58%]">
+                <div className="relative grid h-full grid-rows-[40%_60%]">
                   <div className="relative overflow-hidden">
                     <img
                       src={card.image}
                       alt={card.title}
-                      className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
                     <div className="absolute bottom-5 left-5 right-5 flex items-end justify-center gap-3 text-center">
@@ -156,13 +156,13 @@ export default function HomeTransfersInfiniteStack({
                     </div>
                   </div>
 
-                  <div className="flex flex-col justify-between p-5 text-center sm:p-7">
+                  <div className="flex flex-col justify-between p-4 text-center sm:p-5">
                     <div>
                       <p className="font-poppins text-xs font-bold uppercase tracking-[0.12em] text-safari-500">{card.route}</p>
-                      <p className="mt-2 font-inter text-sm leading-6 text-ocean-700/80">{card.description}</p>
-                      <div className="mx-auto mt-4 grid w-full max-w-[600px] grid-cols-1 gap-2 sm:grid-cols-3">
+                      <p className="mt-2 font-inter text-[13px] leading-5 text-ocean-700/80">{card.description}</p>
+                      <div className="mx-auto mt-3 grid w-full max-w-[540px] grid-cols-1 gap-1.5 sm:grid-cols-3">
                         {card.details.map((detail) => (
-                          <div key={detail} className="flex items-center justify-center gap-2 rounded-2xl border border-white/70 bg-white/45 px-3 py-2.5 text-center backdrop-blur-md">
+                          <div key={detail} className="flex items-center justify-center gap-1.5 rounded-xl border border-white/70 bg-white/45 px-2.5 py-2 text-center backdrop-blur-md transition-all duration-300 group-hover:bg-white/60">
                             <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-safari-500" />
                             <span className="font-inter text-[11px] leading-4 text-ocean-700/80">{detail}</span>
                           </div>
@@ -170,15 +170,15 @@ export default function HomeTransfersInfiniteStack({
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-center gap-4">
-                      <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/35 px-4 py-2 font-inter text-xs font-semibold text-ocean-700/65 backdrop-blur-md">
+                    <div className="flex flex-wrap items-center justify-center gap-2.5">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/35 px-3 py-1.5 font-inter text-xs font-semibold text-ocean-700/65 backdrop-blur-md">
                         <Car className="h-4 w-4 text-safari-500" />
                         Private transfer service
                       </span>
                       <button
                         type="button"
                         onClick={() => onBook(card.bookingValue)}
-                        className="inline-flex items-center gap-2 rounded-xl bg-ocean-700 px-5 py-3 font-poppins text-xs font-semibold text-white shadow-lg shadow-ocean-700/20 transition hover:-translate-y-0.5 hover:bg-ocean-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-500"
+                        className="inline-flex items-center gap-2 rounded-xl bg-ocean-700 px-4 py-2.5 font-poppins text-xs font-semibold text-white shadow-lg shadow-ocean-700/20 transition hover:-translate-y-0.5 hover:bg-ocean-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-500"
                       >
                         {tr.cta || 'Request your transfer'}
                         <ArrowRight className="h-3.5 w-3.5" />
