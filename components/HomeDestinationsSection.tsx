@@ -26,11 +26,11 @@ export default function HomeDestinationsSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {featuredDestinations.map((d) => {
             const localized = getLocalizedDestination(d, locale);
-            return <Link key={d.slug} href={`/destinations/${d.slug}`} prefetch className="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 h-64 sm:h-80 hover:-translate-y-1">
-              <Image src={d.heroImage} alt={`${localized.name} ${e.destGuideLabel}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+            return <Link key={d.slug} href={`/destinations/${d.slug}`} prefetch className="group relative h-56 overflow-hidden rounded-2xl border border-white/20 shadow-card transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(14,95,107,0.18)] sm:h-72">
+              <Image src={d.heroImage} alt={`${localized.name} ${e.destGuideLabel}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" /><div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-ocean-700/15 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               <div className="absolute top-4 left-4 rounded-full border border-white/25 bg-black/20 px-3 py-1 backdrop-blur-md"><span className="font-inter text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-white/90">{localized.country || e.destGuideLabel}</span></div>
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5"><h3 className="font-poppins font-bold text-lg sm:text-xl text-white leading-tight">{localized.name}</h3><span className="block mt-1.5 font-inter text-xs text-white/80 group-hover:text-white transition-colors line-clamp-2">{localized.tagline}</span></div>
+              <div className="absolute bottom-0 left-0 right-0 p-3.5 sm:p-4"><h3 className="font-poppins font-bold text-lg sm:text-xl text-white leading-tight">{localized.name}</h3><span className="block mt-1.5 font-inter text-xs text-white/80 group-hover:text-white transition-colors line-clamp-2">{localized.tagline}</span></div>
             </Link>;
           })}
         </div>
