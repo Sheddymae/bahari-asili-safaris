@@ -162,7 +162,7 @@ export default function TransfersHoverTabs() {
                 active={activeIndex === index}
                 reducedMotion={Boolean(reducedMotion)}
                 onActivate={() => setActiveIndex(index)}
-                onReset={() => setActiveIndex(null)}
+                onReset={() => { if (typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches) setActiveIndex(null); }}
                 onRequest={() => openBooking(transfer)}
               />
             ))}
