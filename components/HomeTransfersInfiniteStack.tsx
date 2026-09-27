@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, ArrowRight, Car, CheckCircle2, Plane, MapPin } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type TransferCard = {
