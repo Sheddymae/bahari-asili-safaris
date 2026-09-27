@@ -48,7 +48,7 @@ const CARD_DATA: Record<Locale, CardData[]> = {
   ],
   it: [
     { code: 'MBA', title: 'Aeroporto Moi di Mombasa', subtitle: 'Hub principale della costa, 2h fino a Watamu', badge: 'TRASFERIMENTO PRIVATO', detailLabel: 'Veicolo', detailValue: 'Land Cruiser privato', includesLabel: 'Include', includes: 'Aria condizionata, acqua, WiFi', secondary: 'Arrivo sulla costa comodo porta a porta', image: '/images/home/services-safari-jeep.jpg' },
-    { code: 'NBO', title: 'Jomo Kenyatta di Nairobi', subtitle: 'Gateway internazionale, 1h di volo per Maasai Mara', badge: 'TRASFERIMENTO PRIVATO', detailLabel: 'Collegamento', detailValue: 'Accoglienza e assistenza', includesLabel: 'Include', includes: 'Collegamento nazionale', secondary: 'Passaggio fluido verso l'inizio del safari', image: '/images/gallery/safari-gamedrive.png' },
+    { code: 'NBO', title: 'Jomo Kenyatta di Nairobi', subtitle: 'Gateway internazionale, 1h di volo per Maasai Mara', badge: 'TRASFERIMENTO PRIVATO', detailLabel: 'Collegamento', detailValue: 'Accoglienza e assistenza', includesLabel: 'Include', includes: 'Collegamento nazionale', secondary: "Passaggio fluido verso l'inizio del safari", image: '/images/gallery/safari-gamedrive.png' },
     { code: 'MYD', title: 'Aeroporto di Malindi', subtitle: 'Il più vicino a Watamu, trasferimento di 15 min', badge: 'TRASFERIMENTO PRIVATO', detailLabel: 'Arrivo', detailValue: 'Trasferimento più breve', includesLabel: 'Include', includes: 'Fast track VIP', secondary: 'Un arrivo rapido e senza pensieri sulla costa', image: '/images/gallery/coast-beach.png' },
     { code: 'UKA', title: 'Airstrip di Ukunda · Diani', subtitle: 'Gateway diretto per Diani e la costa sud', badge: 'TRASFERIMENTO PRIVATO', detailLabel: 'Arrivo', detailValue: 'Accoglienza privata', includesLabel: 'Include', includes: 'Aria condizionata, acqua, WiFi', secondary: 'Collegamento facile tra safari e spiaggia', image: '/images/home/bahari_safari_jeep.jpg.webp' },
   ],
@@ -127,11 +127,11 @@ function TransferCard({ card, copy }: { card: CardData; copy: SliderCopy }) {
 
         <div className="mt-5 grid grid-cols-2 gap-2 border-t border-white/20 pt-4">
           <div className="min-w-0">
-            <p className="font-inter text-[9px] font-bold uppercase tracking-[0.12em] text-white/55">{card.detailLabel || copy.vehicle}</p>
+            <p className="font-inter text-[9px] font-bold uppercase tracking-[0.12em] text-white/55">{card.detailLabel}</p>
             <p className="mt-1 truncate font-inter text-[11px] font-semibold text-white">{card.detailValue}</p>
           </div>
           <div className="min-w-0">
-            <p className="font-inter text-[9px] font-bold uppercase tracking-[0.12em] text-white/55">{card.includesLabel || copy.includes}</p>
+            <p className="font-inter text-[9px] font-bold uppercase tracking-[0.12em] text-white/55">{card.includesLabel}</p>
             <p className="mt-1 truncate font-inter text-[11px] font-semibold text-white">{card.includes}</p>
           </div>
         </div>
