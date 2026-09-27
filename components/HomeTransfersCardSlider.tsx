@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, CarFront, Check, Facebook, Globe2, Instagram, Plane, ShieldCheck, Sparkles, Wifi } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CarFront, Check, Facebook, Globe2, Instagram, Plane } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import ScrollReveal from '@/components/ScrollReveal';
 import { useLanguage } from '@/contexts/LanguageContext';
