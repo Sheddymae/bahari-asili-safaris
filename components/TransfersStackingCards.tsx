@@ -1,63 +1,21 @@
 'use client';
 
 import Image from 'next/image';
-import { ArrowUpRight, CalendarDays, CarFront, MapPin, Plane } from 'lucide-react';
+import { ArrowUpRight, CarFront, MapPin, Plane } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type TransferCard = {
-  eyebrow: string;
-  code?: string;
-  title: string;
-  description: string;
+  code: string;
   image: string;
-  imageAlt: string;
-  action: string;
   actionValue: string;
 };
 
-const TRANSFER_CARDS: TransferCard[] = [
-  {
-    eyebrow: 'Closest airport',
-    code: 'MYD',
-    title: 'Malindi Airport',
-    description: 'The nearest airport to Watamu, with a smooth private transfer to your safari start point.',
-    image: '/images/gallery/coast-beach.png',
-    imageAlt: 'Kenyan coast near Watamu',
-    action: 'MYD transfer',
-    actionValue: 'Airport Transfer – MYD (Malindi)',
-  },
-  {
-    eyebrow: 'Coastal hub',
-    code: 'MBA',
-    title: 'Mombasa Moi Airport',
-    description: 'A comfortable private road transfer from Mombasa to Watamu, with your journey planned around your arrival.',
-    image: '/images/home/services-safari-jeep.jpg',
-    imageAlt: 'Safari vehicle ready for a private transfer',
-    action: 'MBA transfer',
-    actionValue: 'Airport Transfer – MBA (Mombasa)',
-  },
-  {
-    eyebrow: 'International gateway',
-    code: 'NBO',
-    title: 'Nairobi JKIA',
-    description: 'Connect your international arrival with a coordinated flight and private transfer towards the Kenyan coast.',
-    image: '/images/safaris/safari-4day-naivasha-nakuru-mara.jpg',
-    imageAlt: 'Kenyan safari landscape',
-    action: 'NBO transfer',
-    actionValue: 'Airport Transfer – NBO (Nairobi)',
-  },  {
-    eyebrow: 'Southern coast',
-    code: 'UKD',
-    title: 'Diani / Ukunda',
-    description: 'Private transfers for Ukunda Airstrip arrivals and departures, with comfortable connections between Diani Beach, Mombasa and other coastal stays.',
-    image: '/images/gallery/coast-beach.png',
-    imageAlt: 'Kenyan coast near Diani',
-    action: 'UKD / Diani transfer',
-    actionValue: 'Diani / Ukunda Transfer',
-  },
-
+const TRANSFER_CARDS = [
+  { code: 'MYD', image: '/images/gallery/coast-beach.png', actionValue: 'Airport Transfer – MYD (Malindi)' },
+  { code: 'MBA', image: '/images/home/services-safari-jeep.jpg', actionValue: 'Airport Transfer – MBA (Mombasa)' },
+  { code: 'NBO', image: '/images/safaris/safari-4day-naivasha-nakuru-mara.jpg', actionValue: 'Airport Transfer – NBO (Nairobi)' },
 ];
 
 function StackingCard({
@@ -69,6 +27,9 @@ function StackingCard({
   index: number;
   onBook: (value: string) => void;
 }) {
+  const { t } = useLanguage();
+  const tr = t.transfers;
+  const airport = tr.airports.find((item: { code: string }) => item.code === card.code) ?? tr.airports[0];
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -80,10 +41,10 @@ function StackingCard({
     <motion.article
       ref={ref}
       style={{ scale, top: `calc(90px + ${index * 40}px)` }}
-      className="sticky z-10 mb-10 h-[390px] w-full overflow-hidden rounded-[28px] border border-white/50 bg-white/35 shadow-[0_25px_80px_-15px_rgba(14,95,107,0.20)] backdrop-blur-2xl ring-1 ring-white/60 sm:h-[430px] lg:h-[470px]"
+      className="sticky z-10 mb-10 h-auto min-h-[520px] w-full overflow-hidden rounded-[30px] border border-white/75 bg-white/25 shadow-[0_30px_90px_-15px_rgba(14,95,107,0.22)] backdrop-blur-3xl ring-1 ring-white/45 sm:min-h-[470px] lg:h-[470px]"
     >
-      <div className="grid h-full grid-cols-[45%_55%]">
-        <div className="flex min-w-0 flex-col justify-between p-4 sm:p-7 lg:p-10">
+      <div className="grid h-full grid-cols-1 md:grid-cols-[45%_55%]">
+        <div className="relative flex min-w-0 flex-col justify-between p-5 sm:p-7 lg:p-10">
           <div>
             <div className="mb-5 flex flex-wrap items-center gap-2">
               {card.code ? (
@@ -92,34 +53,32 @@ function StackingCard({
                   {card.code}
                 </span>
               ) : null}
-              <span className="font-inter text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground sm:text-xs">
-                {card.eyebrow}
-              </span>
+
             </div>
 
             <h2 className="font-poppins text-xl font-bold leading-tight text-ocean-700 sm:text-3xl lg:text-4xl">
-              {card.title}
+              {airport.name}
             </h2>
 
             <p className="mt-4 max-w-[28rem] font-inter text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6 lg:text-base">
-              {card.description}
+              {airport.desc}
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => onBook(card.actionValue)}
-            className="inline-flex w-fit items-center gap-2 rounded-xl bg-ocean-700 px-3.5 py-2.5 font-poppins text-[10px] font-semibold text-white hover:bg-ocean-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-400 sm:px-4 sm:py-3 sm:text-xs"
+            className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-ocean-700/95 px-3.5 py-2.5 font-poppins text-[10px] font-semibold text-white shadow-lg shadow-ocean-700/20 transition hover:-translate-y-0.5 hover:bg-ocean-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-500 sm:px-4 sm:py-3 sm:text-xs"
           >
-            {card.action}
+            {tr.cta}
             <ArrowUpRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <div className="relative min-h-0 overflow-hidden">
+        <div className="relative min-h-[230px] overflow-hidden md:min-h-0">
           <Image
             src={card.image}
-            alt={card.imageAlt}
+            alt={airport.name}
             fill
             sizes="(max-width: 767px) 55vw, (max-width: 1279px) 38vw, 35vw"
             className="object-cover"
@@ -131,83 +90,6 @@ function StackingCard({
   );
 }
 
-function PeakViewingCard({ onBook, index }: { onBook: (value: string) => void; index: number }) {
-  const { t } = useLanguage();
-  const wildlife = t.wildlifeCalendar;
-  const tr = t.transfers;
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'start 90px'],
-  });
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
-
-  return (
-    <motion.article
-      ref={ref}
-      style={{ scale, top: `calc(90px + ${index * 40}px)` }}
-      className="sticky z-10 mb-10 h-[390px] w-full overflow-hidden rounded-[28px] bg-white shadow-[0_25px_80px_-15px_rgba(0,0,0,0.2)] ring-1 ring-slate-200/80 sm:h-[430px] lg:h-[470px]"
-    >
-      <div className="grid h-full grid-cols-[45%_55%]">
-        <div className="flex min-w-0 flex-col justify-between p-5 sm:p-7 lg:p-10">
-          <div>
-            <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-safari-500 px-3 py-1.5 font-poppins text-[10px] font-extrabold text-white sm:text-xs">
-                <CalendarDays className="h-3.5 w-3.5" />
-                Peak viewing
-              </span>
-              <span className="font-inter text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:text-xs">
-                {wildlife.label}
-              </span>
-            </div>
-
-            <h2 className="font-poppins text-xl font-bold leading-tight text-ocean-700 sm:text-3xl lg:text-4xl">
-              {wildlife.legendPeak} + {t.nav.transfers}
-            </h2>
-
-            <div className="mt-4 space-y-2.5 font-inter text-[10px] text-muted-foreground sm:text-xs">
-              <div className="flex items-center gap-2">
-                <span className="h-2.5 w-8 rounded-full bg-safari-500" />
-                <span>Peak viewing window</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-8 rounded-full bg-slate-200" />
-                <span>Off-peak</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-safari-500" />
-                <span>Current month</span>
-              </div>
-            </div>
-
-            <p className="mt-4 font-inter text-[10px] italic leading-4 text-slate-500 sm:text-xs sm:leading-5">
-              Wildlife sightings can never be 100% guaranteed.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => onBook('Private 4×4 Driver')}
-            className="inline-flex w-fit items-center gap-2 rounded-xl border border-ocean-700 px-3.5 py-2.5 font-poppins text-[10px] font-semibold text-ocean-700 hover:bg-ocean-700 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-400 sm:px-4 sm:py-3 sm:text-xs"
-          >
-            <CarFront className="h-3.5 w-3.5" />
-            {tr.cta}
-          </button>
-        </div>
-
-        <div className="relative min-h-0 overflow-hidden">
-          <Image
-            src="/images/gallery/safari-wildebeest.png"
-            alt="Wildebeest during a Kenyan safari"
-            fill
-            sizes="(max-width: 767px) 55vw, (max-width: 1279px) 38vw, 35vw"
-            className="object-cover"
-          />
-        </div>
-      </div>
-    </motion.article>
-  );
-}
 
 export default function TransfersStackingCards({
   onBook,
@@ -220,11 +102,11 @@ export default function TransfersStackingCards({
 
   return (
     <section className="relative overflow-hidden bg-sand-100 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_65%_35%,rgba(14,95,107,0.14),transparent_42%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.72),transparent_30%),radial-gradient(circle_at_70%_35%,rgba(14,95,107,0.15),transparent_44%)]" />
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1.35fr] lg:gap-16">
         <div className="self-start lg:sticky lg:top-[90px]">
           <div className="max-w-xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/50 px-3 py-1.5 font-poppins text-[10px] font-bold uppercase tracking-[0.14em] text-ocean-700 sm:text-xs">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/45 px-3 py-1.5 font-poppins text-[10px] font-bold uppercase tracking-[0.14em] text-ocean-700 shadow-sm backdrop-blur-2xl sm:text-xs">
               <MapPin className="h-3.5 w-3.5 text-safari-500" />
               {tr.label}
             </div>
@@ -242,7 +124,7 @@ export default function TransfersStackingCards({
           {TRANSFER_CARDS.map((card, index) => (
             <StackingCard key={card.code} card={card} index={index} onBook={onBook} />
           ))}
-          <PeakViewingCard onBook={onBook} index={TRANSFER_CARDS.length} />
+
         </div>
       </div>
     </section>

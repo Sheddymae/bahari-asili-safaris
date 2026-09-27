@@ -38,6 +38,11 @@ export default function FinalCtaSection({ onBook }: { onBook: () => void }) {
               {e.finalCta2}
             </a>
           </div>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/70">
+            <a href={`tel:${t.footer.phone}`} className="transition hover:text-white">{t.footer.phone}</a>
+            <span className="hidden sm:inline text-white/30" aria-hidden="true">•</span>
+            <a href={`mailto:${t.footer.email}`} className="transition hover:text-white">{t.footer.email}</a>
+          </div>
         </div>
       </div>
     </section>

@@ -426,16 +426,30 @@ export async function POST(req: NextRequest) {
 
     try {
       const adminForRateLimit = getSupabaseAdmin();
-      const { data: rateLimit, error: rateLimitError } = await adminForRateLimit.rpc('check_api_rate_limit', {
-        p_rate_key: rateKey,
-        p_window_seconds: 600,
-        p_max_hits: 8,
-      }).maybeSingle();
+      const { data: rateLimitData, error: rateLimitError } = await adminForRateLimit
+        .rpc('check_api_rate_limit', {
+          p_rate_key: rateKey,
+          p_window_seconds: 600,
+          p_max_hits: 8,
+        })
+        .maybeSingle();
+
+      // Supabase cannot infer the row type for a newly-added RPC from the
+      // existing generated database types, so define the small response
+      // contract locally instead of leaving it as an empty object type.
+      const rateLimit = rateLimitData as
+        | { allowed: boolean; retry_after: number | null }
+        | null;
 
       if (!rateLimitError && rateLimit && !rateLimit.allowed) {
         return NextResponse.json(
           { success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' },
-          { status: 429, headers: { 'Retry-After': String(rateLimit.retry_after || 60) } },
+          {
+            status: 429,
+            headers: {
+              'Retry-After': String(rateLimit.retry_after ?? 60),
+            },
+          },
         );
       }
     } catch (rateLimitError) {
