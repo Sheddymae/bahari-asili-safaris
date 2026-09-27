@@ -7,7 +7,6 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { Locale } from '@/lib/i18n';
 import { prefersReducedMotion } from '@/lib/video-config';
-import HomeTransfersCardSlider from '@/components/HomeTransfersCardSlider';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -167,7 +166,7 @@ const CALENDAR_ROWS: CalendarRow[] = [
   },
 ];
 
-export default function WildlifeCalendarSection() {
+export default function WildlifeCalendarSection({ embedded = false }: { embedded?: boolean }) {
   const { t, locale } = useLanguage();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hoverCell, setHoverCell] = useState<{ row: number; month: number } | null>(null);
@@ -238,9 +237,9 @@ export default function WildlifeCalendarSection() {
                       title={`Show what's in season in ${MONTH_NAMES[i]}`}
                       className={`relative text-center font-inter text-[11px] font-bold tracking-wide rounded-full py-1.5 transition-colors duration-150 ${
                         isSelected
-                          ? 'bg-[#FF7A00] text-white shadow-sm shadow-[#FF7A00]/30'
+                          ? 'bg-[#FF7A18] text-white shadow-sm shadow-[#FF7A00]/30'
                           : isToday
-                          ? 'bg-[#FF7A00]/10 text-[#0E7482]'
+                          ? 'bg-[#FF7A00]/10 text-[#0E5F6B]'
                           : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'
                       }`}
                     >
