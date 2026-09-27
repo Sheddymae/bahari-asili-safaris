@@ -510,6 +510,8 @@ export async function POST(req: NextRequest) {
     }
 
     const parsedArrivalDate = new Date(`${arrivalDate}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     if (Number.isNaN(parsedArrivalDate.getTime())) {
       return NextResponse.json(
@@ -519,6 +521,18 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 },
       );
+    }
+
+    if (parsedArrivalDate < today) {
+      return NextResponse.json({ success: false, error: 'Please choose an arrival date that has not passed.' }, { status: 400 });
+    }
+
+    if (adults > 30 || children > 10) {
+      return NextResponse.json({ success: false, error: 'Please check the number of travellers and children.' }, { status: 400 });
+    }
+
+    if (children !== kidsAges.length) {
+      return NextResponse.json({ success: false, error: 'Please provide the age of each child travelling.' }, { status: 400 });
     }
 
     // ----------------------------------------------
