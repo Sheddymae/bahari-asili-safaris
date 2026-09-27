@@ -148,7 +148,7 @@ export default function HomeTransfersInfiniteStack({
                         </span>
                         <h3 className="mt-2 font-poppins text-2xl font-bold text-white sm:text-3xl">{card.title}</h3>
                       </div>
-                      <MapPin className="mb-1 hidden h-7 w-7 text-white/90 sm:block" />
+                      <MapPin className="absolute bottom-1 right-1 hidden h-7 w-7 text-white/90 sm:block" />
                     </div>
                   </div>
 
