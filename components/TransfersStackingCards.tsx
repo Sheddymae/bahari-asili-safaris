@@ -7,57 +7,15 @@ import { useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 type TransferCard = {
-  eyebrow: string;
-  code?: string;
-  title: string;
-  description: string;
+  code: string;
   image: string;
-  imageAlt: string;
-  action: string;
   actionValue: string;
 };
 
-const TRANSFER_CARDS: TransferCard[] = [
-  {
-    eyebrow: 'Closest airport',
-    code: 'MYD',
-    title: 'Malindi Airport',
-    description: 'The nearest airport to Watamu, with a smooth private transfer to your safari start point.',
-    image: '/images/gallery/coast-beach.png',
-    imageAlt: 'Kenyan coast near Watamu',
-    action: 'MYD transfer',
-    actionValue: 'Airport Transfer – MYD (Malindi)',
-  },
-  {
-    eyebrow: 'Coastal hub',
-    code: 'MBA',
-    title: 'Mombasa Moi Airport',
-    description: 'A comfortable private road transfer from Mombasa to Watamu, with your journey planned around your arrival.',
-    image: '/images/home/services-safari-jeep.jpg',
-    imageAlt: 'Safari vehicle ready for a private transfer',
-    action: 'MBA transfer',
-    actionValue: 'Airport Transfer – MBA (Mombasa)',
-  },
-  {
-    eyebrow: 'International gateway',
-    code: 'NBO',
-    title: 'Nairobi JKIA',
-    description: 'Connect your international arrival with a coordinated flight and private transfer towards the Kenyan coast.',
-    image: '/images/safaris/safari-4day-naivasha-nakuru-mara.jpg',
-    imageAlt: 'Kenyan safari landscape',
-    action: 'NBO transfer',
-    actionValue: 'Airport Transfer – NBO (Nairobi)',
-  },  {
-    eyebrow: 'Southern coast',
-    code: 'UKD',
-    title: 'Diani / Ukunda',
-    description: 'Private transfers for Ukunda Airstrip arrivals and departures, with comfortable connections between Diani Beach, Mombasa and other coastal stays.',
-    image: '/images/gallery/coast-beach.png',
-    imageAlt: 'Kenyan coast near Diani',
-    action: 'UKD / Diani transfer',
-    actionValue: 'Diani / Ukunda Transfer',
-  },
-
+const TRANSFER_CARDS = [
+  { code: 'MYD', image: '/images/gallery/coast-beach.png', actionValue: 'Airport Transfer – MYD (Malindi)' },
+  { code: 'MBA', image: '/images/home/services-safari-jeep.jpg', actionValue: 'Airport Transfer – MBA (Mombasa)' },
+  { code: 'NBO', image: '/images/safaris/safari-4day-naivasha-nakuru-mara.jpg', actionValue: 'Airport Transfer – NBO (Nairobi)' },
 ];
 
 function StackingCard({
@@ -69,6 +27,9 @@ function StackingCard({
   index: number;
   onBook: (value: string) => void;
 }) {
+  const { t } = useLanguage();
+  const tr = t.transfers;
+  const airport = tr.airports.find((item: { code: string }) => item.code === card.code) ?? tr.airports[0];
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -92,17 +53,15 @@ function StackingCard({
                   {card.code}
                 </span>
               ) : null}
-              <span className="font-inter text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground sm:text-xs">
-                {card.eyebrow}
-              </span>
+
             </div>
 
             <h2 className="font-poppins text-xl font-bold leading-tight text-ocean-700 sm:text-3xl lg:text-4xl">
-              {card.title}
+              {airport.name}
             </h2>
 
             <p className="mt-4 max-w-[28rem] font-inter text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6 lg:text-base">
-              {card.description}
+              {airport.desc}
             </p>
           </div>
 
@@ -111,7 +70,7 @@ function StackingCard({
             onClick={() => onBook(card.actionValue)}
             className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/20 bg-ocean-700/95 px-3.5 py-2.5 font-poppins text-[10px] font-semibold text-white shadow-lg shadow-ocean-700/20 transition hover:-translate-y-0.5 hover:bg-ocean-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-500 sm:px-4 sm:py-3 sm:text-xs"
           >
-            {card.action}
+            {tr.cta}
             <ArrowUpRight className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -119,7 +78,7 @@ function StackingCard({
         <div className="relative min-h-[230px] overflow-hidden md:min-h-0">
           <Image
             src={card.image}
-            alt={card.imageAlt}
+            alt={airport.name}
             fill
             sizes="(max-width: 767px) 55vw, (max-width: 1279px) 38vw, 35vw"
             className="object-cover"
