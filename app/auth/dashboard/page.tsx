@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, type ComponentType } from 'react';
+import { useEffect, useMemo, type ComponentType } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, CalendarCheck2, CalendarDays, CircleDollarSign, Clock3, Package, Plus, RefreshCw, TrendingUp, Users, Wallet } from 'lucide-react';
 import AdminShell from '@/components/admin/AdminShell';
@@ -10,6 +10,9 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
 
 export default function DashboardPage() {
   const router = useRouter();
+  useEffect(() => {
+    ['/auth/dashboard/bookings','/auth/dashboard/calendar','/auth/dashboard/packages','/auth/dashboard/travelers','/auth/dashboard/analytics'].forEach((href) => router.prefetch(href));
+  }, [router]);
   const { reservations, stats, loading, error, reload } = useAdminData();
   const upcoming = useMemo(() => [...reservations].filter(b => b.arrival_date && b.reservation_status !== 'cancelled').sort((a,b) => new Date(a.arrival_date || 0).getTime()-new Date(b.arrival_date || 0).getTime()).slice(0,5), [reservations]);
   const recent = reservations.slice(0,5);
