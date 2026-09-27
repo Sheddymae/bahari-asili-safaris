@@ -13,7 +13,7 @@ export default function DashboardPage() {
   const { reservations, stats, loading, error, reload } = useAdminData();
   const upcoming = useMemo(() => [...reservations].filter(b => b.arrival_date && b.reservation_status !== 'cancelled').sort((a,b) => new Date(a.arrival_date || 0).getTime()-new Date(b.arrival_date || 0).getTime()).slice(0,5), [reservations]);
   const recent = reservations.slice(0,5);
-  const totalGuests = reservations.reduce((n,b) => n + guests(b), 0);
+  const totalGuests = stats?.guests ?? reservations.reduce((n,b) => n + guests(b), 0);
   const packageCount = new Set(reservations.map(b => b.safari_name || 'Custom Safari')).size;
 
   return <AdminShell title="Travel Agency Dashboard" badge={stats?.pending}>
