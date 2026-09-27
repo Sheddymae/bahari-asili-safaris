@@ -143,7 +143,7 @@ function TransferCard({ card, copy }: { card: CardData; copy: SliderCopy }) {
           </span>
           <Link
             href="/transfers"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#FF7A18] px-3.5 py-2 text-[10px] font-bold text-white shadow-lg shadow-black/15 transition hover:-translate-y-0.5 hover:bg-[#ff8b36] focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#FF7A18] px-3.5 py-2 text-[10px] font-bold text-white shadow-lg shadow-black/15 transition hover:-translate-y-0.5 hover:bg-[#FF7A18] focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             {copy.request}
             <ArrowRight className="h-3.5 w-3.5" />
@@ -188,7 +188,7 @@ export default function HomeTransfersCardSlider() {
             </p>
             <Link
               href="/transfers"
-              className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0E5F6B] px-8 py-3 font-inter text-sm font-bold text-white shadow-[0_10px_24px_rgba(14,95,107,0.18)] transition hover:-translate-y-0.5 hover:bg-[#0c5360] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7A18] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFFBEB]"
+              className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#0E5F6B] px-8 py-3 font-inter text-sm font-bold text-white shadow-[0_10px_24px_rgba(14,95,107,0.18)] transition hover:-translate-y-0.5 hover:bg-[#0E5F6B] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF7A18] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FFFBEB]"
             >
               {t.transfers?.cta || 'Explore Transfers'}
               <ArrowRight className="h-4 w-4" />
