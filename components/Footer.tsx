@@ -31,7 +31,7 @@ export default function Footer() {
 
   async function handleNewsletterSubmit(e: React.FormEvent) {
     e.preventDefault(); if (status === 'loading') return; setStatus('loading'); setErrorMsg('');
-    try { const res = await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, locale }) }); const data = await res.json(); if (!res.ok || !data.success) { setErrorMsg(data.error || t.footer.newsletterError || t.footer.newsletterSubtext); setStatus('error'); return; } setStatus('done'); setEmail(''); } catch { setErrorMsg(t.footer.newsletterError || t.footer.newsletterSubtext); setStatus('error'); }
+    try { const res = await fetch('/api/newsletter', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, locale }) }); const data = await res.json(); if (!res.ok || !data.success) { setErrorMsg(data.error || t.footer.newsletterSubtext); setStatus('error'); return; } setStatus('done'); setEmail(''); } catch { setErrorMsg(t.footer.newsletterError || t.footer.newsletterSubtext); setStatus('error'); }
   }
 
   return (
