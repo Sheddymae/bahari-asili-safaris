@@ -100,9 +100,6 @@ export default function Navbar() {
     [locale],
   );
 
-  // Keep the header compact: the existing destination catalogue order defines
-  // the four primary public destinations; the full catalogue remains available
-  // through "View All Destinations".
   const primaryDestinations = useMemo(
     () => localizedDestinations.slice(0, 4),
     [localizedDestinations],
@@ -255,15 +252,15 @@ export default function Navbar() {
                               {t.nav.kenya}
                             </p>
                             {primaryDestinations.map((destination) => (
-                                <Link
-                                  key={destination.slug}
-                                  href={`/destinations/${destination.slug}`}
-                                  prefetch
-                                  role="menuitem"
-                                  className="flex min-h-10 items-center rounded-xl px-3 py-2 font-inter text-sm text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
-                                >
-                                  {destination.displayName}
-                                </Link>
+                              <Link
+                                key={destination.slug}
+                                href={`/destinations/${destination.slug}`}
+                                prefetch
+                                role="menuitem"
+                                className="flex min-h-10 items-center rounded-xl px-3 py-2 font-inter text-sm text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
+                              >
+                                {destination.displayName}
+                              </Link>
                             ))}
                             <Link
                               href="/destinations"
@@ -538,23 +535,6 @@ export default function Navbar() {
                       {t.nav.signOut}
                     </button>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => openAuth('signin')}
-                      className="min-h-11 rounded-xl border border-border px-4 py-2.5 font-inter text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
-                    >
-                      {t.nav.signIn}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => openAuth('signup')}
-                      className="min-h-11 rounded-xl bg-ocean-700 px-4 py-2.5 font-inter text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
-                    >
-                      {t.nav.register}
-                    </button>
-                  </div>
                 ) : !loading ? (
                   <div className="grid grid-cols-2 gap-2">
                     <button
@@ -572,7 +552,7 @@ export default function Navbar() {
                       {t.nav.register}
                     </button>
                   </div>
-                ) : null
+                ) : null}
               </div>
             </div>
           )}
