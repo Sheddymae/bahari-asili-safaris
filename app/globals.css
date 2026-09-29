@@ -176,3 +176,20 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .animate-tide, .trust-marquee-track, .glow-button, button:not([data-no-glow]), a[role='button']:not([data-no-glow]) { animation: none !important; transition-duration: .01ms !important; }
   html { scroll-behavior: auto; }
 }
+
+
+/* CMS rich text: semantic typography is controlled by the public site, not the editor. */
+.rich-content p { margin: 0 0 1.35rem; }
+.rich-content h2 { margin: 2.4rem 0 1rem; font-size: clamp(1.45rem, 2.5vw, 2rem); line-height: 1.25; font-weight: 700; }
+.rich-content h3 { margin: 2rem 0 .8rem; font-size: clamp(1.2rem, 2vw, 1.5rem); line-height: 1.35; font-weight: 700; }
+.rich-content ul, .rich-content ol { margin: 1rem 0 1.5rem; padding-left: 1.5rem; }
+.rich-content ul { list-style: disc; }
+.rich-content ol { list-style: decimal; }
+.rich-content li { margin: .45rem 0; padding-left: .2rem; }
+.rich-content blockquote { margin: 1.75rem 0; border-left: 3px solid #FF7A18; padding: .75rem 1.25rem; font-style: italic; color: #475569; background: #FFF7ED; border-radius: 0 .75rem .75rem 0; }
+.rich-content a { color: #0E5F6B; font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.rich-content a.content-cta { display: inline-flex; margin: .25rem .35rem .25rem 0; border-radius: 999px; background: #0E5F6B; color: white; padding: .7rem 1.1rem; text-decoration: none; box-shadow: 0 8px 20px rgba(14,95,107,.16); }
+.rich-content strong, .rich-content b { font-weight: 700; }
+.rich-content em, .rich-content i { font-style: italic; }
+.rich-content u { text-underline-offset: 3px; }
+.rich-content br { content: ""; }
