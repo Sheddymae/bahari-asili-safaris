@@ -3,11 +3,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, Clock, MapPin, Building2, Backpack, Sun, Sunset, MoonStar, Check, X, ClipboardList, ArrowLeft, Activity, Sofa, CalendarClock, PawPrint, HelpCircle, Wallet, Gem, Award, MessageCircle } from 'lucide-react';
+import { Clock, MapPin, Building2, Backpack, Sun, Sunset, MoonStar, Check, X, ClipboardList, ArrowLeft, Activity, Sofa, CalendarClock, PawPrint, HelpCircle, Wallet, Gem, Award, MessageCircle } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CompactSafariCard from '@/components/CompactSafariCard';
-import { FALLBACK_TESTIMONIALS, Stars, TestimonialCard } from '@/components/ReviewsSection';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { type Safari, DEFAULT_INCLUDED, DEFAULT_EXCLUDED, getPriceTier } from '@/lib/tours-data';
 import { safaris as safariCatalogue } from '@/lib/safari-catalogue';
@@ -87,8 +86,7 @@ export default function SafariDetailEnhanced({ safari: initialSafari, slug }: { 
   const relatedDestinations = destinations.filter(d => safariDestinationSlugs.includes(d.slug)).map(d => getLocalizedSafariDestination(d, locale));
   const wildlifeHighlights = Array.from(new Set(relatedDestinations.flatMap(d => d.wildlifeHighlights)));
   const faqs = relatedDestinations.flatMap(d => d.faqs);
-  const matchingTestimonials = FALLBACK_TESTIMONIALS.filter(item => item.safariId === safari.id).slice(0, 2);
-  const firstPark = safari.parks[0] || '';
+    const firstPark = safari.parks[0] || '';
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi! I'm interested in the ${safari.name}`)}`;
 
   const facts = <div className="flex flex-wrap items-center gap-3 mb-8"><div className="flex items-center gap-1.5 bg-sand-50 rounded-full px-4 py-2"><Clock className="w-4 h-4 text-ocean-700" /><span className="font-inter text-sm text-ocean-700 font-semibold">{safari.days} {tt.days} / {safari.nights} {tt.nights}</span></div><div className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-safari-500" /><div className="flex flex-wrap gap-1.5">{safari.parks.map((park, i) => <span key={i} className="bg-ocean-50 text-ocean-700 font-inter text-xs px-2.5 py-1 rounded-full border border-ocean-100">{park}</span>)}</div></div></div>;
