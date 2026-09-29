@@ -508,7 +508,7 @@ export default function Navbar() {
                   {t.nav.accountSection}
                 </p>
 
-                {!loading && (user ? (
+                {!loading && user ? (
                   <div className="space-y-2">
                     <div className="flex items-center gap-3 px-2 py-2">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-safari-500">
@@ -555,7 +555,24 @@ export default function Navbar() {
                       {t.nav.register}
                     </button>
                   </div>
-                )}
+                ) : !loading ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openAuth('signin')}
+                      className="min-h-11 rounded-xl border border-border px-4 py-2.5 font-inter text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                    >
+                      {t.nav.signIn}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openAuth('signup')}
+                      className="min-h-11 rounded-xl bg-ocean-700 px-4 py-2.5 font-inter text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                    >
+                      {t.nav.register}
+                    </button>
+                  </div>
+                ) : null
               </div>
             </div>
           )}
