@@ -21,9 +21,21 @@ async function requireAdmin(req: NextRequest) {
 }
 
 async function ensureBucket(admin: ReturnType<typeof getSupabaseAdmin>) {
+  const options = { public: true, fileSizeLimit: MAX_BYTES, allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] };
   const { data, error } = await admin.storage.getBucket(BUCKET);
-  if (data) return;
-  const created = await admin.storage.createBucket(BUCKET, { public: true, fileSizeLimit: MAX_BYTES, allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] });
+  if (error && !/not found|does not exist/i.test(error.message)) throw new Error(error.message);
+
+  // Existing buckets are not changed by createBucket. Make sure the production
+  // bucket is actually public so getPublicUrl() works on the customer-facing site.
+  if (data) {
+    if (!data.public) {
+      const updated = await admin.storage.updateBucket(BUCKET, options);
+      if (updated.error) throw new Error(updated.error.message);
+    }
+    return;
+  }
+
+  const created = await admin.storage.createBucket(BUCKET, options);
   if (created.error && !/already exists/i.test(created.error.message)) throw new Error(created.error.message);
 }
 
