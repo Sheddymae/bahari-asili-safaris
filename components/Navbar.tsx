@@ -194,9 +194,9 @@ export default function Navbar() {
     <>
       <nav
         ref={navRef}
-        aria-label="Primary navigation"
+        aria-label={t.nav.primaryNavigation}
         className={[
-          'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+          'fixed inset-x-0 top-0 z-50 transition-all duration-300 motion-reduce:transition-none',
           isScrolled
             ? 'bg-white/95 py-3 shadow-lg backdrop-blur-md'
             : 'border-b border-white/20 bg-white/10 py-5 backdrop-blur-md',
