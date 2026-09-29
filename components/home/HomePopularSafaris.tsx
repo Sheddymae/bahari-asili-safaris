@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Clock } from 'lucide-react';
+import { trackConversion } from '@/components/Analytics';
 import { getLocalizedSafari } from '@/lib/safari-content-i18n';
 import SectionHeader from './SectionHeader';
 import { useHomeCopy } from './useHomeCopy';
@@ -39,7 +40,7 @@ export default function HomePopularSafaris({ onBook }: { onBook: (name?: string)
                   <p className="mt-1 font-inter text-xs text-muted-foreground">{safari.parks.slice(0, 3).join(' · ')}</p>
                   <div className="mt-auto flex flex-col gap-1 pt-4">
                     <Link href={`/safaris/${safari.id}`} className="inline-flex items-center justify-center rounded-lg bg-ocean-700 px-4 py-2.5 font-inter text-sm font-semibold text-white hover:bg-ocean-800">{c.popular.viewSafari}</Link>
-                    <button type="button" onClick={() => onBook(s.name)} className="rounded-lg px-4 py-2 font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800">{c.popular.requestItinerary}</button>
+                    <button type="button" onClick={() => { trackConversion('booking_started', { location: 'popular_safari' }); onBook(s.name); }} className="rounded-lg px-4 py-2 font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800">{c.popular.requestItinerary}</button>
                   </div>
                 </div>
               </article>
