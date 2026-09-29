@@ -4,6 +4,7 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { ADMIN_COOKIE_NAME, verifyAdminSession } from '@/lib/admin-auth';
 import { excursions } from '@/lib/tours-data';
 import { normalizeLocale } from '@/lib/locale-content';
+import { sanitizeRichText } from '@/lib/rich-text';
 
 type ContentType = 'excursion' | 'safari_blu' | 'blog' | 'article' | 'news';
 
@@ -106,7 +107,7 @@ export async function POST(req: NextRequest) {
       locale,
       title,
       excerpt: body.excerpt || null,
-      body: body.body || null,
+      body: sanitizeRichText(body.body) || null,
       image: body.image || null,
       category: body.category || null,
       duration: body.duration || null,
