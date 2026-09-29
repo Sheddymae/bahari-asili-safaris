@@ -100,13 +100,11 @@ export default function Navbar() {
     [locale],
   );
 
-  const kenyaDestinations = useMemo(
-    () => localizedDestinations.filter((destination) => destination.country === 'Kenya'),
-    [localizedDestinations],
-  );
-
-  const eastAfricaDestinations = useMemo(
-    () => localizedDestinations.filter((destination) => destination.country !== 'Kenya'),
+  // Keep the header compact: the existing destination catalogue order defines
+  // the four primary public destinations; the full catalogue remains available
+  // through "View All Destinations".
+  const primaryDestinations = useMemo(
+    () => localizedDestinations.slice(0, 4),
     [localizedDestinations],
   );
 
@@ -126,11 +124,7 @@ export default function Navbar() {
         key: 'destinations',
         label: t.nav.destinations,
         items: [
-          ...kenyaDestinations.map((destination) => ({
-            label: destination.displayName,
-            href: `/destinations/${destination.slug}`,
-          })),
-          ...eastAfricaDestinations.map((destination) => ({
+          ...primaryDestinations.map((destination) => ({
             label: destination.displayName,
             href: `/destinations/${destination.slug}`,
           })),
@@ -147,7 +141,7 @@ export default function Navbar() {
         ],
       },
     ],
-    [eastAfricaDestinations, kenyaDestinations, t],
+    [primaryDestinations, t],
   );
 
   const directLinks = useMemo<MenuLink[]>(
@@ -256,12 +250,11 @@ export default function Navbar() {
                         aria-label={menu.label}
                       >
                         {menu.key === 'destinations' ? (
-                          <div className="grid grid-cols-2 gap-2 p-1">
-                            <div>
-                              <p className="px-3 pb-1 pt-2 font-inter text-[10px] font-semibold uppercase tracking-[0.16em] text-ocean-700">
-                                {t.nav.kenya}
-                              </p>
-                              {kenyaDestinations.map((destination) => (
+                          <div className="p-1">
+                            <p className="px-3 pb-1 pt-2 font-inter text-[10px] font-semibold uppercase tracking-[0.16em] text-ocean-700">
+                              {t.nav.kenya}
+                            </p>
+                            {primaryDestinations.map((destination) => (
                                 <Link
                                   key={destination.slug}
                                   href={`/destinations/${destination.slug}`}
@@ -271,29 +264,12 @@ export default function Navbar() {
                                 >
                                   {destination.displayName}
                                 </Link>
-                              ))}
-                            </div>
-                            <div className="border-l border-border pl-2">
-                              <p className="px-3 pb-1 pt-2 font-inter text-[10px] font-semibold uppercase tracking-[0.16em] text-ocean-700">
-                                {t.nav.eastAfrica}
-                              </p>
-                              {eastAfricaDestinations.map((destination) => (
-                                <Link
-                                  key={destination.slug}
-                                  href={`/destinations/${destination.slug}`}
-                                  prefetch
-                                  role="menuitem"
-                                  className="flex min-h-10 items-center rounded-xl px-3 py-2 font-inter text-sm text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
-                                >
-                                  {destination.displayName}
-                                </Link>
-                              ))}
-                            </div>
+                            ))}
                             <Link
                               href="/destinations"
                               prefetch
                               role="menuitem"
-                              className="col-span-2 mt-1 flex min-h-10 items-center justify-center rounded-xl bg-ocean-50 px-3 py-2 font-inter text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                              className="mt-1 flex min-h-10 items-center justify-center rounded-xl bg-ocean-50 px-3 py-2 font-inter text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                             >
                               {t.nav.viewAllDestinations}
                             </Link>
@@ -476,7 +452,7 @@ export default function Navbar() {
                         <div id={`mobile-${menu.key}`} className="pb-2 pl-3">
                           {menu.key === 'destinations' ? (
                             <>
-                              {[...kenyaDestinations, ...eastAfricaDestinations].map((destination) => (
+                              {primaryDestinations.map((destination) => (
                                 <Link
                                   key={destination.slug}
                                   href={`/destinations/${destination.slug}`}
