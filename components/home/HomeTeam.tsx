@@ -10,7 +10,7 @@ export default function HomeTeam() {
   const address = (t as { footer?: { address?: string } }).footer?.address ?? 'Pinguili, Watamu';
   const rows = [
     { icon: MapPin, label: c.team.addressLabel, value: address, href: undefined as string | undefined, event: undefined as string | undefined },
-    { icon: MessageCircle, label: 'WhatsApp', value: PHONE_DISPLAY, href: whatsappHref(c.whatsappMessage), event: 'whatsapp_clicked' },
+    { icon: MessageCircle, label: c.final.whatsapp, value: PHONE_DISPLAY, href: whatsappHref(c.whatsappMessage), event: 'whatsapp_clicked' },
     { icon: Phone, label: c.final.call, value: PHONE_DISPLAY, href: `tel:${PHONE_TEL}`, event: 'phone_clicked' },
     { icon: Mail, label: 'Email', value: BUSINESS_EMAIL, href: `mailto:${BUSINESS_EMAIL}`, event: 'email_clicked' },
   ];
