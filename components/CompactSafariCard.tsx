@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, Star, MessageCircle, ArrowUpRight } from 'lucide-react';
+import { Clock, MessageCircle, ArrowUpRight } from 'lucide-react';
 import { getLocalizedSafari, type SafariLocale } from '@/lib/safari-content-i18n';
 import type { Safari } from '@/lib/tours-data';
 
@@ -18,7 +18,7 @@ export default function CompactSafariCard({ safari, t, locale }: { safari: Safar
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           <div className="absolute top-3 left-3 flex items-center gap-2">
             {safari.popular && <span className="bg-safari-500 text-white rounded-full px-3 py-1 font-inter font-bold text-[10px] tracking-wide uppercase">{t.popular}</span>}
-            <span className="bg-white/95 rounded-full px-2.5 py-1 flex items-center gap-1"><Star className="w-3 h-3 fill-accent text-accent" /><span className="font-inter font-semibold text-xs">{safari.rating}</span></span>
+
           </div>
           <div className="absolute bottom-3 left-4 right-4"><h3 className="font-poppins font-bold text-white text-lg leading-tight">{s.name}</h3></div>
         </div>
