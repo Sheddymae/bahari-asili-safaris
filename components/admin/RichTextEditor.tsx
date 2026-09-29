@@ -107,8 +107,8 @@ export default function RichTextEditor({ value, onChange }: Props) {
   const button = 'inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-slate-200';
 
   return (
-    <div className="relative rounded-xl border bg-white shadow-sm">
-      <div className="sticky top-0 z-50 -mx-px flex flex-wrap items-center gap-1 border-b border-white/60 bg-white/75 p-2 shadow-md backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
+    <div className="contents">
+      <div className="sticky top-0 z-50 -mx-5 flex flex-wrap items-center gap-1 border-b border-white/60 bg-white/75 px-5 py-2 shadow-md backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
         <select aria-label="Text style" value={block} onChange={e => run('formatBlock', e.target.value)} className="h-9 rounded-lg border bg-white px-2 text-xs font-semibold">
           {blocks.map(x => <option key={x[0]} value={x[0]}>{x[1]}</option>)}
         </select>
@@ -131,7 +131,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
         <button type="button" title="Redo" onMouseDown={e => e.preventDefault()} onClick={() => run('redo')} className={button}><Redo2 className="h-4 w-4" /></button>
         <button type="button" title="Clear formatting" onMouseDown={e => e.preventDefault()} onClick={() => run('removeFormat')} className={button}><Minus className="h-4 w-4" /></button>
       </div>
-      <div ref={ref} contentEditable suppressContentEditableWarning onInput={emit} onKeyUp={sync} onMouseUp={sync} onFocus={sync} onSelect={sync} className="min-h-[320px] p-5 text-[16px] leading-8 text-slate-800 focus:outline-none" />
+      <div ref={ref} contentEditable suppressContentEditableWarning onInput={emit} onKeyUp={sync} onMouseUp={sync} onFocus={sync} onSelect={sync} className="min-h-[320px] rounded-xl border bg-white p-5 text-[16px] leading-8 text-slate-800 shadow-sm focus:outline-none" />
       <div className="border-t bg-slate-50 px-4 py-2 text-[11px] text-slate-500">Highlight text or place the cursor in a paragraph. The toolbar shows its current H1/H2/H3/body, size, bold, italic and alignment state.</div>
     </div>
   );
