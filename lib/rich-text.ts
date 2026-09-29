@@ -1,4 +1,4 @@
-const allowedTags = new Set(['p','br','strong','b','em','i','u','h2','h3','blockquote','ul','ol','li','a','span']);
+const allowedTags = new Set(['p','br','strong','b','em','i','u','h1','h2','h3','blockquote','ul','ol','li','a','span']);
 
 export function sanitizeRichText(input: unknown): string {
   if (typeof input !== 'string') return '';
@@ -17,6 +17,10 @@ export function sanitizeRichText(input: unknown): string {
       const href = match[1].trim();
       if (!/^(https?:\/\/|mailto:|tel:|\/)/i.test(href)) return '<a>';
       return `<a href="${href.replace(/"/g, '&quot;')}"${href === '/booking' || href === '/contact' ? ' class="content-cta"' : ''} rel="noopener noreferrer">`;
+    }
+    if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'p' || tag === 'blockquote') {
+      const alignment = String(rawAttrs).match(/text-align\s*:\s*(left|center|right)/i);
+      return alignment ? `<${tag} style="text-align:${alignment[1].toLowerCase()}">` : `<${tag}>`;
     }
     if (tag === 'span') {
       const size = String(rawAttrs).match(/font-size\s*:\s*(0\.9rem|1rem|1.15rem)/i);
