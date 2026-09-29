@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { MapPin, Users, CalendarDays, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { trackConversion } from '@/components/Analytics';
 import CinematicHeroVideo from './CinematicHeroVideo';
 import CinematicTextOverlay from './CinematicTextOverlay';
 import type { HeroBookingSelection } from './HeroBookingModal';
@@ -54,6 +55,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
   }, [isLocOpen]);
 
   const handleBookClick = useCallback(() => {
+    trackConversion('booking_started', { location: 'hero_quick_start' });
     onBook({
       destination: location,
       adults: Math.min(30, Math.max(1, Number.parseInt(people, 10) || 1)),
