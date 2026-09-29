@@ -4,24 +4,21 @@ import { useState, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
-import TrustStrip from '@/components/TrustStrip';
-import AboutSection from '@/components/AboutSection';
-import HomeConversionSection from '@/components/HomeConversionSection';
+import HomeIntro from '@/components/home/HomeIntro';
 import StructuredData from '@/components/StructuredData';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import HowToBook from '@/components/HowToBook';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
 
-const ToursSection = dynamic(() => import('@/components/ToursSection'), { loading: () => <div className="h-64 bg-sand-50 animate-pulse" /> });
-const HomeDestinationsSection = dynamic(() => import('@/components/HomeDestinationsSection'), { loading: () => <div className="h-64 bg-sand-50 animate-pulse" /> });
-const BuildSafariPromo = dynamic(() => import('@/components/BuildSafariPromo'), { loading: () => <div className="h-64 bg-foreground animate-pulse" /> });
-const ExcursionsSection = dynamic(() => import('@/components/ExcursionsSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
-const WildlifeCalendarSection = dynamic(() => import('@/components/WildlifeCalendarSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
-const HomeTransfersInfiniteStack = dynamic(() => import('@/components/HomeTransfersInfiniteStack'), { loading: () => <div className="h-64 bg-sand-50 animate-pulse" /> });
-const GallerySection = dynamic(() => import('@/components/GallerySection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
-const ReviewsSection = dynamic(() => import('@/components/ReviewsSection'), { loading: () => <div className="h-64 bg-white animate-pulse" /> });
-const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), { loading: () => <div className="h-48 bg-ocean-700 animate-pulse" /> });
+const HomePopularSafaris = dynamic(() => import('@/components/home/HomePopularSafaris'), { loading: () => <div className="h-64 bg-sand-50" /> });
+const HomeFromWatamu = dynamic(() => import('@/components/home/HomeFromWatamu'), { loading: () => <div className="h-64 bg-white" /> });
+const HomeCoast = dynamic(() => import('@/components/home/HomeCoast'), { loading: () => <div className="h-64 bg-sand-50" /> });
+const HomeWhy = dynamic(() => import('@/components/home/HomeWhy'), { loading: () => <div className="h-64 bg-white" /> });
+const BuildSafariPromo = dynamic(() => import('@/components/BuildSafariPromo'), { loading: () => <div className="h-64 bg-foreground" /> });
+const ReviewsSection = dynamic(() => import('@/components/ReviewsSection'), { loading: () => <div className="h-64 bg-sand-50" /> });
+const HomeTeam = dynamic(() => import('@/components/home/HomeTeam'), { loading: () => <div className="h-64 bg-sand-50" /> });
+const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), { loading: () => <div className="h-48 bg-ocean-800" /> });
 const Footer = dynamic(() => import('@/components/Footer'));
 const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: false });
 const HeroBookingModal = dynamic(() => import('@/components/HeroBookingModal'), { ssr: false });
@@ -42,24 +39,20 @@ export default function Home() {
       <Navbar />
       <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
         <HeroSection onBook={openHeroBooking} />
-        <TrustStrip />
-        <AnimateOnScroll direction="up"><ToursSection variant="home" onBook={openBooking} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><HomeDestinationsSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><AboutSection variant="home" /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><ExcursionsSection variant="home" onBook={openBooking} /></AnimateOnScroll>
+        <HomeIntro />
+        <AnimateOnScroll direction="up"><HomePopularSafaris onBook={openBooking} /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><HomeFromWatamu /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><HomeCoast /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><HomeWhy /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
         <HowToBook />
-        <HomeConversionSection onBook={() => openHeroBooking()} />
-        <AnimateOnScroll direction="up"><WildlifeCalendarSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><HomeTransfersInfiniteStack onBook={openBooking} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><GallerySection variant="home" /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><ReviewsSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><FinalCtaSection onBook={() => openHeroBooking()} /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><HomeTeam /></AnimateOnScroll>
+        <FinalCtaSection onBook={() => openHeroBooking()} />
       </main>
       <Footer />
       {isBookingOpen && <BookingModal isOpen={isBookingOpen} onClose={closeBooking} selectedTour={selectedTour} />}
       <HeroBookingModal isOpen={isHeroBookingOpen} onClose={closeHeroBooking} initialSelection={heroBookingSelection} />
-      {/* Safari Assistant intentionally disabled. Re-enable by restoring <SafariAssistant onRequestQuote={() => openHeroBooking()} /> here. */}
     </>
   );
 }

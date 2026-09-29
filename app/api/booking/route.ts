@@ -426,12 +426,13 @@ export async function POST(req: NextRequest) {
 
     try {
       const adminForRateLimit = getSupabaseAdmin();
-      const { data: rateLimit, error: rateLimitError } = await adminForRateLimit.rpc('check_api_rate_limit', {
+      const { data: rateLimitRaw, error: rateLimitError } = await adminForRateLimit.rpc('check_api_rate_limit', {
         p_rate_key: rateKey,
         p_window_seconds: 600,
         p_max_hits: 8,
       }).maybeSingle();
 
+      const rateLimit = rateLimitRaw as { allowed?: boolean; retry_after?: number } | null;
       if (!rateLimitError && rateLimit && !rateLimit.allowed) {
         return NextResponse.json(
           { success: false, error: 'Too many booking requests. Please wait a few minutes and try again.' },

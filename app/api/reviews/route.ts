@@ -19,12 +19,12 @@ export async function GET() {
 
   const result: { reviews: Review[]; google: PlatformInfo | null; tripadvisor: PlatformInfo | null } = {
     reviews: [],
-    google: googlePlaceId ? {
+    google: (googlePlaceId || process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL) ? {
       rating: 0,
       totalReviews: 0,
       url: process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL || '',
     } : null,
-    tripadvisor: tripAdvisorLocationId ? {
+    tripadvisor: (tripAdvisorLocationId || process.env.NEXT_PUBLIC_TRIPADVISOR_REVIEW_URL) ? {
       rating: 0,
       totalReviews: 0,
       url: process.env.NEXT_PUBLIC_TRIPADVISOR_REVIEW_URL || '',
