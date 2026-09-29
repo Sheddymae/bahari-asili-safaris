@@ -16,7 +16,7 @@ export function sanitizeRichText(input: unknown): string {
       if (!match) return '<a>';
       const href = match[1].trim();
       if (!/^(https?:\/\/|mailto:|tel:|\/)/i.test(href)) return '<a>';
-      return `<a href="${href.replace(/"/g, '&quot;')}" rel="noopener noreferrer">`;
+      return `<a href="${href.replace(/"/g, '&quot;')}"${href === '/booking' || href === '/contact' ? ' class="content-cta"' : ''} rel="noopener noreferrer">`;
     }
     if (tag === 'span') {
       const size = String(rawAttrs).match(/font-size\s*:\s*(0\.9rem|1rem|1.15rem)/i);
