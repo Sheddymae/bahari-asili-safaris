@@ -314,7 +314,7 @@ export default function Navbar() {
                 {t.nav.planMySafari}
               </Link>
 
-              {!loading && (user ? (
+              {!loading && user ? (
                 <div className="relative">
                   <button
                     type="button"
@@ -364,8 +364,8 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
-              ) : (
-                <>
+              ) : !loading ? (
+                <div className="flex items-center gap-1">
                   <button
                     type="button"
                     onClick={() => setAuthModal({ open: true, mode: 'signin' })}
@@ -380,8 +380,8 @@ export default function Navbar() {
                   >
                     {t.nav.register}
                   </button>
-                </>
-              )}
+                </div>
+              ) : null}
             </div>
 
             <div className="flex items-center gap-2 xl:hidden">
