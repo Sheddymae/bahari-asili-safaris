@@ -108,7 +108,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
 
   return (
     <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
-      <div className="flex flex-wrap items-center gap-1 border-b bg-slate-50 p-2">
+      <div className="sticky top-0 z-30 flex flex-wrap items-center gap-1 border-b bg-slate-50/95 p-2 shadow-sm backdrop-blur-md">
         <select aria-label="Text style" value={block} onChange={e => run('formatBlock', e.target.value)} className="h-9 rounded-lg border bg-white px-2 text-xs font-semibold">
           {blocks.map(x => <option key={x[0]} value={x[0]}>{x[1]}</option>)}
         </select>
