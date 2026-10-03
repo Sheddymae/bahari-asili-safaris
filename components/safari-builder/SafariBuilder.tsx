@@ -98,17 +98,17 @@ export default function SafariBuilder() {
   }, [step, currency, safariBuilder]);
 
   return (
-    <section className="py-14 lg:py-20 bg-sand-50 min-h-screen">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10"><span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.nav.buildSafari}</span><h1 className="font-poppins font-bold text-3xl sm:text-4xl text-foreground">{safariBuilder.hero.title}</h1></div>
+    <section className="min-h-screen bg-paper py-12 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
+        <header className="mb-10 grid gap-8 border-b border-line pb-8 lg:grid-cols-[1fr_auto] lg:items-end"><div><p className="editorial-label text-orange">{t.nav.buildSafari}</p><h1 className="mt-4 max-w-3xl font-editorial text-5xl leading-[0.92] tracking-tight text-ink sm:text-6xl lg:text-7xl">{safariBuilder.hero.title}</h1></div><p className="max-w-xs font-mono-editorial text-[9px] uppercase leading-5 tracking-[0.12em] text-muted lg:text-right">COAST → BUSH<br/>A PERSONALISED KENYA JOURNEY</p></header>
         <BuilderProgress steps={STEP_LABELS} currentStep={step} />
-        <div className="bg-white rounded-3xl border border-border shadow-card p-6 sm:p-10">
+        <div className="border-y border-line bg-paper p-5 sm:p-8 lg:p-10">
           {step === 0 && <TripDetailsStep value={trip} onChange={setTrip} errors={errors} />}
           {step === 1 && <TravellersStep value={travellers} onChange={setTravellers} errors={errors} />}
           {step === 2 && <InterestsStep value={interests} onChange={setInterests} />}
           {step === 3 && <DestinationsStep value={destinationSlugs} onChange={setDestinationSlugs} errors={errors} />}
           {step === 4 && <ResultStep plan={plan} planLoading={planLoading} planError={planError} requestPayload={requestPayload} adults={travellers.adults} childrenCount={travellers.children} currency={currency} onCurrencyChange={setCurrency} onSubmitted={() => {}} />}
-          {step < 4 && <div className="flex items-center justify-between mt-10 pt-6 border-t border-border"><button type="button" onClick={goBack} disabled={step === 0} className="font-inter text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-0 flex items-center gap-1 px-2"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button><button type="button" onClick={goNext} className="bg-book hover:bg-book-600 text-white font-poppins font-semibold px-7 py-3 rounded-xl transition-all flex items-center gap-1.5">{t.common.continue} <ChevronRight className="w-4 h-4" /></button></div>}
+          {step < 4 && <div className="flex items-center justify-between mt-10 border-t border-line pt-6"><button type="button" onClick={goBack} disabled={step === 0} className="font-mono-editorial text-[9px] uppercase tracking-[0.12em] text-muted hover:text-ink disabled:opacity-0 flex items-center gap-1 px-2"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button><button type="button" onClick={goNext} className="bg-orange hover:bg-ink text-ink hover:text-paper font-mono-editorial text-[10px] uppercase tracking-[0.14em] px-7 py-3 transition-all flex items-center gap-1.5">{t.common.continue} <ChevronRight className="w-4 h-4" /></button></div>}
           {step === 4 && <div className="mt-8 pt-6 border-t border-border"><button type="button" onClick={goBack} className="font-inter text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-1"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button></div>}
         </div>
       </div>
