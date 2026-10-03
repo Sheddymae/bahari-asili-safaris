@@ -306,7 +306,7 @@ export default function Navbar() {
               <Link
                 href="/build-your-safari"
                 prefetch
-                className={`inline-flex min-h-11 items-center justify-center rounded-full border-2 px-4 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white hover:bg-ocean-800 focus-visible:ring-ocean-700' : 'border-white bg-white/10 text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
+                className={`inline-flex min-h-11 items-center justify-center brand-button rounded-[4px] border px-4 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white hover:bg-ocean-800 focus-visible:ring-ocean-700' : 'border-white bg-white/10 text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
               >
                 {t.nav.planMySafari}
               </Link>
@@ -332,7 +332,7 @@ export default function Navbar() {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden rounded-xl border border-border bg-white shadow-xl" role="menu">
+                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden brand-button brand-button-secondary rounded-[4px] border border-border bg-white shadow-xl" role="menu">
                       <div className="border-b border-border px-4 py-3">
                         <p className="truncate font-inter text-sm font-semibold text-foreground">{displayName}</p>
                         <p className="truncate font-inter text-xs text-muted-foreground">{user.email}</p>
@@ -373,7 +373,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setAuthModal({ open: true, mode: 'signup' })}
-                    className={`min-h-11 rounded-full border-2 px-4 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white focus-visible:ring-ocean-700' : 'border-white text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
+                    className={`min-h-11 brand-button rounded-[4px] border px-4 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white focus-visible:ring-ocean-700' : 'border-white text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
                   >
                     {t.nav.register}
                   </button>
@@ -386,7 +386,7 @@ export default function Navbar() {
                 href="/build-your-safari"
                 prefetch
                 onClick={closeMobile}
-                className={`hidden min-h-11 items-center rounded-full border-2 px-3 py-2 font-inter text-xs font-semibold sm:inline-flex ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white' : 'border-white bg-white/10 text-white'}`}
+                className={`hidden min-h-11 items-center brand-button rounded-[4px] border px-3 py-2 font-inter text-xs font-semibold sm:inline-flex ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white' : 'border-white bg-white/10 text-white'}`}
               >
                 {t.nav.planMySafari}
               </Link>
@@ -421,7 +421,7 @@ export default function Navbar() {
                   href="/build-your-safari"
                   prefetch
                   onClick={closeMobile}
-                  className="flex min-h-12 items-center justify-center rounded-xl bg-ocean-700 px-4 py-3 font-inter text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                  className="flex min-h-12 items-center justify-center brand-button brand-button-primary rounded-[4px] px-4 py-3 font-inter text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                 >
                   {t.nav.planMySafari}
                 </Link>
@@ -520,7 +520,7 @@ export default function Navbar() {
                       href="/dashboard"
                       prefetch
                       onClick={closeMobile}
-                      className="flex min-h-11 items-center justify-center rounded-xl bg-ocean-700 px-4 py-2.5 font-inter text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                      className="flex min-h-11 items-center justify-center brand-button brand-button-primary rounded-[4px] px-4 py-2.5 font-inter text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                     >
                       {t.authSession.myDashboard}
                     </Link>
@@ -530,7 +530,7 @@ export default function Navbar() {
                         signOut();
                         closeMobile();
                       }}
-                      className="flex min-h-11 w-full items-center justify-center rounded-xl border border-destructive/30 px-4 py-2.5 font-inter text-sm font-medium text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
+                      className="flex min-h-11 w-full items-center justify-center brand-button brand-button-secondary rounded-[4px] border border-destructive/30 px-4 py-2.5 font-inter text-sm font-medium text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive"
                     >
                       {t.nav.signOut}
                     </button>
@@ -540,14 +540,14 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => openAuth('signin')}
-                      className="min-h-11 rounded-xl border border-border px-4 py-2.5 font-inter text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                      className="min-h-11 brand-button brand-button-secondary rounded-[4px] border border-border px-4 py-2.5 font-inter text-sm font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                     >
                       {t.nav.signIn}
                     </button>
                     <button
                       type="button"
                       onClick={() => openAuth('signup')}
-                      className="min-h-11 rounded-xl bg-ocean-700 px-4 py-2.5 font-inter text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                      className="min-h-11 brand-button brand-button-primary rounded-[4px] px-4 py-2.5 font-inter text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                     >
                       {t.nav.register}
                     </button>
