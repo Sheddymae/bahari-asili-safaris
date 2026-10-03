@@ -126,3 +126,5 @@ The document-generation and stamp work was validated empirically rather than by 
 - Do not change the stamp/rotation math in `pdf-stamp.ts` based on jsPDF's documented behavior — the current approach was arrived at by empirical testing to work around real bugs in the library.
 - When adding a new document type or translation namespace, follow the existing pattern in the 4 generators / `lib/i18n.ts` rather than introducing a new one.
 - Keep the 8-language coverage in sync: any new UI copy or document field needs a translation key added for all 8 locales, not just the default.
+
+<!-- Production redeploy marker: Sep 29 baseline; runtime source unchanged. -->
