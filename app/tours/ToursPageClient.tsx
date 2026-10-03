@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { Calendar, MapPin, Star, Clock } from 'lucide-react';
+import { Calendar, MapPin, Star, Clock, ArrowUpRight } from 'lucide-react';
 import PageShell from '@/components/PageShell';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -25,12 +25,10 @@ function isDayTrip(duration: string): boolean {
   if (multiDayMatch && parseInt(multiDayMatch[1], 10) > 1) return false;
   return true;
 }
-
 function formatDepartureDate(iso: string, locale: string) {
   const intl = locale === 'zh' ? 'zh-CN' : locale === 'ar' ? 'ar' : locale === 'sw' ? 'sw-KE' : `${locale}-${locale === 'de' ? 'DE' : locale === 'fr' ? 'FR' : locale === 'it' ? 'IT' : locale === 'es' ? 'ES' : 'GB'}`;
   return new Date(iso + 'T00:00:00').toLocaleDateString(intl, { month: 'short', day: 'numeric' });
 }
-
 function staggerDelay(index: number) { return Math.min(index * 80, 400); }
 
 function ToursPageInner() {
@@ -47,20 +45,13 @@ function ToursPageInner() {
   useEffect(() => { getGroupTours().then(setGroupTours); }, []);
   useEffect(() => {
     let active = true;
-    fetch('/api/excursions', { cache: 'no-store' })
-      .then((r) => r.json())
-      .then((d) => { if (active && d.success && Array.isArray(d.excursions)) setManagedExcursions(d.excursions); })
-      .catch(() => { /* static catalogue remains available */ });
+    fetch('/api/excursions', { cache: 'no-store' }).then((r) => r.json()).then((d) => { if (active && d.success && Array.isArray(d.excursions)) setManagedExcursions(d.excursions); }).catch(() => {}).finally(() => {});
     return () => { active = false; };
   }, []);
   useEffect(() => {
     let active = true;
     setProgramsLoading(true);
-    fetch(`/api/programs?locale=${locale}`)
-      .then((r) => r.json())
-      .then((d) => { if (active) setPrograms(d.success && Array.isArray(d.programs) ? d.programs : []); })
-      .catch(() => { if (active) setPrograms([]); })
-      .finally(() => { if (active) setProgramsLoading(false); });
+    fetch(`/api/programs?locale=${locale}`).then((r) => r.json()).then((d) => { if (active) setPrograms(d.success && Array.isArray(d.programs) ? d.programs : []); }).catch(() => { if (active) setPrograms([]); }).finally(() => { if (active) setProgramsLoading(false); });
     return () => { active = false; };
   }, [locale]);
 
@@ -70,18 +61,44 @@ function ToursPageInner() {
 
   return (
     <PageShell>
-      <section className="py-16 lg:py-24 bg-sand-50 min-h-screen">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimateOnScroll direction="up"><div className="text-center mb-10"><span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.nav.tours}</span><h1 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground">{t.tours.title} {t.tours.titleHighlight}</h1></div></AnimateOnScroll>
-          <Tabs defaultValue={initialTab} className="w-full">
-            <TabsList className="mx-auto flex w-full max-w-xl bg-white border border-border rounded-full p-1 h-auto mb-10"><TabsTrigger value="group" className="flex-1 rounded-full py-2.5 font-inter text-sm data-[state=active]:bg-ocean-700 data-[state=active]:text-white">{t.tours.groupJoining}</TabsTrigger><TabsTrigger value="private" className="flex-1 rounded-full py-2.5 font-inter text-sm data-[state=active]:bg-ocean-700 data-[state=active]:text-white">{t.tours.private}</TabsTrigger><TabsTrigger value="day" className="flex-1 rounded-full py-2.5 font-inter text-sm data-[state=active]:bg-ocean-700 data-[state=active]:text-white">{t.tours.dayTrips}</TabsTrigger></TabsList>
+      <section className="bg-paper min-h-screen pt-14 pb-24 lg:pt-20 lg:pb-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <header className="grid lg:grid-cols-[1fr_0.7fr] gap-8 lg:gap-16 items-end border-b border-line pb-10 lg:pb-14">
+            <div>
+              <p className="editorial-label mb-4">{t.nav.tours}</p>
+              <h1 className="font-editorial text-5xl sm:text-6xl lg:text-7xl font-normal leading-[0.94] tracking-tight text-ink">{t.tours.title} {t.tours.titleHighlight}</h1>
+            </div>
+            <div><div className="editorial-rule mb-5" /><p className="font-grotesk text-sm sm:text-base leading-7 text-ink-soft max-w-xl">{t.tours.subtitle}</p></div>
+          </header>
+
+          <Tabs defaultValue={initialTab} className="w-full mt-10 lg:mt-14">
+            <TabsList className="w-full max-w-3xl bg-transparent border-b border-line rounded-none p-0 h-auto mb-12 grid grid-cols-3">
+              <TabsTrigger value="group" className="rounded-none border-b-2 border-transparent py-3 font-mono-editorial text-[10px] uppercase tracking-[0.14em] data-[state=active]:border-orange-500 data-[state=active]:text-ink">{t.tours.groupJoining}</TabsTrigger>
+              <TabsTrigger value="private" className="rounded-none border-b-2 border-transparent py-3 font-mono-editorial text-[10px] uppercase tracking-[0.14em] data-[state=active]:border-orange-500 data-[state=active]:text-ink">{t.tours.private}</TabsTrigger>
+              <TabsTrigger value="day" className="rounded-none border-b-2 border-transparent py-3 font-mono-editorial text-[10px] uppercase tracking-[0.14em] data-[state=active]:border-orange-500 data-[state=active]:text-ink">{t.tours.dayTrips}</TabsTrigger>
+            </TabsList>
+
             <TabsContent value="group">
-              {groupTours === null ? <div className="text-center py-16 font-inter text-muted-foreground">{t.tours.loadingDepartures}</div> : groupTours.length === 0 ? <div className="text-center py-16"><Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" /><p className="font-inter text-muted-foreground">{t.tours.noOpenDepartures}</p></div> : <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{groupTours.map((gt, i) => { const date = formatDepartureDate(gt.departure_date, locale); const seats = gt.seats_left; const summary = gt.joined_names.length > 0 && gt.joined_nationality ? groupLabels.joining.replace('{count}', String(gt.joined_names.length)).replace('{nationality}', gt.joined_nationality).replace('{date}', date).replace('{seats}', String(seats)).replace('{seatWord}', seats === 1 ? groupLabels.seat : groupLabels.seats) : `${groupLabels.seatsLeft.replace('{seats}', String(seats))} — ${groupLabels.firstToJoin}`; return <AnimateOnScroll key={gt.id} direction="up" delay={staggerDelay(i)}><div className="bg-white rounded-2xl border border-border shadow-card p-6 flex flex-col h-full"><div className="flex items-center gap-2 text-ocean-700 mb-3"><Calendar className="w-4 h-4" /><span className="font-inter text-sm font-semibold">{date}</span></div><h3 className="font-poppins font-bold text-lg text-foreground mb-2">{gt.safari_name}</h3><p className="font-inter text-sm text-foreground mb-4 flex-1">{summary}</p><button onClick={() => openBooking(gt.safari_name)} className="bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors">{t.inquiryStatus.requestToJoin}</button></div></AnimateOnScroll>; })}</div>}
+              {groupTours === null ? <div className="py-16 font-grotesk text-sm text-muted text-center">{t.tours.loadingDepartures}</div> :
+                groupTours.length === 0 ? <div className="py-16 text-center"><Calendar className="w-8 h-8 text-muted mx-auto mb-3" /><p className="font-grotesk text-sm text-muted">{t.tours.noOpenDepartures}</p></div> :
+                <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10">
+                  {groupTours.map((gt, i) => { const date = formatDepartureDate(gt.departure_date, locale); const seats = gt.seats_left; const summary = gt.joined_names.length > 0 && gt.joined_nationality ? groupLabels.joining.replace('{count}', String(gt.joined_names.length)).replace('{nationality}', gt.joined_nationality).replace('{date}', date).replace('{seats}', String(seats)).replace('{seatWord}', seats === 1 ? groupLabels.seat : groupLabels.seats) : `${groupLabels.seatsLeft.replace('{seats}', String(seats))} — ${groupLabels.firstToJoin}`; return <AnimateOnScroll key={gt.id} direction="up" delay={staggerDelay(i)} className={`lg:col-span-${i % 3 === 0 ? 7 : 5}`}><article className="border-b border-line pb-5 h-full"><div className="flex items-center gap-2 mb-3 font-mono-editorial text-[10px] uppercase tracking-[0.12em] text-orange-600"><Calendar className="w-3.5 h-3.5" /> {date}</div><h3 className="font-editorial text-3xl text-ink">{gt.safari_name}</h3><p className="font-grotesk text-sm leading-6 text-ink-soft mt-2 mb-5">{summary}</p><button onClick={() => openBooking(gt.safari_name)} className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-grotesk font-semibold text-sm px-5 py-2.5 transition-colors">{t.inquiryStatus.requestToJoin} <ArrowUpRight className="w-4 h-4" /></button></article></AnimateOnScroll>; })}
+                </div>}
             </TabsContent>
+
             <TabsContent value="private">
-              {programsLoading ? <div className="text-center py-16 font-inter text-muted-foreground">{t.tours.loadingDepartures}</div> : programs.length === 0 ? <div className="text-center py-16 font-inter text-muted-foreground">{t.tours.noOpenDepartures}</div> : <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{programs.map((s, i) => { const content = getLocalizedSafari(s, locale as SafariLocale); return <AnimateOnScroll key={s.id} direction="up" delay={staggerDelay(i)}><div className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col h-full"><div className="relative h-40 w-full"><Image src={s.image} alt={content.name} fill className="object-cover" /></div><div className="p-5 flex flex-col flex-1"><h3 className="font-poppins font-bold text-base text-foreground mb-1">{content.name}</h3><p className="font-inter text-xs text-muted-foreground mb-3 flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {content.parks.join(', ')}</p><div className="flex items-center gap-1 mb-4"><Star className="w-3.5 h-3.5 fill-safari-500 text-safari-500" /><span className="font-inter text-xs text-foreground">{s.rating} ({s.reviewCount})</span><span className="font-inter text-xs text-muted-foreground ml-auto">{s.days}D/{s.nights}N</span></div><Link href={`/safaris/${s.id}`} prefetch className="mt-auto inline-flex items-center justify-center gap-2 bg-ocean-700 text-white hover:bg-ocean-800 font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors">{t.tours.itinerary} <span aria-hidden="true">→</span></Link></div></div></AnimateOnScroll>; })}</div>}
+              {programsLoading ? <div className="py-16 font-grotesk text-sm text-muted text-center">{t.tours.loadingDepartures}</div> :
+                programs.length === 0 ? <div className="py-16 font-grotesk text-sm text-muted text-center">{t.tours.noOpenDepartures}</div> :
+                <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-14">
+                  {programs.map((s, i) => { const content = getLocalizedSafari(s, locale as SafariLocale); const wide = i % 4 === 0 || i % 4 === 3; return <AnimateOnScroll key={s.id} direction="up" delay={staggerDelay(i)} className={wide ? 'lg:col-span-7' : 'lg:col-span-5'}><Link href={`/safaris/${s.id}`} prefetch className="group block"><div className={`relative overflow-hidden bg-sand-100 ${wide ? 'aspect-[16/10]' : 'aspect-[4/5]'}`}><Image src={s.image} alt={content.name} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.025]" sizes={wide ? '(max-width: 1024px) 100vw, 58vw' : '(max-width: 1024px) 100vw, 42vw'} /><div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" /><div className="absolute inset-x-0 bottom-0 p-5 sm:p-7"><p className="font-mono-editorial text-[9px] uppercase tracking-[0.14em] text-orange-200 mb-2">{content.parks.join(' · ')}</p><h3 className="font-editorial text-3xl sm:text-4xl text-white">{content.name}</h3></div></div><div className="border-b border-line py-4 flex items-center justify-between gap-4"><span className="font-grotesk text-sm text-ink-soft">{content.tagline}</span><span className="font-mono-editorial text-[9px] uppercase tracking-[0.12em] text-muted">{s.days}D / {s.nights}N · {s.rating}</span></div></Link></AnimateOnScroll>; })}
+                </div>}
             </TabsContent>
-            <TabsContent value="day"><div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{dayTrips.map((e, i) => { const content = getLocalizedExcursion(e, locale as SupportedLocale); return <AnimateOnScroll key={e.id} direction="up" delay={staggerDelay(i)}><div className="bg-white rounded-2xl border border-border shadow-card overflow-hidden flex flex-col h-full"><div className="relative h-40 w-full"><Image src={e.image} alt={content.name} fill className="object-cover" /></div><div className="p-5 flex flex-col flex-1"><h3 className="font-poppins font-bold text-base text-foreground mb-1">{content.name}</h3><p className="font-inter text-xs text-muted-foreground mb-4 flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {content.duration}</p><button onClick={() => openBooking(content.name)} className="mt-auto bg-book hover:bg-book-600 text-white font-poppins font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors">{t.common.bookNow}</button></div></div></AnimateOnScroll>; })}</div></TabsContent>
+
+            <TabsContent value="day">
+              <div className="grid md:grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-12">
+                {dayTrips.map((e, i) => { const content = getLocalizedExcursion(e, locale as SupportedLocale); const wide = i % 4 === 0 || i % 4 === 3; return <AnimateOnScroll key={e.id} direction="up" delay={staggerDelay(i)} className={wide ? 'lg:col-span-7' : 'lg:col-span-5'}><article className="group"><div className={`relative overflow-hidden bg-sand-100 ${wide ? 'aspect-[16/10]' : 'aspect-[4/5]'}`}><Image src={e.image} alt={content.name} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.025]" sizes={wide ? '(max-width: 1024px) 100vw, 58vw' : '(max-width: 1024px) 100vw, 42vw'} /><div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-transparent" /><div className="absolute left-4 top-4 bg-ink/85 px-2.5 py-1 font-mono-editorial text-[9px] uppercase tracking-[0.14em] text-white">{e.category}</div><div className="absolute inset-x-0 bottom-0 p-5 sm:p-7"><h3 className="font-editorial text-3xl sm:text-4xl text-white">{content.name}</h3></div></div><div className="border-b border-line py-4 flex items-center justify-between gap-4"><span className="font-grotesk text-sm text-ink-soft">{content.duration}</span><button onClick={() => openBooking(content.name)} className="inline-flex items-center gap-1.5 font-mono-editorial text-[9px] uppercase tracking-[0.12em] text-ink hover:text-orange-600">{t.common.bookNow} <ArrowUpRight className="w-3.5 h-3.5" /></button></div></article></AnimateOnScroll>; })}
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
       </section>
@@ -89,5 +106,4 @@ function ToursPageInner() {
     </PageShell>
   );
 }
-
 export default function ToursPageClient() { return <Suspense fallback={null}><ToursPageInner /></Suspense>; }
