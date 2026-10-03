@@ -1,26 +1,35 @@
 'use client';
 
-import { Check } from 'lucide-react';
+import { ArrowDownRight } from 'lucide-react';
 import { useHomeCopy } from './useHomeCopy';
 
 export default function HomeIntro() {
   const { c } = useHomeCopy();
   return (
-    <section aria-labelledby="home-intro-title" className="border-b border-border bg-white py-14 sm:py-16">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16 lg:px-8">
-        <div>
-          <span className="font-inter text-xs font-bold uppercase tracking-[0.18em] text-safari-600">{c.intro.kicker}</span>
-          <h2 id="home-intro-title" className="mt-2 font-poppins text-3xl font-bold leading-tight text-foreground sm:text-4xl">{c.intro.title}</h2>
-          <p className="mt-4 max-w-xl font-inter text-base leading-7 text-muted-foreground">{c.intro.body}</p>
+    <section aria-labelledby="home-intro-title" className="border-b border-line bg-paper py-20 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] lg:gap-20">
+          <div>
+            <div className="mb-7 flex items-center gap-4">
+              <span className="editorial-label text-ocean-600">{c.intro.kicker}</span>
+              <span className="editorial-rule flex-1" aria-hidden="true" />
+            </div>
+            <h2 id="home-intro-title" className="max-w-5xl font-editorial text-5xl leading-[0.95] tracking-tight text-ink sm:text-6xl lg:text-8xl">{c.intro.title}</h2>
+            <p className="mt-8 max-w-2xl font-grotesk text-base leading-7 text-ink-soft sm:text-lg">{c.intro.body}</p>
+          </div>
+          <aside className="self-end border-t border-line pt-5 lg:border-t-0 lg:border-l lg:pl-8">
+            <p className="font-mono-editorial text-[10px] uppercase tracking-[0.18em] text-muted">The Kenya journal</p>
+            <ul className="mt-6 divide-y divide-line border-y border-line">
+              {c.intro.points.map((point, index) => (
+                <li key={point} className="flex items-start gap-4 py-4">
+                  <span className="font-mono-editorial text-[10px] text-ocean-600">0{index + 1}</span>
+                  <span className="font-grotesk text-sm leading-6 text-ink">{point}</span>
+                </li>
+              ))}
+            </ul>
+            <ArrowDownRight className="mt-7 h-6 w-6 text-orange-500" aria-hidden="true" />
+          </aside>
         </div>
-        <ul className="grid gap-3 sm:grid-cols-2">
-          {c.intro.points.map((point) => (
-            <li key={point} className="flex items-start gap-3 rounded-xl border border-border bg-sand-50 p-4">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-700" aria-hidden="true" />
-              <span className="font-inter text-sm font-medium leading-5 text-foreground">{point}</span>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   );
