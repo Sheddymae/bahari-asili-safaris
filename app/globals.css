@@ -208,6 +208,93 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .homepage-main button { min-height: 42px; }
 }
 
+
+/* Phase 16: responsive reconstruction — preserve the editorial composition while
+   making narrow phones, landscape phones, tablets, and compact laptops first-class. */
+:root {
+  --page-gutter: clamp(1rem, 3vw, 2.5rem);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@layer base {
+  html { min-width: 320px; }
+  body { min-height: 100svh; }
+  :where(input, select, textarea, button) { max-width: 100%; }
+  :where(input, select, textarea) { font-size: 16px; } /* prevents iOS zoom */
+  :where([id]) { scroll-margin-top: 84px; }
+}
+
+@media (max-width: 767px) {
+  /* Keep editorial gutters consistent instead of allowing nested components
+     to become wider than the viewport. */
+  .section-padding { padding-left: var(--page-gutter); padding-right: var(--page-gutter); }
+
+  /* Long localized headings must never create horizontal overflow. */
+  h1, h2, h3, h4, h5, h6, p, a, button, label, span {
+    overflow-wrap: anywhere;
+  }
+
+  /* Two-column editorial compositions collapse intentionally; avoid tiny
+     second columns and preserve reading order. */
+  .editorial-grid { grid-template-columns: 1fr; }
+  .homepage-main section { scroll-margin-top: 80px; }
+
+  /* Touch targets: keep controls comfortably tappable without inflating
+     the visual system. */
+  .touch-target { min-width: 44px; min-height: 44px; }
+
+  /* Media should remain stable when copy changes across locales. */
+  .responsive-media { aspect-ratio: 4 / 3; min-height: 0; }
+  .responsive-media-tall { aspect-ratio: 4 / 5; min-height: 0; }
+
+  /* Prevent fixed/sticky editorial columns from behaving like desktop
+     layouts on phones. */
+  .editorial-sticky { position: static !important; top: auto !important; }
+
+  /* Horizontal metadata rows become scrollable rather than wrapping into
+     unreadable stacks. */
+  .metadata-strip {
+    display: flex;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .metadata-strip::-webkit-scrollbar { display: none; }
+
+  /* Tables in CMS/public content stay usable on narrow screens. */
+  .rich-content { overflow-wrap: anywhere; }
+  .rich-content table { display: block; width: max-content; max-width: none; overflow-x: auto; }
+  .rich-content pre { max-width: 100%; overflow-x: auto; }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  /* Tablet: retain asymmetric layouts but use a controlled page gutter. */
+  .section-padding { padding-left: clamp(1.25rem, 3vw, 2rem); padding-right: clamp(1.25rem, 3vw, 2rem); }
+  .editorial-sticky { position: static !important; top: auto !important; }
+}
+
+@media (max-width: 639px) {
+  /* Compact phones: reduce oversized editorial display type only where the
+     utility is present, while keeping the serif hierarchy intact. */
+  .display-mobile-safe { font-size: clamp(2.35rem, 12vw, 3.5rem) !important; }
+  .mobile-stack { flex-direction: column !important; align-items: stretch !important; }
+  .mobile-full { width: 100% !important; }
+  .mobile-hide { display: none !important; }
+}
+
+@media (max-width: 380px) {
+  .homepage-main .px-4 { padding-left: .8rem; padding-right: .8rem; }
+  .homepage-main button { min-height: 44px; }
+  .homepage-main h1 { font-size: clamp(2.25rem, 12.5vw, 3rem); }
+}
+
+@media (orientation: landscape) and (max-height: 560px) {
+  /* Landscape phones need breathing room for the hero controls without
+     forcing a tall viewport crop. */
+  .hero-section { min-height: 620px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
