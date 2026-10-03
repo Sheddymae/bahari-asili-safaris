@@ -20,6 +20,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
   const [mounted, setMounted] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0, width: 0 });
   const locationButtonRef = useRef<HTMLButtonElement>(null);
+  const [activeLocationIndex, setActiveLocationIndex] = useState(-1);
 
   useEffect(() => {
     const id = window.setTimeout(() => setMounted(true), 250);
@@ -48,11 +49,14 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
   useEffect(() => {
     if (!isLocOpen) return;
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsLocOpen(false);
+      if (event.key === 'Escape') { setIsLocOpen(false); setActiveLocationIndex(-1); locationButtonRef.current?.focus(); return; }
+      if (event.key === 'ArrowDown') { event.preventDefault(); setActiveLocationIndex((index) => Math.min(index + 1, locations.length - 1)); }
+      if (event.key === 'ArrowUp') { event.preventDefault(); setActiveLocationIndex((index) => Math.max(index - 1, 0)); }
+      if (event.key === 'Enter' && activeLocationIndex >= 0) { event.preventDefault(); setLocation(locations[activeLocationIndex]); setIsLocOpen(false); setActiveLocationIndex(-1); }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [isLocOpen]);
+  }, [activeLocationIndex, isLocOpen]);
 
   const handleBookClick = useCallback(() => {
     trackConversion('booking_started', { location: 'hero_quick_start' });
@@ -67,7 +71,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
     ? createPortal(
         <div className="fixed z-[10000] max-h-72 overflow-y-auto rounded-[2px] border border-border bg-white shadow-editorial" style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }} role="listbox" aria-label={t.bookingOverlay.selectDest}>
           {locations.map((loc) => (
-            <button key={loc} type="button" role="option" aria-selected={location === loc} onClick={() => { setLocation(loc); setIsLocOpen(false); }} className="block w-full border-b border-sand-100 px-4 py-3 text-left font-grotesk text-sm text-foreground transition-colors last:border-0 hover:bg-sand-50 hover:text-ocean-700">
+            <button key={loc} type="button" role="option" aria-selected={location === loc} aria-current={activeLocationIndex === locations.indexOf(loc) ? 'true' : undefined} onClick={() => { setLocation(loc); setIsLocOpen(false); setActiveLocationIndex(-1); }} className="block w-full border-b border-sand-100 px-4 py-3 text-left font-grotesk text-sm text-foreground transition-colors last:border-0 hover:bg-sand-50 hover:text-ocean-700">
               {loc}
             </button>
           ))}
@@ -83,7 +87,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
         <div className={(mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0') + ' absolute bottom-3 left-1/2 z-30 block w-full -translate-x-1/2 px-3 transition-all duration-300 sm:bottom-7 sm:px-6'} style={{ pointerEvents: mounted ? 'auto' : 'none' }}>
           <div className="mx-auto flex max-w-6xl flex-col items-stretch gap-1 border border-line/70 bg-paper/95 p-1.5 shadow-editorial backdrop-blur-sm sm:flex-row sm:items-center sm:p-2">
             <div className="relative min-w-0 flex-1">
-              <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) updateMenuPosition(); setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-[2px] px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
+              <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) { updateMenuPosition(); setActiveLocationIndex(Math.max(0, locations.indexOf(location))); } else { setActiveLocationIndex(-1); } setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-[2px] px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
                 <MapPin className="h-4 w-4 flex-shrink-0 text-orange-500" />
                 <span className="min-w-0 flex-1">
                   <span className="block font-grotesk text-xs font-medium text-muted-foreground">{t.hero.location}</span>
