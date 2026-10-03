@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { heroVideoConfig, getVideoSourceForViewport, prefersReducedMotion } from '@/lib/video-config';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface CinematicHeroVideoProps {
   onReady?: () => void;
