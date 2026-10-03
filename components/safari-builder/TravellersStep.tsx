@@ -17,24 +17,24 @@ interface TravellersStepProps {
 
 function Stepper({ label, value, min, onChange }: { label: string; value: number; min: number; onChange: (v: number) => void }) {
   return (
-    <div className="flex items-center justify-between bg-sand-50 rounded-xl border border-sand-200 px-5 py-4">
-      <span className="font-inter text-sm font-medium text-foreground">{label}</span>
+    <div className="flex items-center justify-between border-y border-line py-5">
+      <span className="font-grotesk text-sm text-ink">{label}</span>
       <div className="flex items-center gap-4">
         <button
           type="button"
           aria-label={`Decrease ${label}`}
           onClick={() => onChange(Math.max(min, value - 1))}
-          className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-foreground hover:border-ocean-500 hover:text-ocean-700 transition-colors disabled:opacity-40"
+          className="w-8 h-8 border border-line flex items-center justify-center text-foreground hover:border-ocean-500 hover:text-ocean-700 transition-colors disabled:opacity-40"
           disabled={value <= min}
         >
           <Minus className="w-4 h-4" />
         </button>
-        <span className="font-poppins font-bold text-lg text-foreground w-6 text-center">{value}</span>
+        <span className="font-editorial text-2xl text-ink w-6 text-center">{value}</span>
         <button
           type="button"
           aria-label={`Increase ${label}`}
           onClick={() => onChange(value + 1)}
-          className="w-8 h-8 rounded-full border border-border flex items-center justify-center text-foreground hover:border-ocean-500 hover:text-ocean-700 transition-colors"
+          className="w-8 h-8 border border-line flex items-center justify-center text-foreground hover:border-ocean-500 hover:text-ocean-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
         </button>
@@ -62,13 +62,13 @@ export default function TravellersStep({ value, onChange, errors }: TravellersSt
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground mb-1">{tr.title}</h2>
-        <p className="font-inter text-sm text-muted-foreground">{tr.subtitle}</p>
+        <h2 className="font-editorial text-4xl leading-none text-ink sm:text-5xl">{tr.title}</h2>
+        <p className="font-grotesk text-sm leading-6 text-ink-soft">{tr.subtitle}</p>
       </div>
 
       <div className="flex items-center gap-2 mb-2">
         <Users className="w-5 h-5 text-ocean-700" />
-        <span className="font-inter text-sm text-muted-foreground">{tr.guestsLabel}</span>
+        <span className="font-grotesk text-sm leading-6 text-ink-soft">{tr.guestsLabel}</span>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
@@ -79,7 +79,7 @@ export default function TravellersStep({ value, onChange, errors }: TravellersSt
 
       {value.children > 0 && (
         <div>
-          <p className="font-inter text-sm font-medium text-foreground mb-3">{tr.childrenAgesTitle}</p>
+          <p className="font-grotesk text-sm text-ink mb-3">{tr.childrenAgesTitle}</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {value.childrenAges.map((age, i) => (
               <div key={i}>
@@ -88,7 +88,7 @@ export default function TravellersStep({ value, onChange, errors }: TravellersSt
                   id={`child-age-${i}`}
                   value={age}
                   onChange={(e) => setAge(i, Number(e.target.value))}
-                  className="w-full h-11 px-3 rounded-lg border border-border focus:border-ocean-500 focus:ring-2 focus:ring-ocean-100 outline-none font-inter text-sm bg-white"
+                  className="w-full h-11 px-3 border-0 border-b border-line focus:border-ocean-500 focus:ring-2 focus:ring-ocean-100 outline-none font-inter text-sm bg-white"
                 >
                   {Array.from({ length: 18 }, (_, a) => (
                     <option key={a} value={a}>{a === 0 ? tr.under1 : `${a} ${tr.yrs}`}</option>
