@@ -64,19 +64,19 @@ export default function TravelerEssentials() {
       key={locale}
       lang={locale}
       dir={isRTL ? 'rtl' : 'ltr'}
-      className="traveler-essentials relative overflow-hidden border-y border-sand-200 bg-white py-14 sm:py-18 lg:py-20"
+      className="traveler-essentials relative overflow-hidden border-y border-line bg-paper py-16 sm:py-20 lg:py-24"
       aria-labelledby="traveler-essentials-title"
       data-traveler-locale={locale}
     >
-      <div className="pointer-events-none absolute right-0 top-20 h-72 w-72 rounded-full bg-safari-100/30 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-96 w-96 rounded-full bg-ocean-100/20 blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-20 h-72 w-72 rounded-full bg-sand/40 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-96 w-96 rounded-full bg-ocean/10 blur-3xl" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <AnimateOnScroll direction="up">
-          <div className="mx-auto mb-10 max-w-3xl text-center lg:mb-14">
-            <span className="mb-3 block font-inter text-xs font-semibold uppercase tracking-widest text-safari-500">{content.label}</span>
-            <h2 id="traveler-essentials-title" className="font-poppins text-3xl font-extrabold leading-tight text-foreground sm:text-5xl lg:text-6xl">{content.title}</h2>
-            <p className="mx-auto mt-4 max-w-3xl font-inter text-base leading-7 text-foreground/70 sm:text-lg">{content.subtitle}</p>
+          <div className="mb-10 max-w-3xl border-b border-line pb-7 lg:mb-14">
+            <span className="editorial-label text-orange">{content.label}</span>
+            <h2 id="traveler-essentials-title" className="mt-4 max-w-2xl font-editorial text-5xl leading-[0.92] tracking-tight text-ink sm:text-6xl lg:text-7xl">{content.title}</h2>
+            <p className="mt-5 max-w-2xl font-grotesk text-sm leading-6 text-ink-soft sm:text-base">{content.subtitle}</p>
           </div>
         </AnimateOnScroll>
 
@@ -101,7 +101,7 @@ export default function TravelerEssentials() {
             return (
               <article
                 key={`${locale}-${index}-${title}`}
-                className={`absolute left-1/2 top-1/2 w-[82vw] max-w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-[1px] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'z-30' : 'z-20'}`}
+                className={`absolute left-1/2 top-1/2 w-[82vw] max-w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-none p-[1px] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'z-30' : 'z-20'}`}
                 style={{
                   transform: `translate(calc(-50% + ${direction * offset * cardDistance}px), -50%) scale(${isActive ? 1 : 0.84})`,
                   opacity: absOffset > 1 ? 0 : isActive ? 1 : 0.68,
@@ -109,21 +109,21 @@ export default function TravelerEssentials() {
                   pointerEvents: absOffset > 1 ? 'none' : 'auto',
                 }}
               >
-                <div className={`h-full min-h-[310px] rounded-2xl border bg-white p-6 shadow-xl transition-all duration-700 sm:min-h-[325px] ${isActive ? 'border-safari-300 shadow-[0_20px_60px_rgba(14,116,144,0.18)]' : 'border-sand-200 shadow-card'}`}>
+                <div className={`h-full min-h-[310px] rounded-none border bg-paper p-6 shadow-none transition-all duration-700 sm:min-h-[325px] ${isActive ? 'border-ocean shadow-[0_20px_60px_rgba(14,116,144,0.18)]' : 'border-line shadow-none'}`}>
                   <Link
                     href={href}
                     aria-label={title}
                     aria-current={isActive ? 'true' : undefined}
                     onClick={() => setActiveIndex(index)}
-                    className="block h-full rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-safari-400 focus-visible:ring-offset-4"
+                    className="block h-full rounded-none focus:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-4"
                   >
-                    <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-2xl transition-all duration-500 ${isActive ? 'bg-safari-500 text-white shadow-[0_0_28px_rgba(249,115,22,0.42)]' : 'bg-safari-50 text-safari-500'}`}>
+                    <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-none transition-all duration-500 ${isActive ? 'bg-orange text-white shadow-[0_0_28px_rgba(249,115,22,0.42)]' : 'bg-sand text-orange'}`}>
                       <Icon className="h-6 w-6" />
                     </div>
-                    <h3 className="mb-2 font-poppins text-lg font-bold leading-snug text-foreground sm:text-xl">{title}</h3>
-                    <p className="font-inter text-sm leading-6 text-foreground/75 sm:text-base">{text}</p>
-                    <div className={`mt-5 h-1 rounded-full transition-all duration-700 ${isActive ? 'w-20 bg-safari-500' : 'w-10 bg-sand-200'}`} />
-                    <span className="mt-5 inline-flex items-center gap-2 font-inter text-sm font-semibold text-ocean-700 transition-all duration-300 hover:gap-3 hover:text-ocean-800">
+                    <h3 className="mb-2 font-editorial text-lg font-bold leading-snug text-foreground sm:text-xl">{title}</h3>
+                    <p className="font-grotesk text-sm leading-6 text-foreground/75 sm:text-base">{text}</p>
+                    <div className={`mt-5 h-1 rounded-full transition-all duration-700 ${isActive ? 'w-20 bg-orange' : 'w-10 bg-sand-200'}`} />
+                    <span className="mt-5 inline-flex items-center gap-2 font-grotesk text-sm font-semibold text-ocean transition-all duration-300 hover:gap-3 hover:text-ocean">
                       {content.learnMore}
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </span>
@@ -139,7 +139,7 @@ export default function TravelerEssentials() {
             type="button"
             onClick={() => goTo(-1)}
             aria-label="Previous travel tip"
-            className="group flex h-12 w-12 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:text-safari-600 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"
+            className="group flex h-12 w-12 items-center justify-center rounded-full border border-line bg-paper text-foreground shadow-sm transition-all duration-300 hover:border-ocean hover:bg-sand hover:text-orange hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-orange"
           >
             <ChevronLeft className="h-5 w-5 transition-transform duration-300 group-hover:-translate-x-0.5" />
           </button>
@@ -152,7 +152,7 @@ export default function TravelerEssentials() {
                 aria-label={`Go to ${item.title}`}
                 aria-current={activeIndex === index}
                 onClick={() => setActiveIndex(index)}
-                className={`h-2 rounded-full transition-all duration-500 ${activeIndex === index ? 'w-7 bg-safari-500 shadow-[0_0_12px_rgba(249,115,22,0.45)]' : 'w-2 bg-sand-300 hover:bg-safari-300'}`}
+                className={`h-2 rounded-full transition-all duration-500 ${activeIndex === index ? 'w-7 bg-orange shadow-[0_0_12px_rgba(249,115,22,0.45)]' : 'w-2 bg-line hover:bg-orange'}`}
               />
             ))}
           </div>
@@ -161,7 +161,7 @@ export default function TravelerEssentials() {
             type="button"
             onClick={() => goTo(1)}
             aria-label="Next travel tip"
-            className="group flex h-12 w-12 items-center justify-center rounded-full border border-sand-200 bg-white text-foreground shadow-sm transition-all duration-300 hover:border-safari-300 hover:bg-safari-50 hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-safari-400"
+            className="group flex h-12 w-12 items-center justify-center rounded-full border border-line bg-paper text-foreground shadow-sm transition-all duration-300 hover:border-ocean hover:bg-sand hover:shadow-[0_0_24px_rgba(249,115,22,0.25)] focus:outline-none focus:ring-2 focus:ring-orange"
           >
             <ChevronRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5" />
           </button>
