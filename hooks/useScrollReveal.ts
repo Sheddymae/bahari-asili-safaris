@@ -8,36 +8,29 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Avoids the SSR warning for useLayoutEffect while still running before paint
-// in the browser, which keeps elements from flashing visible-then-hidden.
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export interface ScrollRevealOptions {
-  /** Pixels the element travels upward while fading in. Default 32. */
+  /** Pixels the element travels upward while fading in. Default 24. */
   y?: number;
-  /** Animation duration in seconds. Default 0.8. */
+  /** Animation duration in seconds. Default 0.72. */
   duration?: number;
   /** Delay before the animation starts, in seconds. Default 0. */
   delay?: number;
-  /** Gap between each child's animation when revealing a group. Default 0.12. */
+  /** Gap between each child's animation when revealing a group. Default 0.1. */
   stagger?: number;
-  /** ScrollTrigger "start" position. Default 'top 80%' (fires shortly before the element enters the viewport). */
+  /** ScrollTrigger "start" position. Default 'top 84%'. */
   start?: string;
-  /**
-   * CSS selector for child elements to stagger-reveal individually, scoped to
-   * the ref'd container (e.g. '[data-reveal-item]' or '.card'). Omit to
-   * animate the container itself as a single element.
-   */
+  /** CSS selector for children to stagger individually. */
   itemSelector?: string;
-  /** Re-plays the animation every time the element re-enters the viewport. Default false (plays once). */
+  /** Replays when the element re-enters the viewport. Default false. */
   repeat?: boolean;
 }
 
 /**
- * Attach the returned ref to a container. On scroll into view it fades and
- * slides the container in — or, if `itemSelector` is given, staggers each
- * matching child individually. Respects prefers-reduced-motion by skipping
- * the animation and leaving content at its natural, fully-visible state.
+ * A restrained editorial reveal: opacity + short vertical movement.
+ * It intentionally plays once by default so the page does not feel animated
+ * on every scroll. Reduced-motion users receive the natural static layout.
  */
 export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
   options: ScrollRevealOptions = {}
@@ -54,36 +47,40 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
     if (prefersReduced) return;
 
     const {
-      y = 32,
-      duration = 0.8,
+      y = 24,
+      duration = 0.72,
       delay = 0,
-      stagger = 0.12,
-      start = 'top 80%',
+      stagger = 0.1,
+      start = 'top 84%',
       itemSelector,
       repeat = false,
     } = optionsRef.current;
 
     const ctx = gsap.context(() => {
-      const targets = itemSelector ? el.querySelectorAll(itemSelector) : el;
+      const targets = itemSelector
+        ? Array.from(el.querySelectorAll<HTMLElement>(itemSelector))
+        : [el];
 
-      gsap.fromTo(
-        targets,
-        { opacity: 0, y },
-        {
-          opacity: 1,
-          y: 0,
-          duration,
-          delay,
-          stagger,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start,
-            toggleActions: repeat ? 'play none none none' : 'play none none reverse',
-            once: !repeat,
-          },
-        }
-      );
+      if (!targets.length) return;
+
+      gsap.set(targets, { opacity: 0, y });
+
+      gsap.to(targets, {
+        opacity: 1,
+        y: 0,
+        duration,
+        delay,
+        stagger,
+        ease: 'power2.out',
+        overwrite: 'auto',
+        scrollTrigger: {
+          trigger: el,
+          start,
+          toggleActions: repeat ? 'play none none reset' : 'play none none none',
+          once: !repeat,
+          invalidateOnRefresh: true,
+        },
+      });
     }, el);
 
     return () => ctx.revert();
