@@ -10,7 +10,6 @@ interface CinematicHeroVideoProps {
 }
 
 export default function CinematicHeroVideo({ onReady, children }: CinematicHeroVideoProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [hasReducedMotion, setHasReducedMotion] = useState(false);
@@ -19,13 +18,22 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
   useEffect(() => {
     const reduced = prefersReducedMotion();
     setHasReducedMotion(reduced);
-    setVideoSrc(getVideoSourceForViewport(typeof window !== 'undefined' ? window.innerWidth : 1024));
+    setVideoSrc(getVideoSourceForViewport(window.innerWidth));
   }, []);
 
   useEffect(() => {
-    if (!videoRef.current || hasReducedMotion || !videoSrc) return;
-    const promise = videoRef.current.play();
-    promise?.catch(() => {});
+    const video = videoRef.current;
+    if (!video || hasReducedMotion || !videoSrc) return;
+
+    video.load();
+    const play = async () => {
+      try {
+        await video.play();
+      } catch {
+        // Autoplay can be blocked by the browser; the poster remains visible.
+      }
+    };
+    void play();
   }, [videoSrc, hasReducedMotion]);
 
   const handleVideoLoad = () => {
@@ -37,23 +45,46 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
     console.error('[hero] Video failed to load; keeping poster fallback.');
   };
 
+  const mediaOverlay = (
+    <>
+      <div className="absolute inset-0 bg-ocean-deep/20" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,25,29,.58)_0%,rgba(4,25,29,.12)_34%,rgba(4,25,29,.18)_62%,rgba(4,25,29,.78)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,transparent_0%,rgba(4,25,29,.08)_46%,rgba(4,25,29,.42)_100%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ocean-deep/70 to-transparent" />
+    </>
+  );
+
   if (hasReducedMotion) {
     return (
-      <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-slate-900">
-        <Image src={heroVideoConfig.poster} alt="Bahari Asili Safaris — Kenya safari and coastal experiences" fill priority fetchPriority="high" quality={75} sizes="100vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
+      <section id="home" className="relative min-h-[100svh] w-full overflow-hidden bg-ocean-deep">
+        <Image src={heroVideoConfig.poster} alt="Bahari Asili Safaris — Kenya safari and coastal experiences" fill priority fetchPriority="high" quality={80} sizes="100vw" className="object-cover object-center" />
+        {mediaOverlay}
         {children}
       </section>
     );
   }
 
   return (
-    <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-slate-900">
+    <section id="home" className="relative min-h-[100svh] w-full overflow-hidden bg-ocean-deep">
       <div className="absolute inset-0 h-full w-full">
-        <video ref={videoRef} src={videoSrc} poster={heroVideoConfig.poster} onCanPlay={handleVideoLoad} onError={handleVideoError} autoPlay muted playsInline preload="metadata" className="h-full w-full select-none object-cover object-center" aria-label="Bahari Asili Safaris Kenya" />
+        {!videoLoaded && (
+          <Image src={heroVideoConfig.poster} alt="" fill priority fetchPriority="high" quality={80} sizes="100vw" className="object-cover object-center" />
+        )}
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          poster={heroVideoConfig.poster}
+          onCanPlay={handleVideoLoad}
+          onError={handleVideoError}
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          className="h-full w-full select-none object-cover object-center"
+          aria-label="Bahari Asili Safaris Kenya"
+        />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
-      {!videoLoaded && <Image src={heroVideoConfig.poster} alt="" fill priority fetchPriority="high" quality={75} sizes="100vw" className="absolute inset-0 object-cover object-center" />}
+      {mediaOverlay}
       {children}
     </section>
   );
