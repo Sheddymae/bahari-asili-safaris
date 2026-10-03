@@ -9,16 +9,13 @@ interface RevealProps extends ScrollRevealOptions {
 }
 
 /**
- * Fades and slides its children in as they scroll into view.
- * For a single element or block — for staggering a grid of cards, use
- * `useScrollReveal` directly with `itemSelector` on the grid container instead.
- *
- * Usage:
- *   <Reveal><h2>Heading</h2></Reveal>
- *   <Reveal delay={0.1} y={16}><p>Subtext</p></Reveal>
+ * Small composable for the site's restrained editorial motion system.
+ * Prefer one reveal per meaningful content group rather than animating every
+ * individual element on a page.
  */
 export default function Reveal({ children, className, ...options }: RevealProps) {
   const ref = useScrollReveal<HTMLDivElement>(options);
+
   return (
     <div ref={ref} className={className}>
       {children}
