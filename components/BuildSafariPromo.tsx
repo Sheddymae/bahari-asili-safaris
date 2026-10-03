@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function BuildSafariPromo() {
@@ -10,37 +10,23 @@ export default function BuildSafariPromo() {
   const e = t.homeExtras;
 
   return (
-    <section className="relative py-24 lg:py-32 overflow-hidden">
+    <section className="relative overflow-hidden bg-ocean-deep py-24 lg:py-32">
       <div className="absolute inset-0">
-        <Image
-          src="/images/safaris/safari-inside-tsavo-amboseli.jpg"
-          alt="Personalised Kenya safari with Bahari Asili Safaris"
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/35" />
+        <Image src="/images/safaris/safari-inside-tsavo-amboseli.jpg" alt="Personalised Kenya safari with Bahari Asili Safaris" fill className="object-cover opacity-55" sizes="100vw" />
+        <div className="absolute inset-0 bg-ocean-deep/70" />
       </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl">
-          <span className="inline-flex items-center gap-2 font-inter text-orange-400 font-semibold text-sm tracking-widest uppercase mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-            <Sparkles className="w-4 h-4" />
-            {e.buildLabel}
-          </span>
-          <h2 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight mb-5 drop-shadow-[0_3px_8px_rgba(0,0,0,0.9)]">
-            {e.buildTitle}
-          </h2>
-          <p className="font-inter text-white text-base leading-relaxed mb-8 max-w-2xl drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)]">
-            {e.buildSubtitle}
-          </p>
-          <Link
-            href="/build-your-safari"
-            prefetch
-            className="inline-flex items-center gap-2 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-7 py-3.5 rounded-xl transition-all hover:shadow-lg"
-          >
-            {e.buildCta}
-            <ArrowRight className="w-4 h-4" />
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-4 w-4 text-orange-400" aria-hidden="true" />
+              <span className="editorial-label text-orange-300">{e.buildLabel}</span>
+            </div>
+            <h2 className="mt-6 font-editorial text-5xl leading-[0.94] tracking-tight text-white sm:text-6xl lg:text-8xl">{e.buildTitle}</h2>
+            <p className="mt-7 max-w-2xl font-grotesk text-base leading-7 text-white/75">{e.buildSubtitle}</p>
+          </div>
+          <Link href="/build-your-safari" prefetch className="inline-flex items-center gap-3 border-b border-white/60 pb-2 font-mono-editorial text-[10px] uppercase tracking-[0.16em] text-white hover:border-orange-400 hover:text-orange-300">
+            {e.buildCta}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
       </div>
