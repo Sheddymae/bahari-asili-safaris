@@ -18,10 +18,10 @@ export default function InterestsStep({ value, onChange }: InterestsStepProps) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-9">
       <div>
-        <h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground mb-1">{st.title}</h2>
-        <p className="font-inter text-sm text-muted-foreground flex items-center gap-1.5">
+        <h2 className="font-editorial text-4xl leading-none text-ink sm:text-5xl">{st.title}</h2>
+        <p className="font-grotesk text-sm leading-6 text-ink-soft flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-safari-500" /> {st.subtitle}
         </p>
       </div>
@@ -36,10 +36,10 @@ export default function InterestsStep({ value, onChange }: InterestsStepProps) {
               type="button"
               aria-pressed={selected}
               onClick={() => toggle(interest.key)}
-              className={`font-inter text-sm font-medium px-5 py-2.5 rounded-full border-2 transition-all ${
+              className={`font-grotesk text-sm px-5 py-2.5 border border-line transition-all ${
                 selected
-                  ? 'bg-ocean-700 border-ocean-700 text-white shadow-sm'
-                  : 'bg-white border-border text-foreground hover:border-ocean-400 hover:text-ocean-700'
+                  ? 'bg-ocean border-ocean text-paper'
+                  : 'bg-paper border-line text-ink hover:bg-sand hover:text-ocean'
               }`}
             >
               {label}
