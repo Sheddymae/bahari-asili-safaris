@@ -21,6 +21,12 @@ function applySecurityHeaders(res: NextResponse, protectedRoute = false) {
   res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.headers.set('X-Frame-Options', 'SAMEORIGIN');
   res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.headers.set('X-DNS-Prefetch-Control', 'on');
+  res.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
+  res.headers.set('Cross-Origin-Resource-Policy', 'same-site');
+  if (process.env.NODE_ENV === 'production') {
+    res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
   if (protectedRoute) res.headers.set('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
   return res;
 }
