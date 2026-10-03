@@ -77,6 +77,13 @@
   .font-inter { font-family: 'Manrope', sans-serif; }
   .font-caveat { font-family: 'Cormorant Garamond', serif; }
   .text-ocean { color: oklch(42% 0.085 190); }
+  .text-ink { color: var(--color-ink); }
+  .text-paper { color: var(--color-paper); }
+  .text-muted { color: var(--color-muted); }
+  .bg-paper { background-color: var(--color-paper); }
+  .bg-ink { background-color: var(--color-ink); }
+  .bg-ocean-deep { background-color: var(--color-ocean-deep); }
+  .border-line { border-color: var(--color-line); }
   .text-orange { color: oklch(67% 0.17 48); }
   .bg-ocean { background-color: oklch(42% 0.085 190); }
   .bg-orange { background-color: var(--color-orange); }
