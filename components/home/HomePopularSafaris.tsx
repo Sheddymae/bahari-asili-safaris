@@ -3,10 +3,9 @@
 import { useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Clock } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { trackConversion } from '@/components/Analytics';
 import { getLocalizedSafari } from '@/lib/safari-content-i18n';
-import SectionHeader from './SectionHeader';
 import { useHomeCopy } from './useHomeCopy';
 import { useSafariCatalogue } from './useSafariCatalogue';
 
@@ -18,35 +17,64 @@ export default function HomePopularSafaris({ onBook }: { onBook: (name?: string)
     const rest = safaris.filter((s) => !s.popular && s.category !== 'long');
     return [...popular, ...rest].slice(0, 4);
   }, [safaris]);
+
   return (
-    <section id="tours" aria-labelledby="home-popular-title" className="bg-sand-50 py-16 lg:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <SectionHeader kicker={c.popular.kicker} title={c.popular.title} sub={c.popular.sub} />
-          <Link href="/tours" className="mb-10 inline-flex shrink-0 items-center gap-2 font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800">{c.popular.seeAll} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" /></Link>
+    <section id="tours" aria-labelledby="home-popular-title" className="bg-sand-50 py-20 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:items-end">
+          <div>
+            <p className="editorial-label text-ocean-600">{c.popular.kicker}</p>
+            <h2 id="home-popular-title" className="mt-4 max-w-md font-editorial text-4xl leading-none tracking-tight text-ink sm:text-5xl lg:text-6xl">{c.popular.title}</h2>
+          </div>
+          <div className="flex items-end justify-between gap-8 border-b border-line pb-4">
+            <p className="max-w-xl font-grotesk text-sm leading-6 text-ink-soft">{c.popular.sub}</p>
+            <Link href="/tours" className="hidden shrink-0 items-center gap-2 font-mono-editorial text-[10px] uppercase tracking-[0.16em] text-ocean-700 hover:text-orange-600 sm:inline-flex">
+              {c.popular.seeAll}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
         </div>
-        <span id="home-popular-title" className="sr-only">{c.popular.title}</span>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((safari) => {
+
+        <div className="mt-14 grid gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-12">
+          {featured.map((safari, index) => {
             const s = getLocalizedSafari(safari, safariLocale);
+            const featuredLayout = index === 0 ? 'lg:col-span-7 lg:row-span-2' : index === 1 ? 'lg:col-span-5' : index === 2 ? 'lg:col-span-5' : 'lg:col-span-7';
+            const imageHeight = index === 0 ? 'h-[25rem] sm:h-[34rem]' : index === 3 ? 'h-64' : 'h-56 sm:h-64';
             return (
-              <article key={safari.id} className="flex flex-col overflow-hidden rounded-xl border border-border bg-white shadow-card">
-                <Link href={`/safaris/${safari.id}`} className="relative block h-44 focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600 focus-visible:ring-inset">
-                  <Image src={safari.image} alt={s.name} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover" />
+              <article key={safari.id} className={'group ' + featuredLayout}>
+                <Link href={'/safaris/' + safari.id} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600 focus-visible:ring-offset-4">
+                  <div className={'relative overflow-hidden bg-ocean-deep ' + imageHeight}>
+                    <Image src={safari.image} alt={s.name} fill sizes={index === 0 ? '(max-width: 1024px) 100vw, 58vw' : '(max-width: 1024px) 100vw, 42vw'} className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]" />
+                    <span className="absolute left-4 top-4 bg-paper/90 px-2.5 py-1.5 font-mono-editorial text-[10px] uppercase tracking-[0.14em] text-ink backdrop-blur-sm">0{index + 1}</span>
+                  </div>
                 </Link>
-                <div className="flex flex-1 flex-col p-4">
-                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-sand-50 px-3 py-1 font-inter text-xs font-semibold text-ocean-700"><Clock className="h-3.5 w-3.5" aria-hidden="true" />{unit(safari.days, safari.days === 1 ? c.units.day : c.units.days)}{safari.nights > 0 && <> / {unit(safari.nights, safari.nights === 1 ? c.units.night : c.units.nights)}</>}</span>
-                  <h3 className="mt-3 font-poppins text-base font-bold leading-snug text-foreground">{s.name}</h3>
-                  <p className="mt-1 font-inter text-xs text-muted-foreground">{safari.parks.slice(0, 3).join(' · ')}</p>
-                  <div className="mt-auto flex flex-col gap-1 pt-4">
-                    <Link href={`/safaris/${safari.id}`} className="inline-flex items-center justify-center rounded-lg bg-ocean-700 px-4 py-2.5 font-inter text-sm font-semibold text-white hover:bg-ocean-800">{c.popular.viewSafari}</Link>
-                    <button type="button" onClick={() => { trackConversion('booking_started', { location: 'popular_safari' }); onBook(s.name); }} className="rounded-lg px-4 py-2 font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800">{c.popular.requestItinerary}</button>
+                <div className="grid gap-4 pt-4 sm:grid-cols-[1fr_auto] sm:items-start">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="font-mono-editorial text-[10px] uppercase tracking-[0.14em] text-ocean-600">
+                        {unit(safari.days, safari.days === 1 ? c.units.day : c.units.days)}
+                        {safari.nights > 0 && <> / {unit(safari.nights, safari.nights === 1 ? c.units.night : c.units.nights)}</>}
+                      </span>
+                      <span className="text-line" aria-hidden="true">•</span>
+                      <span className="font-grotesk text-xs text-muted">{safari.parks.slice(0, 3).join(' · ')}</span>
+                    </div>
+                    <h3 className="mt-2 font-editorial text-2xl leading-tight text-ink sm:text-3xl">{s.name}</h3>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-4 sm:pt-1">
+                    <button type="button" onClick={() => { trackConversion('booking_started', { location: 'popular_safari' }); onBook(s.name); }} className="font-mono-editorial text-[10px] uppercase tracking-[0.12em] text-ocean-700 hover:text-orange-600">
+                      {c.popular.requestItinerary}
+                    </button>
+                    <Link href={'/safaris/' + safari.id} className="inline-flex h-9 w-9 items-center justify-center border border-line text-ocean-700 hover:border-ocean-500 hover:bg-paper focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600" aria-label={c.popular.viewSafari}>
+                      <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
                   </div>
                 </div>
               </article>
             );
           })}
         </div>
+        <Link href="/tours" className="mt-12 inline-flex items-center gap-2 border-b border-ink pb-1 font-mono-editorial text-[10px] uppercase tracking-[0.16em] text-ink sm:hidden">
+          {c.popular.seeAll}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
       </div>
     </section>
   );
