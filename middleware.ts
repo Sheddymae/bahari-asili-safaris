@@ -23,7 +23,6 @@ function applySecurityHeaders(res: NextResponse, protectedRoute = false) {
   res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   res.headers.set('X-DNS-Prefetch-Control', 'on');
   res.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
-  res.headers.set('Cross-Origin-Resource-Policy', 'same-site');
   if (process.env.NODE_ENV === 'production') {
     res.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
   }
