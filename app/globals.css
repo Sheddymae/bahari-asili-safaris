@@ -1,54 +1,82 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Caveat:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --ocean: #0e7490;
-  --sand: #f5f1e8;
-  --orange: #f97316;
-  --dark: #1f2937;
-  --radius: 0.5rem;
-  --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-  --primary: 197 79% 31%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 43 44% 92%;
-  --secondary-foreground: 222 47% 11%;
-  --muted: 210 20% 96%;
-  --muted-foreground: 215 14% 45%;
-  --accent: 25 95% 53%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 197 79% 31%;
+  /* Coast / Bush Editorial — Phase 1 tokens */
+  --color-ink: oklch(22% 0.025 185);
+  --color-ink-soft: oklch(38% 0.025 185);
+  --color-ocean: oklch(42% 0.085 190);
+  --color-ocean-deep: oklch(28% 0.055 195);
+  --color-sand: oklch(95% 0.028 82);
+  --color-paper: oklch(98.5% 0.012 82);
+  --color-orange: oklch(67% 0.17 48);
+  --color-line: oklch(84% 0.018 82);
+  --color-muted: oklch(52% 0.025 185);
+  --radius: 2px;
+
+  /* Compatibility variables used by existing Radix/Tailwind utilities. */
+  --background: 98.5% 0.012 82;
+  --foreground: 22% 0.025 185;
+  --card: 100% 0 0;
+  --card-foreground: 22% 0.025 185;
+  --popover: 100% 0 0;
+  --popover-foreground: 22% 0.025 185;
+  --primary: 42% 0.085 190;
+  --primary-foreground: 98.5% 0.012 82;
+  --secondary: 95% 0.028 82;
+  --secondary-foreground: 22% 0.025 185;
+  --muted: 94% 0.015 185;
+  --muted-foreground: 52% 0.025 185;
+  --accent: 67% 0.17 48;
+  --accent-foreground: 100% 0 0;
+  --destructive: 58% 0.22 25;
+  --destructive-foreground: 98.5% 0.012 82;
+  --border: 84% 0.018 82;
+  --input: 84% 0.018 82;
+  --ring: 42% 0.085 190;
 }
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-white text-gray-800 font-inter antialiased; overflow-x: clip; }
-  h1, h2, h3, h4, h5, h6 { @apply font-poppins; }
+  body { @apply bg-white text-gray-800 antialiased; font-family: 'Manrope', sans-serif; overflow-x: clip; }
+  h1, h2, h3, h4, h5, h6 { font-family: 'DM Serif Display', serif; font-weight: 400; }
   img, svg, video, canvas { max-width: 100%; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 }
 
 @layer utilities {
-  .font-poppins { font-family: 'Poppins', sans-serif; }
-  .font-inter { font-family: 'Inter', sans-serif; }
-  .text-ocean { color: #0e7490; }
-  .text-orange { color: #f97316; }
-  .bg-ocean { background-color: #0e7490; }
-  .bg-orange { background-color: #f97316; }
-  .bg-sand { background-color: #f5f1e8; }
-  .border-ocean { border-color: #0e7490; }
+  .font-editorial { font-family: 'DM Serif Display', serif; }
+  .font-grotesk { font-family: 'Manrope', sans-serif; }
+  .font-mono-editorial { font-family: 'IBM Plex Mono', monospace; }
+  /* Legacy aliases retained so existing components do not break during migration. */
+  .font-poppins { font-family: 'Manrope', sans-serif; }
+  .font-inter { font-family: 'Manrope', sans-serif; }
+  .font-caveat { font-family: 'DM Serif Display', serif; }
+  .text-ocean { color: oklch(42% 0.085 190); }
+  .text-orange { color: oklch(67% 0.17 48); }
+  .bg-ocean { background-color: oklch(42% 0.085 190); }
+  .bg-orange { background-color: oklch(67% 0.17 48); }
+  .bg-sand { background-color: oklch(95% 0.028 82); }
+  .border-ocean { border-color: oklch(42% 0.085 190); }
   .section-padding { @apply px-4 sm:px-6 lg:px-8; }
+  .editorial-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    line-height: 1.2;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .editorial-rule { border-color: oklch(84% 0.018 82); }
+  .editorial-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  @media (min-width: 768px) {
+    .editorial-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  }
 }
 
 html { scroll-behavior: smooth; }
@@ -62,13 +90,12 @@ a, button, input, select, textarea, [role='button'] {
 button:not([data-no-glow]), a[role='button']:not([data-no-glow]) {
   position: relative;
   isolation: isolate;
-  box-shadow: 0 4px 16px rgba(14, 116, 144, 0.10);
+  box-shadow: none;
 }
 
 button:not([data-no-glow]):hover, button:not([data-no-glow]):focus-visible,
 a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow]):focus-visible {
-  box-shadow: 0 0 18px rgba(14, 116, 144, 0.32), 0 8px 24px rgba(14, 116, 144, 0.16);
-  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(20, 42, 42, 0.10);
 }
 
 button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active { transform: translateY(0) scale(0.98); }
@@ -79,33 +106,9 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
 .trust-marquee-track:hover, .trust-marquee-track:focus-visible { animation-play-state: paused; }
 @keyframes trust-marquee-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 
-.glow-button { position: relative; isolation: isolate; box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 8px 24px rgba(249,115,22,.22); transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease; animation: glow-button-pulse 2.8s ease-in-out infinite; }
-.glow-button:hover, .glow-button:focus-visible { box-shadow: 0 0 0 1px rgba(255,255,255,.28), 0 0 24px rgba(249,115,22,.68), 0 12px 32px rgba(249,115,22,.36); filter: brightness(1.06); animation: none; }
-.glow-button:active { transform: scale(.97); }
-@keyframes glow-button-pulse { 0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 8px 24px rgba(249,115,22,.20); } 50% { box-shadow: 0 0 0 1px rgba(255,255,255,.20), 0 0 20px rgba(249,115,22,.48), 0 10px 28px rgba(249,115,22,.28); } }
-
-.tour-card { transition: transform .3s ease, box-shadow .3s ease; }
-.tour-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.14); }
-
-.nav-link::after { content: ''; display: block; height: 2px; width: 0; background: #f97316; transition: width .3s ease; }
-.nav-link:hover::after, .nav-link.active::after { width: 100%; }
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #0e7490; border-radius: 3px; }
-
-.homepage-main { width: 100%; max-width: 100%; }
-.homepage-main section { max-width: 100%; }
-.homepage-main .max-w-7xl, .homepage-main .max-w-6xl, .homepage-main .max-w-5xl { width: 100%; }
-
-/* Traveler Essentials: compact, layered cards on small screens. The
-   negative offset creates a true card-stack feel while preserving every
-   destination as a reachable link. Desktop/tablet retain the 3-column grid. */
-.traveler-essential-card {
-  position: relative;
-  z-index: 1;
-  transition: transform 280ms cubic-bezier(.22,1,.36,1), box-shadow 280ms ease, border-color 280ms ease, background-color 280ms ease;
-}
+.glow-button { position: relative; isolation: isolate; box-shadow: 0 8px 24px rgba(20,42,42,.12); transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease; }
+.glow-button:hover, .glow-button:focus-visible { box-shadow: 0 12px 30px rgba(20,42,42,.16); filter: brightness(1.03); }
+.glow-button:active { transform: scale(.98); }
 .traveler-essential-card:hover,
 .traveler-essential-card:focus-visible {
   z-index: 10;
