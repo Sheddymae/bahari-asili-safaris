@@ -50,83 +50,124 @@ export default function AboutPageClient() {
 
   return (
     <PageShell>
-      <section className="relative h-[60vh] min-h-[420px] flex items-end overflow-hidden">
-        <Image src="/images/gallery/safari-gamedrive.png" alt={aboutPage.heroImageAlt} fill priority className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 w-full">
-          <span className="font-inter text-safari-300 font-semibold text-sm tracking-widest uppercase block mb-3">{aboutPage.label}</span>
-          <h1 className="font-poppins font-black text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">{aboutPage.heroTitle}</h1>
+      <section className="relative flex min-h-[68vh] items-end overflow-hidden border-b border-line bg-ocean-deep">
+        <Image
+          src="/images/gallery/safari-gamedrive.png"
+          alt={aboutPage.heroImageAlt}
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ocean-deep/90 via-ocean-deep/30 to-transparent" />
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-14 sm:px-8 sm:pb-16 lg:px-10 lg:pb-20">
+          <p className="editorial-label text-orange-300">{aboutPage.label}</p>
+          <h1 className="mt-5 max-w-5xl font-editorial text-5xl leading-[0.9] tracking-tight text-white sm:text-6xl lg:text-8xl">
+            {aboutPage.heroTitle}
+          </h1>
         </div>
       </section>
 
-      <section className="py-16 lg:py-24 bg-sand-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-poppins font-bold text-2xl sm:text-3xl text-foreground mb-5">{aboutPage.whoWeAreTitle}</h2>
-          <p className="font-inter text-foreground text-base leading-relaxed">{aboutPage.whoWeAreBody}</p>
-        </div>
-      </section>
-
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-3 gap-6">
-            {values.map(({ icon: Icon, key }) => (
-              <div key={key} className="bg-sand-50 rounded-2xl p-7 border border-sand-200 text-center">
-                <div className="w-12 h-12 mx-auto rounded-full bg-ocean-50 flex items-center justify-center mb-4"><Icon className="w-6 h-6 text-ocean-700" /></div>
-                <h3 className="font-poppins font-bold text-lg text-foreground mb-2">{aboutPage.values[key].title}</h3>
-                <p className="font-inter text-sm text-foreground leading-relaxed">{aboutPage.values[key].body}</p>
-              </div>
-            ))}
+      <section className="border-b border-line bg-paper py-20 sm:py-24 lg:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-24 lg:px-10">
+          <div>
+            <p className="editorial-label text-ocean-700">01 / Our story</p>
+            <h2 className="mt-5 max-w-md font-editorial text-4xl leading-[0.95] tracking-tight text-ink sm:text-5xl">
+              {aboutPage.whoWeAreTitle}
+            </h2>
+          </div>
+          <div className="max-w-3xl border-t border-line pt-6">
+            <p className="font-grotesk text-base leading-8 text-ink-soft sm:text-lg">{aboutPage.whoWeAreBody}</p>
+            <div className="mt-10 grid gap-6 border-t border-line pt-5 sm:grid-cols-3">
+              <div><p className="font-mono-editorial text-[9px] uppercase tracking-[0.15em] text-muted">Origin</p><p className="mt-2 font-editorial text-xl text-ink">Watamu</p></div>
+              <div><p className="font-mono-editorial text-[9px] uppercase tracking-[0.15em] text-muted">Perspective</p><p className="mt-2 font-editorial text-xl text-ink">Kenyan</p></div>
+              <div><p className="font-mono-editorial text-[9px] uppercase tracking-[0.15em] text-muted">Journey</p><p className="mt-2 font-editorial text-xl text-ink">Coast → Bush</p></div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-16 lg:py-24 bg-sand-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-poppins font-bold text-2xl sm:text-3xl text-foreground text-center mb-10">{aboutPage.setsApartTitle}</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {setsApart.map(({ icon: Icon, key }) => (
-              <div key={key} className="bg-white rounded-2xl p-6 border border-border shadow-card">
-                <Icon className="w-6 h-6 text-safari-500 mb-3" />
-                <h3 className="font-poppins font-semibold text-base text-foreground mb-1.5">{aboutPage.setsApart[key].title}</h3>
-                <p className="font-inter text-sm text-foreground leading-relaxed">{aboutPage.setsApart[key].body}</p>
-              </div>
-            ))}
+      <section className="border-b border-line bg-sand-50 py-20 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="mb-10 flex items-end justify-between gap-6 border-b border-line pb-5">
+            <div>
+              <p className="editorial-label text-orange-600">02 / Principles</p>
+              <h2 className="mt-3 font-editorial text-4xl leading-none text-ink sm:text-5xl">{aboutPage.setsApartTitle}</h2>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-9 max-w-2xl text-center">
-            <span className="mb-2 inline-flex items-center rounded-full bg-safari-100 px-4 py-1.5 font-inter text-xs font-bold uppercase tracking-[0.18em] text-safari-700">{t.about.label}</span>
-            <h2 className="font-poppins text-2xl font-extrabold text-foreground sm:text-4xl">{t.about.whyTitle}</h2>
-            <p className="mt-2 font-inter text-sm leading-6 text-foreground/70 sm:text-base">{t.about.whySubtitle}</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-            {whyTravel.map(({ icon: Icon, titleKey, bodyKey }) => (
-              <article key={titleKey} className="rounded-2xl border border-sand-200 bg-sand-50 p-6 shadow-card">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-safari-500 text-white"><Icon className="h-6 w-6" /></div>
-                <h3 className="mb-2 font-poppins text-lg font-bold leading-snug text-foreground">{t.about[titleKey as keyof typeof t.about] as string}</h3>
-                <p className="font-inter text-sm leading-6 text-foreground/75">{t.about[bodyKey as keyof typeof t.about] as string}</p>
+          <div className="border-t border-line">
+            {setsApart.map(({ icon: Icon, key }, index) => (
+              <article key={key} className="grid gap-5 border-b border-line py-7 sm:grid-cols-[3rem_3rem_0.55fr_1fr] sm:items-start sm:gap-6">
+                <span className="font-mono-editorial text-[10px] text-orange-600">0{index + 1}</span>
+                <Icon className="mt-0.5 h-4 w-4 text-ocean-700" aria-hidden="true" />
+                <h3 className="font-editorial text-2xl leading-tight text-ink sm:text-3xl">{aboutPage.setsApart[key].title}</h3>
+                <p className="font-grotesk text-sm leading-6 text-ink-soft">{aboutPage.setsApart[key].body}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 justify-center mb-4"><Users className="w-5 h-5 text-safari-500" /><h2 className="font-poppins font-bold text-2xl sm:text-3xl text-foreground">{aboutPage.guidesTitle}</h2></div>
-          <p className="font-inter text-muted-foreground text-sm text-center max-w-xl mx-auto mb-10">{aboutPage.guidesIntro}</p>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {guideQualities.map(({ icon: Icon, key }) => (
-              <div key={key} className="bg-sand-50 rounded-2xl p-6 border border-sand-200 text-center"><Icon className="w-8 h-8 mx-auto text-safari-500 mb-4" /><h3 className="font-poppins font-bold text-base text-foreground mb-1.5">{aboutPage.guides[key].title}</h3><p className="font-inter text-sm text-muted-foreground">{aboutPage.guides[key].body}</p></div>
-            ))}
+      <section className="border-b border-line bg-paper py-20 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+            <div>
+              <p className="editorial-label text-ocean-700">03 / Working with you</p>
+              <h2 className="mt-4 max-w-md font-editorial text-4xl leading-[0.95] text-ink sm:text-5xl">{t.about.whyTitle}</h2>
+              <p className="mt-5 max-w-sm font-grotesk text-sm leading-6 text-ink-soft">{t.about.whySubtitle}</p>
+            </div>
+            <div className="border-t border-line">
+              {whyTravel.map(({ icon: Icon, titleKey, bodyKey }, index) => (
+                <article key={titleKey} className="grid gap-5 border-b border-line py-6 sm:grid-cols-[3rem_1fr]">
+                  <div className="flex h-7 w-7 items-center justify-center border border-line text-ocean-700">
+                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <h3 className="font-editorial text-2xl leading-tight text-ink">{t.about[titleKey as keyof typeof t.about] as string}</h3>
+                      <span className="hidden font-mono-editorial text-[9px] text-muted sm:block">0{index + 1}</span>
+                    </div>
+                    <p className="mt-2 max-w-2xl font-grotesk text-sm leading-6 text-ink-soft">{t.about[bodyKey as keyof typeof t.about] as string}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="pb-20 lg:pb-28 bg-white"><div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center"><p className="font-inter text-muted-foreground text-sm mb-2">{aboutPage.signatureIntro}</p><p className="font-caveat text-5xl text-ocean-800">— Shadrack</p></div></section>
+      <section className="border-b border-line bg-ocean-deep py-20 text-paper sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+            <div>
+              <p className="editorial-label text-orange-300">04 / The field team</p>
+              <h2 className="mt-4 max-w-md font-editorial text-4xl leading-[0.95] sm:text-5xl">{aboutPage.guidesTitle}</h2>
+              <p className="mt-5 max-w-sm font-grotesk text-sm leading-6 text-white/65">{aboutPage.guidesIntro}</p>
+            </div>
+            <div className="border-t border-white/15">
+              {guideQualities.map(({ icon: Icon, key }, index) => (
+                <article key={key} className="grid gap-5 border-b border-white/15 py-7 sm:grid-cols-[3rem_3rem_1fr] sm:items-start">
+                  <span className="font-mono-editorial text-[10px] text-orange-300">0{index + 1}</span>
+                  <Icon className="mt-0.5 h-4 w-4 text-white/65" aria-hidden="true" />
+                  <div>
+                    <h3 className="font-editorial text-2xl leading-tight">{aboutPage.guides[key].title}</h3>
+                    <p className="mt-2 max-w-xl font-grotesk text-sm leading-6 text-white/60">{aboutPage.guides[key].body}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-paper py-16 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <div className="border-t border-line pt-6">
+            <p className="font-mono-editorial text-[9px] uppercase tracking-[0.16em] text-muted">{aboutPage.signatureIntro}</p>
+            <p className="mt-3 font-editorial text-4xl text-ocean-deep sm:text-5xl">— Shadrack</p>
+            <p className="mt-2 font-mono-editorial text-[9px] uppercase tracking-[0.14em] text-muted">Bahari Asili Safaris / Watamu, Kenya</p>
+          </div>
+        </div>
+      </section>
     </PageShell>
   );
 }
