@@ -17,6 +17,12 @@
   --color-muted: oklch(52% 0.025 185);
   --radius: 2px;
 
+  /* Motion system — short, calm, and tactile rather than decorative. */
+  --motion-fast: 180ms;
+  --motion-base: 240ms;
+  --motion-slow: 720ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
   /* Compatibility variables used by existing Radix/Tailwind utilities. */
   --background: 98.5% 0.012 82;
   --foreground: 22% 0.025 185;
@@ -51,7 +57,6 @@
   .font-editorial { font-family: 'DM Serif Display', serif; }
   .font-grotesk { font-family: 'Manrope', sans-serif; }
   .font-mono-editorial { font-family: 'IBM Plex Mono', monospace; }
-  /* Legacy aliases retained so existing components do not break during migration. */
   .font-poppins { font-family: 'Manrope', sans-serif; }
   .font-inter { font-family: 'Manrope', sans-serif; }
   .font-caveat { font-family: 'DM Serif Display', serif; }
@@ -70,21 +75,29 @@
     text-transform: uppercase;
   }
   .editorial-rule { border-color: oklch(84% 0.018 82); }
-  .editorial-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+  .editorial-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
   @media (min-width: 768px) {
     .editorial-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   }
+
+  /* Phase 14: reusable, restrained interaction primitives. */
+  .motion-lift {
+    transition: transform var(--motion-base) var(--motion-ease), border-color var(--motion-base) var(--motion-ease), color var(--motion-base) var(--motion-ease);
+  }
+  .motion-lift:hover { transform: translateY(-3px); }
+  .motion-image { overflow: hidden; }
+  .motion-image img, .motion-image video { transition: transform 900ms var(--motion-ease); }
+  .motion-image:hover img, .motion-image:hover video { transform: scale(1.025); }
+  .motion-arrow { transition: transform var(--motion-fast) var(--motion-ease); }
+  .group:hover .motion-arrow { transform: translate(2px, -2px); }
 }
 
 html { scroll-behavior: smooth; }
 
 a, button, input, select, textarea, [role='button'] {
   transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
-  transition-duration: 220ms;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-duration: var(--motion-base);
+  transition-timing-function: var(--motion-ease);
 }
 
 button:not([data-no-glow]), a[role='button']:not([data-no-glow]) {
@@ -106,7 +119,7 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
 .trust-marquee-track:hover, .trust-marquee-track:focus-visible { animation-play-state: paused; }
 @keyframes trust-marquee-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 
-.glow-button { position: relative; isolation: isolate; box-shadow: 0 8px 24px rgba(20,42,42,.12); transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease; }
+.glow-button { position: relative; isolation: isolate; box-shadow: 0 8px 24px rgba(20,42,42,.12); transition: transform var(--motion-base) var(--motion-ease), box-shadow var(--motion-base) var(--motion-ease), filter var(--motion-base) var(--motion-ease); }
 .glow-button:hover, .glow-button:focus-visible { box-shadow: 0 12px 30px rgba(20,42,42,.16); filter: brightness(1.03); }
 .glow-button:active { transform: scale(.98); }
 .traveler-essential-card:hover,
@@ -126,43 +139,17 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .tour-card { border-radius: 1rem; }
 
   .traveler-essentials { padding-top: 2.75rem; padding-bottom: 2.75rem; }
-  .traveler-essentials-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-    padding: 0 .15rem .75rem;
-  }
-  .traveler-essentials-grid > div {
-    position: relative;
-    margin-top: -18px;
-  }
+  .traveler-essentials-grid { grid-template-columns: 1fr; gap: 0; padding: 0 .15rem .75rem; }
+  .traveler-essentials-grid > div { position: relative; margin-top: -18px; }
   .traveler-essentials-grid > div:first-child { margin-top: 0; }
   .traveler-essentials-grid > div:nth-child(2) { z-index: 2; }
   .traveler-essentials-grid > div:nth-child(3) { z-index: 3; }
   .traveler-essentials-grid > div:nth-child(4) { z-index: 4; }
   .traveler-essentials-grid > div:nth-child(5) { z-index: 5; }
   .traveler-essentials-grid > div:nth-child(6) { z-index: 6; }
-  .traveler-essential-card {
-    min-height: 0;
-    padding: 1rem 1.05rem;
-    border-radius: 1.15rem;
-    box-shadow: 0 7px 20px rgba(15,23,42,.08);
-  }
-  .traveler-essential-card:hover,
-  .traveler-essential-card:focus-visible {
-    transform: translateY(-6px) scale(1.01);
-  }
-  .traveler-essential-description {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-    line-clamp: 2;
-    line-height: 1.45rem;
-  }
-
-  /* Safari cards are critical landing-page content. GSAP may not receive a
-     ScrollTrigger callback on some mobile browsers; keep the content visible
-     rather than allowing a JS animation to leave the page blank. */
+  .traveler-essential-card { min-height: 0; padding: 1rem 1.05rem; border-radius: 1.15rem; box-shadow: 0 7px 20px rgba(15,23,42,.08); }
+  .traveler-essential-card:hover, .traveler-essential-card:focus-visible { transform: translateY(-6px) scale(1.01); }
+  .traveler-essential-description { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; line-clamp: 2; line-height: 1.45rem; }
   .homepage-main .tour-card { opacity: 1 !important; visibility: visible !important; }
 }
 
@@ -176,10 +163,18 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-tide, .trust-marquee-track, .glow-button, button:not([data-no-glow]), a[role='button']:not([data-no-glow]) { animation: none !important; transition-duration: .01ms !important; }
   html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .motion-lift:hover,
+  .traveler-essential-card:hover,
+  .traveler-essential-card:focus-visible { transform: none !important; }
+  .motion-image img, .motion-image video { transform: none !important; }
 }
-
 
 /* CMS rich text: semantic typography is controlled by the public site, not the editor. */
 .rich-content p { margin: 0 0 1.35rem; }
@@ -196,5 +191,4 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
 .rich-content em, .rich-content i { font-style: italic; }
 .rich-content u { text-underline-offset: 3px; }
 .rich-content br { content: ""; }
-
 .rich-content h1 { margin: 2.6rem 0 1.1rem; font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.2; font-weight: 750; }
