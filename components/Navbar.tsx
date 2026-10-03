@@ -180,12 +180,12 @@ export default function Navbar() {
   );
 
   const navTextClass = isScrolled
-    ? 'text-foreground hover:text-ocean-700'
-    : 'text-white/90 hover:text-white';
+    ? 'text-ink hover:text-ocean'
+    : 'text-white/90 hover:text-white hover:border-white/50';
 
   const dropdownPanelClass = isScrolled
-    ? 'bg-paper/95 border-border shadow-editorial'
-    : 'bg-paper/95 border-white/30 shadow-editorial';
+    ? 'bg-paper/98 border-line shadow-editorial'
+    : 'bg-paper/98 border-line shadow-editorial';
 
   return (
     <>
@@ -195,8 +195,8 @@ export default function Navbar() {
         className={[
           'fixed inset-x-0 top-0 z-50 transition-all duration-200 motion-reduce:transition-none',
           isScrolled
-            ? 'bg-paper/95 py-2.5 shadow-editorial backdrop-blur-sm'
-            : 'border-b border-white/20 bg-white/[0.06] py-4 backdrop-blur-sm',
+            ? 'border-b border-[color:var(--color-line)]/70 bg-paper/96 py-2.5 shadow-editorial backdrop-blur-md'
+            : 'border-b border-white/20 bg-ocean-deep/30 py-4 backdrop-blur-md',
         ].join(' ')}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -205,7 +205,7 @@ export default function Navbar() {
               href="/"
               prefetch
               aria-label="Bahari Asili Safaris home"
-              className="flex shrink-0 items-center rounded-md transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+              className="flex shrink-0 items-center transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
             >
               <Image
                 src="/images/logo/logo-horizontal.png"
@@ -213,7 +213,7 @@ export default function Navbar() {
                 width={1752}
                 height={798}
                 priority
-                className="h-7 w-auto sm:h-9"
+                className="h-7 w-auto sm:h-8 lg:h-9"
               />
             </Link>
 
@@ -234,7 +234,7 @@ export default function Navbar() {
                       aria-expanded={isOpen}
                       onClick={() => setOpenMenu(isOpen ? null : menu.key)}
                       onKeyDown={(event) => handleDropdownKeyDown(event, menu.key)}
-                      className={`inline-flex min-h-11 items-center gap-1 rounded-[2px] px-2 py-2 font-grotesk text-sm font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 2xl:px-2.5 ${navTextClass}`}
+                      className={`inline-flex min-h-11 items-center gap-1 border-b border-transparent px-2 py-2 font-grotesk text-sm font-medium tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 2xl:px-2.5 ${navTextClass}`}
                     >
                       {menu.label}
                       <ChevronDown aria-hidden="true" className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -257,7 +257,7 @@ export default function Navbar() {
                                 href={`/destinations/${destination.slug}`}
                                 prefetch
                                 role="menuitem"
-                                className="flex min-h-10 items-center rounded-[2px] px-3 py-2 font-grotesk text-sm text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
+                                className="flex min-h-10 items-center rounded-[2px] px-3 py-2 font-grotesk text-sm text-foreground transition-colors hover:bg-shell focus-visible:bg-shell focus-visible:outline-none"
                               >
                                 {destination.displayName}
                               </Link>
@@ -266,7 +266,7 @@ export default function Navbar() {
                               href="/destinations"
                               prefetch
                               role="menuitem"
-                              className="mt-1 flex min-h-10 items-center justify-center rounded-[2px] bg-ocean-50 px-3 py-2 font-grotesk text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                              className="mt-1 flex min-h-10 items-center justify-center rounded-[2px] bg-ocean px-3 py-2 font-grotesk text-sm font-semibold text-white transition-colors hover:bg-ocean-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                             >
                               {t.nav.viewAllDestinations}
                             </Link>
@@ -306,7 +306,7 @@ export default function Navbar() {
               <Link
                 href="/build-your-safari"
                 prefetch
-                className={`inline-flex min-h-11 items-center justify-center rounded-[2px] border px-4 py-2 font-grotesk text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white hover:bg-ocean-800 focus-visible:ring-ocean-700' : 'border-white bg-white/[0.06] text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
+                className={`inline-flex min-h-11 items-center justify-center rounded-[2px] border px-4 py-2 font-grotesk text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white hover:bg-ocean-deep focus-visible:ring-ocean-700' : 'border-white bg-white/[0.06] text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
               >
                 {t.nav.planMySafari}
               </Link>
@@ -322,9 +322,9 @@ export default function Navbar() {
                     }}
                     aria-haspopup="true"
                     aria-expanded={isUserMenuOpen}
-                    className={`inline-flex min-h-11 items-center gap-2 rounded-[2px] px-3 py-2 font-grotesk text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'bg-white text-ocean-700 hover:bg-ocean-50' : 'text-white hover:bg-white/15'}`}
+                    className={`inline-flex min-h-11 items-center gap-2 rounded-[2px] px-3 py-2 font-grotesk text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'bg-white text-ocean-700 hover:bg-shell' : 'text-white hover:bg-white/15'}`}
                   >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[2px] bg-orange-500">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[2px] bg-coral">
                       <User aria-hidden="true" className="h-3.5 w-3.5 text-white" />
                     </span>
                     {t.authSession.myDashboard}
@@ -341,7 +341,7 @@ export default function Navbar() {
                         href="/dashboard"
                         role="menuitem"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="flex min-h-11 items-center gap-2 px-4 py-3 font-grotesk text-sm text-foreground transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+                        className="flex min-h-11 items-center gap-2 px-4 py-3 font-grotesk text-sm text-foreground transition-colors hover:bg-shell focus-visible:bg-shell focus-visible:outline-none"
                       >
                         <User aria-hidden="true" className="h-4 w-4 text-muted-foreground" />
                         {t.authSession.myDashboard}
@@ -411,7 +411,7 @@ export default function Navbar() {
           {isMobileOpen && (
             <div
               id="mobile-navigation"
-              className="mt-3 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-[2px] border border-border bg-white shadow-editorial xl:hidden"
+              className="mt-3 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-[2px] border border-border bg-paper/98 shadow-editorial backdrop-blur-xl xl:hidden"
             >
               <div className="border-b border-border px-4 py-4">
                 <p className="px-2 pb-2 font-grotesk text-[10px] font-semibold uppercase tracking-[0.16em] text-ocean-700">
@@ -421,7 +421,7 @@ export default function Navbar() {
                   href="/build-your-safari"
                   prefetch
                   onClick={closeMobile}
-                  className="flex min-h-12 items-center justify-center rounded-[2px] bg-ocean-700 px-4 py-3 font-grotesk text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                  className="flex min-h-12 items-center justify-center rounded-[2px] bg-ocean px-4 py-3 font-grotesk text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                 >
                   {t.nav.planMySafari}
                 </Link>
@@ -455,7 +455,7 @@ export default function Navbar() {
                                   href={`/destinations/${destination.slug}`}
                                   prefetch
                                   onClick={closeMobile}
-                                  className="flex min-h-11 items-center rounded-[2px] px-3 py-2.5 font-grotesk text-sm text-muted-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                                  className="flex min-h-11 items-center rounded-[2px] px-3 py-2.5 font-grotesk text-sm text-muted-foreground transition-colors hover:bg-shell hover:text-ocean focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                                 >
                                   {destination.displayName}
                                 </Link>
@@ -476,7 +476,7 @@ export default function Navbar() {
                                 href={item.href}
                                 prefetch
                                 onClick={closeMobile}
-                                className="flex min-h-11 items-center rounded-[2px] px-3 py-2.5 font-grotesk text-sm text-muted-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                                className="flex min-h-11 items-center rounded-[2px] px-3 py-2.5 font-grotesk text-sm text-muted-foreground transition-colors hover:bg-shell hover:text-ocean focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                               >
                                 {item.label}
                               </Link>
@@ -520,7 +520,7 @@ export default function Navbar() {
                       href="/dashboard"
                       prefetch
                       onClick={closeMobile}
-                      className="flex min-h-11 items-center justify-center rounded-[2px] bg-ocean-700 px-4 py-2.5 font-grotesk text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                      className="flex min-h-11 items-center justify-center rounded-[2px] bg-ocean px-4 py-2.5 font-grotesk text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                     >
                       {t.authSession.myDashboard}
                     </Link>
@@ -547,7 +547,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => openAuth('signup')}
-                      className="min-h-11 rounded-[2px] bg-ocean-700 px-4 py-2.5 font-grotesk text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                      className="min-h-11 rounded-[2px] bg-ocean px-4 py-2.5 font-grotesk text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                     >
                       {t.nav.register}
                     </button>
