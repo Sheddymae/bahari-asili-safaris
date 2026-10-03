@@ -1,20 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Coast / Bush Editorial — Phase 1 tokens */
-  --color-ink: oklch(22% 0.025 185);
-  --color-ink-soft: oklch(38% 0.025 185);
-  --color-ocean: oklch(42% 0.085 190);
-  --color-ocean-deep: oklch(28% 0.055 195);
-  --color-sand: oklch(95% 0.028 82);
-  --color-paper: oklch(98.5% 0.012 82);
-  --color-orange: oklch(67% 0.17 48);
-  --color-line: oklch(84% 0.018 82);
-  --color-muted: oklch(52% 0.025 185);
+  /* Indian Ocean / Raw Luxury — Phase 1 tokens */
+  --color-ink: oklch(19% 0.035 205);
+  --color-ink-soft: oklch(37% 0.035 205);
+  --color-ocean: oklch(43% 0.085 205);
+  --color-ocean-deep: oklch(24% 0.055 210);
+  --color-sand: oklch(94% 0.025 78);
+  --color-paper: oklch(98% 0.012 78);
+  --color-orange: oklch(66% 0.145 42);
+  --color-line: oklch(83% 0.02 78);
+  --color-muted: oklch(51% 0.03 205);
+  --color-shell: oklch(96% 0.018 55);
+  --color-coral: oklch(65% 0.12 35);
+  --color-bronze: oklch(59% 0.095 63);
   --radius: 2px;
 
   /* Motion system — short, calm, and tactile rather than decorative. */
@@ -30,25 +33,25 @@
   /* Compatibility variables consumed as HSL channels by the legacy
      Tailwind/Radix aliases below. Keep the editorial tokens above in OKLCH;
      these channel values prevent invalid hsl(var(...)) declarations. */
-  --background: 48 33% 98%;
-  --foreground: 180 20% 18%;
+  --background: 40 30% 98%;
+  --foreground: 197 34% 16%;
   --card: 0 0% 100%;
-  --card-foreground: 180 20% 18%;
+  --card-foreground: 197 34% 16%;
   --popover: 0 0% 100%;
-  --popover-foreground: 180 20% 18%;
-  --primary: 184 72% 27%;
-  --primary-foreground: 48 33% 98%;
+  --popover-foreground: 197 34% 16%;
+  --primary: 198 62% 28%;
+  --primary-foreground: 40 30% 98%;
   --secondary: 43 36% 95%;
-  --secondary-foreground: 180 20% 18%;
+  --secondary-foreground: 197 34% 16%;
   --muted: 180 13% 94%;
-  --muted-foreground: 180 18% 42%;
-  --accent: 29 93% 53%;
+  --muted-foreground: 197 18% 42%;
+  --accent: 29 78% 49%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 72% 50%;
-  --destructive-foreground: 48 33% 98%;
+  --destructive-foreground: 40 30% 98%;
   --border: 43 24% 84%;
   --input: 43 24% 84%;
-  --ring: 184 72% 27%;
+  --ring: 198 62% 28%;
 }
 
 @layer base {
@@ -61,22 +64,30 @@
     background-size: 180px 180px;
     background-attachment: fixed;
   }
-  h1, h2, h3, h4, h5, h6 { font-family: 'DM Serif Display', serif; font-weight: 400; }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Cormorant Garamond', serif; font-weight: 500; }
   img, svg, video, canvas { max-width: 100%; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 }
 
 @layer utilities {
-  .font-editorial { font-family: 'DM Serif Display', serif; }
+  .font-editorial { font-family: 'Cormorant Garamond', serif; font-weight: 500; }
   .font-grotesk { font-family: 'Manrope', sans-serif; }
   .font-mono-editorial { font-family: 'IBM Plex Mono', monospace; }
   .font-poppins { font-family: 'Manrope', sans-serif; }
   .font-inter { font-family: 'Manrope', sans-serif; }
-  .font-caveat { font-family: 'DM Serif Display', serif; }
+  .font-caveat { font-family: 'Cormorant Garamond', serif; }
   .text-ocean { color: oklch(42% 0.085 190); }
   .text-orange { color: oklch(67% 0.17 48); }
   .bg-ocean { background-color: oklch(42% 0.085 190); }
-  .bg-orange { background-color: oklch(67% 0.17 48); }
+  .bg-orange { background-color: var(--color-orange); }
+  .text-shell { color: var(--color-shell); }
+  .text-coral { color: var(--color-coral); }
+  .text-bronze { color: var(--color-bronze); }
+  .bg-shell { background-color: var(--color-shell); }
+  .bg-coral { background-color: var(--color-coral); }
+  .bg-bronze { background-color: var(--color-bronze); }
+  .border-shell { border-color: var(--color-shell); }
+  .border-bronze { border-color: var(--color-bronze); }
   .bg-sand { background-color: oklch(95% 0.028 82); }
   .border-ocean { border-color: oklch(42% 0.085 190); }
   .section-padding { @apply px-4 sm:px-6 lg:px-8; }
