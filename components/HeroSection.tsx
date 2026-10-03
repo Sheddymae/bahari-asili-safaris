@@ -65,9 +65,9 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
 
   const dropdown = isLocOpen && typeof document !== 'undefined'
     ? createPortal(
-        <div className="fixed z-[10000] max-h-72 overflow-y-auto rounded-xl border border-border bg-white shadow-2xl" style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }} role="listbox" aria-label={t.bookingOverlay.selectDest}>
+        <div className="fixed z-[10000] max-h-72 overflow-y-auto rounded-sm border border-border bg-white shadow-2xl" style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }} role="listbox" aria-label={t.bookingOverlay.selectDest}>
           {locations.map((loc) => (
-            <button key={loc} type="button" role="option" aria-selected={location === loc} onClick={() => { setLocation(loc); setIsLocOpen(false); }} className="block w-full border-b border-sand-100 px-4 py-3 text-left font-inter text-sm text-foreground transition-colors last:border-0 hover:bg-sand-50 hover:text-ocean-700">
+            <button key={loc} type="button" role="option" aria-selected={location === loc} onClick={() => { setLocation(loc); setIsLocOpen(false); }} className="block w-full border-b border-sand-100 px-4 py-3 text-left font-grotesk text-sm text-foreground transition-colors last:border-0 hover:bg-sand-50 hover:text-ocean-700">
               {loc}
             </button>
           ))}
@@ -81,13 +81,13 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
       <CinematicHeroVideo>
         <CinematicTextOverlay onPlan={() => onBook({ destination: location, adults: Math.min(30, Math.max(1, Number.parseInt(people, 10) || 1)), arrivalDate: date })} />
         <div className={(mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0') + ' hidden sm:block absolute bottom-6 left-1/2 z-30 w-full -translate-x-1/2 px-4 transition-all duration-300 sm:bottom-8 sm:px-6'} style={{ pointerEvents: mounted ? 'auto' : 'none' }}>
-          <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-2 rounded-2xl border border-white/30 bg-white/95 p-3 shadow-2xl backdrop-blur-md sm:flex-row sm:items-center sm:p-4">
+          <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-2 rounded-sm border border-white/30 bg-white/95 p-3 shadow-2xl backdrop-blur-md sm:flex-row sm:items-center sm:p-4">
             <div className="relative min-w-0 flex-1">
-              <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) updateMenuPosition(); setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
+              <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) updateMenuPosition(); setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-sm px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
                 <MapPin className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
-                  <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.location}</span>
-                  <span className={'block truncate font-inter text-sm ' + (location ? 'font-medium text-foreground' : 'text-muted-foreground')}>{location || t.bookingOverlay.selectDest}</span>
+                  <span className="block font-grotesk text-xs font-medium text-muted-foreground">{t.hero.location}</span>
+                  <span className={'block truncate font-grotesk text-sm ' + (location ? 'font-medium text-foreground' : 'text-muted-foreground')}>{location || t.bookingOverlay.selectDest}</span>
                 </span>
                 <ChevronDown className={'h-3.5 w-3.5 flex-shrink-0 text-muted-foreground transition-transform ' + (isLocOpen ? 'rotate-180' : '')} />
               </button>
@@ -96,11 +96,11 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
             <div className="hidden h-10 w-px self-center bg-muted sm:block" />
 
             <label className="min-w-0 flex-1">
-              <span className="flex items-center gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-sand-50">
+              <span className="flex items-center gap-2 rounded-sm px-4 py-3 transition-colors hover:bg-sand-50">
                 <Users className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
-                  <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.people}</span>
-                  <input type="number" min="1" max="30" value={people} onChange={(e) => setPeople(e.target.value)} className="w-full border-none bg-transparent font-inter text-sm font-medium text-foreground outline-none" aria-label={t.hero.people} />
+                  <span className="block font-grotesk text-xs font-medium text-muted-foreground">{t.hero.people}</span>
+                  <input type="number" min="1" max="30" value={people} onChange={(e) => setPeople(e.target.value)} className="w-full border-none bg-transparent font-grotesk text-sm font-medium text-foreground outline-none" aria-label={t.hero.people} />
                 </span>
               </span>
             </label>
@@ -108,16 +108,16 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
             <div className="hidden h-10 w-px self-center bg-muted sm:block" />
 
             <label className="min-w-0 flex-1">
-              <span className="flex items-center gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-sand-50">
+              <span className="flex items-center gap-2 rounded-sm px-4 py-3 transition-colors hover:bg-sand-50">
                 <CalendarDays className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
-                  <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.date}</span>
-                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full cursor-pointer border-none bg-transparent font-inter text-sm text-foreground outline-none" aria-label={t.hero.date} />
+                  <span className="block font-grotesk text-xs font-medium text-muted-foreground">{t.hero.date}</span>
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full cursor-pointer border-none bg-transparent font-grotesk text-sm text-foreground outline-none" aria-label={t.hero.date} />
                 </span>
               </span>
             </label>
 
-            <button type="button" onClick={handleBookClick} className="whitespace-nowrap rounded-xl bg-book px-8 py-3.5 font-poppins font-semibold text-white transition-colors hover:bg-book-600 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-book focus-visible:ring-offset-2">
+            <button type="button" onClick={handleBookClick} className="whitespace-nowrap rounded-sm bg-book px-8 py-3.5 font-editorial font-semibold text-white transition-colors hover:bg-book-600 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-book focus-visible:ring-offset-2">
               {t.hero.bookNow} →
             </button>
           </div>

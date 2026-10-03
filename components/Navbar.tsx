@@ -195,11 +195,11 @@ export default function Navbar() {
         className={[
           'fixed inset-x-0 top-0 z-50 transition-all duration-300 motion-reduce:transition-none',
           isScrolled
-            ? 'bg-white/95 py-3 shadow-lg backdrop-blur-md'
-            : 'border-b border-white/20 bg-white/10 py-5 backdrop-blur-md',
+            ? 'border-b border-black/10 bg-paper/95 py-3 shadow-none backdrop-blur-md'
+            : 'border-b border-white/25 bg-black/10 py-5 backdrop-blur-sm',
         ].join(' ')}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="editorial-shell">
           <div className="flex items-center justify-between gap-4">
             <Link
               href="/"
@@ -234,7 +234,7 @@ export default function Navbar() {
                       aria-expanded={isOpen}
                       onClick={() => setOpenMenu(isOpen ? null : menu.key)}
                       onKeyDown={(event) => handleDropdownKeyDown(event, menu.key)}
-                      className={`inline-flex min-h-11 items-center gap-1 rounded-lg px-2.5 py-2 font-inter text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 2xl:px-3 ${navTextClass}`}
+                      className={`inline-flex min-h-11 items-center gap-1 px-2.5 py-2 font-grotesk text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 2xl:px-3 ${navTextClass}`}
                     >
                       {menu.label}
                       <ChevronDown aria-hidden="true" className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -242,7 +242,7 @@ export default function Navbar() {
 
                     {isOpen && (
                       <div
-                        className={`absolute left-1/2 top-full mt-2 -translate-x-1/2 rounded-2xl border p-2 backdrop-blur-xl ${dropdownPanelClass} ${menu.key === 'destinations' ? 'w-[min(42rem,calc(100vw-2rem))]' : 'w-64'}`}
+                        className={`absolute left-1/2 top-full mt-2 -translate-x-1/2 border p-2 backdrop-blur-md ${dropdownPanelClass} ${menu.key === 'destinations' ? 'w-[min(42rem,calc(100vw-2rem))]' : 'w-64'}`}
                         role="menu"
                         aria-label={menu.label}
                       >
@@ -306,7 +306,7 @@ export default function Navbar() {
               <Link
                 href="/build-your-safari"
                 prefetch
-                className={`inline-flex min-h-11 items-center justify-center rounded-full border-2 px-4 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white hover:bg-ocean-800 focus-visible:ring-ocean-700' : 'border-white bg-white/10 text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
+                className={`inline-flex min-h-11 items-center justify-center rounded-sm border px-4 py-2 font-mono-editorial text-[11px] font-semibold uppercase tracking-[0.08em] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 bg-ocean-700 text-white hover:bg-ocean-800 focus-visible:ring-ocean-700' : 'border-white bg-white/10 text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
               >
                 {t.nav.planMySafari}
               </Link>
@@ -332,7 +332,7 @@ export default function Navbar() {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden rounded-xl border border-border bg-white shadow-xl" role="menu">
+                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden border border-border bg-white shadow-none" role="menu">
                       <div className="border-b border-border px-4 py-3">
                         <p className="truncate font-inter text-sm font-semibold text-foreground">{displayName}</p>
                         <p className="truncate font-inter text-xs text-muted-foreground">{user.email}</p>
@@ -373,7 +373,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setAuthModal({ open: true, mode: 'signup' })}
-                    className={`min-h-11 rounded-full border-2 px-4 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white focus-visible:ring-ocean-700' : 'border-white text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
+                    className={`min-h-11 rounded-sm border px-4 py-2 font-mono-editorial text-[11px] font-semibold uppercase tracking-[0.08em] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 2xl:px-5 ${isScrolled ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white focus-visible:ring-ocean-700' : 'border-white text-white hover:bg-white hover:text-ocean-700 focus-visible:ring-white'}`}
                   >
                     {t.nav.register}
                   </button>
@@ -421,7 +421,7 @@ export default function Navbar() {
                   href="/build-your-safari"
                   prefetch
                   onClick={closeMobile}
-                  className="flex min-h-12 items-center justify-center rounded-xl bg-ocean-700 px-4 py-3 font-inter text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                  className="flex min-h-12 items-center justify-center rounded-sm bg-ocean-700 px-4 py-3 font-inter text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                 >
                   {t.nav.planMySafari}
                 </Link>
