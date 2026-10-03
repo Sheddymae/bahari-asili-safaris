@@ -94,6 +94,8 @@ export default function HeroBookingModal({ isOpen, onClose, initialSelection }: 
 
   if (!isOpen) return null;
 
+  const today = new Date().toISOString().slice(0, 10);
+
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
