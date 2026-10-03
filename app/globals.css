@@ -309,6 +309,87 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .motion-image img, .motion-image video { transform: none !important; }
 }
 
+
+/* Phase 17: accessibility + performance hardening */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-ocean);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--color-orange) 24%, var(--color-paper));
+    color: var(--color-ink);
+  }
+
+  img, video {
+    content-visibility: auto;
+  }
+
+  /* Avoid layout jumps from media that has not loaded yet. */
+  img:not([width]):not([height]) {
+    height: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Disable expensive fixed texture compositing on small devices. */
+  body {
+    background-attachment: scroll;
+  }
+
+  .surface-paper::after {
+    opacity: .24;
+  }
+
+  .image-grain::after {
+    opacity: .10;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  /* Hover-only affordances must never be required to discover content. */
+  .motion-lift:hover {
+    transform: none;
+  }
+
+  .motion-image:hover img,
+  .motion-image:hover video {
+    transform: none;
+  }
+
+  .traveler-essential-card:hover {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid CanvasText;
+  }
+
+  a, button {
+    forced-color-adjust: auto;
+  }
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  nav, footer, [aria-label*="WhatsApp"], .whatsapp-button,
+  button, video {
+    display: none !important;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: underline;
+  }
+}
+
 /* CMS rich text: semantic typography is controlled by the public site, not the editor. */
 .rich-content p { margin: 0 0 1.35rem; }
 .rich-content h2 { margin: 2.4rem 0 1rem; font-size: clamp(1.45rem, 2.5vw, 2rem); line-height: 1.25; font-weight: 700; }
