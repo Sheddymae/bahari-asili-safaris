@@ -80,8 +80,8 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
     <>
       <CinematicHeroVideo>
         <CinematicTextOverlay onPlan={() => onBook({ destination: location, adults: Math.min(30, Math.max(1, Number.parseInt(people, 10) || 1)), arrivalDate: date })} />
-        <div className={(mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0') + ' hidden sm:block absolute bottom-5 left-1/2 z-30 w-full -translate-x-1/2 px-4 transition-all duration-300 sm:bottom-7 sm:px-6'} style={{ pointerEvents: mounted ? 'auto' : 'none' }}>
-          <div className="mx-auto flex max-w-6xl flex-col items-stretch gap-0 border border-line/70 bg-paper/95 p-2 shadow-editorial backdrop-blur-sm sm:flex-row sm:items-center sm:p-2">
+        <div className={(mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0') + ' absolute bottom-3 left-1/2 z-30 block w-full -translate-x-1/2 px-3 transition-all duration-300 sm:bottom-7 sm:px-6'} style={{ pointerEvents: mounted ? 'auto' : 'none' }}>
+          <div className="mx-auto flex max-w-6xl flex-col items-stretch gap-1 border border-line/70 bg-paper/95 p-1.5 shadow-editorial backdrop-blur-sm sm:flex-row sm:items-center sm:p-2">
             <div className="relative min-w-0 flex-1">
               <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) updateMenuPosition(); setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-[2px] px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
                 <MapPin className="h-4 w-4 flex-shrink-0 text-orange-500" />
@@ -117,7 +117,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
               </span>
             </label>
 
-            <button type="button" onClick={handleBookClick} className="whitespace-nowrap rounded-[2px] bg-orange-500 px-8 py-3.5 font-editorial font-semibold text-white transition-colors hover:bg-orange-500-600 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2">
+            <button type="button" onClick={handleBookClick} className="min-h-12 w-full whitespace-nowrap rounded-[2px] bg-orange-500 px-6 py-3.5 font-editorial font-semibold text-white transition-colors hover:bg-orange-500-600 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 sm:w-auto sm:px-8">
               {t.hero.bookNow} →
             </button>
           </div>
