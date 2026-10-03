@@ -25,25 +25,7 @@ async function fetchReviews(): Promise<{reviews:Review[];google:PlatformInfo|nul
 }
 
 export function Stars({rating}:{rating:number}) {
-  return <div className="flex items-center gap-0.5" aria-label={`${rating} out of 5 stars`}>{[1,2,3,4,5].map(n=><Star key={n} className={`h-4 w-4 ${n<=Math.round(rating)?'fill-accent text-accent':'text-muted-foreground'}`} aria-hidden="true"/>)}</div>;
-}
-
-function ReviewCard({review}:{review:Review}) {
-  return <article className="rounded-xl border border-border bg-white p-5 shadow-card">
-    <div className="flex items-center justify-between gap-3">
-      <div><p className="font-poppins text-sm font-semibold text-foreground">{review.author}</p>{review.date&&<p className="font-inter text-xs text-muted-foreground">{review.date}</p>}</div>
-      <span className="rounded-full bg-sand-50 px-2.5 py-1 font-inter text-xs font-semibold text-ocean-700">{review.source==='google'?'Google':'TripAdvisor'}</span>
-    </div>
-    <Stars rating={review.rating}/>
-    <p className="mt-3 font-inter text-sm leading-6 text-foreground">“{review.text}”</p>
-  </article>;
-}
-
-function PlatformLink({info,label}:{info:PlatformInfo;label:string}) {
-  if (!info.url) return null;
-  return <a href={info.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-4 py-2.5 font-inter text-sm font-semibold text-ocean-700 hover:border-ocean-300">
-    {label}<ExternalLink className="h-4 w-4" aria-hidden="true"/>
-  </a>;
+  return <div className="flex items-center gap-0.5" aria-label={rating + ' out of 5 stars'}>{[1,2,3,4,5].map(n=><Star key={n} className={n<=Math.round(rating) ? 'h-4 w-4 fill-accent text-accent' : 'h-4 w-4 text-muted-foreground'} aria-hidden="true"/>)}</div>;
 }
 
 export default function ReviewsSection() {
@@ -52,18 +34,45 @@ export default function ReviewsSection() {
   const [data,setData]=useState<{reviews:Review[];google:PlatformInfo|null;tripadvisor:PlatformInfo|null}>({reviews:[],google:null,tripadvisor:null});
   const [loading,setLoading]=useState(true);
   useEffect(()=>{let active=true;(async()=>{const next=await fetchReviews();if(active){setData(next);setLoading(false);}})();return()=>{active=false;};},[]);
-  return <section aria-labelledby="reviews-title" className="bg-white py-16 lg:py-20">
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-      <div className="mb-10 max-w-2xl">
-        <span className="font-inter text-xs font-bold uppercase tracking-[0.18em] text-safari-600">{c.reviews.kicker}</span>
-        <h2 id="reviews-title" className="mt-2 font-poppins text-2xl font-bold text-foreground sm:text-3xl">{c.reviews.title}</h2>
+
+  return (
+    <section aria-labelledby="reviews-title" className="bg-paper py-20 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div className="grid gap-10 lg:grid-cols-[0.65fr_1.35fr]">
+          <div>
+            <p className="editorial-label text-orange-600">{c.reviews.kicker}</p>
+            <h2 id="reviews-title" className="mt-4 font-editorial text-5xl leading-none tracking-tight text-ink sm:text-6xl">{c.reviews.title}</h2>
+          </div>
+          <div>
+            {loading ? <div className="h-40 border-y border-line animate-pulse" aria-hidden="true" /> :
+              data.reviews.length ? (
+                <div className="divide-y divide-line border-y border-line">
+                  {data.reviews.slice(0, 4).map((review, i) => (
+                    <article key={review.source + '-' + i} className="grid gap-5 py-7 sm:grid-cols-[8rem_1fr_auto] sm:items-start">
+                      <div>
+                        <p className="font-grotesk text-sm font-semibold text-ink">{review.author}</p>
+                        {review.date && <p className="mt-1 font-mono-editorial text-[9px] uppercase tracking-[0.12em] text-muted">{review.date}</p>}
+                      </div>
+                      <div>
+                        <p className="font-editorial text-2xl leading-snug text-ink">“{review.text}”</p>
+                        <div className="mt-3 flex items-center gap-3"><Stars rating={review.rating}/><span className="font-mono-editorial text-[9px] uppercase tracking-[0.12em] text-muted">{review.source === 'google' ? 'Google' : 'TripAdvisor'}</span></div>
+                      </div>
+                      <span className="font-mono-editorial text-[9px] uppercase tracking-[0.12em] text-ocean-600">0{i + 1}</span>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="border-y border-line py-8">
+                  <p className="max-w-xl font-editorial text-2xl leading-snug text-ink">{data.google?.url || data.tripadvisor?.url ? c.reviews.empty : c.reviews.emptyNoLinks}</p>
+                  <div className="mt-5 flex flex-wrap gap-5">
+                    {data.google?.url && <a href={data.google.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-mono-editorial text-[10px] uppercase tracking-[0.14em] text-ocean-700 hover:text-orange-600">{c.reviews.google}<ExternalLink className="h-4 w-4" aria-hidden="true"/></a>}
+                    {data.tripadvisor?.url && <a href={data.tripadvisor.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-mono-editorial text-[10px] uppercase tracking-[0.14em] text-ocean-700 hover:text-orange-600">{c.reviews.tripadvisor}<ExternalLink className="h-4 w-4" aria-hidden="true"/></a>}
+                  </div>
+                </div>
+              )}
+          </div>
+        </div>
       </div>
-      {loading ? <div className="h-28 rounded-xl border border-border bg-sand-50 animate-pulse" aria-hidden="true"/> :
-        data.reviews.length ? <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{data.reviews.slice(0,6).map((review,i)=><ReviewCard key={`${review.source}-${i}`} review={review}/>)}</div> :
-        <div className="rounded-xl border border-border bg-sand-50 p-6">
-          <p className="font-inter text-base leading-7 text-foreground">{data.google?.url||data.tripadvisor?.url ? c.reviews.empty : c.reviews.emptyNoLinks}</p>
-          <div className="mt-4 flex flex-wrap gap-3"><>{data.google&&<PlatformLink info={data.google} label={c.reviews.google}/>}</>{data.tripadvisor&&<PlatformLink info={data.tripadvisor} label={c.reviews.tripadvisor}/>}</div>
-        </div>}
-    </div>
-  </section>;
+    </section>
+  );
 }
