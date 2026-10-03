@@ -6,7 +6,6 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import HomeIntro from '@/components/home/HomeIntro';
 import StructuredData from '@/components/StructuredData';
-import AnimateOnScroll from '@/components/AnimateOnScroll';
 import HowToBook from '@/components/HowToBook';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
@@ -40,14 +39,14 @@ export default function Home() {
       <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
         <HeroSection onBook={openHeroBooking} />
         <HomeIntro />
-        <AnimateOnScroll direction="up"><HomePopularSafaris onBook={openBooking} /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><HomeFromWatamu /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><HomeCoast /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><HomeWhy /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
+        <HomePopularSafaris onBook={openBooking} />
+        <HomeFromWatamu />
+        <HomeCoast />
+        <HomeWhy />
+        <BuildSafariPromo />
         <HowToBook />
-        <AnimateOnScroll direction="up"><ReviewsSection /></AnimateOnScroll>
-        <AnimateOnScroll direction="up"><HomeTeam /></AnimateOnScroll>
+        <ReviewsSection />
+        <HomeTeam />
         <FinalCtaSection onBook={() => openHeroBooking()} />
       </main>
       <Footer />
