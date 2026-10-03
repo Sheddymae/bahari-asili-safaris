@@ -51,7 +51,14 @@
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-paper text-ink antialiased; font-family: 'Manrope', sans-serif; overflow-x: clip; }
+  body {
+    @apply bg-paper text-ink antialiased;
+    font-family: 'Manrope', sans-serif;
+    overflow-x: clip;
+    background-image: var(--texture-paper);
+    background-size: 180px 180px;
+    background-attachment: fixed;
+  }
   h1, h2, h3, h4, h5, h6 { font-family: 'DM Serif Display', serif; font-weight: 400; }
   img, svg, video, canvas { max-width: 100%; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
