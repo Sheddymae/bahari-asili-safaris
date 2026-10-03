@@ -51,8 +51,9 @@ export default function HeroBookingModal({ isOpen, onClose, initialSelection }: 
     if (!isOpen) return;
     setForm({ ...emptyForm, destination: initialSelection?.destination || '', adults: String(initialSelection?.adults || 2), arrivalDate: initialSelection?.arrivalDate || '' });
     setStatus('idle'); setErrorDetail(''); setBookingRef(''); setEmailSent(false);
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    return () => { document.body.style.overflow = previousOverflow; };
   }, [isOpen, initialSelection]);
 
   useEffect(() => {
@@ -125,8 +126,8 @@ export default function HeroBookingModal({ isOpen, onClose, initialSelection }: 
               <label className="font-inter text-sm font-medium text-foreground">Children<input type="number" min="0" max="10" value={form.children} onChange={(event) => update('children', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" /></label>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="font-inter text-sm font-medium text-foreground">Arrival date *<input required type="date" value={form.arrivalDate} onChange={(event) => update('arrivalDate', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" /></label>
-              <label className="font-inter text-sm font-medium text-foreground">Departure date<input type="date" min={form.arrivalDate || undefined} value={form.departureDate} onChange={(event) => update('departureDate', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" /></label>
+              <label className="font-inter text-sm font-medium text-foreground">Arrival date *<input required type="date" min={today} value={form.arrivalDate} onChange={(event) => update('arrivalDate', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" /></label>
+              <label className="font-inter text-sm font-medium text-foreground">Departure date<input type="date" min={form.arrivalDate || today} value={form.departureDate} onChange={(event) => update('departureDate', event.target.value)} className="mt-1.5 w-full rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" /></label>
             </div>
             <NationalitySelect id="hero-booking-nationality" value={form.nationality} onChange={(country) => { update('nationality', country); setErrorDetail(''); }} label={t.booking?.nationality || 'Nationality'} required error={status === 'error' && (!form.nationality || !isCountry(form.nationality.trim()))} errorMessage={status === 'error' && (!form.nationality || !isCountry(form.nationality.trim())) ? 'Please select your nationality from the country list.' : undefined} placeholder="Type country name or code (e.g. KE or IT)" helperText="Type a country name or ISO code such as KE or IT, then select it from the list." />
             <label className="block font-inter text-sm font-medium text-foreground">Message / special requests<textarea rows={4} value={form.message} onChange={(event) => update('message', event.target.value)} placeholder="Tell us anything important about your trip..." className="mt-1.5 w-full resize-none rounded-xl border border-border bg-muted px-4 py-3 text-sm outline-none transition focus:border-ocean-600 focus:ring-2 focus:ring-ocean-100" /></label>
