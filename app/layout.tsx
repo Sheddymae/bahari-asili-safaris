@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={initialLocale} dir={initialLocale === 'ar' ? 'rtl' : 'ltr'} className={`scroll-smooth bg-paper ${manrope.variable}`}>
       <body className="bg-paper text-ink">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ocean-600">Skip to main content</a>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:border focus:border-line focus:bg-paper focus:px-4 focus:py-3 focus:font-grotesk focus:text-sm focus:text-ink focus:shadow-editorial focus:outline-none focus:ring-2 focus:ring-ocean-600">Skip to main content</a>
         <AuthProvider>
           <LanguageProvider initialLocale={initialLocale}>
             <SessionGuard />
