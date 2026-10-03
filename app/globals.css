@@ -23,6 +23,10 @@
   --motion-slow: 720ms;
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
+  /* Phase 15: tactile paper, ink, and photographic surface treatment. */
+  --texture-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E");
+  --texture-grid: linear-gradient(to right, color-mix(in oklch, var(--color-line) 34%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklch, var(--color-line) 22%, transparent) 1px, transparent 1px);
+
   /* Compatibility variables used by existing Radix/Tailwind utilities. */
   --background: 98.5% 0.012 82;
   --foreground: 22% 0.025 185;
@@ -47,7 +51,7 @@
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-white text-gray-800 antialiased; font-family: 'Manrope', sans-serif; overflow-x: clip; }
+  body { @apply bg-paper text-ink antialiased; font-family: 'Manrope', sans-serif; overflow-x: clip; }
   h1, h2, h3, h4, h5, h6 { font-family: 'DM Serif Display', serif; font-weight: 400; }
   img, svg, video, canvas { max-width: 100%; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
@@ -90,6 +94,41 @@
   .motion-image:hover img, .motion-image:hover video { transform: scale(1.025); }
   .motion-arrow { transition: transform var(--motion-fast) var(--motion-ease); }
   .group:hover .motion-arrow { transform: translate(2px, -2px); }
+
+  /* Phase 15: surfaces gain texture without looking like an overlay or filter. */
+  .surface-paper { position: relative; isolation: isolate; }
+  .surface-paper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: var(--texture-paper);
+    opacity: .38;
+    mix-blend-mode: multiply;
+  }
+  .surface-grid {
+    background-image: var(--texture-grid);
+    background-size: 48px 48px;
+  }
+  .surface-rule { position: relative; }
+  .surface-rule::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: var(--color-line);
+  }
+  .image-grain { position: relative; overflow: hidden; }
+  .image-grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--texture-paper);
+    opacity: .16;
+    mix-blend-mode: soft-light;
+  }
 }
 
 html { scroll-behavior: smooth; }
