@@ -36,6 +36,7 @@ export default function AnimateOnScroll({
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const node = ref.current;
     if (!node || typeof IntersectionObserver === 'undefined') return;
 
