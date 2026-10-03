@@ -2,46 +2,29 @@
 
 import { Check } from 'lucide-react';
 
-interface BuilderProgressProps {
-  steps: string[];
-  currentStep: number; // 0-indexed
-}
+interface BuilderProgressProps { steps: string[]; currentStep: number; }
 
 export default function BuilderProgress({ steps, currentStep }: BuilderProgressProps) {
   return (
-    <div className="flex items-center justify-center mb-10" role="navigation" aria-label="Safari builder progress">
-      {steps.map((label, i) => {
-        const isDone = i < currentStep;
-        const isActive = i === currentStep;
-        return (
-          <div key={label} className="flex items-center">
-            <div className="flex flex-col items-center gap-1.5">
-              <div
-                aria-current={isActive ? 'step' : undefined}
-                className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center font-poppins font-semibold text-xs transition-colors ${
-                  isDone
-                    ? 'bg-ocean-700 text-white'
-                    : isActive
-                    ? 'bg-book text-white'
-                    : 'bg-white border border-border text-muted-foreground'
-                }`}
-              >
-                {isDone ? <Check className="w-4 h-4" /> : i + 1}
+    <nav className="mb-8 border-y border-line py-4" aria-label="Safari builder progress">
+      <ol className="grid grid-cols-5 gap-2">
+        {steps.map((label, i) => {
+          const isDone = i < currentStep;
+          const isActive = i === currentStep;
+          return (
+            <li key={label} className="relative min-w-0">
+              <div className="flex items-start gap-2">
+                <span aria-current={isActive ? 'step' : undefined} className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border font-mono-editorial text-[9px] transition-colors ${isDone ? 'border-ocean bg-ocean text-paper' : isActive ? 'border-orange bg-orange text-ink' : 'border-line bg-paper text-muted'}`}>
+                  {isDone ? <Check className="h-3.5 w-3.5" /> : `0${i + 1}`}
+                </span>
+                <span className={`hidden min-w-0 font-mono-editorial text-[9px] uppercase leading-4 tracking-[0.1em] sm:block ${isActive ? 'text-ink' : 'text-muted'}`}>{label}</span>
               </div>
-              <span
-                className={`hidden sm:block font-inter text-[11px] text-center max-w-[72px] ${
-                  isActive ? 'text-foreground font-medium' : 'text-muted-foreground'
-                }`}
-              >
-                {label}
-              </span>
-            </div>
-            {i < steps.length - 1 && (
-              <div className={`w-6 sm:w-12 h-0.5 mx-1 sm:mx-2 ${isDone ? 'bg-ocean-700' : 'bg-muted'}`} />
-            )}
-          </div>
-        );
-      })}
-    </div>
+              <span className={`mt-2 block h-px ${i < currentStep ? 'bg-ocean' : isActive ? 'bg-orange' : 'bg-line'}`} aria-hidden="true" />
+            </li>
+          );
+        })}
+      </ol>
+      <p className="mt-3 font-mono-editorial text-[9px] uppercase tracking-[0.14em] text-muted sm:hidden">Step {currentStep + 1} / {steps.length} — {steps[currentStep]}</p>
+    </nav>
   );
 }
