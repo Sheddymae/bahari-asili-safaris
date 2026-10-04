@@ -401,7 +401,7 @@ export default function Navbar() {
                 aria-label={isMobileOpen ? t.nav.closeMenu : t.nav.openMenu}
                 aria-expanded={isMobileOpen}
                 aria-controls="mobile-navigation"
-                className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'text-foreground' : 'text-white'}`}
+                className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'text-foreground' : 'text-white'}`}
               >
                 {isMobileOpen ? <X aria-hidden="true" className="h-6 w-6" /> : <Menu aria-hidden="true" className="h-6 w-6" />}
               </button>
@@ -455,7 +455,7 @@ export default function Navbar() {
                                   href={`/destinations/${destination.slug}`}
                                   prefetch
                                   onClick={closeMobile}
-                                  className="flex min-h-11 items-center rounded-lg px-3 py-2.5 font-inter text-sm text-muted-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                                  className="flex min-h-11 items-center rounded-[4px] px-3 py-2.5 font-inter text-sm text-muted-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                                 >
                                   {destination.displayName}
                                 </Link>
