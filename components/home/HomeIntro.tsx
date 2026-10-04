@@ -9,7 +9,7 @@ export default function HomeIntro() {
     <section aria-labelledby="home-intro-title" className="border-b border-border bg-white py-14 sm:py-16">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16 lg:px-8">
         <div>
-          <span className="inline-flex items-center gap-2 font-inter text-xs font-bold uppercase tracking-[0.18em] text-ocean-700"><span aria-hidden="true" className="h-0.5 w-6 bg-safari-500" />{c.intro.kicker}</span>
+          <span className="inline-flex items-center gap-2 font-inter text-[13px] font-medium text-ocean-700"><span aria-hidden="true" className="h-0.5 w-6 bg-safari-500" />{c.intro.kicker}</span>
           <h2 id="home-intro-title" className="mt-2 font-poppins text-3xl font-bold leading-tight text-foreground sm:text-4xl">{c.intro.title}</h2>
           <p className="mt-4 max-w-xl font-inter text-base leading-7 text-muted-foreground">{c.intro.body}</p>
         </div>
