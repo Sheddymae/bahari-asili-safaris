@@ -65,7 +65,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
 
   const dropdown = isLocOpen && typeof document !== 'undefined'
     ? createPortal(
-        <div className="fixed z-[10000] max-h-72 overflow-y-auto rounded-xl border border-border bg-white shadow-2xl" style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }} role="listbox" aria-label={t.bookingOverlay.selectDest}>
+        <div className="fixed z-[10000] max-h-72 overflow-y-auto rounded-[4px] border border-border bg-white shadow-none" style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }} role="listbox" aria-label={t.bookingOverlay.selectDest}>
           {locations.map((loc) => (
             <button key={loc} type="button" role="option" aria-selected={location === loc} onClick={() => { setLocation(loc); setIsLocOpen(false); }} className="block w-full border-b border-sand-100 px-4 py-3 text-left font-inter text-sm text-foreground transition-colors last:border-0 hover:bg-sand-50 hover:text-ocean-700">
               {loc}
