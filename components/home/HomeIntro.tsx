@@ -15,7 +15,7 @@ export default function HomeIntro() {
         </div>
         <ul className="grid gap-3 sm:grid-cols-2">
           {c.intro.points.map((point) => (
-            <li key={point} className="flex items-start gap-3 rounded-xl border border-border bg-sand-50 p-4">
+            <li key={point} className="flex items-start gap-3 rounded-[4px] border border-border bg-sand-50 p-4">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-ocean-700" aria-hidden="true" />
               <span className="font-inter text-sm font-medium leading-5 text-foreground">{point}</span>
             </li>
