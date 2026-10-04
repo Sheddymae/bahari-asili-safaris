@@ -421,7 +421,7 @@ export default function Navbar() {
                   href="/build-your-safari"
                   prefetch
                   onClick={closeMobile}
-                  className="flex min-h-12 items-center justify-center brand-button brand-button-primary rounded-[4px] px-4 py-3 font-inter text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                  className="flex min-h-12 items-center justify-center brand-button brand-button-primary rounded-[4px] px-4 py-3 font-inter text-sm font-semibold text-white shadow-none transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                 >
                   {t.nav.planMySafari}
                 </Link>
