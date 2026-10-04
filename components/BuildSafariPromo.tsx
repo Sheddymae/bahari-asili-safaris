@@ -4,9 +4,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useHomeCopy } from '@/components/home/useHomeCopy';
 
 export default function BuildSafariPromo() {
   const { t } = useLanguage();
+  const { c } = useHomeCopy();
   const e = t.homeExtras;
 
   return (
@@ -39,7 +41,7 @@ export default function BuildSafariPromo() {
             prefetch
             className="inline-flex items-center gap-2 bg-ember-700 hover:bg-ember-600 text-white font-poppins font-semibold text-sm px-7 py-3.5 rounded-card"
           >
-            {e.buildCta}
+            {c.final.plan}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
