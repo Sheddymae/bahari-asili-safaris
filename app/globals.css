@@ -11,7 +11,6 @@
   --sand: #f5f1e8;
   --orange: #f97316;
   --dark: #1f2937;
-  --radius: 0.5rem;
   --background: 0 0% 100%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
@@ -35,7 +34,7 @@
 
 @layer base {
   * { @apply border-border; }
-  body { @apply bg-white text-gray-800 font-inter antialiased; overflow-x: clip; }
+  body { background: var(--brand-bg); color: var(--brand-text); @apply font-inter antialiased; overflow-x: clip; }
   h1, h2, h3, h4, h5, h6 { @apply font-poppins; }
   img, svg, video, canvas { max-width: 100%; }
   button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
@@ -61,27 +60,13 @@ a, button, input, select, textarea, [role='button'] {
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-button:not([data-no-glow]), a[role='button']:not([data-no-glow]) {
-  position: relative;
-  isolation: isolate;
-  box-shadow: 0 4px 16px rgba(14, 116, 144, 0.10);
-}
-
-button:not([data-no-glow]):hover, button:not([data-no-glow]):focus-visible,
-a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow]):focus-visible {
-  box-shadow: 0 0 18px rgba(14, 116, 144, 0.32), 0 8px 24px rgba(14, 116, 144, 0.16);
-  transform: translateY(-1px);
-}
-
-button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active { transform: translateY(0) scale(0.98); }
-
 .trust-marquee-mask { width: 100%; overflow: hidden; }
 .trust-marquee-track { display: flex; width: max-content; min-width: max-content; animation: trust-marquee-scroll 32s linear infinite; will-change: transform; }
 .trust-marquee-group { width: max-content; }
 .trust-marquee-track:hover, .trust-marquee-track:focus-visible { animation-play-state: paused; }
 @keyframes trust-marquee-scroll { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
 
-/* Legacy glow utility retained as a non-glowing brand-safe interaction. */
+/* Legacy utility retained for compatibility; it is intentionally non-glowing. */
 .glow-button { position: relative; isolation: isolate; box-shadow: none; transition: transform 160ms ease, filter 180ms ease; }
 .glow-button:hover, .glow-button:focus-visible { box-shadow: none; filter: brightness(1.04); }
 .glow-button:active { transform: translateY(1px); }
