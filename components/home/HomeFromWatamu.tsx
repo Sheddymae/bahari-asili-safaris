@@ -33,7 +33,7 @@ export default function HomeFromWatamu() {
           <p className="mt-4 font-inter text-sm leading-6 text-muted-foreground">{c.watamu.note}</p>
           <Link href="/destinations" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-ocean-700 px-5 py-3 font-inter text-sm font-semibold text-white hover:bg-ocean-800">{c.watamu.cta} <ArrowRight className="h-4 w-4 rtl:rotate-180" /></Link>
         </div>
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-[4px] border border-border">
           <div className="grid grid-cols-[1.2fr_1fr_1fr] gap-3 bg-sand-50 px-4 py-3 font-inter text-xs font-bold uppercase tracking-wider text-muted-foreground"><span>{c.watamu.colDestination}</span><span>{c.watamu.colProgrammes}</span><span>{c.watamu.colLength}</span></div>
           <ul className="divide-y divide-border">{rows.map((row) => <li key={row.key}><Link href={`/destinations/${row.key}`} className="grid grid-cols-[1.2fr_1fr_1fr] items-center gap-3 px-4 py-4 hover:bg-sand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600 focus-visible:ring-inset"><span className="font-poppins text-sm font-semibold text-foreground">{row.name}</span><span className="font-inter text-sm text-muted-foreground">{unit(row.count, row.count === 1 ? c.units.programme : c.units.programmes)}</span><span className="font-inter text-sm text-muted-foreground">{unit(row.min === row.max ? row.min : `${row.min}–${row.max}`, row.max === 1 ? c.units.day : c.units.days)}</span></Link></li>)}</ul>
         </div>
