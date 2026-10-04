@@ -118,7 +118,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
             </label>
 
             <button type="button" onClick={handleBookClick} className="brand-button brand-button-primary whitespace-nowrap px-8 py-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-book focus-visible:ring-offset-2">
-              {t.hero.bookNow} →
+              {t.homeExtras?.buildCta || t.hero.plan} →
             </button>
           </div>
         </div>
