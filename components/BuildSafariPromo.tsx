@@ -24,7 +24,7 @@ export default function BuildSafariPromo() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-xl">
-          <span className="inline-flex items-center gap-2 font-inter text-orange-400 font-semibold text-sm tracking-widest uppercase mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <span className="inline-flex items-center gap-2 font-inter text-white/90 font-medium text-[13px] mb-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             <Sparkles className="w-4 h-4" />
             {e.buildLabel}
           </span>
@@ -37,7 +37,7 @@ export default function BuildSafariPromo() {
           <Link
             href="/build-your-safari"
             prefetch
-            className="inline-flex items-center gap-2 bg-safari-500 hover:bg-safari-600 text-white font-poppins font-semibold text-sm px-7 py-3.5 rounded-xl transition-all hover:shadow-lg"
+            className="inline-flex items-center gap-2 bg-ember-700 hover:bg-ember-600 text-white font-poppins font-semibold text-sm px-7 py-3.5 rounded-card"
           >
             {e.buildCta}
             <ArrowRight className="w-4 h-4" />
