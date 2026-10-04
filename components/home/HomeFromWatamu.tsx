@@ -27,7 +27,7 @@ export default function HomeFromWatamu() {
     <section aria-labelledby="home-watamu-title" className="bg-white py-16 lg:py-20">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-16 lg:px-8">
         <div>
-          <span className="font-inter text-xs font-bold uppercase tracking-[0.18em] text-safari-600">{c.watamu.kicker}</span>
+          <span className="inline-flex items-center gap-2 font-inter text-xs font-bold uppercase tracking-[0.18em] text-ocean-700"><span aria-hidden="true" className="h-0.5 w-6 bg-safari-500" />{c.watamu.kicker}</span>
           <h2 id="home-watamu-title" className="mt-2 font-poppins text-2xl font-bold leading-tight text-foreground sm:text-3xl lg:text-4xl">{c.watamu.title}</h2>
           <p className="mt-4 font-inter text-base leading-7 text-muted-foreground">{c.watamu.body}</p>
           <p className="mt-4 font-inter text-sm leading-6 text-muted-foreground">{c.watamu.note}</p>
