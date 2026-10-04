@@ -322,9 +322,9 @@ export default function Navbar() {
                     }}
                     aria-haspopup="true"
                     aria-expanded={isUserMenuOpen}
-                    className={`inline-flex min-h-11 items-center gap-2 rounded-full px-3 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'bg-white text-ocean-700 hover:bg-ocean-50' : 'text-white hover:bg-white/15'}`}
+                    className={`inline-flex min-h-11 items-center gap-2 rounded-[4px] px-3 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'bg-white text-ocean-700 hover:bg-ocean-50' : 'text-white hover:bg-white/15'}`}
                   >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-safari-500">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] bg-safari-500">
                       <User aria-hidden="true" className="h-3.5 w-3.5 text-white" />
                     </span>
                     {t.authSession.myDashboard}
@@ -332,7 +332,7 @@ export default function Navbar() {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden brand-button brand-button-secondary rounded-[4px] border border-border bg-white shadow-xl" role="menu">
+                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden rounded-[4px] border border-border bg-white shadow-xl" role="menu">
                       <div className="border-b border-border px-4 py-3">
                         <p className="truncate font-inter text-sm font-semibold text-foreground">{displayName}</p>
                         <p className="truncate font-inter text-xs text-muted-foreground">{user.email}</p>
@@ -411,7 +411,7 @@ export default function Navbar() {
           {isMobileOpen && (
             <div
               id="mobile-navigation"
-              className="mt-3 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-2xl border border-border bg-white shadow-xl xl:hidden"
+              className="mt-3 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-[4px] border border-border bg-white shadow-xl xl:hidden"
             >
               <div className="border-b border-border px-4 py-4">
                 <p className="px-2 pb-2 font-inter text-[10px] font-semibold uppercase tracking-[0.16em] text-ocean-700">
@@ -440,7 +440,7 @@ export default function Navbar() {
                         aria-expanded={expanded}
                         aria-controls={`mobile-${menu.key}`}
                         onClick={() => setMobileSection(expanded ? null : menu.key)}
-                        className="flex min-h-12 w-full items-center justify-between rounded-xl px-2 py-3 text-left font-inter text-base font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                        className="flex min-h-12 w-full items-center justify-between rounded-[4px] px-2 py-3 text-left font-inter text-base font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                       >
                         {menu.label}
                         <ChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
@@ -493,7 +493,7 @@ export default function Navbar() {
                     href={link.href}
                     prefetch
                     onClick={closeMobile}
-                    className="flex min-h-12 items-center rounded-xl px-2 py-3 font-inter text-base font-semibold text-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                    className="flex min-h-12 items-center rounded-[4px] px-2 py-3 font-inter text-base font-semibold text-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                   >
                     {link.label}
                   </Link>
@@ -508,7 +508,7 @@ export default function Navbar() {
                 {!loading && user ? (
                   <div className="space-y-2">
                     <div className="flex items-center gap-3 px-2 py-2">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-safari-500">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] bg-safari-500">
                         <User aria-hidden="true" className="h-4 w-4 text-white" />
                       </div>
                       <div className="min-w-0">
