@@ -122,7 +122,7 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .homepage-main h1 { overflow-wrap: anywhere; }
   .trust-marquee-group { gap: 1.5rem; padding-top: .9rem; padding-bottom: .9rem; }
   .trust-marquee-track { animation-duration: 24s; }
-  .tour-card { border-radius: 1rem; }
+  .tour-card { border-radius: 4px; }
 
   .traveler-essentials { padding-top: 2.75rem; padding-bottom: 2.75rem; }
   .traveler-essentials-grid {
@@ -143,7 +143,7 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .traveler-essential-card {
     min-height: 0;
     padding: 1rem 1.05rem;
-    border-radius: 1.15rem;
+    border-radius: 4px;
     box-shadow: 0 7px 20px rgba(15,23,42,.08);
   }
   .traveler-essential-card:hover,
