@@ -271,7 +271,7 @@ export default function WildlifeCalendarSection() {
                           className={`w-10 h-10 rounded-full border flex items-center justify-center shrink-0 transition-colors duration-300 ${
                             isInSeasonForSelection
                               ? 'bg-safari-500 border-safari-500 text-white'
-                              : 'bg-safari-50 border-safari-100 text-safari-600'
+                              : 'bg-safari-50 border-safari-100 text-ocean-700'
                           }`}
                         >
                           <row.Icon className="w-5 h-5" />
