@@ -32,6 +32,27 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
     promise?.catch(() => {});
   }, [videoSrc, hasReducedMotion]);
 
+  useEffect(() => {
+    if (hasReducedMotion || !containerRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        containerRef.current,
+        { yPercent: 0 },
+        {
+          yPercent: 8,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true,
+          },
+        },
+      );
+    }, containerRef);
+    return () => ctx.revert();
+  }, [hasReducedMotion]);
+
   const handleVideoLoad = () => {
     setVideoLoaded(true);
     onReady?.();
