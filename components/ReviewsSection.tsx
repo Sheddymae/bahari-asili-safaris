@@ -52,7 +52,8 @@ export default function ReviewsSection() {
   const [data,setData]=useState<{reviews:Review[];google:PlatformInfo|null;tripadvisor:PlatformInfo|null}>({reviews:[],google:null,tripadvisor:null});
   const [loading,setLoading]=useState(true);
   useEffect(()=>{let active=true;(async()=>{const next=await fetchReviews();if(active){setData(next);setLoading(false);}})();return()=>{active=false;};},[]);
-  if (loading || !data.reviews.length) return null;\n  return <section aria-labelledby="reviews-title" className="bg-white py-16 lg:py-20">
+  if (loading || !data.reviews.length) return null;
+  return <section aria-labelledby="reviews-title" className="bg-white py-16 lg:py-20">
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div className="mb-10 max-w-2xl">
         <span className="inline-flex items-center gap-2 font-inter text-[13px] font-medium text-ocean-700"><span aria-hidden="true" className="h-0.5 w-6 bg-safari-500" />{c.reviews.kicker}</span>
