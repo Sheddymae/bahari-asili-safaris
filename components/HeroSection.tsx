@@ -112,7 +112,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
                 <CalendarDays className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
                   <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.date}</span>
-                  <input type="month" value={date} onChange={(e) => setDate(e.target.value)} type="month" className="w-full cursor-pointer border-none bg-transparent font-inter text-sm text-foreground outline-none" aria-label={t.hero.date} />
+                  <input type="month" value={date} onChange={(e) => setDate(e.target.value)} className="w-full cursor-pointer border-none bg-transparent font-inter text-sm text-foreground outline-none" aria-label={t.hero.date} />
                 </span>
               </span>
             </label>
