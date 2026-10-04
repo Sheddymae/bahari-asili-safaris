@@ -14,6 +14,7 @@ export interface Safari {
   image: string;
   category: 'short' | 'medium' | 'long';
   popular?: boolean;
+  private?: boolean;
   highlights: string[];
   itinerary: { day: string; title: string; morning: string; afternoon: string; overnight: string }[];
   packingTips: string[];
