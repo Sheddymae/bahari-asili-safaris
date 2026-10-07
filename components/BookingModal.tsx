@@ -51,7 +51,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
   const validateStep = (target: Step) => { if (target === 1) { if (!form.firstName.trim() || !form.lastName.trim() || (parseInt(form.adults, 10) || 0) < 1) return false; if (childCount > 0 && kidsAges.some((age) => age === '')) { setKidsAgesError(true); return false; } } if (target === 2 && (!form.arrivalDate || !form.safari)) return false; if (target === 3 && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) || !isCountry(form.nationality.trim()))) return false; return true; };
   const buildWhatsAppMsg = (ref = bookingRef) => encodeURIComponent(['*Bahari Asili Safaris booking*', ref ? `Ref: ${ref}` : '', `Name: ${form.firstName} ${form.lastName}`, `Adults: ${form.adults} | Children: ${form.children}${childCount ? ` (Ages: ${kidsAges.join(', ')})` : ''}`, `Safari: ${form.safari}`, `Date: ${form.arrivalDate}`, form.email ? `Email: ${form.email}` : '', form.whatsapp ? `WhatsApp: ${form.whatsapp}` : '', form.message ? `Notes: ${form.message}` : ''].filter(Boolean).join('\n'));
   const downloadInvoice = async (ref: string, bookingType?: string) => {
-    const invoiceRes = await fetch('/api/booking/invoice', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/pdf' }, body: JSON.stringify({ bookingRef: ref, firstName: form.firstName, lastName: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kidsAges: kidsAges.filter((age): age is number => age !== ''), arrivalDate: form.arrivalDate, safariName: form.safari, message: form.message, bookingType, locale }) });
+    const invoiceRes = await fetch('/api/booking/invoice', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/pdf' }, body: JSON.stringify({ bookingRef: ref, fullName: (form.firstName + ' ' + form.lastName).trim(), firstName: form.firstName, lastName: form.lastName, email: form.email, whatsapp: form.whatsapp, nationality: form.nationality, adults: parseInt(form.adults, 10), children: childCount, kidsAges: kidsAges.filter((age): age is number => age !== ''), arrivalDate: form.arrivalDate, safariName: form.safari, message: form.message, bookingType, locale }) });
     if (!invoiceRes.ok) { let detail = `Invoice generation failed (HTTP ${invoiceRes.status}).`; try { const data = await invoiceRes.json(); if (data?.error) detail = data.error; } catch {} throw new Error(detail); }
     if (!(invoiceRes.headers.get('content-type') || '').includes('application/pdf')) throw new Error('Invoice service returned an invalid PDF response.');
     const blob = await invoiceRes.blob(); if (!blob.size) throw new Error('Invoice PDF is empty.'); const url = URL.createObjectURL(blob); const anchor = document.createElement('a'); anchor.href = url; anchor.download = invoiceRes.headers.get('content-disposition')?.match(/filename="?([^";]+)"?/i)?.[1] || `Bahari-Asili-Provisional-Invoice-${ref}.pdf`; anchor.style.display = 'none'; document.body.appendChild(anchor); anchor.click(); anchor.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 10000);
@@ -100,7 +100,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
           locale,
           itinerary: selectedItinerary,
           total: 0,
-          currency,
+          currency, travelers: { adults, children: childCount, kidsAges }, dates: { arrival: form.arrivalDate },
         }),
       });
 
