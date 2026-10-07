@@ -222,6 +222,7 @@ export async function PATCH(
     if (action === 'approve') {
       const updates: Partial<Booking> = {
         reservation_status: 'confirmed',
+        status: 'confirmed',
         confirmed_at: new Date().toISOString(),
       };
 
@@ -350,6 +351,7 @@ export async function PATCH(
     if (action === 'reject') {
       const updates: Partial<Booking> = {
         reservation_status: 'cancelled',
+        status: 'cancelled',
         admin_notes: body.reason || booking.admin_notes,
       };
 
@@ -406,6 +408,7 @@ export async function PATCH(
         .from('bookings')
         .update({
           reservation_status: 'completed',
+          status: 'confirmed',
         })
         .eq('id', id)
         .select()
