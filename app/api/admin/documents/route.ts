@@ -28,16 +28,9 @@ export async function POST(req: NextRequest) {
       const { data: updated, error } = await admin.from('bookings').update(updates).eq('id', bookingId).select().single();
       if (error) throw error;
       current = updated;
-      if (current.user_id) {
-        const existing = await admin.from('client_documents').select('id').eq('booking_id', bookingId).eq('type','voucher').maybeSingle();
-        if (!existing.data) {
-          body.action = 'voucher';
-        } else {
-          return NextResponse.json({ success:true, reservation:current, document:null });
-        }
-      } else {
-        return NextResponse.json({ success:true, reservation:current, document:null });
-      }
+      const existing = await admin.from('client_documents').select('id').eq('booking_id', bookingId).eq('type','voucher').maybeSingle();
+      if (!existing.data) body.action = 'voucher';
+      else return NextResponse.json({ success:true, reservation:current, document:null });
     }
 
     const effectiveAction = (body.action || action) as Exclude<Action,'confirm'>;
@@ -90,7 +83,7 @@ export async function POST(req: NextRequest) {
     }
 
     let document = null;
-    if (current.user_id) {
+    if (current.user_id || current.email) {
       const type = effectiveAction === 'visa_support' ? 'visa_support' : effectiveAction;
       const title = effectiveAction === 'invoice' ? 'Invoice ' + invoiceNumber : effectiveAction === 'voucher' ? 'Travel Voucher – ' + current.safari_name : effectiveAction === 'receipt' ? 'Payment Receipt – ' + current.booking_ref : effectiveAction === 'itinerary' ? 'Detailed Itinerary – ' + current.safari_name : 'Visa Supporting Document – ' + current.safari_name;
       document = await createClientDocument(admin,{ userId:current.user_id, bookingId, type:type as any, title, pdfPath:path, email:current.email });
