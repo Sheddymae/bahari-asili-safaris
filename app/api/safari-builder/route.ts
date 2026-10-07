@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
 
   const userId = await getAuthenticatedUserId(req);
   const quotationRef = await generateQuotationRef(admin);
+  let generatedInvoiceNumber = '';
   const tripRequestPayload: Record<string, unknown> = {
     user_id: userId,
     arrival_date: input.arrivalDate,
@@ -207,15 +208,10 @@ export async function POST(req: NextRequest) {
       total_amount: plan.pricing.total_cost,
       invoice_generated: Boolean(quotationPdfBase64),
       invoice_status: quotationPdfBase64 ? 'sent' : 'draft',
-      invoice_number: quotationRef,
       message: specialRequests ? `${specialRequests}\n\n(Full itinerary & pricing: safari_trip_requests, ref ${quotationRef})` : `Full itinerary & pricing: safari_trip_requests, ref ${quotationRef}`,
       reservation_status: 'pending',
       payment_status: 'unpaid',
       user_id: userId,
-      itinerary_snapshot: plan.itinerary,
-      status: 'pending_confirmation',
-      total_amount: plan.pricing.total_cost,
-      currency: plan.pricing.currency,
     });
     if (mirrorError) {
       console.error('Safari builder: mirroring into bookings failed:', mirrorError.message);
@@ -225,6 +221,7 @@ export async function POST(req: NextRequest) {
         if (bookingLookupError || !bookingRow?.id) throw bookingLookupError || new Error('Created booking could not be located.');
         const { data: invoiceNumber, error: invoiceNumberError } = await admin.rpc('next_bahari_invoice_number');
         if (invoiceNumberError || !invoiceNumber) throw invoiceNumberError || new Error('Invoice number could not be generated.');
+        generatedInvoiceNumber = String(invoiceNumber);
         const invoiceInput = {
           booking_ref: String(invoiceNumber),
           first_name: firstName,
@@ -262,6 +259,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     success: true,
     quotation_ref: quotationRef,
+    invoiceNumber: generatedInvoiceNumber || null,
     emailSent,
     invoiceGenerated: Boolean(quotationPdfBase64),
     needsAccount: !userId,
