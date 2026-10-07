@@ -248,7 +248,7 @@ export async function POST(req: NextRequest) {
         };
         const generatedInvoice = await generatePremiumInvoicePDF(invoiceInput as any, locale);
         const invoicePath = `invoices/${invoiceNumber}.pdf`;
-        const upload = await admin.storage.from('documents').upload(invoicePath, Buffer.from(generatedInvoice.base64, 'base64'), { contentType: 'application/pdf', upsert: true });
+        const upload = await admin.storage.from(process.env.SUPABASE_DOCUMENTS_BUCKET || 'documents').upload(invoicePath, Buffer.from(generatedInvoice.base64, 'base64'), { contentType: 'application/pdf', upsert: true });
         if (upload.error) throw upload.error;
         await admin.from('bookings').update({ invoice_generated: true, invoice_status: 'sent', invoice_number: String(invoiceNumber), invoice_url: invoicePath }).eq('id', bookingRow.id);
         await admin.from('invoices').insert({ booking_id: bookingRow.id, user_id: userId, invoice_number: String(invoiceNumber), amount: plan.pricing.total_cost, currency: plan.pricing.currency, status: 'pending', itinerary: plan.itinerary, pdf_url: invoicePath });
