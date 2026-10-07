@@ -43,7 +43,7 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
     setForm((previous) => ({ ...previous, firstName: parts[0] || previous.firstName, lastName: parts.slice(1).join(' ') || previous.lastName, email: user.email || previous.email, whatsapp: meta.whatsapp || previous.whatsapp, nationality: normalizedNationality || previous.nationality }));
   }, [user, isOpen]);
   useEffect(() => { if (selectedTour) setForm((previous) => ({ ...previous, safari: selectedTour })); }, [selectedTour]);
-  useEffect(() => { document.body.style.overflow = isOpen ? 'hidden' : ''; if (isOpen) { setStep(1); setStatus('idle'); setErrorDetail(''); setBookingRef(''); setShowAuthPrompt(false); } return () => { document.body.style.overflow = ''; }; }, [isOpen]);
+  useEffect(() => { document.body.style.overflow = isOpen ? 'hidden' : ''; if (isOpen) { setStep(1); setStatus('idle'); setErrorDetail(''); setBookingRef(''); setInvoiceNumber(''); setShowAuthPrompt(false); } return () => { document.body.style.overflow = ''; }; }, [isOpen]);
   useEffect(() => { if (!isOpen) return; const handler = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); }; window.addEventListener('keydown', handler); return () => window.removeEventListener('keydown', handler); }, [isOpen, onClose]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm((previous) => ({ ...previous, [event.target.name]: event.target.value }));
@@ -153,5 +153,5 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
   {status === 'error' && <div className="mt-4 flex gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />{errorDetail || t.booking.error}</div>}
   <div className="flex gap-3 mt-6">{step > 1 && <button type="button" onClick={() => setStep((step - 1) as Step)} className="flex-1 flex items-center justify-center gap-2 border border-border rounded-xl py-3.5 font-semibold"><ArrowLeft className="w-4 h-4" />{copy.back}</button>}{step < 3 ? <button type="button" onClick={() => { if (validateStep(step)) { setErrorDetail(''); setStep((step + 1) as Step); } else setErrorDetail('Please complete the required fields before continuing.'); }} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-safari-500 hover:bg-safari-600 text-white py-3.5 font-semibold">{copy.next}<ArrowRight className="w-4 h-4" /></button> : <button type="submit" disabled={status === 'loading'} className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-safari-500 hover:bg-safari-600 disabled:opacity-60 text-white py-3.5 font-semibold"><Send className="w-4 h-4" />{status === 'loading' ? copy.sending : copy.confirm}</button>}</div>
   </form>}
-  </div></div><AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode="signup" /></>;
+  </div></div><AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode="signup" initialEmail={form.email} /></>;
 }
