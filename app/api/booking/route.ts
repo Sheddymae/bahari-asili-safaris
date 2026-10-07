@@ -836,7 +836,7 @@ export async function POST(req: NextRequest) {
       invoiceGenerated = Boolean(invoiceBase64);
 
       invoicePath = `invoices/${invoiceNumber || bookingRef}.pdf`;
-      const upload = await admin.storage.from('documents').upload(invoicePath, Buffer.from(invoiceBase64, 'base64'), { contentType: 'application/pdf', upsert: true });
+      const upload = await admin.storage.from(process.env.SUPABASE_DOCUMENTS_BUCKET || 'documents').upload(invoicePath, Buffer.from(invoiceBase64, 'base64'), { contentType: 'application/pdf', upsert: true });
       if (upload.error) throw upload.error;
 
       const { error: invoiceUpdateError } = await supabase
