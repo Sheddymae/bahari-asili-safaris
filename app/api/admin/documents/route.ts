@@ -54,13 +54,13 @@ export async function POST(req: NextRequest) {
 
     let generated:{base64:string};
     if (effectiveAction === 'invoice') generated = await generatePremiumInvoicePDF({ ...current, booking_ref: invoiceNumber }, locale as any);
-    else if (effectiveAction === 'voucher') generated = await generateVoucherPDF(current, locale as any, path);
+    else if (effectiveAction === 'voucher') generated = await generateVoucherPDF(current, locale as any);
     else if (effectiveAction === 'receipt') {
       const { data: history } = await admin.from('payments').select('*').eq('booking_id', bookingId).order('created_at',{ascending:true});
       const payments = (history || []) as any[];
-      generated = await generatePaymentReceiptPDF(current, payments[payments.length-1], payments, locale as any, path);
-    } else if (effectiveAction === 'itinerary') generated = await generateDetailedItineraryPDF(current, locale as any, path);
-    else generated = await generateVisaItineraryPDF(current, String(body.passportNumber || ''), locale as any, path);
+      generated = await generatePaymentReceiptPDF(current, payments[payments.length-1], payments, locale as any);
+    } else if (effectiveAction === 'itinerary') generated = await generateDetailedItineraryPDF(current, locale as any);
+    else generated = await generateVisaItineraryPDF(current, String(body.passportNumber || ''), locale as any);
 
     const upload = await admin.storage.from(process.env.SUPABASE_DOCUMENTS_BUCKET || 'documents').upload(path, Buffer.from(generated.base64,'base64'), { contentType:'application/pdf', upsert:true });
     if (upload.error) throw upload.error;
