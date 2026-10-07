@@ -18,9 +18,9 @@ export default function ContactPageClient() {
 
   return (
     <PageShell>
-      <section className="py-20 lg:py-28 bg-sand-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+      <section className="bg-sand-50 py-14 sm:py-20 lg:py-28">
+        <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-10 text-center sm:mb-14">
             <span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">
               {t.nav.contact}
             </span>
@@ -32,8 +32,8 @@ export default function ContactPageClient() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
-            <div className="bg-white rounded-2xl p-6 border border-border shadow-card text-center">
+          <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:mb-12 lg:grid-cols-4">
+            <div className="rounded-xl border border-border bg-white p-5 text-center shadow-card sm:rounded-2xl sm:p-6">
               <div className="w-11 h-11 mx-auto rounded-full bg-ocean-50 flex items-center justify-center mb-3">
                 <MapPin className="w-5 h-5 text-ocean-700" />
               </div>
@@ -71,7 +71,7 @@ export default function ContactPageClient() {
           <div className="text-center">
             <button
               onClick={openBooking}
-              className="bg-book hover:bg-book-600 text-white font-poppins font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95"
+              className="w-full max-w-sm bg-book hover:bg-book-600 text-white font-poppins font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95"
             >
               {t.contact.quoteTitle}
             </button>
