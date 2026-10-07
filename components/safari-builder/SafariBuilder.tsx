@@ -53,7 +53,7 @@ export default function SafariBuilder() {
       else if (!trip.endLocation) e.locations = safariBuilder.validation.endRequired;
     }
     if (step === 1) {
-      if (travellers.adults < 1 || travellers.adults > 30) e.adults = safariBuilder.validation.adultRequired; e.adults = safariBuilder.validation.adultRequired;
+      if (travellers.adults < 1 || travellers.adults > 30) e.adults = safariBuilder.validation.adultRequired;
       if (travellers.children > 0 && travellers.childrenAges.length !== travellers.children) e.childrenAges = safariBuilder.validation.childAgesRequired;
     }
     if (step === 3 && destinationSlugs.length === 0) e.destinations = safariBuilder.validation.destinationRequired;
@@ -98,17 +98,17 @@ export default function SafariBuilder() {
   }, [step, currency, safariBuilder]);
 
   return (
-    <section className="py-14 lg:py-20 bg-sand-50 min-h-screen">
+    <section className="py-14 lg:py-20 bg-[var(--brand-bg)] min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10"><span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.nav.buildSafari}</span><h1 className="font-poppins font-bold text-3xl sm:text-4xl text-foreground">{safariBuilder.hero.title}</h1></div>
         <BuilderProgress steps={STEP_LABELS} currentStep={step} />
-        <div className="bg-white rounded-3xl border border-border shadow-card p-6 sm:p-10">
+        <div className="bg-white rounded-[4px] border border-border shadow-none p-6 sm:p-10">
           {step === 0 && <TripDetailsStep value={trip} onChange={setTrip} errors={errors} />}
           {step === 1 && <TravellersStep value={travellers} onChange={setTravellers} errors={errors} />}
           {step === 2 && <InterestsStep value={interests} onChange={setInterests} />}
           {step === 3 && <DestinationsStep value={destinationSlugs} onChange={setDestinationSlugs} errors={errors} />}
           {step === 4 && <ResultStep plan={plan} planLoading={planLoading} planError={planError} requestPayload={requestPayload} adults={travellers.adults} childrenCount={travellers.children} currency={currency} onCurrencyChange={setCurrency} onSubmitted={() => {}} />}
-          {step < 4 && <div className="flex items-center justify-between mt-10 pt-6 border-t border-border"><button type="button" onClick={goBack} disabled={step === 0} className="font-inter text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-0 flex items-center gap-1 px-2"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button><button type="button" onClick={goNext} className="bg-book hover:bg-book-600 text-white font-poppins font-semibold px-7 py-3 rounded-xl transition-all flex items-center gap-1.5">{t.common.continue} <ChevronRight className="w-4 h-4" /></button></div>}
+          {step < 4 && <div className="flex items-center justify-between mt-10 pt-6 border-t border-border"><button type="button" onClick={goBack} disabled={step === 0} className="font-inter text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-0 flex items-center gap-1 px-2"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button><button type="button" onClick={goNext} className="brand-button brand-button-primary text-white font-poppins font-semibold px-7 py-3 rounded-[4px] transition-all flex items-center gap-1.5">{t.common.continue} <ChevronRight className="w-4 h-4" /></button></div>}
           {step === 4 && <div className="mt-8 pt-6 border-t border-border"><button type="button" onClick={goBack} className="font-inter text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-1"><ChevronLeft className="w-4 h-4" /> {t.common.back}</button></div>}
         </div>
       </div>

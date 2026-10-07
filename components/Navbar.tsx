@@ -184,8 +184,8 @@ export default function Navbar() {
     : 'text-white/90 hover:text-white';
 
   const dropdownPanelClass = isScrolled
-    ? 'bg-white/95 border-border shadow-none'
-    : 'bg-white/95 border-white/30 shadow-none';
+    ? 'bg-white/95 border-border shadow-xl'
+    : 'bg-white/95 border-white/30 shadow-2xl';
 
   return (
     <>
@@ -195,7 +195,7 @@ export default function Navbar() {
         className={[
           'fixed inset-x-0 top-0 z-50 transition-all duration-300 motion-reduce:transition-none',
           isScrolled
-            ? 'bg-white/95 py-3 backdrop-blur-md'
+            ? 'bg-white/95 py-3 shadow-lg backdrop-blur-md'
             : 'border-b border-white/20 bg-white/10 py-5 backdrop-blur-md',
         ].join(' ')}
       >
@@ -242,7 +242,7 @@ export default function Navbar() {
 
                     {isOpen && (
                       <div
-                        className={`absolute left-1/2 top-full mt-2 -translate-x-1/2 rounded-[4px] border p-2 backdrop-blur-xl ${dropdownPanelClass} ${menu.key === 'destinations' ? 'w-[min(42rem,calc(100vw-2rem))]' : 'w-64'}`}
+                        className={`absolute left-1/2 top-full mt-2 -translate-x-1/2 rounded-2xl border p-2 backdrop-blur-xl ${dropdownPanelClass} ${menu.key === 'destinations' ? 'w-[min(42rem,calc(100vw-2rem))]' : 'w-64'}`}
                         role="menu"
                         aria-label={menu.label}
                       >
@@ -257,7 +257,7 @@ export default function Navbar() {
                                 href={`/destinations/${destination.slug}`}
                                 prefetch
                                 role="menuitem"
-                                className="flex min-h-10 items-center rounded-[4px] px-3 py-2 font-inter text-sm text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
+                                className="flex min-h-10 items-center rounded-xl px-3 py-2 font-inter text-sm text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
                               >
                                 {destination.displayName}
                               </Link>
@@ -266,7 +266,7 @@ export default function Navbar() {
                               href="/destinations"
                               prefetch
                               role="menuitem"
-                              className="mt-1 flex min-h-10 items-center justify-center rounded-[4px] bg-ocean-50 px-3 py-2 font-inter text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                              className="mt-1 flex min-h-10 items-center justify-center rounded-xl bg-ocean-50 px-3 py-2 font-inter text-sm font-semibold text-ocean-700 transition-colors hover:bg-ocean-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                             >
                               {t.nav.viewAllDestinations}
                             </Link>
@@ -278,7 +278,7 @@ export default function Navbar() {
                               href={item.href}
                               prefetch
                               role="menuitem"
-                              className="flex min-h-11 items-center rounded-[4px] px-3 py-2.5 font-inter text-sm font-medium text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
+                              className="flex min-h-11 items-center rounded-xl px-3 py-2.5 font-inter text-sm font-medium text-foreground transition-colors hover:bg-sand-50 focus-visible:bg-sand-50 focus-visible:outline-none"
                             >
                               {item.label}
                             </Link>
@@ -322,9 +322,9 @@ export default function Navbar() {
                     }}
                     aria-haspopup="true"
                     aria-expanded={isUserMenuOpen}
-                    className={`inline-flex min-h-11 items-center gap-2 rounded-[4px] px-3 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'bg-white text-ocean-700 hover:bg-ocean-50' : 'text-white hover:bg-white/15'}`}
+                    className={`inline-flex min-h-11 items-center gap-2 rounded-full px-3 py-2 font-inter text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'bg-white text-ocean-700 hover:bg-ocean-50' : 'text-white hover:bg-white/15'}`}
                   >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[4px] bg-safari-500">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-safari-500">
                       <User aria-hidden="true" className="h-3.5 w-3.5 text-white" />
                     </span>
                     {t.authSession.myDashboard}
@@ -332,7 +332,7 @@ export default function Navbar() {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden rounded-[4px] border border-border bg-white shadow-none" role="menu">
+                    <div className="absolute right-0 top-full z-50 mt-2 min-w-[220px] overflow-hidden brand-button brand-button-secondary rounded-[4px] border border-border bg-white shadow-xl" role="menu">
                       <div className="border-b border-border px-4 py-3">
                         <p className="truncate font-inter text-sm font-semibold text-foreground">{displayName}</p>
                         <p className="truncate font-inter text-xs text-muted-foreground">{user.email}</p>
@@ -401,7 +401,7 @@ export default function Navbar() {
                 aria-label={isMobileOpen ? t.nav.closeMenu : t.nav.openMenu}
                 aria-expanded={isMobileOpen}
                 aria-controls="mobile-navigation"
-                className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'text-foreground' : 'text-white'}`}
+                className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2 ${isScrolled ? 'text-foreground' : 'text-white'}`}
               >
                 {isMobileOpen ? <X aria-hidden="true" className="h-6 w-6" /> : <Menu aria-hidden="true" className="h-6 w-6" />}
               </button>
@@ -411,7 +411,7 @@ export default function Navbar() {
           {isMobileOpen && (
             <div
               id="mobile-navigation"
-              className="mt-3 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-[4px] border border-border bg-white shadow-none xl:hidden"
+              className="mt-3 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-2xl border border-border bg-white shadow-xl xl:hidden"
             >
               <div className="border-b border-border px-4 py-4">
                 <p className="px-2 pb-2 font-inter text-[10px] font-semibold uppercase tracking-[0.16em] text-ocean-700">
@@ -421,7 +421,7 @@ export default function Navbar() {
                   href="/build-your-safari"
                   prefetch
                   onClick={closeMobile}
-                  className="flex min-h-12 items-center justify-center brand-button brand-button-primary rounded-[4px] px-4 py-3 font-inter text-sm font-semibold text-white shadow-none transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+                  className="flex min-h-12 items-center justify-center brand-button brand-button-primary rounded-[4px] px-4 py-3 font-inter text-sm font-semibold text-white shadow-sm transition-colors hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
                 >
                   {t.nav.planMySafari}
                 </Link>
@@ -440,7 +440,7 @@ export default function Navbar() {
                         aria-expanded={expanded}
                         aria-controls={`mobile-${menu.key}`}
                         onClick={() => setMobileSection(expanded ? null : menu.key)}
-                        className="flex min-h-12 w-full items-center justify-between rounded-[4px] px-2 py-3 text-left font-inter text-base font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                        className="flex min-h-12 w-full items-center justify-between rounded-xl px-2 py-3 text-left font-inter text-base font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                       >
                         {menu.label}
                         <ChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
@@ -455,7 +455,7 @@ export default function Navbar() {
                                   href={`/destinations/${destination.slug}`}
                                   prefetch
                                   onClick={closeMobile}
-                                  className="flex min-h-11 items-center rounded-[4px] px-3 py-2.5 font-inter text-sm text-muted-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                                  className="flex min-h-11 items-center rounded-lg px-3 py-2.5 font-inter text-sm text-muted-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                                 >
                                   {destination.displayName}
                                 </Link>
@@ -493,7 +493,7 @@ export default function Navbar() {
                     href={link.href}
                     prefetch
                     onClick={closeMobile}
-                    className="flex min-h-12 items-center rounded-[4px] px-2 py-3 font-inter text-base font-semibold text-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
+                    className="flex min-h-12 items-center rounded-xl px-2 py-3 font-inter text-base font-semibold text-foreground transition-colors hover:bg-sand-50 hover:text-ocean-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
                   >
                     {link.label}
                   </Link>
@@ -508,7 +508,7 @@ export default function Navbar() {
                 {!loading && user ? (
                   <div className="space-y-2">
                     <div className="flex items-center gap-3 px-2 py-2">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[4px] bg-safari-500">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-safari-500">
                         <User aria-hidden="true" className="h-4 w-4 text-white" />
                       </div>
                       <div className="min-w-0">
