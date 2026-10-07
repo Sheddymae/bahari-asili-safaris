@@ -42,15 +42,15 @@ export default function CallbackRequest({ inline = false }: CallbackRequestProps
       </button>
       {open && <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
         <button aria-label={c.close} className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
-        <div role="dialog" aria-modal="true" className="relative w-full max-w-md rounded-3xl bg-white shadow-2xl p-6">
+        <div role="dialog" aria-modal="true" className="relative w-full max-w-md rounded-lg bg-white shadow-2xl p-6">
           <button type="button" onClick={() => setOpen(false)} aria-label={c.close} className="absolute right-4 top-4 rounded-full p-2 hover:bg-sand-50"><X className="w-5 h-5" /></button>
-          {status === 'done' ? <div className="py-8 text-center"><CheckCircle className="w-14 h-14 text-ocean-700 mx-auto mb-4" /><h2 className="font-poppins font-bold text-xl">{c.done}</h2><p className="text-muted-foreground mt-2">{c.doneText}</p><button type="button" onClick={() => setOpen(false)} className="mt-6 rounded-xl bg-ocean-700 text-white px-6 py-3 font-semibold">{c.close}</button></div> : <>
+          {status === 'done' ? <div className="py-8 text-center"><CheckCircle className="w-14 h-14 text-ocean-700 mx-auto mb-4" /><h2 className="font-poppins font-bold text-xl">{c.done}</h2><p className="text-muted-foreground mt-2">{c.doneText}</p><button type="button" onClick={() => setOpen(false)} className="mt-6 rounded-lg brand-button brand-button-primary  text-white px-6 py-3 font-semibold">{c.close}</button></div> : <>
             <div className="pr-8"><h2 className="font-poppins font-bold text-xl">{c.title}</h2><p className="text-sm text-muted-foreground mt-2">{c.text}</p></div>
             <form onSubmit={submit} className="mt-6 space-y-4">
-              <div><label className="block text-sm font-medium mb-1.5">{c.name}</label><input required value={name} onChange={e => setName(e.target.value)} className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-200" /></div>
-              <div><label className="block text-sm font-medium mb-1.5">{c.phone}</label><input required type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-200" /></div>
-              {status === 'error' && <div className="flex gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"><AlertCircle className="w-4 h-4 shrink-0" />{c.error}</div>}
-              <button disabled={status === 'loading'} className="w-full rounded-xl bg-ocean-700 hover:bg-ocean-800 disabled:opacity-60 text-white py-3 font-semibold flex items-center justify-center gap-2">{status === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}{status === 'loading' ? c.sending : c.submit}</button>
+              <div><label className="block text-sm font-medium mb-1.5">{c.name}</label><input required value={name} onChange={e => setName(e.target.value)} className="w-full rounded-lg border border-border px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-200" /></div>
+              <div><label className="block text-sm font-medium mb-1.5">{c.phone}</label><input required type="tel" value={phone} onChange={e => setPhone(e.target.value)} className="w-full rounded-lg border border-border px-4 py-3 outline-none focus:ring-2 focus:ring-ocean-200" /></div>
+              {status === 'error' && <div className="flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"><AlertCircle className="w-4 h-4 shrink-0" />{c.error}</div>}
+              <button disabled={status === 'loading'} className="w-full rounded-lg brand-button brand-button-primary  hover:bg-ocean-800 disabled:opacity-60 text-white py-3 font-semibold flex items-center justify-center gap-2">{status === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}{status === 'loading' ? c.sending : c.submit}</button>
             </form>
           </>}
         </div>
