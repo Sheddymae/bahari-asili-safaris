@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
-import { createClientDocument } from '@/lib/client-documents';
+import { createClientDocument, createSignedDocumentUrl } from '@/lib/client-documents';
 import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { generatePaymentReceiptPDF } from '@/lib/payment-receipt-generator';
@@ -96,7 +96,8 @@ export async function POST(req: NextRequest) {
       document = await createClientDocument(admin,{ userId:current.user_id, bookingId, type:type as any, title, pdfPath:path, email:current.email });
     }
 
-    return NextResponse.json({ success:true, reservation:current, url:path, path, document });
+    const signedUrl = await createSignedDocumentUrl(admin, path, 900);
+    return NextResponse.json({ success:true, reservation:current, url:signedUrl, path, document });
   } catch (error) {
     console.error('Admin client document action failed:', error);
     return NextResponse.json({ success:false, error:error instanceof Error ? error.message : 'Document generation failed.' }, { status:500 });
