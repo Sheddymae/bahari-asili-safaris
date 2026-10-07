@@ -94,7 +94,7 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
 
       <div>
         <h3 className="font-poppins font-semibold text-base text-foreground mb-4 flex items-center gap-1.5"><Calendar className="w-4 h-4 text-ocean-700" /> {t.safariBuilder.result.itineraryTitle}<span className="font-inter text-xs font-normal text-muted-foreground ml-1">({t.safariBuilder.result.itineraryNotice})</span></h3>
-        <ol className="space-y-3">{plan.itinerary.map((day) => <li key={day.day} className="flex gap-4 bg-sand-50 rounded-xl border border-sand-200 p-4"><div className="w-9 h-9 rounded-full bg-ocean-700 text-white flex items-center justify-center font-poppins font-bold text-xs flex-shrink-0">{day.day}</div><div><p className="font-poppins font-semibold text-sm text-foreground mb-0.5">{day.title}</p><p className="font-inter text-xs text-foreground">{day.description}</p><p className="font-inter text-[11px] text-ocean-700 mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> {t.safariBuilder.result.overnightLabel}: {day.overnight}</p></div></li>)}</ol>
+        <ol className="space-y-3">{plan.itinerary.map((day) => <li key={day.day} className="flex gap-4 bg-[var(--brand-sand)] rounded-[4px] border border-border p-4"><div className="w-9 h-9 rounded-full bg-ocean-700 text-white flex items-center justify-center font-poppins font-bold text-xs flex-shrink-0">{day.day}</div><div><p className="font-poppins font-semibold text-sm text-foreground mb-0.5">{day.title}</p><p className="font-inter text-xs text-foreground">{day.description}</p><p className="font-inter text-[11px] text-ocean-700 mt-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> {t.safariBuilder.result.overnightLabel}: {day.overnight}</p></div></li>)}</ol>
       </div>
 
       <div>
@@ -103,12 +103,12 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
           <label className="flex items-center gap-2 text-sm font-inter font-medium text-foreground">
             <WalletCards className="w-4 h-4 text-ocean-700" />
             <span className="sr-only">Currency</span>
-            <select value={currency} onChange={(e) => onCurrencyChange(e.target.value as BookingCurrency)} className="h-10 rounded-xl border border-border bg-white px-3 outline-none focus:border-ocean-500 focus:ring-2 focus:ring-ocean-100">
+            <select value={currency} onChange={(e) => onCurrencyChange(e.target.value as BookingCurrency)} className="h-10 rounded-[4px] border border-border bg-white px-3 outline-none focus:border-ocean-500 focus:ring-2 focus:ring-ocean-100">
               {(['KES', 'USD', 'EUR'] as BookingCurrency[]).map((code) => <option key={code} value={code}>{labels[code]}</option>)}
             </select>
           </label>
         </div>
-        <div className="bg-white rounded-2xl border border-border shadow-card p-6">
+        <div className="bg-white rounded-[4px] border border-border shadow-none p-6">
           <dl className="space-y-2.5 font-inter text-sm">
             <Row label={t.safariBuilder.result.accommodationCost} value={pricing.accommodation_cost} currency={pricing.currency} />
             <Row label={t.safariBuilder.result.parkFees} value={pricing.park_fees} currency={pricing.currency} />
@@ -124,18 +124,18 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-sand-50 rounded-2xl border border-sand-200 p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-[var(--brand-sand)] rounded-[4px] border border-border p-6 space-y-4">
         <h3 className="font-poppins font-semibold text-base text-foreground">{t.safariBuilder.result.requestQuoteTitle}</h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <input id="firstName" required placeholder={t.safariBuilder.result.firstNameLabel} value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full h-11 px-4 rounded-xl border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
-          <input id="lastName" required placeholder={t.safariBuilder.result.lastNameLabel} value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full h-11 px-4 rounded-xl border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
-          <input id="email" type="email" required placeholder={t.safariBuilder.result.emailLabel} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full h-11 px-4 rounded-xl border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
-          <input id="whatsapp" placeholder={t.safariBuilder.result.whatsappLabel} value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} className="w-full h-11 px-4 rounded-xl border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
-          <input id="nationality" placeholder={t.booking.nationalityPlaceholder} value={form.nationality} onChange={(e) => setForm({ ...form, nationality: e.target.value })} className="w-full h-11 px-4 rounded-xl border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
+          <input id="firstName" required placeholder={t.safariBuilder.result.firstNameLabel} value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="w-full h-11 px-4 rounded-[4px] border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
+          <input id="lastName" required placeholder={t.safariBuilder.result.lastNameLabel} value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="w-full h-11 px-4 rounded-[4px] border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
+          <input id="email" type="email" required placeholder={t.safariBuilder.result.emailLabel} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full h-11 px-4 rounded-[4px] border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
+          <input id="whatsapp" placeholder={t.safariBuilder.result.whatsappLabel} value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })} className="w-full h-11 px-4 rounded-[4px] border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
+          <input id="nationality" placeholder={t.booking.nationalityPlaceholder} value={form.nationality} onChange={(e) => setForm({ ...form, nationality: e.target.value })} className="w-full h-11 px-4 rounded-[4px] border border-border focus:border-ocean-500 outline-none font-inter text-sm" />
         </div>
-        <textarea id="specialRequests" placeholder={t.safariBuilder.result.notesLabel} rows={3} value={form.specialRequests} onChange={(e) => setForm({ ...form, specialRequests: e.target.value })} className="w-full px-4 py-3 rounded-xl border border-border focus:border-ocean-500 outline-none font-inter text-sm resize-none" />
+        <textarea id="specialRequests" placeholder={t.safariBuilder.result.notesLabel} rows={3} value={form.specialRequests} onChange={(e) => setForm({ ...form, specialRequests: e.target.value })} className="w-full px-4 py-3 rounded-[4px] border border-border focus:border-ocean-500 outline-none font-inter text-sm resize-none" />
         {submitState === 'error' && <p className="text-sm text-destructive font-inter">{submitError}</p>}
-        <button type="submit" disabled={submitState === 'loading'} className="w-full bg-book hover:bg-book-600 text-white font-poppins font-semibold py-3.5 rounded-xl transition-all disabled:opacity-60 flex items-center justify-center gap-2">{submitState === 'loading' ? <><Loader2 className="w-4 h-4 animate-spin" /> {t.safariBuilder.result.submitting}</> : t.safariBuilder.result.submitQuoteBtn}</button>
+        <button type="submit" disabled={submitState === 'loading'} className="w-full brand-button brand-button-primary text-white font-poppins font-semibold py-3.5 rounded-[4px] transition-all disabled:opacity-60 flex items-center justify-center gap-2">{submitState === 'loading' ? <><Loader2 className="w-4 h-4 animate-spin" /> {t.safariBuilder.result.submitting}</> : t.safariBuilder.result.submitQuoteBtn}</button>
       </form>
     </div>
   );
