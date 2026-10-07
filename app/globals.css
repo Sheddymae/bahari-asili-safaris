@@ -191,21 +191,23 @@ a, button, input, select, textarea, [role='button'] {
    Palette source: Sep 29 baseline. No October Raw Luxury colors.
    -------------------------------------------------------------------------- */
 .brand-button,
-.brand-button-primary {
-  border-radius: 9999px !important;
-  letter-spacing: .01em;
+.brand-button-primary,
+.brand-button-secondary {
+  border-radius: 0.5rem !important;
+  letter-spacing: 0.01em;
   text-transform: none;
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
-  box-shadow: none !important;
-  transition: transform 160ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+  box-shadow: 0 4px 16px rgba(14, 116, 144, 0.10) !important;
+  transition: transform 160ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 .brand-button-primary { background: #F97316 !important; color: #ffffff !important; }
 .brand-button-primary:hover { background: #F97316 !important; }
-.brand-button-secondary { border: 1px solid var(--brand-primary) !important; color: #0E7490 !important; background: transparent !important; border-radius: 9999px !important; }
-.brand-button:hover { transform: translateY(-1px); }
-.brand-button:active { transform: translateY(1px); }
+.brand-button-secondary { border: 1px solid var(--brand-primary) !important; color: #0E7490 !important; background: transparent !important; }
+.brand-button:hover,
+.brand-button:focus-visible { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(14, 116, 144, 0.16) !important; }
+.brand-button:active { transform: translateY(0) scale(0.98); }
 .brand-rule { border-color: color-mix(in srgb, #0E7490 12%, transparent) !important; }
 button:not([data-no-glow]), a[role='button']:not([data-no-glow]) { box-shadow: none; }
 button:not([data-no-glow]):hover, button:not([data-no-glow]):focus-visible,
@@ -231,3 +233,11 @@ a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow])
   .why-editorial-grid { grid-template-columns: 1fr; }
   .why-editorial-item, .why-editorial-item:nth-child(2), .why-editorial-item:nth-child(3) { margin-top: 0; border-left: 0; border-top: 1px solid color-mix(in srgb, var(--brand-primary) 12%, transparent); }
 }
+
+
+/* Shared public UI primitives — keep reusable controls visually aligned with the Sep 29 system. */
+.brand-card { border: 1px solid hsl(var(--border)); border-radius: 0.75rem; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+.brand-input { min-height: 2.75rem; border: 1px solid hsl(var(--border)); border-radius: 0.5rem; background: #fff; color: hsl(var(--foreground)); font-family: 'Inter', sans-serif; font-size: .875rem; outline: none; transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease; }
+.brand-input:focus { border-color: #0E7490; box-shadow: 0 0 0 3px rgba(14,116,144,.12); }
+.brand-badge { display: inline-flex; align-items: center; gap: .35rem; border-radius: .5rem; padding: .35rem .65rem; font-family: 'Inter', sans-serif; font-size: .6875rem; font-weight: 600; line-height: 1.2; }
+.brand-modal { border: 1px solid hsl(var(--border)); border-radius: .75rem; background: #fff; box-shadow: 0 24px 64px rgba(15,23,42,.18); }
