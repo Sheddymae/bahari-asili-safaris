@@ -452,11 +452,14 @@ export async function POST(req: NextRequest) {
     // READ FORM DATA
     // ----------------------------------------------
 
-    const firstName = String(body.firstName || '').trim();
+    const fullName = String(body.fullName || `${body.firstName || ''} ${body.lastName || ''}`).trim();
+    const firstName = String(body.firstName || fullName.split(/\\s+/)[0] || '').trim();
     const lastName = String(body.lastName || '').trim();
     const email = String(body.email || '').trim();
     const whatsapp = String(body.whatsapp || '').trim();
     const nationality = String(body.nationality || '').trim();
+    const travelers = body.travelers && typeof body.travelers === 'object' ? body.travelers as Record<string, unknown> : null;
+    const dates = body.dates && typeof body.dates === 'object' ? body.dates as Record<string, unknown> : null;
     const safariName = String(body.safariName || '').trim();
     const arrivalDate = String(body.arrivalDate || '').trim();
 
@@ -506,7 +509,7 @@ export async function POST(req: NextRequest) {
     // VALIDATION
     // ----------------------------------------------
 
-    if (!firstName || !lastName) {
+    if (!fullName || !firstName || !lastName) {
       return NextResponse.json(
         {
           success: false,
@@ -524,6 +527,14 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 },
       );
+    }
+
+    if (!nationality) {
+      return NextResponse.json({ success: false, error: 'Nationality is required.' }, { status: 400 });
+    }
+
+    if (!travelers || !dates) {
+      return NextResponse.json({ success: false, error: 'Traveller and travel date details are required.' }, { status: 400 });
     }
 
     if (!safariName) {
