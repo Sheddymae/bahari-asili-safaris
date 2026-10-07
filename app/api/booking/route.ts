@@ -453,7 +453,7 @@ export async function POST(req: NextRequest) {
     // ----------------------------------------------
 
     const fullName = String(body.fullName || `${body.firstName || ''} ${body.lastName || ''}`).trim();
-    const firstName = String(body.firstName || fullName.split(/\\s+/)[0] || '').trim();
+    const firstName = String(body.firstName || fullName.split(/\s+/)[0] || '').trim();
     const lastName = String(body.lastName || '').trim();
     const email = String(body.email || '').trim();
     const whatsapp = String(body.whatsapp || '').trim();
