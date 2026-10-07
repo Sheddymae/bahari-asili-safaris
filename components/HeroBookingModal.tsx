@@ -85,7 +85,7 @@ export default function HeroBookingModal({ isOpen, onClose, initialSelection }: 
       const selectedItinerary = safaris.find((s) => s.name === form.destination) || excursions.find((e) => e.nameIt === form.destination) || null;
       const response = await fetch('/api/booking', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName: (form.firstName + ' ' + form.lastName).trim(), travelers: { adults, children, kidsAges: [] }, dates: { arrival: form.arrivalDate }, firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email.trim(), whatsapp: form.whatsapp.trim(), nationality, adults, children, kidsAges: [], arrivalDate: form.arrivalDate, safariName: form.destination.trim(), message: messageParts.join('\n'), userId: user?.id || null, locale, itinerary: selectedItinerary, total: 0, currency }),
+        body: JSON.stringify({ fullName: (form.firstName + ' ' + form.lastName).trim(), travelers: { adults, children, kidsAges: [] }, dates: { arrival: form.arrivalDate }, firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email.trim(), whatsapp: form.whatsapp.trim(), nationality, adults, children, kidsAges: [], arrivalDate: form.arrivalDate, safariName: form.destination.trim(), message: messageParts.join('\n'), userId: user?.id || null, locale, itinerary: selectedItinerary || { id: form.destination, name: form.destination, title: form.destination, type: 'service' }, total: 0, currency }),
       });
       let data: any = null;
       try { data = await response.json(); } catch { data = null; }
