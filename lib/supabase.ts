@@ -24,6 +24,9 @@ export interface Booking {
   email_sent?: boolean;
   reservation_status?: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   user_id?: string | null;
+  status?: 'pending_confirmation' | 'confirmed' | 'cancelled';
+  itinerary_snapshot?: unknown;
+  total_amount?: number | null;
   voucher_path?: string | null;
   kids_ages?: number[] | null;
   created_at?: string;
