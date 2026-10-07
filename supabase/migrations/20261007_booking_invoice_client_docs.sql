@@ -93,6 +93,10 @@ CREATE INDEX IF NOT EXISTS idx_client_documents_booking_id ON public.client_docu
 CREATE INDEX IF NOT EXISTS idx_client_documents_created_at ON public.client_documents(created_at DESC);
 
 ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
+
+-- Older migrations exposed every booking to anon/authenticated. Remove those broad SELECT policies before adding the account-scoped policy.
+DROP POLICY IF EXISTS "anon_select_bookings" ON public.bookings;
+DROP POLICY IF EXISTS "public_select_bookings" ON public.bookings;
 ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.client_documents ENABLE ROW LEVEL SECURITY;
 
