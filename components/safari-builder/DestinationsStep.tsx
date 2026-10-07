@@ -34,7 +34,7 @@ export default function DestinationsStep({ value, onChange, errors }: Destinatio
               <div className="relative h-40 w-full">
                 <Image src={dest.heroImage} alt={dest.name} fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                {selected && <div className="absolute top-3 right-3 w-7 h-7 bg-book rounded-[4px] flex items-center justify-center"><Check className="w-4 h-4 text-white" /></div>}
+                {selected && <div className="absolute top-3 right-3 w-7 h-7 bg-[var(--brand-secondary)] rounded-[4px] flex items-center justify-center"><Check className="w-4 h-4 text-white" /></div>}
                 <div className="absolute bottom-3 left-4 right-4"><h3 className="font-poppins font-bold text-lg text-white flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {dest.name}</h3></div>
               </div>
               <div className="bg-white p-4"><p className="font-inter text-xs text-foreground mb-2 line-clamp-2">{dest.tagline}</p><p className="font-inter text-[11px] text-ocean-700 font-medium">{dest.wildlifeHighlights[0]}</p></div>
