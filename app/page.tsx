@@ -41,7 +41,7 @@ export default function Home() {
       <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
         <HeroSection onBook={openHeroBooking} />
         <HomeIntro />
-        <AnimateOnScroll direction="up"><HomePopularSafaris /></AnimateOnScroll>
+        <AnimateOnScroll direction="up"><HomePopularSafaris onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeFromWatamu /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeCoast /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeWhy /></AnimateOnScroll>
