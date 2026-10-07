@@ -890,9 +890,6 @@ export async function POST(req: NextRequest) {
     // PREPARE EMAIL DATA
     // ----------------------------------------------
 
-    const fullName =
-      `${firstName} ${lastName}`;
-
     const childrenDisplay =
       children > 0
         ? kidsAges.length > 0
