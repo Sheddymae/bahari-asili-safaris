@@ -1,7 +1,6 @@
 import './globals.css';
 import './responsive.css';
 import type { Metadata } from 'next';
-import { Manrope } from 'next/font/google';
 import { cookies } from 'next/headers';
 import { translations, type Locale } from '@/lib/i18n';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -13,7 +12,6 @@ import Analytics from '@/components/Analytics';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import SessionGuard from '@/components/auth/SessionGuard';
 
-const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope', display: 'swap' });
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
 
 export const viewport = { width: 'device-width', initialScale: 1, colorScheme: 'light' } as const;
@@ -35,7 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const cookieLocale = cookieStore.get('bahari-locale')?.value as Locale | undefined;
   const initialLocale = cookieLocale && Object.prototype.hasOwnProperty.call(translations, cookieLocale) ? cookieLocale : 'en';
   return (
-    <html lang={initialLocale} dir={initialLocale === 'ar' ? 'rtl' : 'ltr'} className={`scroll-smooth bg-sand-50 ${manrope.variable}`}>
+    <html lang={initialLocale} dir={initialLocale === 'ar' ? 'rtl' : 'ltr'} className="scroll-smooth bg-sand-50">
       <body className="bg-sand-50">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ocean-600">Skip to main content</a>
         <AuthProvider>
