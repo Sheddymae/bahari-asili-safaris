@@ -22,22 +22,22 @@ export default function DestinationsPage() {
 
   return (
     <PageShell>
-      <section className="py-16 lg:py-24 bg-sand-50 min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="min-h-screen bg-sand-50 py-12 sm:py-16 lg:py-24">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <AnimateOnScroll direction="up">
-            <div className="text-center mb-12 lg:mb-14">
+            <div className="mb-10 text-center sm:mb-12 lg:mb-14">
               <span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.destinationsPage.label}</span>
               <h1 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4">{t.destinationsPage.title}</h1>
               <p className="font-inter text-muted-foreground max-w-3xl mx-auto">{t.destinationsPage.description}</p>
             </div>
           </AnimateOnScroll>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
             {destinations.map((d, i) => {
               const content = getExpandedLocalizedDestination(getLocalizedDestination(d, locale), locale);
               return (
                 <AnimateOnScroll key={d.slug} direction="up" delay={staggerDelay(i)}>
-                  <Link href={`/destinations/${d.slug}`} prefetch className="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 bg-white block hover:-translate-y-1">
+                  <Link href={`/destinations/${d.slug}`} prefetch className="group relative rounded-xl sm:rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 bg-white block hover:-translate-y-1">
                     <div className="relative h-64 sm:h-72 w-full overflow-hidden">
                       <Image src={d.heroImage} alt={`${content.name} ${t.destinationsPage.safariDestination}${d.country ? `, ${d.country}` : ''}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
