@@ -18,11 +18,7 @@ export default function CinematicTextOverlay({ onPlan }: { onPlan: () => void })
           <MessageCircle className="h-5 w-5" aria-hidden="true" />{c.hero.whatsapp}
         </a>
       </div>
-      <div className="mt-6 flex flex-wrap gap-2" aria-label="Destinations">
-        {c.hero.destinations.split(' · ').map((destination) => (
-          <span key={destination} className="inline-flex h-7 items-center rounded-pill bg-white/15 px-3 text-[13px] font-medium text-white backdrop-blur-sm">{destination}</span>
-        ))}
-      </div>
+      <p className="mt-6 font-inter text-sm font-medium tracking-wide text-white/90 drop-shadow-md">{c.hero.destinations}</p>
     </div>
   );
 }

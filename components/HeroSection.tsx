@@ -65,7 +65,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
 
   const dropdown = isLocOpen && typeof document !== 'undefined'
     ? createPortal(
-        <div className="fixed z-[10000] max-h-72 overflow-y-auto rounded-[4px] border border-border bg-white shadow-none" style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }} role="listbox" aria-label={t.bookingOverlay.selectDest}>
+        <div className="fixed z-[10000] max-h-72 overflow-y-auto rounded-xl border border-border bg-white shadow-2xl" style={{ top: menuPosition.top, left: menuPosition.left, width: menuPosition.width }} role="listbox" aria-label={t.bookingOverlay.selectDest}>
           {locations.map((loc) => (
             <button key={loc} type="button" role="option" aria-selected={location === loc} onClick={() => { setLocation(loc); setIsLocOpen(false); }} className="block w-full border-b border-sand-100 px-4 py-3 text-left font-inter text-sm text-foreground transition-colors last:border-0 hover:bg-sand-50 hover:text-ocean-700">
               {loc}
@@ -112,13 +112,13 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
                 <CalendarDays className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
                   <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.date}</span>
-                  <input type="month" value={date} onChange={(e) => setDate(e.target.value)} className="w-full cursor-pointer border-none bg-transparent font-inter text-sm text-foreground outline-none" aria-label={t.hero.date} />
+                  <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full cursor-pointer border-none bg-transparent font-inter text-sm text-foreground outline-none" aria-label={t.hero.date} />
                 </span>
               </span>
             </label>
 
             <button type="button" onClick={handleBookClick} className="brand-button brand-button-primary whitespace-nowrap px-8 py-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-book focus-visible:ring-offset-2">
-              {t.homeExtras?.buildCta || t.hero.plan} →
+              {t.hero.bookNow} →
             </button>
           </div>
         </div>
