@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     } else if (effectiveAction === 'itinerary') generated = await generateDetailedItineraryPDF(current, locale as any, path);
     else generated = await generateVisaItineraryPDF(current, String(body.passportNumber || ''), locale as any, path);
 
-    const upload = await admin.storage.from('documents').upload(path, Buffer.from(generated.base64,'base64'), { contentType:'application/pdf', upsert:true });
+    const upload = await admin.storage.from(process.env.SUPABASE_DOCUMENTS_BUCKET || 'documents').upload(path, Buffer.from(generated.base64,'base64'), { contentType:'application/pdf', upsert:true });
     if (upload.error) throw upload.error;
 
     if (effectiveAction === 'invoice') {
