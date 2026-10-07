@@ -71,7 +71,7 @@ export default function ContactPageClient() {
           <div className="text-center">
             <button
               onClick={openBooking}
-              className="bg-[var(--brand-secondary)] hover:bg-[var(--brand-secondary)]-600 text-white font-poppins font-semibold px-8 py-3.5 brand-button brand-button-primary rounded-[4px] transition-all duration-200 active:scale-95"
+              className="bg-[var(--brand-secondary)] hover:bg-[#ea580c] text-white font-poppins font-semibold px-8 py-3.5 brand-button brand-button-primary rounded-[4px] transition-all duration-200 active:scale-95"
             >
               {t.contact.quoteTitle}
             </button>
