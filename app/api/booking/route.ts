@@ -835,7 +835,6 @@ export async function POST(req: NextRequest) {
       invoiceFilename = `Bahari-Asili-Booking-Invoice-${invoiceNumber || bookingRef}.pdf`;
       invoiceGenerated = Boolean(invoiceBase64);
 
-      const admin = getSupabaseAdmin();
       invoicePath = `invoices/${invoiceNumber || bookingRef}.pdf`;
       const upload = await admin.storage.from('documents').upload(invoicePath, Buffer.from(invoiceBase64, 'base64'), { contentType: 'application/pdf', upsert: true });
       if (upload.error) throw upload.error;
