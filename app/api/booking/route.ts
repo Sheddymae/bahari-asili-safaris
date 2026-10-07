@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { normalizeLocale } from '@/lib/locale-content';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { generateCustomerInvoicePDF } from '@/lib/customer-invoice-generator';
@@ -495,7 +496,9 @@ export async function POST(req: NextRequest) {
     const { data: authData } = bearerToken
       ? await authClient.auth.getUser(bearerToken)
       : { data: { user: null } };
-    const userId = authData.user?.id || null;
+    const serverAuth = await createSupabaseServerClient();
+    const { data: { user: cookieUser } } = await serverAuth.auth.getUser();
+    const userId = cookieUser?.id || authData.user?.id || null;
 
     const locale = normalizeLocale(body.locale);
 
