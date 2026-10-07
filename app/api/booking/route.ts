@@ -4,7 +4,6 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { normalizeLocale } from '@/lib/locale-content';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
-import { generateCustomerInvoicePDF } from '@/lib/customer-invoice-generator';
 import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import { createClientDocument } from '@/lib/client-documents';
 import { resolveBookingPackage, addBookingDays } from '@/lib/booking-document';
