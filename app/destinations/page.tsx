@@ -37,7 +37,7 @@ export default function DestinationsPage() {
               const content = getExpandedLocalizedDestination(getLocalizedDestination(d, locale), locale);
               return (
                 <AnimateOnScroll key={d.slug} direction="up" delay={staggerDelay(i)}>
-                  <Link href={`/destinations/${d.slug}`} prefetch className="group relative rounded-xl sm:rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 bg-white block hover:-translate-y-1">
+                  <Link href={`/destinations/${d.slug}`} prefetch className="group relative rounded-xl sm:rounded-xl sm:rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 bg-white block hover:-translate-y-1">
                     <div className="relative h-64 sm:h-72 w-full overflow-hidden">
                       <Image src={d.heroImage} alt={`${content.name} ${t.destinationsPage.safariDestination}${d.country ? `, ${d.country}` : ''}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
