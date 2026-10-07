@@ -98,9 +98,9 @@ export default function BookingModal({ isOpen, onClose, selectedTour }: BookingM
           message: form.message,
           userId: user?.id || null,
           locale,
-          itinerary: selectedItinerary,
+          itinerary: selectedItinerary || { id: form.safari, name: form.safari, title: form.safari, type: 'service' },
           total: 0,
-          currency, travelers: { adults, children: childCount, kidsAges }, dates: { arrival: form.arrivalDate },
+          currency, travelers: { adults: parseInt(form.adults, 10), children: childCount, kidsAges: resolvedAges }, dates: { arrival: form.arrivalDate },
         }),
       });
 
