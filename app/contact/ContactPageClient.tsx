@@ -18,7 +18,7 @@ export default function ContactPageClient() {
 
   return (
     <PageShell>
-      <section className="py-20 lg:py-28 bg-sand-50">
+      <section className="py-20 lg:py-28 bg-[var(--brand-bg)]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">
@@ -33,13 +33,13 @@ export default function ContactPageClient() {
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
-            <div className="bg-white rounded-2xl p-6 border border-border shadow-card text-center">
+            <div className="bg-white rounded-[4px] p-6 border border-border shadow-none text-center">
               <div className="w-11 h-11 mx-auto rounded-full bg-ocean-50 flex items-center justify-center mb-3">
                 <MapPin className="w-5 h-5 text-ocean-700" />
               </div>
               <p className="font-inter text-sm text-foreground">{t.footer.address}</p>
             </div>
-            <div className="bg-white rounded-2xl p-6 border border-border shadow-card text-center">
+            <div className="bg-white rounded-[4px] p-6 border border-border shadow-none text-center">
               <div className="w-11 h-11 mx-auto rounded-full bg-ocean-50 flex items-center justify-center mb-3">
                 <Phone className="w-5 h-5 text-ocean-700" />
               </div>
@@ -47,7 +47,7 @@ export default function ContactPageClient() {
                 {t.footer.phone}
               </a>
             </div>
-            <div className="bg-white rounded-2xl p-6 border border-border shadow-card text-center">
+            <div className="bg-white rounded-[4px] p-6 border border-border shadow-none text-center">
               <div className="w-11 h-11 mx-auto rounded-full bg-ocean-50 flex items-center justify-center mb-3">
                 <Mail className="w-5 h-5 text-ocean-700" />
               </div>
@@ -59,9 +59,9 @@ export default function ContactPageClient() {
               href={`https://wa.me/${whatsappNumber}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white rounded-2xl p-6 border border-border shadow-card text-center hover:border-safari-300 transition-colors"
+              className="bg-white rounded-[4px] p-6 border border-border shadow-none text-center hover:border-safari-300 transition-colors"
             >
-              <div className="w-11 h-11 mx-auto rounded-full bg-book/10 flex items-center justify-center mb-3">
+              <div className="w-11 h-11 mx-auto rounded-full bg-[var(--brand-secondary)]/10 flex items-center justify-center mb-3">
                 <MessageCircle className="w-5 h-5 text-book" />
               </div>
               <p className="font-inter text-sm text-foreground">{t.contact.whatsAppTitle}</p>
@@ -71,7 +71,7 @@ export default function ContactPageClient() {
           <div className="text-center">
             <button
               onClick={openBooking}
-              className="bg-book hover:bg-book-600 text-white font-poppins font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95"
+              className="bg-[var(--brand-secondary)] hover:bg-[#ea580c] text-white font-poppins font-semibold px-8 py-3.5 brand-button brand-button-primary rounded-[4px] transition-all duration-200 active:scale-95"
             >
               {t.contact.quoteTitle}
             </button>

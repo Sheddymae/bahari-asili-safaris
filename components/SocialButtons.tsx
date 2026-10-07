@@ -99,9 +99,9 @@ export default function SocialButtons({ variant = 'dark', className = '' }: Soci
           rel="noopener noreferrer"
           aria-label={s.label}
           style={{ '--brand': s.brand } as CSSProperties}
-          className={`group relative flex h-11 items-center overflow-hidden rounded-full pl-[11px] pr-[11px] transition-all duration-300 ease-out hover:pr-5 hover:text-white hover:shadow-md hover:scale-105 active:scale-95 ${base}`}
+          className={`group relative flex h-11 items-center overflow-hidden rounded-[4px] pl-[11px] pr-[11px] transition-all duration-300 ease-out hover:pr-5 hover:text-white hover:shadow-md hover:scale-105 active:scale-95 ${base}`}
         >
-          <span className="absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background-color:var(--brand)]" />
+          <span className="absolute inset-0 rounded-[4px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background-color:var(--brand)]" />
           <span className="relative z-10 flex items-center">
             {s.icon}
             <span className="ml-0 max-w-0 overflow-hidden whitespace-nowrap font-inter text-sm font-semibold opacity-0 transition-all duration-300 ease-out group-hover:ml-2 group-hover:max-w-[120px] group-hover:opacity-100">
