@@ -12,7 +12,7 @@ export default function TrustProofStrip() {
     { icon: ShieldCheck, text: 'Licensed local operator' },
   ];
   return (
-    <section aria-label="Booking proof" className="border-y border-sand-100 bg-sand-50 py-6">
+    <section aria-label="Booking proof" className="border-y border-sand-100 bg-[var(--brand-bg)] py-6">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="trust-proof-strip divide-x divide-sand-300 rtl:divide-x-reverse">
           {items.map(({ icon: Icon, text }) => (
