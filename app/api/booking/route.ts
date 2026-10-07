@@ -4,6 +4,7 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { normalizeLocale } from '@/lib/locale-content';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { generateCustomerInvoicePDF } from '@/lib/customer-invoice-generator';
+import { createClientDocument } from '@/lib/client-documents';
 import { resolveBookingPackage, addBookingDays } from '@/lib/booking-document';
 import type { Booking } from '@/lib/supabase';
 import { safaris, excursions } from '@/lib/tours-data';
@@ -479,6 +480,10 @@ export async function POST(req: NextRequest) {
       : [];
 
     const message = String(body.message || '').trim();
+    const currency = ['KES', 'USD', 'EUR'].includes(String(body.currency || '').toUpperCase()) ? String(body.currency).toUpperCase() : 'USD';
+    const requestedTotal = Number(body.total);
+    const totalAmount = Number.isFinite(requestedTotal) && requestedTotal >= 0 ? requestedTotal : 0;
+    const submittedItinerary = body.itinerary && typeof body.itinerary === 'object' ? body.itinerary as Record<string, unknown> : null;
 
     const authHeader = req.headers.get('authorization') || '';
     const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
@@ -525,6 +530,10 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 },
       );
+    }
+
+    if (!submittedItinerary) {
+      return NextResponse.json({ success: false, error: 'The selected itinerary is required. Please select the safari again.' }, { status: 400 });
     }
 
     if (!arrivalDate) {
@@ -684,6 +693,11 @@ export async function POST(req: NextRequest) {
       payment_status: 'unpaid',
       user_id: userId,
       locale,
+      itinerary_snapshot: submittedItinerary,
+      status: 'pending_confirmation',
+      total_amount: totalAmount,
+      total_price: totalAmount,
+      currency,
     };
 
     // ----------------------------------------------
@@ -762,14 +776,23 @@ export async function POST(req: NextRequest) {
     let invoiceEmailSent = false;
     let invoiceBase64 = '';
     let invoiceFilename = '';
+    let invoiceNumber = '';
+    let invoicePath = '';
+    let bookingId: number | null = null;
 
     try {
       const packageDetails = await resolveBookingPackage(safariName, locale);
       const packageDays = Math.max(1, Number(packageDetails.days) || 1);
       const departureDate = addBookingDays(arrivalDate, packageDays);
 
+      const { data: savedBooking } = await supabase.from('bookings').select('id').eq('booking_ref', bookingRef).maybeSingle();
+      bookingId = savedBooking?.id ? Number(savedBooking.id) : null;
+      const admin = getSupabaseAdmin();
+      const { data: generatedInvoiceNumber, error: invoiceNumberError } = await admin.rpc('next_bahari_invoice_number');
+      if (invoiceNumberError || !generatedInvoiceNumber) throw invoiceNumberError || new Error('Invoice number could not be generated.');
+      invoiceNumber = String(generatedInvoiceNumber);
       const customerInvoice = {
-        booking_ref: bookingRef,
+        booking_ref: invoiceNumber,
         first_name: firstName,
         last_name: lastName,
         email,
@@ -785,13 +808,23 @@ export async function POST(req: NextRequest) {
         reservation_status: 'pending',
         locale,
         package: packageDetails,
-        costs: null,
+        costs: totalAmount > 0 ? { total: totalAmount, currency } : null,
       };
 
-      const generated = await generateCustomerInvoicePDF(customerInvoice);
+      const generated = await generatePremiumInvoicePDF({
+        ...(customerInvoice as any),
+        booking_ref: invoiceNumber,
+        total_price: totalAmount,
+        currency,
+      } as any, locale);
       invoiceBase64 = generated.base64;
-      invoiceFilename = `Bahari-Asili-Booking-Invoice-${bookingRef}.pdf`;
+      invoiceFilename = `Bahari-Asili-Booking-Invoice-${invoiceNumber || bookingRef}.pdf`;
       invoiceGenerated = Boolean(invoiceBase64);
+
+      const admin = getSupabaseAdmin();
+      invoicePath = `invoices/${invoiceNumber || bookingRef}.pdf`;
+      const upload = await admin.storage.from('documents').upload(invoicePath, Buffer.from(invoiceBase64, 'base64'), { contentType: 'application/pdf', upsert: true });
+      if (upload.error) throw upload.error;
 
       const { error: invoiceUpdateError } = await supabase
         .from('bookings')
@@ -799,13 +832,42 @@ export async function POST(req: NextRequest) {
           itinerary: packageDetails.itinerary || [],
           invoice_generated: invoiceGenerated,
           invoice_status: invoiceGenerated ? 'sent' : 'draft',
-          invoice_number: bookingRef,
+          invoice_number: invoiceNumber || bookingRef,
+          invoice_url: invoicePath || null,
+          itinerary_snapshot: packageDetails,
+          status: 'pending_confirmation',
+          total_amount: totalAmount,
+          currency,
           updated_at: new Date().toISOString(),
         })
         .eq('booking_ref', bookingRef);
 
       if (invoiceUpdateError) {
         console.error('Booking invoice metadata update failed:', invoiceUpdateError.message);
+      }
+
+      if (bookingId && invoicePath) {
+        const admin = getSupabaseAdmin();
+        const { error: invoiceRowError } = await admin.from('invoices').insert({
+          booking_id: bookingId,
+          user_id: userId,
+          invoice_number: invoiceNumber,
+          amount: totalAmount,
+          currency,
+          status: 'pending',
+          itinerary: packageDetails,
+          pdf_url: invoicePath,
+        });
+        if (invoiceRowError && !/duplicate key|already exists/i.test(invoiceRowError.message)) throw invoiceRowError;
+
+        await createClientDocument(admin, {
+          userId,
+          bookingId,
+          type: 'invoice',
+          title: `Invoice ${invoiceNumber} - ${packageDetails.name || safariName}`,
+          pdfPath: invoicePath,
+          email,
+        });
       }
     } catch (invoiceError) {
       console.error('Automatic booking invoice generation failed:', invoiceError);
@@ -1010,6 +1072,7 @@ export async function POST(req: NextRequest) {
       'BOOKING CREATED SUCCESSFULLY:',
       {
         bookingRef,
+        invoiceNumber: invoiceNumber || null,
         bookingType,
         email,
         customerEmailSent,
@@ -1029,6 +1092,9 @@ export async function POST(req: NextRequest) {
         bookingType,
         invoiceGenerated,
         invoiceEmailSent,
+        invoiceNumber: invoiceNumber || null,
+        invoiceUrl: invoicePath || null,
+        needsAccount: !userId,
         invoiceFilename: invoiceGenerated ? invoiceFilename : null,
         invoiceDataUrl: invoiceGenerated ? `data:application/pdf;base64,${invoiceBase64}` : null,
       },
