@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type Quotation } from '@/lib/supabase';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { sendQuotationEmail, sendAdminTripRequestEmail } from '@/lib/quotation-email';
 import { generateQuotationPDF } from '@/lib/quotation-generator';
 import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
@@ -89,7 +90,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Server is missing Supabase configuration. Please try again later or contact us directly.' }, { status: 500 });
   }
 
-  const userId = await getAuthenticatedUserId(req);
+  const cookieClient = await createSupabaseServerClient();
+  const { data: { user: cookieUser } } = await cookieClient.auth.getUser();
+  const userId = cookieUser?.id || await getAuthenticatedUserId(req);
   const quotationRef = await generateQuotationRef(admin);
   let generatedInvoiceNumber = '';
   const tripRequestPayload: Record<string, unknown> = {
