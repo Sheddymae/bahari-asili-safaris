@@ -1,5 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
+const DOCUMENTS_BUCKET = process.env.SUPABASE_DOCUMENTS_BUCKET || 'documents';
+
 export type ClientDocumentType = 'invoice' | 'voucher' | 'visa_support' | 'receipt' | 'itinerary';
 
 export async function createClientDocument(
@@ -37,7 +39,7 @@ export async function createSignedDocumentUrl(
   expiresIn = 600,
 ) {
   const { data, error } = await admin.storage
-    .from('documents')
+    .from(DOCUMENTS_BUCKET)
     .createSignedUrl(pdfPath, expiresIn);
 
   if (error || !data?.signedUrl) {
