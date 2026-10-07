@@ -35,7 +35,7 @@ export default function SessionGuard() {
   const { warning, staySignedIn } = useInactivityTimeout(Boolean(user && session), signOut);
 
   useEffect(() => {
-    if (!loading && !user && (pathname === '/dashboard' || pathname.startsWith('/dashboard/'))) {
+    if (!loading && !user && (pathname === '/dashboard' || pathname.startsWith('/dashboard/') || pathname === '/account' || pathname.startsWith('/account/'))) {
       router.replace('/login');
     }
   }, [loading, user, pathname, router]);

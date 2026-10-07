@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type Quotation } from '@/lib/supabase';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 import { sendQuotationEmail, sendAdminTripRequestEmail } from '@/lib/quotation-email';
 import { generateQuotationPDF } from '@/lib/quotation-generator';
+import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
+import { createClientDocument } from '@/lib/client-documents';
 import { normalizeLocale } from '@/lib/locale-content';
 import {
   validateBuilderInput,
@@ -87,8 +90,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: 'Server is missing Supabase configuration. Please try again later or contact us directly.' }, { status: 500 });
   }
 
-  const userId = await getAuthenticatedUserId(req);
+  const cookieClient = await createSupabaseServerClient();
+  const { data: { user: cookieUser } } = await cookieClient.auth.getUser();
+  const userId = cookieUser?.id || await getAuthenticatedUserId(req);
   const quotationRef = await generateQuotationRef(admin);
+  let generatedInvoiceNumber = '';
   const tripRequestPayload: Record<string, unknown> = {
     user_id: userId,
     arrival_date: input.arrivalDate,
@@ -200,22 +206,66 @@ export async function POST(req: NextRequest) {
       tax: plan.pricing.tax,
       currency: plan.pricing.currency,
       itinerary: plan.itinerary,
+      itinerary_snapshot: plan.itinerary,
+      status: 'pending_confirmation',
+      total_amount: plan.pricing.total_cost,
       invoice_generated: Boolean(quotationPdfBase64),
       invoice_status: quotationPdfBase64 ? 'sent' : 'draft',
-      invoice_number: quotationRef,
       message: specialRequests ? `${specialRequests}\n\n(Full itinerary & pricing: safari_trip_requests, ref ${quotationRef})` : `Full itinerary & pricing: safari_trip_requests, ref ${quotationRef}`,
       reservation_status: 'pending',
       payment_status: 'unpaid',
       user_id: userId,
     });
-    if (mirrorError) console.error('Safari builder: mirroring into bookings failed:', mirrorError.message);
+    if (mirrorError) {
+      console.error('Safari builder: mirroring into bookings failed:', mirrorError.message);
+    } else {
+      try {
+        const { data: bookingRow, error: bookingLookupError } = await admin.from('bookings').select('id').eq('booking_ref', quotationRef).maybeSingle();
+        if (bookingLookupError || !bookingRow?.id) throw bookingLookupError || new Error('Created booking could not be located.');
+        const { data: invoiceNumber, error: invoiceNumberError } = await admin.rpc('next_bahari_invoice_number');
+        if (invoiceNumberError || !invoiceNumber) throw invoiceNumberError || new Error('Invoice number could not be generated.');
+        generatedInvoiceNumber = String(invoiceNumber);
+        const invoiceInput = {
+          booking_ref: String(invoiceNumber),
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          whatsapp,
+          nationality: nationality || null,
+          adults: input.adults,
+          children: input.children,
+          kids_ages: input.childrenAges,
+          arrival_date: input.arrivalDate,
+          departure_date: input.departureDate,
+          safari_name: `Safari Trip Builder – ${plan.destinations.map((d) => d.name).join(', ')}`,
+          message: specialRequests,
+          reservation_status: 'pending',
+          locale,
+          itinerary: plan.itinerary,
+          parks: plan.destinations.map((d) => d.name),
+          total_price: plan.pricing.total_cost,
+          currency: plan.pricing.currency,
+        };
+        const generatedInvoice = await generatePremiumInvoicePDF(invoiceInput as any, locale);
+        const invoicePath = `invoices/${invoiceNumber}.pdf`;
+        const upload = await admin.storage.from(process.env.SUPABASE_DOCUMENTS_BUCKET || 'documents').upload(invoicePath, Buffer.from(generatedInvoice.base64, 'base64'), { contentType: 'application/pdf', upsert: true });
+        if (upload.error) throw upload.error;
+        await admin.from('bookings').update({ invoice_generated: true, invoice_status: 'sent', invoice_number: String(invoiceNumber), invoice_url: invoicePath }).eq('id', bookingRow.id);
+        await admin.from('invoices').insert({ booking_id: bookingRow.id, user_id: userId, invoice_number: String(invoiceNumber), amount: plan.pricing.total_cost, currency: plan.pricing.currency, status: 'pending', itinerary: plan.itinerary, pdf_url: invoicePath });
+        await createClientDocument(admin, { userId, bookingId: Number(bookingRow.id), type: 'invoice', title: `Invoice ${invoiceNumber} - Safari Trip Builder`, pdfPath: invoicePath, email });
+      } catch (invoiceError) {
+        console.error('Safari builder invoice persistence failed:', invoiceError);
+      }
+    }
   } catch (err) { console.error('Safari builder: mirroring into bookings threw:', err); }
 
   return NextResponse.json({
     success: true,
     quotation_ref: quotationRef,
+    invoiceNumber: generatedInvoiceNumber || null,
     emailSent,
     invoiceGenerated: Boolean(quotationPdfBase64),
+    needsAccount: !userId,
     invoiceFilename: `Bahari-Asili-Safari-Estimate-Invoice-${quotationRef}.pdf`,
     invoiceDataUrl: quotationPdfBase64 ? `data:application/pdf;base64,${quotationPdfBase64}` : null,
     quotationPdfBase64,

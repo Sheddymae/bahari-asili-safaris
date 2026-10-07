@@ -12,6 +12,7 @@ interface AuthModalProps {
   defaultMode?: 'signin' | 'signup';
   redirectTo?: string | null;
   reason?: string | null;
+  initialEmail?: string;
 }
 
 type Mode = 'signin' | 'signup' | 'verify';
@@ -131,7 +132,7 @@ const otpCopy = {
   },
 } as const;
 
-export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', redirectTo, reason }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', redirectTo, reason, initialEmail }: AuthModalProps) {
   const { t, locale } = useLanguage();
   const router = useRouter();
   const copy = otpCopy[locale as keyof typeof otpCopy] || otpCopy.en;
@@ -149,8 +150,12 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    if (isOpen) setMode(defaultMode);
-  }, [isOpen, defaultMode]);
+    if (isOpen) { setMode(defaultMode); if (initialEmail) setEmail(initialEmail); }
+  }, [isOpen, defaultMode, initialEmail]);
+
+  const linkExistingBookings = async () => {
+    try { await fetch('/api/auth/link-bookings', { method: 'POST' }); } catch {}
+  };
 
   useEffect(() => {
     if (isOpen && reason === 'inactive') setError(t.authSession.signedOutInactive);
@@ -205,6 +210,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
 
         if (verifyError) throw verifyError;
 
+        await linkExistingBookings();
         setSuccess(copy.verified);
         setTimeout(() => {
           reset();
@@ -229,6 +235,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
         // With Supabase email confirmation enabled, signUp returns no active
         // session until the confirmation code is verified.
         if (data.session) {
+          await linkExistingBookings();
           setSuccess(t.auth.accountCreated);
           setTimeout(() => {
             reset();
@@ -263,6 +270,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
         throw signinError;
       }
 
+      await linkExistingBookings();
       reset();
       onClose();
       router.push(safeRedirect);
