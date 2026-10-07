@@ -199,13 +199,13 @@ export default function Navbar() {
             : 'border-b border-white/20 bg-white/10 py-5 backdrop-blur-md',
         ].join(' ')}
       >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
+        <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center justify-between gap-2 sm:gap-4">
             <Link
               href="/"
               prefetch
               aria-label="Bahari Asili Safaris home"
-              className="flex shrink-0 items-center rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
+              className="flex min-w-0 shrink-0 items-center rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
             >
               <Image
                 src="/images/logo/logo-horizontal.png"
@@ -213,7 +213,7 @@ export default function Navbar() {
                 width={1752}
                 height={798}
                 priority
-                className="h-8 w-auto sm:h-10"
+                className="h-8 max-w-[150px] w-auto sm:h-10 sm:max-w-none"
               />
             </Link>
 
@@ -381,7 +381,7 @@ export default function Navbar() {
               ) : null}
             </div>
 
-            <div className="flex items-center gap-2 xl:hidden">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 xl:hidden">
               <Link
                 href="/build-your-safari"
                 prefetch
@@ -411,7 +411,7 @@ export default function Navbar() {
           {isMobileOpen && (
             <div
               id="mobile-navigation"
-              className="mt-3 max-h-[calc(100vh-5.5rem)] overflow-y-auto rounded-[4px] border border-border bg-white shadow-none xl:hidden"
+              className="mt-3 w-full max-h-[calc(100dvh-5.5rem)] overflow-y-auto overscroll-contain rounded-[4px] border border-border bg-white shadow-none [scrollbar-width:thin] xl:hidden"
             >
               <div className="border-b border-border px-4 py-4">
                 <p className="px-2 pb-2 font-inter text-[10px] font-semibold uppercase tracking-[0.16em] text-ocean-700">
