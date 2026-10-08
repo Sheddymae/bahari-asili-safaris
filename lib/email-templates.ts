@@ -23,7 +23,7 @@ export function buildConfirmationEmailHtml(booking: Booking): string {
   const rtl = locale === 'ar' ? 'direction:rtl;text-align:right;' : '';
   return `<div style="font-family:'Segoe UI',Arial,sans-serif;max-width:620px;margin:0 auto;color:#1f2937;background:#fff;${rtl}">
     <div style="background:var(--brand-primary);padding:32px;border-radius:12px 12px 0 0;text-align:center;direction:${locale==='ar'?'rtl':'ltr'}"><h1 style="color:#fff;margin:0;font-size:24px">BAHARI ASILI SAFARIS</h1><p style="color:#dff7ff;margin:6px 0 0;font-size:13px">Watamu, Kenya · ${c.confirmed}</p></div>
-    <div style="background:#f5f1e8;padding:20px 32px;border-left:4px solid var(--brand-secondary)"><p style="margin:0;color:var(--brand-secondary);font-weight:700;font-size:12px;text-transform:uppercase">✓ ${c.confirmed}</p><p style="margin:4px 0 0;font-size:15px;color:var(--brand-secondary)">${c.dear} ${fullName}, ${c.thank}</p></div>
+    <div style="background:#F5F1E8;padding:20px 32px;border-left:4px solid var(--brand-secondary)"><p style="margin:0;color:var(--brand-secondary);font-weight:700;font-size:12px;text-transform:uppercase">✓ ${c.confirmed}</p><p style="margin:4px 0 0;font-size:15px;color:var(--brand-secondary)">${c.dear} ${fullName}, ${c.thank}</p></div>
     <div style="padding:28px 32px;border:1px solid #e2e8f0;border-top:none"><p style="font-size:14px;color:#64748b;margin:0 0 4px;text-transform:uppercase;font-weight:600">${c.reservation}</p><p style="font-size:26px;font-weight:800;color:var(--brand-primary);margin:0 0 20px">${booking.booking_ref}</p>
       <table style="width:100%;border-collapse:collapse;font-size:14px"><tr><td style="padding:10px 0;color:#64748b;font-weight:600;width:40%">${c.package}</td><td style="padding:10px 0;font-weight:600;color:var(--brand-secondary)">${booking.safari_name}</td></tr><tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.travel}</td><td style="padding:10px 0">${travelDate}</td></tr><tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.guests}</td><td style="padding:10px 0">${guests}</td></tr>${booking.hotel_name?`<tr><td style="padding:10px 0;color:#64748b;font-weight:600">Hotel</td><td style="padding:10px 0">${booking.hotel_name}</td></tr>`:''}${booking.pickup_location?`<tr><td style="padding:10px 0;color:#64748b;font-weight:600">Pickup</td><td style="padding:10px 0">${booking.pickup_location}</td></tr>`:''}<tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.amount}</td><td style="padding:10px 0;font-weight:700;color:var(--brand-primary)">${amount}</td></tr><tr><td style="padding:10px 0;color:#64748b;font-weight:600">${c.payment}</td><td style="padding:10px 0">${paymentStatus}</td></tr></table>
       <div style="background:#f1f5f9;border-radius:8px;padding:16px;margin-top:24px"><p style="margin:0;font-size:13.5px;color:var(--brand-primary)">${c.attachments}</p></div>
@@ -151,7 +151,7 @@ export function buildQuoteEmailHtml(booking: Booking): string {
       <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Quoted Amount</td><td style="padding: 10px 0; font-weight: 700; color: var(--brand-primary); font-size: 16px;">${fmtKES(booking.total_price)}</td></tr>
       ${booking.deposit_amount ? `<tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Deposit to Confirm</td><td style="padding: 10px 0; font-weight: 600;">${fmtKES(booking.deposit_amount)}</td></tr>` : ''}
     </table>
-    <div style="background: #f5f1e8; border: 1px solid #f5f1e8; border-radius: 8px; padding: 14px; margin-top: 20px;">
+    <div style="background: #F5F1E8; border: 1px solid #F5F1E8; border-radius: 8px; padding: 14px; margin-top: 20px;">
       <p style="margin: 0; font-size: 13px; color: var(--brand-secondary);">This quote is valid for 7 days. Reply to this email or WhatsApp us on +254 101 923 355 to confirm your booking.</p>
     </div>
   `;
@@ -174,7 +174,7 @@ export function buildPaymentReminderEmailHtml(booking: Booking): string {
       ${booking.due_date ? `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Due Date</td><td style="padding: 10px 0; font-weight: 600;">${fmtDate(booking.due_date)}</td></tr>` : ''}
       <tr><td style="padding: 10px 0; color: #64748b; font-weight: 600;">Balance Due</td><td style="padding: 10px 0; font-weight: 800; color: #ef4444; font-size: 17px;">${fmtKES(balance)}</td></tr>
     </table>
-    <div style="background: #f5f1e8; border: 1px solid #f5f1e8; border-radius: 8px; padding: 14px; margin-top: 20px;">
+    <div style="background: #F5F1E8; border: 1px solid #F5F1E8; border-radius: 8px; padding: 14px; margin-top: 20px;">
       <p style="margin: 0; font-size: 13px; color: #ef4444;">Please settle the balance to secure your reservation. Contact us on WhatsApp (+254 101 923 355) for payment options.</p>
     </div>
   `;
