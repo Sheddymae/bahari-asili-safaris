@@ -10,14 +10,13 @@ import AnimateOnScroll from '@/components/AnimateOnScroll';
 import HowToBook from '@/components/HowToBook';
 import { safaris, excursions } from '@/lib/tours-data';
 import type { HeroBookingSelection } from '@/components/HeroBookingModal';
-import TrustProofStrip from '@/components/TrustProofStrip';
 
 const HomePopularSafaris = dynamic(() => import('@/components/home/HomePopularSafaris'), { loading: () => <div className="h-64 bg-sand-50" /> });
 const HomeFromWatamu = dynamic(() => import('@/components/home/HomeFromWatamu'), { loading: () => <div className="h-64 bg-white" /> });
 const HomeCoast = dynamic(() => import('@/components/home/HomeCoast'), { loading: () => <div className="h-64 bg-sand-50" /> });
 const HomeWhy = dynamic(() => import('@/components/home/HomeWhy'), { loading: () => <div className="h-64 bg-white" /> });
 const BuildSafariPromo = dynamic(() => import('@/components/BuildSafariPromo'), { loading: () => <div className="h-64 bg-foreground" /> });
-const ReviewsSection = dynamic(() => import('@/components/ReviewsSection'), { loading: () => null });
+const ReviewsSection = dynamic(() => import('@/components/ReviewsSection'), { loading: () => <div className="h-64 bg-sand-50" /> });
 const HomeTeam = dynamic(() => import('@/components/home/HomeTeam'), { loading: () => <div className="h-64 bg-sand-50" /> });
 const FinalCtaSection = dynamic(() => import('@/components/FinalCtaSection'), { loading: () => <div className="h-48 bg-ocean-800" /> });
 const Footer = dynamic(() => import('@/components/Footer'));
@@ -48,7 +47,6 @@ export default function Home() {
         <AnimateOnScroll direction="up"><BuildSafariPromo /></AnimateOnScroll>
         <HowToBook />
         <AnimateOnScroll direction="up"><ReviewsSection /></AnimateOnScroll>
-        <TrustProofStrip />
         <AnimateOnScroll direction="up"><HomeTeam /></AnimateOnScroll>
         <FinalCtaSection onBook={() => openHeroBooking()} />
       </main>
