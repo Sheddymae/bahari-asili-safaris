@@ -3,10 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { heroVideoConfig, getVideoSourceForViewport, prefersReducedMotion } from '@/lib/video-config';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface CinematicHeroVideoProps {
   onReady?: () => void;
@@ -43,20 +39,20 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
 
   if (hasReducedMotion) {
     return (
-      <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-[var(--brand-text)]">
+      <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-slate-900">
         <Image src={heroVideoConfig.poster} alt="Bahari Asili Safaris — Kenya safari and coastal experiences" fill priority fetchPriority="high" quality={75} sizes="100vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(31,41,55,.18)] via-[rgba(31,41,55,.42)] to-[rgba(31,41,55,.76)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
         {children}
       </section>
     );
   }
 
   return (
-    <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-[var(--brand-text)]">
+    <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-slate-900">
       <div className="absolute inset-0 h-full w-full">
         <video ref={videoRef} src={videoSrc} poster={heroVideoConfig.poster} onCanPlay={handleVideoLoad} onError={handleVideoError} autoPlay muted playsInline preload="metadata" className="h-full w-full select-none object-cover object-center" aria-label="Bahari Asili Safaris Kenya" />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(31,41,55,.18)] via-[rgba(31,41,55,.42)] to-[rgba(31,41,55,.76)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
       {!videoLoaded && <Image src={heroVideoConfig.poster} alt="" fill priority fetchPriority="high" quality={75} sizes="100vw" className="absolute inset-0 object-cover object-center" />}
       {children}
     </section>
