@@ -81,9 +81,9 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
       <CinematicHeroVideo>
         <CinematicTextOverlay onPlan={() => onBook({ destination: location, adults: Math.min(30, Math.max(1, Number.parseInt(people, 10) || 1)), arrivalDate: date })} />
         <div className={(mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0') + ' hidden sm:block absolute bottom-6 left-1/2 z-30 w-full -translate-x-1/2 px-4 transition-all duration-300 sm:bottom-8 sm:px-6'} style={{ pointerEvents: mounted ? 'auto' : 'none' }}>
-          <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-2 rounded-[4px] border border-white/30 bg-white/95 p-3 shadow-none backdrop-blur-md sm:flex-row sm:items-center sm:p-4">
+          <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-2 rounded-2xl border border-white/30 bg-white/95 p-3 shadow-2xl backdrop-blur-md sm:flex-row sm:items-center sm:p-4">
             <div className="relative min-w-0 flex-1">
-              <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) updateMenuPosition(); setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-[4px] px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
+              <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) updateMenuPosition(); setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
                 <MapPin className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
                   <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.location}</span>
@@ -96,7 +96,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
             <div className="hidden h-10 w-px self-center bg-muted sm:block" />
 
             <label className="min-w-0 flex-1">
-              <span className="flex items-center gap-2 rounded-[4px] px-4 py-3 transition-colors hover:bg-sand-50">
+              <span className="flex items-center gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-sand-50">
                 <Users className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
                   <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.people}</span>
@@ -108,7 +108,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
             <div className="hidden h-10 w-px self-center bg-muted sm:block" />
 
             <label className="min-w-0 flex-1">
-              <span className="flex items-center gap-2 rounded-[4px] px-4 py-3 transition-colors hover:bg-sand-50">
+              <span className="flex items-center gap-2 rounded-xl px-4 py-3 transition-colors hover:bg-sand-50">
                 <CalendarDays className="h-4 w-4 flex-shrink-0 text-safari-500" />
                 <span className="min-w-0 flex-1">
                   <span className="block font-inter text-xs font-medium text-muted-foreground">{t.hero.date}</span>
@@ -117,7 +117,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
               </span>
             </label>
 
-            <button type="button" onClick={handleBookClick} className="brand-button brand-button-primary whitespace-nowrap px-8 py-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-book focus-visible:ring-offset-2">
+            <button type="button" onClick={handleBookClick} className="whitespace-nowrap rounded-xl bg-book px-8 py-3.5 font-poppins font-semibold text-white transition-colors hover:bg-book-600 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-book focus-visible:ring-offset-2">
               {t.hero.bookNow} →
             </button>
           </div>
