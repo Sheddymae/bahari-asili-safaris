@@ -19,7 +19,7 @@ export async function generateQrPngDataUrl(url: string): Promise<string | null> 
     return await QRCode.toDataURL(url, {
       margin: 1,
       width: 160,
-      color: { dark: '#0e7490', light: '#ffffff' },
+      color: { dark: '#167D95', light: '#ffffff' },
     });
   } catch (err) {
     console.error('QR code generation failed:', err);
