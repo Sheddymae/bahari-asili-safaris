@@ -38,7 +38,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0e7490] via-[#1f2937] to-[#1f2937] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--brand-primary)] via-[#1f2937] to-[#1f2937] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm mb-4">
@@ -62,7 +62,7 @@ function LoginForm() {
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
                 required
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border focus:border-[#0e7490] focus:ring-2 focus:ring-[#0e7490]/20 outline-none transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border focus:border-[var(--brand-primary)] focus:ring-2 focus:ring-[var(--brand-primary)]/20 outline-none transition"
                 placeholder="Admin"
               />
             </div>
@@ -78,7 +78,7 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
-                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border focus:border-[#0e7490] focus:ring-2 focus:ring-[#0e7490]/20 outline-none transition"
+                className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border focus:border-[var(--brand-primary)] focus:ring-2 focus:ring-[var(--brand-primary)]/20 outline-none transition"
                 placeholder="••••••••"
               />
             </div>
@@ -93,7 +93,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-[#0e7490] hover:bg-[#0e7490] text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-60"
+            className="w-full flex items-center justify-center gap-2 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary)] text-white font-semibold py-2.5 rounded-lg transition disabled:opacity-60"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             {loading ? 'Signing in…' : 'Sign In'}

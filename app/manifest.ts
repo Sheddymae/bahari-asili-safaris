@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Kenya safaris, coastal excursions and transfers from Watamu.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#f8f5ee',
-    theme_color: '#0e7490',
+    background_color: '#F5F1E8',
+    theme_color: '#167D95',
     icons: [
       { src: '/images/logo/icon-192.png', sizes: '192x192', type: 'image/png' },
       { src: '/images/logo/icon-512.png', sizes: '512x512', type: 'image/png' },

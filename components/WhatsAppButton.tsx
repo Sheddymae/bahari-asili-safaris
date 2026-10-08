@@ -50,7 +50,7 @@ export default function WhatsAppButton() {
           href={`tel:${CALL_NUMBER}`}
           aria-label={labels.call}
           title={labels.call}
-          className="group flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand-primary)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#0a6078] focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
+          className="group flex h-11 w-11 items-center justify-center rounded-full bg-[var(--brand-primary)] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[var(--brand-primary)] focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
         >
           <Phone className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
         </a>
@@ -72,7 +72,7 @@ export default function WhatsAppButton() {
         aria-expanded={open}
         aria-label={labels.contact}
         title={labels.contact}
-        className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-[var(--brand-primary)] text-white shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition-all duration-300 hover:scale-105 hover:bg-[#0a6078] focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
+        className="group relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-[var(--brand-primary)] text-white shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition-all duration-300 hover:scale-105 hover:bg-[var(--brand-primary)] focus:outline-none focus:ring-4 focus:ring-ocean-300 active:scale-95"
       >
         {open ? (
           <X className="h-6 w-6 transition-transform duration-300 group-hover:rotate-90" aria-hidden="true" />

@@ -396,8 +396,8 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
                 />
               </div>
               {error && <div className="flex items-start gap-2 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-[4px] px-4 py-3"><AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" /><p className="font-inter text-sm text-destructive">{error}</p></div>}
-              {success && <div className="bg-[#0e7490]/10 border border-[#0e7490]/30 rounded-[4px] px-4 py-3"><p className="font-inter text-sm text-primary">{success}</p></div>}
-              <button type="submit" disabled={loading} className="w-full bg-[var(--brand-primary)] hover:bg-[#0a6078] disabled:opacity-60 text-white font-poppins font-semibold py-3.5 rounded-[4px] transition-all flex items-center justify-center gap-2">
+              {success && <div className="bg-[var(--brand-primary)]/10 border border-[var(--brand-primary)]/30 rounded-[4px] px-4 py-3"><p className="font-inter text-sm text-primary">{success}</p></div>}
+              <button type="submit" disabled={loading} className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary)] disabled:opacity-60 text-white font-poppins font-semibold py-3.5 rounded-[4px] transition-all flex items-center justify-center gap-2">
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> {t.auth.processing}</> : <><ShieldCheck className="w-4 h-4" /> {copy.verify}</>}
               </button>
               <div className="grid grid-cols-2 gap-3">
@@ -437,9 +437,9 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
               </div>
 
               {error && <div className="flex items-start gap-2 bg-[#ef4444]/10 border border-[#ef4444]/30 rounded-[4px] px-4 py-3"><AlertCircle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" /><p className="font-inter text-sm text-destructive">{error}</p></div>}
-              {success && <div className="bg-[#0e7490]/10 border border-[#0e7490]/30 rounded-[4px] px-4 py-3"><p className="font-inter text-sm text-primary">{success}</p></div>}
+              {success && <div className="bg-[var(--brand-primary)]/10 border border-[var(--brand-primary)]/30 rounded-[4px] px-4 py-3"><p className="font-inter text-sm text-primary">{success}</p></div>}
 
-              <button type="submit" disabled={loading} className="w-full bg-[var(--brand-primary)] hover:bg-[#0a6078] disabled:opacity-60 text-white font-poppins font-semibold py-3.5 rounded-[4px] transition-all flex items-center justify-center gap-2">
+              <button type="submit" disabled={loading} className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary)] disabled:opacity-60 text-white font-poppins font-semibold py-3.5 rounded-[4px] transition-all flex items-center justify-center gap-2">
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> {t.auth.processing}</> : mode === 'signin' ? t.auth.signInTab : t.auth.signUpTitle}
               </button>
             </form>
