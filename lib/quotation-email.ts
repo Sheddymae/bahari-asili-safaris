@@ -15,19 +15,19 @@ export function buildQuotationEmailHtml(q: Quotation & { createdDate: string }):
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; color: #1f2937;">
-      <div style="background: linear-gradient(135deg, #0e7490 0%, #0e7490 100%); padding: 32px; border-radius: 12px 12px 0 0;">
+      <div style="background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary) 100%); padding: 32px; border-radius: 12px 12px 0 0;">
         <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">Bahari Asili Safaris</h1>
         <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0; font-size: 14px;">Watamu, Kenya · Premium Safari Experiences</p>
       </div>
 
-      <div style="background: #f1f5f9; padding: 20px 32px; border-top: 4px solid #0e7490;">
-        <p style="margin: 0; color: #0e7490; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Quotation Reference</p>
-        <p style="font-size: 32px; font-weight: 800; color: #0e7490; margin: 8px 0;">${q.quotation_ref}</p>
+      <div style="background: #f1f5f9; padding: 20px 32px; border-top: 4px solid var(--brand-primary);">
+        <p style="margin: 0; color: var(--brand-primary); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Quotation Reference</p>
+        <p style="font-size: 32px; font-weight: 800; color: var(--brand-primary); margin: 8px 0;">${q.quotation_ref}</p>
         <p style="margin: 0; font-size: 13px; color: #64748b;">Valid until: ${formatLocaleDate(new Date(new Date(q.createdDate).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(), normalizeLocale(q.locale))}</p>
       </div>
 
       <div style="padding: 32px; background: #ffffff; border: 1px solid #e2e8f0;">
-        <h2 style="color: #0e7490; font-size: 20px; margin: 0 0 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">Guest Details</h2>
+        <h2 style="color: var(--brand-primary); font-size: 20px; margin: 0 0 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">Guest Details</h2>
         <table style="width: 100%; margin-bottom: 24px; font-size: 14px;">
           <tr style="border-bottom: 1px solid #f1f5f9;">
             <td style="padding: 12px 0; font-weight: 600; color: #64748b; width: 40%;">Name</td>
@@ -47,7 +47,7 @@ export function buildQuotationEmailHtml(q: Quotation & { createdDate: string }):
           </tr>
         </table>
 
-        <h2 style="color: #0e7490; font-size: 20px; margin: 24px 0 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">Travel Itinerary</h2>
+        <h2 style="color: var(--brand-primary); font-size: 20px; margin: 24px 0 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">Travel Itinerary</h2>
         <table style="width: 100%; margin-bottom: 24px; font-size: 14px;">
           <tr style="border-bottom: 1px solid #f1f5f9;">
             <td style="padding: 12px 0; font-weight: 600; color: #64748b; width: 40%;">Destination</td>
@@ -71,7 +71,7 @@ export function buildQuotationEmailHtml(q: Quotation & { createdDate: string }):
           </tr>
         </table>
 
-        <h2 style="color: #0e7490; font-size: 20px; margin: 24px 0 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">Cost Breakdown</h2>
+        <h2 style="color: var(--brand-primary); font-size: 20px; margin: 24px 0 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">Cost Breakdown</h2>
         <table style="width: 100%; margin-bottom: 24px; font-size: 14px; border-collapse: collapse;">
           ${q.accommodation_cost ? `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 12px 0; color: #64748b;">Accommodation</td><td style="padding: 12px 0; text-align: right; color: #1f2937;">KES ${q.accommodation_cost.toLocaleString()}</td></tr>` : ''}
           ${q.park_fees ? `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 12px 0; color: #64748b;">Park Fees</td><td style="padding: 12px 0; text-align: right; color: #1f2937;">KES ${q.park_fees.toLocaleString()}</td></tr>` : ''}
@@ -79,21 +79,21 @@ export function buildQuotationEmailHtml(q: Quotation & { createdDate: string }):
           ${q.transport_cost ? `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 12px 0; color: #64748b;">Transport & Transfers</td><td style="padding: 12px 0; text-align: right; color: #1f2937;">KES ${q.transport_cost.toLocaleString()}</td></tr>` : ''}
           ${q.meals_cost ? `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 12px 0; color: #64748b;">Meals</td><td style="padding: 12px 0; text-align: right; color: #1f2937;">KES ${q.meals_cost.toLocaleString()}</td></tr>` : ''}
           ${q.other_costs ? `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 12px 0; color: #64748b;">Other Services</td><td style="padding: 12px 0; text-align: right; color: #1f2937;">KES ${q.other_costs.toLocaleString()}</td></tr>` : ''}
-          <tr style="border-bottom: 2px solid #0e7490; font-weight: 600;">
+          <tr style="border-bottom: 2px solid var(--brand-primary); font-weight: 600;">
             <td style="padding: 12px 0;">Subtotal</td>
             <td style="padding: 12px 0; text-align: right;">KES ${subtotal.toLocaleString()}</td>
           </tr>
-          ${q.discount ? `<tr style="border-bottom: 1px solid #f1f5f9; color: #0e7490;"><td style="padding: 12px 0;">Discount</td><td style="padding: 12px 0; text-align: right;">-KES ${q.discount.toLocaleString()}</td></tr>` : ''}
+          ${q.discount ? `<tr style="border-bottom: 1px solid #f1f5f9; color: var(--brand-primary);"><td style="padding: 12px 0;">Discount</td><td style="padding: 12px 0; text-align: right;">-KES ${q.discount.toLocaleString()}</td></tr>` : ''}
           ${q.tax ? `<tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 12px 0; color: #64748b;">Tax & Fees</td><td style="padding: 12px 0; text-align: right; color: #1f2937;">KES ${q.tax.toLocaleString()}</td></tr>` : ''}
           <tr style="background: #ffffff;">
-            <td style="padding: 16px 0; font-weight: 700; font-size: 16px; color: #0e7490;">TOTAL</td>
-            <td style="padding: 16px 0; text-align: right; font-weight: 700; font-size: 16px; color: #0e7490;">KES ${total.toLocaleString()}</td>
+            <td style="padding: 16px 0; font-weight: 700; font-size: 16px; color: var(--brand-primary);">TOTAL</td>
+            <td style="padding: 16px 0; text-align: right; font-weight: 700; font-size: 16px; color: var(--brand-primary);">KES ${total.toLocaleString()}</td>
           </tr>
         </table>
 
         <div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
-          <p style="margin: 0; font-size: 14px; color: #0e7490;"><strong>Next Steps:</strong></p>
-          <p style="margin: 8px 0 0; font-size: 13px; color: #0e7490;">1. Review the quotation above<br/>2. Confirm dates and guests<br/>3. Reply to confirm or ask questions<br/>4. Upon acceptance, we'll send an invoice and booking confirmation</p>
+          <p style="margin: 0; font-size: 14px; color: var(--brand-primary);"><strong>Next Steps:</strong></p>
+          <p style="margin: 8px 0 0; font-size: 13px; color: var(--brand-primary);">1. Review the quotation above<br/>2. Confirm dates and guests<br/>3. Reply to confirm or ask questions<br/>4. Upon acceptance, we'll send an invoice and booking confirmation</p>
         </div>
 
         ${q.terms ? `<div style="background: #f1f5f9; border-radius: 8px; padding: 16px; margin: 24px 0; font-size: 12px; color: #64748b;"><strong>Terms & Conditions:</strong><br/>${q.terms}</div>` : ''}
