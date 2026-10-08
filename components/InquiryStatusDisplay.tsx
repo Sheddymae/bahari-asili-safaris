@@ -26,21 +26,21 @@ export default function InquiryStatusDisplay({
     pending: {
       icon: Clock,
       color: 'text-accent',
-      bgColor: 'bg-[#f97316]/10',
+      bgColor: 'bg-[var(--brand-secondary)]/10',
       title: is.receivedTitle,
       description: is.receivedDesc,
     },
     quotation_sent: {
       icon: Mail,
       color: 'text-primary',
-      bgColor: 'bg-[#0e7490]/10',
+      bgColor: 'bg-[var(--brand-primary)]/10',
       title: is.quoteSentTitle,
       description: is.quoteSentDesc,
     },
     confirmed: {
       icon: CheckCircle,
       color: 'text-primary',
-      bgColor: 'bg-[#0e7490]/10',
+      bgColor: 'bg-[var(--brand-primary)]/10',
       title: is.confirmedTitle,
       description: is.confirmedDesc,
     },
@@ -79,7 +79,7 @@ export default function InquiryStatusDisplay({
           </div>
 
           {emailSent && (
-            <div className="flex items-start gap-2 p-3 bg-[#0e7490]/10 rounded-lg mb-4">
+            <div className="flex items-start gap-2 p-3 bg-[var(--brand-primary)]/10 rounded-lg mb-4">
               <CheckCircle className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
               <p className="text-sm text-primary">
                 {is.emailSentSuccess}
@@ -88,7 +88,7 @@ export default function InquiryStatusDisplay({
           )}
 
           {!emailSent && (
-            <div className="flex items-start gap-2 p-3 bg-[#f97316]/10 rounded-lg mb-4">
+            <div className="flex items-start gap-2 p-3 bg-[var(--brand-secondary)]/10 rounded-lg mb-4">
               <AlertCircle className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
               <p className="text-sm text-accent">
                 {is.emailSentFail}
