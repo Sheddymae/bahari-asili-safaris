@@ -107,16 +107,22 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
 
         // Use live street-map tiles with a monitored provider fallback chain.
         // A map is not considered visually loaded until actual tiles arrive.
+        // Start with Esri's direct XYZ-style tile endpoint for quick initial
+        // street-map rendering, then fall back to CARTO and OpenStreetMap.
+        // Keep the initial request lightweight; Leaflet loads only visible tiles.
         const tileProviders = [
           {
-            name: "OpenStreetMap",
-            url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            name: "Esri World Street Map",
+            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
             options: {
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
+              attribution: "Tiles &copy; Esri — Sources: Esri, HERE, Garmin, OpenStreetMap contributors, and the GIS user community",
               maxZoom: 19,
               minZoom: 2,
               updateWhenIdle: true,
-              keepBuffer: 3,
+              updateWhenZooming: false,
+              keepBuffer: 1,
+              detectRetina: false,
+              crossOrigin: true,
             },
           },
           {
@@ -128,18 +134,24 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
               maxZoom: 20,
               minZoom: 2,
               updateWhenIdle: true,
-              keepBuffer: 3,
+              updateWhenZooming: false,
+              keepBuffer: 1,
+              detectRetina: false,
+              crossOrigin: true,
             },
           },
           {
-            name: "Esri World Street Map",
-            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+            name: "OpenStreetMap",
+            url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
             options: {
-              attribution: "Tiles &copy; Esri — Sources: Esri, HERE, Garmin, OpenStreetMap contributors, and the GIS user community",
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
               maxZoom: 19,
               minZoom: 2,
               updateWhenIdle: true,
-              keepBuffer: 3,
+              updateWhenZooming: false,
+              keepBuffer: 1,
+              detectRetina: false,
+              crossOrigin: true,
             },
           },
         ];
