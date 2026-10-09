@@ -156,7 +156,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         }
 
         mapInstance.on("popupopen", (event: any) => {
-          const node = event.popup.getElement()?.querySelector<HTMLButtonElement>("[data-select-day]");
+          const node = event.popup.getElement()?.querySelector("[data-select-day]") as HTMLButtonElement | null | undefined;
           if (!node) return;
           node.onclick = () => onSelectDay(Number(node.dataset.selectDay));
         });
