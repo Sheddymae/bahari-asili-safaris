@@ -167,7 +167,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
           }
         };
 
-        const useNextTileProvider = () => {
+        const switchToNextTileProvider = () => {
           if (cancelled || !mapInstance) return;
           clearTileFallbackTimer();
           if (activeTileLayer && mapInstance.hasLayer(activeTileLayer)) {
@@ -195,18 +195,18 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
             // Switch providers after several failed requests, not on one missing tile.
             const failedTiles = Number(layer._bahariTileErrors || 0) + 1;
             layer._bahariTileErrors = failedTiles;
-            if (failedTiles >= 4 && tileLoadCount === 0) useNextTileProvider();
+            if (failedTiles >= 4 && tileLoadCount === 0) switchToNextTileProvider();
           });
 
           // Some blocked endpoints never reliably emit enough tileerror events.
           tileFallbackTimer = window.setTimeout(() => {
             if (!cancelled && layer === activeTileLayer && tileLoadCount === 0) {
-              useNextTileProvider();
+              switchToNextTileProvider();
             }
           }, 5000);
         };
 
-        useNextTileProvider();
+        switchToNextTileProvider();
 
         // The site-wide img { max-width: 100% } rule was resizing Leaflet's
         // fixed 256px map tiles. The scoped override below restores tile size.
@@ -352,7 +352,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         .leaflet-container .leaflet-tile,
         .leaflet-container .leaflet-tile-container img { max-width: none !important; max-height: none !important; }
         .leaflet-container img { max-width: none !important; }
-        .leaflet-control-attribution { font-size: 10px !important; background: rgba(255,255,255,.88) !important; }
+        .leaflet-control-attribution { font-size: 8px !important; line-height: 1.25 !important; background: rgba(255,255,255,.72) !important; color: #64748b !important; box-shadow: none !important; }\n        .leaflet-control-attribution a { color: #64748b !important; text-decoration: none !important; }
         .bahari-route-popup { line-height: 1.6; min-width: 150px; }
         .bahari-route-popup-button { display: inline-block; margin-top: 7px; color: ${BRAND}; font-weight: 700; cursor: pointer; }
       `}</style>
@@ -383,7 +383,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-3 text-xs text-muted-foreground">
         <span>● Numbered pins are itinerary days</span>
         <span>
-          {routingStatus === "road" ? "Road route © OSRM" : routingStatus === "loading" ? "Calculating road route…" : "Direct itinerary line"}
+          {routingStatus === "road" ? "Road route" : routingStatus === "loading" ? "Preparing route…" : "Direct itinerary line"}
           {" · "}Zoom in for destination streets and place names
         </span>
       </div>
