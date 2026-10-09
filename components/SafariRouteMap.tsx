@@ -167,9 +167,22 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
 
         setReady(true);
         setError(false);
-        window.setTimeout(() => {
-          if (!cancelled && mapInstance) mapInstance.invalidateSize({ pan: false });
-        }, 150);
+        // Leaflet may initialize while a responsive grid or accordion is still settling.
+        // Recalculate repeatedly and observe size changes to prevent a compressed map.
+        const invalidate = () => {
+          if (!cancelled && mapInstance && element.current) {
+            mapInstance.invalidateSize({ pan: false, animate: false });
+          }
+        };
+        window.requestAnimationFrame(invalidate);
+        window.setTimeout(invalidate, 100);
+        window.setTimeout(invalidate, 350);
+        window.setTimeout(invalidate, 800);
+        const resizeObserver = typeof ResizeObserver !== "undefined" && element.current
+          ? new ResizeObserver(invalidate)
+          : null;
+        if (resizeObserver && element.current) resizeObserver.observe(element.current);
+        mapInstance.once("load", invalidate);
 
         if (validStops.length > 1) {
           const controller = new AbortController();
@@ -306,7 +319,8 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
           ref={element}
           role="application"
           aria-label={`Interactive route map for ${safariTitle}`}
-          className="h-[360px] w-full sm:h-[470px]"
+          className="!h-[360px] !min-h-[360px] w-full sm:!h-[470px] sm:!min-h-[470px]"
+          style={{ height: "360px", minHeight: "360px", width: "100%", display: "block" }}
         />
         {!ready && !error && (
           <div className="absolute inset-0 flex items-center justify-center bg-sand-50/90 text-sm text-muted-foreground" role="status">
