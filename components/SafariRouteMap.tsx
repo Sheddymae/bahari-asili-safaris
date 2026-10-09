@@ -106,13 +106,34 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
 
         // Use the canonical OSM tile endpoint. Attribution remains visible in
         // Leaflet's compact map control as required by the tile licence.
-        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        // Prefer OpenStreetMap. If its public tile endpoint is blocked or
+        // temporarily unavailable, fall back to CARTO so the map is not blank.
+        let tileErrors = 0;
+        let fallbackActivated = false;
+        const osmTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
           maxZoom: 19,
           minZoom: 2,
           updateWhenIdle: true,
           keepBuffer: 3,
+          crossOrigin: true,
         }).addTo(mapInstance);
+
+        osmTiles.on("tileerror", () => {
+          tileErrors += 1;
+          if (tileErrors < 3 || fallbackActivated || cancelled) return;
+          fallbackActivated = true;
+          if (mapInstance.hasLayer(osmTiles)) mapInstance.removeLayer(osmTiles);
+          L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+            subdomains: "abcd",
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
+            maxZoom: 20,
+            minZoom: 2,
+            updateWhenIdle: true,
+            keepBuffer: 3,
+            crossOrigin: true,
+          }).addTo(mapInstance);
+        });
 
         // The site-wide img { max-width: 100% } rule was resizing Leaflet's
         // fixed 256px map tiles. The scoped override below restores tile size.
