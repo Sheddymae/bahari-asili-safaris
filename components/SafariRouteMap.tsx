@@ -92,6 +92,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
   useEffect(() => {
     let cancelled = false;
     let mapInstance: any = null;
+    let resizeObserver: ResizeObserver | null = null;
 
     async function init() {
       try {
@@ -178,7 +179,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         window.setTimeout(invalidate, 100);
         window.setTimeout(invalidate, 350);
         window.setTimeout(invalidate, 800);
-        const resizeObserver = typeof ResizeObserver !== "undefined" && element.current
+        resizeObserver = typeof ResizeObserver !== "undefined" && element.current
           ? new ResizeObserver(invalidate)
           : null;
         if (resizeObserver && element.current) resizeObserver.observe(element.current);
@@ -258,6 +259,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
       cancelled = true;
       routeRequest.current?.abort();
       routeRequest.current = null;
+      resizeObserver?.disconnect();
       mapInstance?.remove();
       if (map.current === mapInstance) map.current = null;
       markers.current = {};
