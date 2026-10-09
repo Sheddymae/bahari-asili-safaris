@@ -72,6 +72,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
   const routeRequest = useRef<AbortController | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
+  const [basemapError, setBasemapError] = useState(false);
   const [routingStatus, setRoutingStatus] = useState<"loading" | "road" | "fallback">("loading");
 
   // Depend on actual route data, not the parent array identity. This prevents
@@ -104,36 +105,96 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         }).setView([-0.8, 37.8], 6);
         map.current = mapInstance;
 
-        // Use the canonical OSM tile endpoint. Attribution remains visible in
-        // Leaflet's compact map control as required by the tile licence.
-        // Prefer OpenStreetMap. If its public tile endpoint is blocked or
-        // temporarily unavailable, fall back to CARTO so the map is not blank.
-        let tileErrors = 0;
-        let fallbackActivated = false;
-        const osmTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
-          maxZoom: 19,
-          minZoom: 2,
-          updateWhenIdle: true,
-          keepBuffer: 3,
-          crossOrigin: true,
-        }).addTo(mapInstance);
+        // Use live street-map tiles with a monitored provider fallback chain.
+        // A map is not considered visually loaded until actual tiles arrive.
+        const tileProviders = [
+          {
+            name: "OpenStreetMap",
+            url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            options: {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
+              maxZoom: 19,
+              minZoom: 2,
+              updateWhenIdle: true,
+              keepBuffer: 3,
+            },
+          },
+          {
+            name: "CARTO",
+            url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+            options: {
+              subdomains: "abcd",
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
+              maxZoom: 20,
+              minZoom: 2,
+              updateWhenIdle: true,
+              keepBuffer: 3,
+            },
+          },
+          {
+            name: "Esri World Street Map",
+            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+            options: {
+              attribution: "Tiles &copy; Esri — Sources: Esri, HERE, Garmin, OpenStreetMap contributors, and the GIS user community",
+              maxZoom: 19,
+              minZoom: 2,
+              updateWhenIdle: true,
+              keepBuffer: 3,
+            },
+          },
+        ];
+        let providerIndex = -1;
+        let activeTileLayer: any = null;
+        let tileFallbackTimer: number | null = null;
+        let tileLoadCount = 0;
 
-        osmTiles.on("tileerror", () => {
-          tileErrors += 1;
-          if (tileErrors < 3 || fallbackActivated || cancelled) return;
-          fallbackActivated = true;
-          if (mapInstance.hasLayer(osmTiles)) mapInstance.removeLayer(osmTiles);
-          L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-            subdomains: "abcd",
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
-            maxZoom: 20,
-            minZoom: 2,
-            updateWhenIdle: true,
-            keepBuffer: 3,
-            crossOrigin: true,
-          }).addTo(mapInstance);
-        });
+        const clearTileFallbackTimer = () => {
+          if (tileFallbackTimer !== null) {
+            window.clearTimeout(tileFallbackTimer);
+            tileFallbackTimer = null;
+          }
+        };
+
+        const useNextTileProvider = () => {
+          if (cancelled || !mapInstance) return;
+          clearTileFallbackTimer();
+          if (activeTileLayer && mapInstance.hasLayer(activeTileLayer)) {
+            mapInstance.removeLayer(activeTileLayer);
+          }
+          providerIndex += 1;
+          if (providerIndex >= tileProviders.length) {
+            setBasemapError(true);
+            return;
+          }
+
+          tileLoadCount = 0;
+          const provider = tileProviders[providerIndex];
+          const layer = L.tileLayer(provider.url, provider.options).addTo(mapInstance);
+          activeTileLayer = layer;
+
+          layer.on("tileload", () => {
+            tileLoadCount += 1;
+            setBasemapError(false);
+            clearTileFallbackTimer();
+          });
+
+          layer.on("tileerror", () => {
+            if (cancelled || layer !== activeTileLayer) return;
+            // Switch providers after several failed requests, not on one missing tile.
+            const failedTiles = Number(layer._bahariTileErrors || 0) + 1;
+            layer._bahariTileErrors = failedTiles;
+            if (failedTiles >= 4 && tileLoadCount === 0) useNextTileProvider();
+          });
+
+          // Some blocked endpoints never reliably emit enough tileerror events.
+          tileFallbackTimer = window.setTimeout(() => {
+            if (!cancelled && layer === activeTileLayer && tileLoadCount === 0) {
+              useNextTileProvider();
+            }
+          }, 5000);
+        };
+
+        useNextTileProvider();
 
         // The site-wide img { max-width: 100% } rule was resizing Leaflet's
         // fixed 256px map tiles. The scoped override below restores tile size.
@@ -297,8 +358,13 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         )}
         {error && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-sand-50 p-6 text-center text-sm text-muted-foreground">
-            <strong>The map could not load.</strong>
-            <span>Check your connection and reload to see the interactive map.</span>
+            <strong>The interactive map could not start.</strong>
+            <span>Check your connection and reload the page.</span>
+          </div>
+        )}
+        {ready && basemapError && (
+          <div className="absolute left-3 right-3 top-3 z-[1000] rounded-md border border-amber-300 bg-white/95 px-3 py-2 text-xs text-slate-700 shadow-sm" role="status">
+            Live map tiles are blocked or unavailable on this connection. Try reloading or checking browser extensions/network restrictions.
           </div>
         )}
       </div>
