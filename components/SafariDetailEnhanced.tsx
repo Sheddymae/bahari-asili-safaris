@@ -73,14 +73,14 @@ export default function SafariDetailEnhanced({ safari: initialSafari, slug }: { 
     if (!safari) return [];
     const labels = t.tours;
     const rawDays = safari.itinerary.map((day, i) => ({
-      day: Number(String(day.day).match(/\\d+/)?.[0]) || i + 1,
+      day: Number(String(day.day).match(/\d+/)?.[0]) || i + 1,
       title: day.title,
       location: day.title,
       description: [
         day.morning && `${labels.morning}: ${day.morning}`,
         day.afternoon && `${labels.afternoon}: ${day.afternoon}`,
         day.overnight && `${labels.overnight}: ${day.overnight}`,
-      ].filter(Boolean).join('\\n\\n'),
+      ].filter(Boolean).join('\n\n'),
     }));
     return resolveStops(rawDays);
   }, [safari, t.tours]);
