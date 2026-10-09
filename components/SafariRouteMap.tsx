@@ -107,7 +107,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         // Use the canonical OSM tile endpoint. Attribution remains visible in
         // Leaflet's compact map control as required by the tile licence.
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
           maxZoom: 19,
           minZoom: 2,
           updateWhenIdle: true,
@@ -284,7 +284,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-3 text-xs text-muted-foreground">
         <span>● Numbered pins are itinerary days</span>
         <span>
-          {routingStatus === "road" ? "Road route" : routingStatus === "loading" ? "Calculating road route…" : "Direct itinerary line"}
+          {routingStatus === "road" ? "Road route © OSRM" : routingStatus === "loading" ? "Calculating road route…" : "Direct itinerary line"}
           {" · "}Zoom in for destination streets and place names
         </span>
       </div>
