@@ -82,7 +82,7 @@ export default function SafariDetailEnhanced({ safari: initialSafari, slug }: { 
         day.overnight && `${labels.overnight}: ${day.overnight}`,
       ].filter(Boolean).join('\\n\\n'),
     }));
-    return resolveStops(rawDays, safari.parks);
+    return resolveStops(rawDays);
   }, [safari, t.tours]);
 
   const relatedSafaris = useMemo(() => {
