@@ -69,10 +69,10 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
   const map = useRef<any>(null);
   const markers = useRef<Record<number, any>>({});
   const route = useRef<any>(null);
+  const routeDots = useRef<any[]>([]);
   const routeRequest = useRef<AbortController | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
-  const [basemapError, setBasemapError] = useState(false);
   const [routingStatus, setRoutingStatus] = useState<"loading" | "road" | "fallback">("loading");
 
   // Depend on actual route data, not the parent array identity. This prevents
@@ -105,108 +105,18 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         }).setView([-0.8, 37.8], 6);
         map.current = mapInstance;
 
-        // Use live street-map tiles with a monitored provider fallback chain.
-        // A map is not considered visually loaded until actual tiles arrive.
-        // Start with Esri's direct XYZ-style tile endpoint for quick initial
-        // street-map rendering, then fall back to CARTO and OpenStreetMap.
-        // Keep the initial request lightweight; Leaflet loads only visible tiles.
-        const tileProviders = [
-          {
-            name: "Esri World Street Map",
-            url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-            options: {
-              attribution: "Tiles &copy; Esri — Sources: Esri, HERE, Garmin, OpenStreetMap contributors, and the GIS user community",
-              maxZoom: 19,
-              minZoom: 2,
-              updateWhenIdle: true,
-              updateWhenZooming: false,
-              keepBuffer: 1,
-              detectRetina: false,
-              crossOrigin: true,
-            },
-          },
-          {
-            name: "CARTO",
-            url: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-            options: {
-              subdomains: "abcd",
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noreferrer">CARTO</a>',
-              maxZoom: 20,
-              minZoom: 2,
-              updateWhenIdle: true,
-              updateWhenZooming: false,
-              keepBuffer: 1,
-              detectRetina: false,
-              crossOrigin: true,
-            },
-          },
-          {
-            name: "OpenStreetMap",
-            url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-            options: {
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
-              maxZoom: 19,
-              minZoom: 2,
-              updateWhenIdle: true,
-              updateWhenZooming: false,
-              keepBuffer: 1,
-              detectRetina: false,
-              crossOrigin: true,
-            },
-          },
-        ];
-        let providerIndex = -1;
-        let activeTileLayer: any = null;
-        let tileFallbackTimer: number | null = null;
-        let tileLoadCount = 0;
-
-        const clearTileFallbackTimer = () => {
-          if (tileFallbackTimer !== null) {
-            window.clearTimeout(tileFallbackTimer);
-            tileFallbackTimer = null;
-          }
-        };
-
-        const switchToNextTileProvider = () => {
-          if (cancelled || !mapInstance) return;
-          clearTileFallbackTimer();
-          if (activeTileLayer && mapInstance.hasLayer(activeTileLayer)) {
-            mapInstance.removeLayer(activeTileLayer);
-          }
-          providerIndex += 1;
-          if (providerIndex >= tileProviders.length) {
-            setBasemapError(true);
-            return;
-          }
-
-          tileLoadCount = 0;
-          const provider = tileProviders[providerIndex];
-          const layer = L.tileLayer(provider.url, provider.options).addTo(mapInstance);
-          activeTileLayer = layer;
-
-          layer.on("tileload", () => {
-            tileLoadCount += 1;
-            setBasemapError(false);
-            clearTileFallbackTimer();
-          });
-
-          layer.on("tileerror", () => {
-            if (cancelled || layer !== activeTileLayer) return;
-            // Switch providers after several failed requests, not on one missing tile.
-            const failedTiles = Number(layer._bahariTileErrors || 0) + 1;
-            layer._bahariTileErrors = failedTiles;
-            if (failedTiles >= 4 && tileLoadCount === 0) switchToNextTileProvider();
-          });
-
-          // Some blocked endpoints never reliably emit enough tileerror events.
-          tileFallbackTimer = window.setTimeout(() => {
-            if (!cancelled && layer === activeTileLayer && tileLoadCount === 0) {
-              switchToNextTileProvider();
-            }
-          }, 5000);
-        };
-
-        switchToNextTileProvider();
+        // Use one standard OpenStreetMap tile source to keep initialization predictable.
+        // Keep the required attribution tiny and unobtrusive; do not remove provider credit.
+        L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>',
+          maxZoom: 19,
+          minZoom: 2,
+          updateWhenIdle: true,
+          updateWhenZooming: false,
+          keepBuffer: 1,
+          detectRetina: false,
+          crossOrigin: true,
+        }).addTo(mapInstance);
 
         // The site-wide img { max-width: 100% } rule was resizing Leaflet's
         // fixed 256px map tiles. The scoped override below restores tile size.
@@ -289,7 +199,27 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
               opacity: 0.92,
               lineJoin: "round",
             }).addTo(mapInstance);
-            mapInstance.fitBounds(route.current.getBounds(), { padding: [36, 36], maxZoom: 7 });
+
+            // Numbered waypoint dots sampled from the returned road geometry.
+            // These follow the actual routed road line rather than straight-line guesses.
+            routeDots.current.forEach((dot) => mapInstance.removeLayer(dot));
+            routeDots.current = [];
+            const waypointCount = Math.min(12, Math.max(4, Math.floor(roadPoints.length / 18)));
+            for (let i = 0; i < waypointCount; i += 1) {
+              const pointIndex = Math.round((i * (roadPoints.length - 1)) / Math.max(1, waypointCount - 1));
+              const point = roadPoints[pointIndex];
+              if (!point) continue;
+              const waypointIcon = L.divIcon({
+                className: "bahari-route-waypoint-wrap",
+                html: `<span class="bahari-route-waypoint" aria-label="Route waypoint ${i + 1}">${i + 1}</span>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11],
+              });
+              const waypoint = L.marker(point, { icon: waypointIcon, interactive: false, keyboard: false }).addTo(mapInstance);
+              routeDots.current.push(waypoint);
+            }
+
+            mapInstance.fitBounds(route.current.getBounds(), { padding: [42, 42], maxZoom: 7 });
             setRoutingStatus("road");
           } catch (routingError) {
             if (routingError instanceof Error && routingError.name === "AbortError") return;
@@ -319,6 +249,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
       if (map.current === mapInstance) map.current = null;
       markers.current = {};
       route.current = null;
+      routeDots.current = [];
     };
     // stopsKey serialises the fields used by the map and avoids reference churn.
     // onSelectDay is a stable useCallback in the parent component.
@@ -342,6 +273,20 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
     <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-card">
       <style jsx global>{`
         .bahari-route-pin-wrap { background: transparent; border: 0; }
+        .bahari-route-waypoint-wrap { background: transparent; border: 0; }
+        .bahari-route-waypoint {
+          display: flex; width: 22px; height: 22px; align-items: center; justify-content: center;
+          border: 2px solid white; border-radius: 999px; background: #FF7A00; color: white;
+          font: 800 10px ui-sans-serif, system-ui; box-shadow: 0 1px 5px #0004;
+          animation: bahari-route-breathe 1.8s ease-in-out infinite;
+        }
+        @keyframes bahari-route-breathe {
+          0%, 100% { transform: scale(.88); box-shadow: 0 1px 5px #0003, 0 0 0 0 rgba(255,122,0,.32); }
+          50% { transform: scale(1.12); box-shadow: 0 1px 6px #0004, 0 0 0 5px rgba(255,122,0,0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .bahari-route-waypoint { animation: none; }
+        }
         .bahari-route-pin {
           display: flex; width: 36px; height: 36px; align-items: center; justify-content: center;
           border: 3px solid white; border-radius: 999px; background: ${BRAND}; color: white;
@@ -352,7 +297,7 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
         .leaflet-container .leaflet-tile,
         .leaflet-container .leaflet-tile-container img { max-width: none !important; max-height: none !important; }
         .leaflet-container img { max-width: none !important; }
-        .leaflet-control-attribution { font-size: 8px !important; line-height: 1.25 !important; background: rgba(255,255,255,.72) !important; color: #64748b !important; box-shadow: none !important; }\n        .leaflet-control-attribution a { color: #64748b !important; text-decoration: none !important; }
+        .leaflet-control-attribution { font-size: 7px !important; line-height: 1.15 !important; background: rgba(255,255,255,.55) !important; color: #64748b !important; box-shadow: none !important; padding: 0 2px !important; }\n        .leaflet-control-attribution a { color: #64748b !important; text-decoration: none !important; }
         .bahari-route-popup { line-height: 1.6; min-width: 150px; }
         .bahari-route-popup-button { display: inline-block; margin-top: 7px; color: ${BRAND}; font-weight: 700; cursor: pointer; }
       `}</style>
@@ -374,14 +319,9 @@ export default function SafariRouteMap({ stops, safariTitle, activeDay, onSelect
             <span>Check your connection and reload the page.</span>
           </div>
         )}
-        {ready && basemapError && (
-          <div className="absolute left-3 right-3 top-3 z-[1000] rounded-md border border-amber-300 bg-white/95 px-3 py-2 text-xs text-slate-700 shadow-sm" role="status">
-            Live map tiles are blocked or unavailable on this connection. Try reloading or checking browser extensions/network restrictions.
-          </div>
-        )}
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-3 text-xs text-muted-foreground">
-        <span>● Numbered pins are itinerary days</span>
+        <span>● Large pins mark itinerary days · Small breathing dots number the road route</span>
         <span>
           {routingStatus === "road" ? "Road route" : routingStatus === "loading" ? "Preparing route…" : "Direct itinerary line"}
           {" · "}Zoom in for destination streets and place names
