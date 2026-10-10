@@ -110,7 +110,7 @@ export default function HomeTransfersInfiniteStack({
           <h2 className="mt-4 font-poppins text-3xl font-bold leading-tight text-ocean-700 sm:text-4xl lg:text-5xl">
             {tr.title || 'We take care of'} <span className="text-safari-500">{tr.titleHighlight || 'everything'}</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl font-inter text-sm leading-6 text-ocean-700/70 sm:text-base">
+          <p className="mx-auto mt-4 max-w-2xl font-inter text-sm leading-6 text-muted-foreground sm:text-base">
             {tr.subtitle || 'Private airport, coastal and safari transfers arranged around your itinerary.'}
           </p>
         </div>
@@ -205,7 +205,7 @@ export default function HomeTransfersInfiniteStack({
           ))}
         </div>
 
-        <div className="mx-auto mt-7 flex max-w-2xl items-center justify-center gap-2 text-center font-inter text-xs text-ocean-700/60">
+        <div className="mx-auto mt-7 flex max-w-2xl items-center justify-center gap-2 text-center font-inter text-xs text-muted-foreground">
           <span className="inline-flex h-2 w-2 rounded-full bg-safari-500 shadow-[0_0_0_5px_rgba(255,122,24,0.12)]" />
           Auto-rotating transfer routes • pause by hovering
         </div>
