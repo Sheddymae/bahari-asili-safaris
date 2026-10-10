@@ -41,7 +41,7 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
     return (
       <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-slate-900">
         <Image src={heroVideoConfig.poster} alt="Bahari Asili Safaris — Kenya safari and coastal experiences" fill priority fetchPriority="high" quality={75} sizes="100vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/70" />
         {children}
       </section>
     );
@@ -52,7 +52,7 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
       <div className="absolute inset-0 h-full w-full">
         <video ref={videoRef} src={videoSrc} poster={heroVideoConfig.poster} onCanPlay={handleVideoLoad} onError={handleVideoError} autoPlay muted playsInline preload="metadata" className="h-full w-full select-none object-cover object-center" aria-label="Bahari Asili Safaris Kenya" />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/70" />
       {!videoLoaded && <Image src={heroVideoConfig.poster} alt="" fill priority fetchPriority="high" quality={75} sizes="100vw" className="absolute inset-0 object-cover object-center" />}
       {children}
     </section>
