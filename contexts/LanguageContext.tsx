@@ -107,6 +107,22 @@ function buildLocaleTextMap(locale: Locale): Record<string, string> {
     }
   }
 
+  // Also map each hardcoded translation back from every source language.
+  // This lets a switch from Italian/French/etc. back to English restore the
+  // original phrase instead of leaving a previously translated DOM node behind.
+  for (const sourceLocale of Object.keys(hardcodedUiTranslations) as Locale[]) {
+    const sourceCatalogue = hardcodedUiTranslations[sourceLocale] || {};
+    const targetCatalogue = hardcodedUiTranslations[locale] || {};
+    for (const [english, sourceText] of Object.entries(sourceCatalogue)) {
+      const targetText = locale === 'en'
+        ? english
+        : targetCatalogue[english] || map[normalize(english)] || english;
+      if (!Object.prototype.hasOwnProperty.call(map, normalize(sourceText))) {
+        map[normalize(sourceText)] = targetText;
+      }
+    }
+  }
+
   // Exact hardcoded UI strings are explicit overrides, not inferred matches.
   for (const [source, translated] of Object.entries(hardcodedUiTranslations[locale] || {})) {
     map[normalize(source)] = translated;
