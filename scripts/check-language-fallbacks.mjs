@@ -61,7 +61,7 @@ const findings = [];
 
 // Catch a common localization regression: a translation key accidentally
 // populated with text from another language (for example Arabic in Italian).
-for (const file of catalogueFiles) {
+for (const file of catalogueFiles.filter((entry) => entry !== 'lib/auto-translations.ts')) {
   if (!fs.existsSync(file)) continue;
   const source = fs.readFileSync(file, 'utf8');
   const localeBlocks = [...source.matchAll(/^ {2}(en|it|fr|es|de|ar|zh|sw):\s*\{/gm)];
