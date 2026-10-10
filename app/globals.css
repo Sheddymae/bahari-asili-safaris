@@ -25,7 +25,7 @@
   --muted: 210 20% 96%;
   --muted-foreground: 215 14% 45%;
   --accent: 24 100% 55%;
-  --accent-foreground: 0 0% 100%;
+  --accent-foreground: 222 47% 11%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --border: 214 32% 91%;
@@ -311,4 +311,55 @@ footer.bg-foreground .text-safari-400 { color: #FFB37E; }
   inset: 0;
   pointer-events: none;
   background: linear-gradient(to top, rgba(0,0,0,.78), rgba(0,0,0,.34) 58%, rgba(0,0,0,.08));
+}
+
+
+/* Contrast guardrails for the locked brand palette.
+   The Tailwind safari scale intentionally reuses the brand orange; pale
+   surface tokens must therefore resolve to sand, and orange surfaces use ink. */
+.bg-safari-50,
+.bg-safari-100,
+.bg-safari-200 {
+  background-color: var(--brand-sand) !important;
+}
+
+.text-safari-500,
+.text-safari-600,
+.text-safari-700,
+.text-safari-800,
+.text-safari-900 {
+  color: var(--brand-text) !important;
+}
+
+:where(
+  [class~="bg-safari-50"],
+  [class~="bg-safari-100"],
+  [class~="bg-safari-200"],
+  [class~="bg-safari-300"],
+  [class~="bg-safari-400"],
+  [class~="bg-safari-500"],
+  [class~="bg-safari-600"],
+  [class~="bg-safari-700"],
+  [class~="bg-safari-800"],
+  [class~="bg-safari-900"],
+  [class~="bg-book"],
+  [class~="bg-orange"],
+  [class~="bg-[var(--brand-secondary)]"]
+).text-white,
+:where(
+  [class~="bg-safari-50"],
+  [class~="bg-safari-100"],
+  [class~="bg-safari-200"],
+  [class~="bg-safari-300"],
+  [class~="bg-safari-400"],
+  [class~="bg-safari-500"],
+  [class~="bg-safari-600"],
+  [class~="bg-safari-700"],
+  [class~="bg-safari-800"],
+  [class~="bg-safari-900"],
+  [class~="bg-book"],
+  [class~="bg-orange"],
+  [class~="bg-[var(--brand-secondary)]"]
+) .text-white {
+  color: var(--brand-text) !important;
 }
