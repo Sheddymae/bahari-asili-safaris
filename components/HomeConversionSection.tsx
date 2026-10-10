@@ -50,14 +50,14 @@ export default function HomeConversionSection({ onBook }: { onBook: () => void }
 
         <div className="mt-14 grid gap-8 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
           <div className="rounded-3xl bg-ocean-700 p-7 text-white sm:p-10">
-            <div className="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-widest text-white/75">
+            <div className="mb-4 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-widest text-white">
               <ShieldCheck className="h-4 w-4" /> {copy.trust.eyebrow}
             </div>
             <h2 className="font-poppins text-3xl font-extrabold leading-tight sm:text-4xl">{copy.trust.title}</h2>
-            <p className="mt-4 max-w-2xl font-inter text-sm leading-6 text-white/80 sm:text-base">{copy.trust.subtitle}</p>
+            <p className="mt-4 max-w-2xl font-inter text-sm leading-6 text-white sm:text-base">{copy.trust.subtitle}</p>
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <button type="button" onClick={onBook} className="rounded-full bg-safari-500 px-6 py-3 font-poppins text-sm font-bold text-white transition hover:bg-safari-600">{copy.availability.cta}</button>
-              <span className="inline-flex items-center gap-2 text-xs text-white/75"><Clock3 className="h-4 w-4" /> {copy.availability.text.split('.')[0]}.</span>
+              <span className="inline-flex items-center gap-2 text-xs text-white"><Clock3 className="h-4 w-4" /> {copy.availability.text.split('.')[0]}.</span>
             </div>
           </div>
 
