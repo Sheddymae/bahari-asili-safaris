@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const COPY = {
   en: { title: 'Privacy & cookies', text: 'We use essential storage to remember your language and optional analytics to understand site usage. You can change your choice at any time.', accept: 'Accept analytics', reject: 'Essential only', privacy: 'Privacy policy' },
@@ -15,7 +16,8 @@ const COPY = {
 
 type Locale = keyof typeof COPY;
 
-export default function CookieConsent({ locale = 'en' }: { locale?: string }) {
+export default function CookieConsent() {
+  const { locale } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [currentLocale, setCurrentLocale] = useState<Locale>('en');
 
