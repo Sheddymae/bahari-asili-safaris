@@ -319,7 +319,10 @@ footer.bg-foreground .text-safari-400 { color: #FFB37E; }
    surface tokens must therefore resolve to sand, and orange surfaces use ink. */
 .bg-safari-50,
 .bg-safari-100,
-.bg-safari-200 {
+.bg-safari-200,
+.bg-ocean-50,
+.bg-ocean-100,
+.bg-ocean-200 {
   background-color: var(--brand-sand) !important;
 }
 
