@@ -42,7 +42,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {children}
             <LanguageFloatingSelector />
             <WhatsAppButton />
-            <CookieConsent locale={initialLocale} />
+            <CookieConsent />
           </LanguageProvider>
         </AuthProvider>
         <Analytics />
