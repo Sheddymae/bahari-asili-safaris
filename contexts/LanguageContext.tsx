@@ -130,7 +130,7 @@ function installCustomerAutoTranslator(locale: Locale) {
     if (!parent || skipTags.has(parent.tagName) || parent.closest('[data-no-auto-translate="true"]')) return;
     if (!textOriginals.has(node)) textOriginals.set(node, node.nodeValue ?? '');
     const original = textOriginals.get(node) ?? '';
-    const translated = locale === 'en' ? original : map[normalize(original)];
+    const translated = map[normalize(original)];
     if (!translated) return;
     const leading = original.match(/^\s*/)?.[0] || '';
     const trailing = original.match(/\s*$/)?.[0] || '';
@@ -150,7 +150,7 @@ function installCustomerAutoTranslator(locale: Locale) {
       if (current == null) continue;
       if (!originals.has(attr)) originals.set(attr, current);
       const original = originals.get(attr) || '';
-      const translated = locale === 'en' ? original : map[normalize(original)];
+      const translated = map[normalize(original)];
       if (translated && current !== translated) el.setAttribute(attr, translated);
     }
   };
