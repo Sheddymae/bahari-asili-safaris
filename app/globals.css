@@ -240,3 +240,75 @@ a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow])
   .why-editorial-grid { grid-template-columns: 1fr; }
   .why-editorial-item, .why-editorial-item:nth-child(2), .why-editorial-item:nth-child(3) { margin-top: 0; border-left: 0; border-top: 1px solid color-mix(in srgb, var(--brand-primary) 12%, transparent); }
 }
+
+
+/* Accessible surface system: keep foreground, links and muted text paired with
+   their backgrounds. Keep these tokens aligned with app/brand.css. */
+:root {
+  color-scheme: light;
+  --surface-ink: #1F2937;
+  --surface-sand: #F5F1E8;
+  --surface-ocean: #167D95;
+  --surface-link-light: #125B6B;
+  --surface-link-dark: #BFEAF0;
+  --surface-muted-light: #475569;
+  --surface-muted-dark: #D6DEE4;
+}
+.surface-light, .surface-white {
+  color: var(--surface-ink);
+  background-color: var(--surface-sand);
+  --surface-link: var(--surface-link-light);
+  --surface-muted: var(--surface-muted-light);
+}
+.surface-white { background-color: #FFFFFF; }
+.surface-dark {
+  color: var(--surface-sand);
+  background-color: var(--surface-ink);
+  --surface-link: var(--surface-link-dark);
+  --surface-muted: var(--surface-muted-dark);
+}
+.surface-sea {
+  color: #FFFFFF;
+  background-color: var(--surface-ocean);
+  --surface-link: #FFFFFF;
+  --surface-muted: #E5F3F5;
+}
+.surface-clay {
+  color: var(--surface-ink);
+  background-color: #FF7418;
+  --surface-link: var(--surface-ink);
+  --surface-muted: #3D3029;
+}
+.surface-light a, .surface-white a, .surface-dark a,
+.surface-sea a, .surface-clay a { color: var(--surface-link); }
+.surface-light .text-muted, .surface-white .text-muted,
+.surface-dark .text-muted, .surface-sea .text-muted,
+.surface-clay .text-muted { color: var(--surface-muted); }
+.surface-light :where(h1,h2,h3,h4,h5,h6,p,li,label),
+.surface-white :where(h1,h2,h3,h4,h5,h6,p,li,label) { color: inherit; }
+.surface-dark :where(h1,h2,h3,h4,h5,h6,p,li,label),
+.surface-sea :where(h1,h2,h3,h4,h5,h6,p,li,label),
+.surface-clay :where(h1,h2,h3,h4,h5,h6,p,li,label) { color: inherit; }
+
+/* Existing dark footer used the light-theme muted token, which was too dark.
+   Correct its descendants without changing the site's layout or brand palette. */
+footer.bg-foreground { color: var(--surface-muted-dark); }
+footer.bg-foreground .text-muted-foreground { color: #D6DEE4 !important; }
+footer.bg-foreground a.text-muted-foreground:hover,
+footer.bg-foreground a:hover { color: #FFFFFF !important; }
+footer.bg-foreground input::placeholder { color: #D6DEE4 !important; opacity: 1; }
+footer.bg-foreground input { color: #FFFFFF; }
+footer.bg-foreground .bg-white\/10 { color: #FFFFFF; }
+footer.bg-foreground .text-safari-400 { color: #FFB37E; }
+
+/* Contrast-safe text on image backgrounds. Apply to hero/card copy wrappers. */
+.text-on-image {
+  color: #FFFFFF;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .85);
+}
+.image-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0,0,0,.78), rgba(0,0,0,.34) 58%, rgba(0,0,0,.08));
+}
