@@ -57,10 +57,10 @@ function collectCatalogueStrings() {
 }
 
 const catalogue = collectCatalogueStrings();
+const findings = [];
 
 // Catch a common localization regression: a translation key accidentally
 // populated with text from another language (for example Arabic in Italian).
-const localeOrder = ['en', 'it', 'fr', 'es', 'de', 'ar', 'zh', 'sw'];
 for (const file of catalogueFiles) {
   if (!fs.existsSync(file)) continue;
   const source = fs.readFileSync(file, 'utf8');
@@ -82,8 +82,6 @@ for (const file of catalogueFiles) {
 const rawCatalogueSources = catalogueFiles.map((file) => fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '').join('\n');
 const literal = />\s*([A-Za-z][^<{\n]{2,160})\s*</g;
 const fallback = /(?:\|\||\?\?)\s*["'`]([A-Za-z][^"'`\n]{2,200})["'`]/g;
-const findings = [];
-
 for (const file of files) {
   const normalizedPath = file.replaceAll('\\', '/');
   if (skip.some(s => normalizedPath.startsWith(s))) continue;
