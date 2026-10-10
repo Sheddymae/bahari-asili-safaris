@@ -57,6 +57,28 @@ function collectCatalogueStrings() {
 }
 
 const catalogue = collectCatalogueStrings();
+
+// Catch a common localization regression: a translation key accidentally
+// populated with text from another language (for example Arabic in Italian).
+const localeOrder = ['en', 'it', 'fr', 'es', 'de', 'ar', 'zh', 'sw'];
+for (const file of catalogueFiles) {
+  if (!fs.existsSync(file)) continue;
+  const source = fs.readFileSync(file, 'utf8');
+  const localeBlocks = [...source.matchAll(/^ {2}(en|it|fr|es|de|ar|zh|sw):\s*\{/gm)];
+  for (let i = 0; i < localeBlocks.length; i++) {
+    const locale = localeBlocks[i][1];
+    const start = localeBlocks[i].index ?? 0;
+    const end = i + 1 < localeBlocks.length ? (localeBlocks[i + 1].index ?? source.length) : source.length;
+    const block = source.slice(start, end);
+    if (locale !== 'ar' && /[\u0600-\u06FF]/u.test(block)) {
+      findings.push(`${file}: Arabic-script text found inside the "${locale}" locale block`);
+    }
+    if (locale !== 'zh' && /[\u3400-\u9FFF]/u.test(block)) {
+      findings.push(`${file}: Chinese-script text found inside the "${locale}" locale block`);
+    }
+  }
+}
+
 const rawCatalogueSources = catalogueFiles.map((file) => fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '').join('\n');
 const literal = />\s*([A-Za-z][^<{\n]{2,160})\s*</g;
 const fallback = /(?:\|\||\?\?)\s*["'`]([A-Za-z][^"'`\n]{2,200})["'`]/g;
