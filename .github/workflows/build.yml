@@ -28,5 +28,8 @@ jobs:
       - name: Translation fallback check
         run: npm run check:i18n
 
+      - name: WCAG brand contrast check
+        run: npm run check:contrast
+
       - name: Production build
         run: npm run build
