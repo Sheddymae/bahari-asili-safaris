@@ -363,3 +363,10 @@ footer.bg-foreground .text-safari-400 { color: #FFB37E; }
 ) .text-white {
   color: var(--brand-text) !important;
 }
+
+
+/* Brand-orange text utilities are decorative accents; use ink for legible text/icons. */
+.text-accent,
+.text-book {
+  color: var(--brand-text) !important;
+}
