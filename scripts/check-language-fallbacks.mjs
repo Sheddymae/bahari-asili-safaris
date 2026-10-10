@@ -8,6 +8,12 @@ const catalogueFiles = [
   'lib/i18n-extra.ts',
   'lib/home-enhancements-i18n.ts',
   'lib/safari-detail-i18n.ts',
+  'lib/destination-translations.ts',
+  'lib/expanded-destination-translations.ts',
+  'lib/destination-page-i18n.ts',
+  'lib/safari-content-i18n.ts',
+  'lib/excursion-content-i18n.ts',
+  'lib/group-departure-i18n.ts',
   'lib/auto-translations.ts',
 ];
 const files = [];
