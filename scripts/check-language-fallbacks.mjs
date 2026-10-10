@@ -62,19 +62,55 @@ function collectCatalogueStrings() {
   return catalogue;
 }
 
+
+function findObjectEnd(source, openBraceIndex) {
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  let lineComment = false;
+  let blockComment = false;
+
+  for (let i = openBraceIndex; i < source.length; i++) {
+    const ch = source[i];
+    const next = source[i + 1];
+
+    if (lineComment) {
+      if (ch === '\n') lineComment = false;
+      continue;
+    }
+    if (blockComment) {
+      if (ch === '*' && next === '/') { blockComment = false; i++; }
+      continue;
+    }
+    if (quote) {
+      if (escaped) { escaped = false; continue; }
+      if (ch === '\\') { escaped = true; continue; }
+      if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '/' && next === '/') { lineComment = true; i++; continue; }
+    if (ch === '/' && next === '*') { blockComment = true; i++; continue; }
+    if (ch === "'" || ch === '"' || ch === '`') { quote = ch; continue; }
+    if (ch === '{') depth++;
+    if (ch === '}' && --depth === 0) return i + 1;
+  }
+  return source.length;
+}
+
 const catalogue = collectCatalogueStrings();
 const findings = [];
 
 // Catch a common localization regression: a translation key accidentally
 // populated with text from another language (for example Arabic in Italian).
-for (const file of catalogueFiles.filter((entry) => entry !== 'lib/auto-translations.ts')) {
+for (const file of catalogueFiles) {
   if (!fs.existsSync(file)) continue;
   const source = fs.readFileSync(file, 'utf8');
   const localeBlocks = [...source.matchAll(/^ {2}(en|it|fr|es|de|ar|zh|sw):\s*\{/gm)];
   for (let i = 0; i < localeBlocks.length; i++) {
     const locale = localeBlocks[i][1];
     const start = localeBlocks[i].index ?? 0;
-    const end = i + 1 < localeBlocks.length ? (localeBlocks[i + 1].index ?? source.length) : source.length;
+    const openBrace = start + localeBlocks[i][0].lastIndexOf('{');
+    const end = findObjectEnd(source, openBrace);
     const block = source.slice(start, end);
     if (locale !== 'ar' && /[\u0600-\u06FF]/u.test(block)) {
       findings.push(`${file}: Arabic-script text found inside the "${locale}" locale block`);
