@@ -71,7 +71,7 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden xl:flex items-center gap-6">
-              {navLinks.map(link => <Link key={link.href} href={link.href} prefetch className={`nav-link font-inter text-sm transition-colors pb-0.5 cursor-pointer ${link.primary ? 'font-semibold px-4 py-2 rounded-full border-2' : 'font-medium'} ${isScrolled ? (link.primary ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white' : 'text-foreground hover:text-ocean-700') : (link.primary ? 'border-white text-white hover:bg-white hover:text-ocean-700' : 'text-white/90 hover:text-white')}`}>{link.label}</Link>)}
+              {navLinks.map(link => <Link key={link.href} href={link.href} prefetch className={`nav-link font-inter text-sm transition-colors pb-0.5 cursor-pointer ${link.primary ? 'font-semibold px-4 py-2 rounded-full border-2' : 'font-medium'} ${isScrolled ? (link.primary ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white' : 'text-foreground hover:text-ocean-700') : (link.primary ? 'border-white text-white hover:bg-white hover:text-ocean-700' : 'text-white hover:text-white')}`}>{link.label}</Link>)}
             </div>
 
             <div className="hidden xl:flex items-center gap-3">
@@ -88,7 +88,7 @@ export default function Navbar() {
                   </div>}
                 </div>
               ) : <div className="flex items-center gap-2">
-                <button onClick={() => setAuthModal({ open: true, mode: 'signin' })} className={`font-inter text-sm font-medium px-4 py-2 rounded-full transition-all ${isScrolled ? 'text-foreground hover:text-ocean-700' : 'text-white/90 hover:text-white'}`}>{t.nav.signIn}</button>
+                <button onClick={() => setAuthModal({ open: true, mode: 'signin' })} className={`font-inter text-sm font-medium px-4 py-2 rounded-full transition-all ${isScrolled ? 'text-foreground hover:text-ocean-700' : 'text-white hover:text-white'}`}>{t.nav.signIn}</button>
                 <button onClick={() => setAuthModal({ open: true, mode: 'signup' })} className={`font-inter text-sm font-semibold px-5 py-2 rounded-full border-2 transition-all ${isScrolled ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white' : 'border-white text-white hover:bg-white hover:text-ocean-700'}`}>{t.nav.register}</button>
               </div>)}
             </div>
