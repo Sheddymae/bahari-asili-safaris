@@ -572,8 +572,8 @@ export const translations = {
       title: 'Quando la natura si mette in mostra',
       subtitle: 'Una guida indicativa alle stagioni migliori per la fauna selvatica — la natura non segue un calendario rigido, ma questi periodi offrono le migliori probabilità.',
       footnote: 'Mesi evidenziati = periodo di avvistamento migliore. Gli avvistamenti non sono mai garantiti al 100%.',
-      legendPeak: 'Peak viewing window',
-      legendOff: 'Off-peak',
+      legendPeak: 'Periodo migliore per gli avvistamenti',
+      legendOff: 'Fuori stagione',
     },
     excursions: {
       label: 'Escursioni Giornaliere',
