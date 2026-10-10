@@ -342,7 +342,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin', red
           <h2 className="font-poppins font-bold text-2xl">
             {mode === 'verify' ? copy.title : mode === 'signin' ? t.auth.signInTitle : t.auth.signUpTitle}
           </h2>
-          <p className="font-inter text-white/70 text-sm mt-1">
+          <p className="font-inter text-white text-sm mt-1">
             {mode === 'verify' ? copy.desc : mode === 'signin' ? t.auth.signInDesc : t.auth.signUpDesc}
           </p>
         </div>
