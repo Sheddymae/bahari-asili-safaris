@@ -21,7 +21,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) return { title: 'Article not found — Bahari Asili Safaris' };
-  return { title: post.seo_title || post.title, description: post.seo_description || post.excerpt || undefined, alternates: { canonical: `/blog/${post.slug}` }, openGraph: { title: post.title, description: post.excerpt || undefined, images: post.image ? [post.image] : undefined } };
+  const description = post.seo_description || post.excerpt || undefined;
+  const canonical = `/blog/${encodeURIComponent(post.slug)}`;
+  return {
+    title: post.seo_title || post.title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: post.title,
+      description,
+      type: 'article',
+      url: canonical,
+      images: post.image ? [{ url: post.image, alt: post.title }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.seo_title || post.title,
+      description,
+      images: post.image ? [post.image] : undefined,
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
