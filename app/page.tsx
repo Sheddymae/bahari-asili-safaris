@@ -39,14 +39,6 @@ export default function Home() {
       <Navbar />
       <main id="main-content" tabIndex={-1} className="homepage-main min-w-0 overflow-x-clip outline-none">
         <HeroSection onBook={openHeroBooking} />
-        <section aria-label="Why travel with Bahari Asili Safaris" className="relative z-10 border-b border-[var(--brand-border)] bg-white px-4 py-5 sm:px-6 lg:px-8">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-6 gap-y-3 text-center text-xs font-semibold text-[var(--brand-primary-deep)] sm:gap-x-8 sm:text-sm">
-            <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--brand-secondary)]" />Locally operated in Watamu</span>
-            <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--brand-secondary)]" />Private &amp; group safaris</span>
-            <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-[var(--brand-secondary)]" />Multilingual travel support</span>
-            <span className="inline-flex items-center gap-2 text-slate-500">Reviews: <a className="underline underline-offset-4 hover:text-[var(--brand-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-focus)]" href="https://www.tripadvisor.com/" target="_blank" rel="noopener noreferrer">Tripadvisor</a> · <a className="underline underline-offset-4 hover:text-[var(--brand-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-focus)]" href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">Google</a></span>
-          </div>
-        </section>
         <HomeIntro />
         <AnimateOnScroll direction="up"><HomePopularSafaris onBook={openBooking} /></AnimateOnScroll>
         <AnimateOnScroll direction="up"><HomeFromWatamu /></AnimateOnScroll>
