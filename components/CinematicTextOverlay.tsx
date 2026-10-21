@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle, ArrowDownRight, ArrowUpRight } from 'lucide-react';
+import { MessageCircle, ArrowDownRight } from 'lucide-react';
 import Link from 'next/link';
 import { trackConversion } from '@/components/Analytics';
 import { whatsappHref } from '@/lib/contact-info';
@@ -29,18 +29,6 @@ export default function CinematicTextOverlay({ onPlan }: { onPlan: () => void })
           <a href={whatsappHref(c.whatsappMessage)} target="_blank" rel="noopener noreferrer" onClick={() => trackConversion('whatsapp_clicked', { location: 'hero' })} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/75 bg-black/25 px-7 py-3.5 font-poppins text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-[var(--brand-primary-deep)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
             <MessageCircle className="h-5 w-5" aria-hidden="true" />{c.hero.whatsapp}
           </a>
-        </div>
-        <div className="mt-7 grid w-full max-w-3xl grid-cols-1 gap-3 text-left sm:mt-8 sm:grid-cols-2 sm:gap-4">
-          <Link href="/tours" className="group rounded-2xl border border-white/30 bg-slate-950/55 p-4 text-white shadow-lg transition-colors hover:bg-slate-950/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:p-5">
-            <span className="flex items-center justify-between font-poppins text-base font-bold sm:text-lg">Safari <ArrowUpRight className="h-4 w-4 text-[var(--brand-secondary)]" aria-hidden="true" /></span>
-            <span className="mt-1 block font-inter text-xs leading-5 text-white/90 sm:text-sm">Tsavo · Amboseli · Maasai Mara</span>
-            <span className="mt-3 inline-flex items-center gap-1 font-inter text-xs font-semibold text-white underline decoration-[var(--brand-secondary)] underline-offset-4">Learn more <ArrowUpRight className="h-3 w-3" aria-hidden="true" /></span>
-          </Link>
-          <Link href="/excursions" className="group rounded-2xl border border-white/30 bg-slate-950/55 p-4 text-white shadow-lg transition-colors hover:bg-slate-950/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:p-5">
-            <span className="flex items-center justify-between font-poppins text-base font-bold sm:text-lg">Coast <ArrowUpRight className="h-4 w-4 text-[var(--brand-secondary)]" aria-hidden="true" /></span>
-            <span className="mt-1 block font-inter text-xs leading-5 text-white/90 sm:text-sm">Watamu beach and excursions</span>
-            <span className="mt-3 inline-flex items-center gap-1 font-inter text-xs font-semibold text-white underline decoration-[var(--brand-secondary)] underline-offset-4">Learn more <ArrowUpRight className="h-3 w-3" aria-hidden="true" /></span>
-          </Link>
         </div>
         <p className="mx-auto mt-3 max-w-2xl font-inter text-[10px] font-semibold uppercase leading-5 tracking-[0.12em] text-white/90 drop-shadow-md sm:text-xs">{c.hero.destinations}</p>
       </div>
