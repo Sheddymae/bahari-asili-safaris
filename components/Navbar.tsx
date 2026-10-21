@@ -48,13 +48,13 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
-  // Keep primary navigation focused on the customer's planning journey.
+  // Keep navigation links consistent and ordered by the visitor's planning journey.
   const navLinks = useMemo(() => [
     { label: t.nav.tours, href: '/tours' },
     { label: t.nav.destinations, href: '/destinations' },
-    { label: t.homeExtras.buildCta, href: '/build-your-safari', primary: true },
     { label: t.nav.excursions, href: '/excursions' },
     { label: serviceHubCopy[locale].eyebrow, href: '/services' },
+    { label: t.homeExtras.buildCta, href: '/build-your-safari' },
     { label: t.nav.about, href: '/about' },
     { label: t.nav.contact, href: '/contact' },
   ], [t, locale]);
@@ -73,7 +73,7 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden xl:flex items-center gap-6">
-              {navLinks.map(link => <Link key={link.href} href={link.href} prefetch className={`nav-link font-inter text-sm transition-colors pb-0.5 cursor-pointer ${link.primary ? 'font-semibold px-4 py-2 rounded-full border-2' : 'font-medium'} ${isScrolled ? (link.primary ? 'border-ocean-700 text-ocean-700 hover:bg-ocean-700 hover:text-white' : 'text-foreground hover:text-ocean-700') : (link.primary ? 'border-white text-white hover:bg-white hover:text-ocean-700' : 'text-white hover:text-white')}`}>{link.label}</Link>)}
+              {navLinks.map(link => <Link key={link.href} href={link.href} prefetch className={`nav-link font-inter text-sm font-medium whitespace-nowrap transition-colors pb-0.5 cursor-pointer ${isScrolled ? 'text-foreground hover:text-ocean-700' : 'text-white hover:text-white'}`}>{link.label}</Link>)}
             </div>
 
             <div className="hidden xl:flex items-center gap-3">
