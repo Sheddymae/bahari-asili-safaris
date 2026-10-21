@@ -1,7 +1,82 @@
+/* Bahari Asili Safaris — brand tokens.
+ * Keep the established logo palette; use orange as a selective accent, not a
+ * default text colour. White-on-orange is not a safe text pairing.
+ */
 :root {
+  /* Existing brand colours retained from the current brand lock. */
   --brand-primary: #167D95;
+  --brand-primary-hover: #11677B;
+  --brand-primary-deep: #104B59;
   --brand-secondary: #FF7418;
+  --brand-secondary-hover: #E85E08;
   --brand-sand: #F5F1E8;
+  --brand-sand-deep: #EAE2D2;
   --brand-text: #1F2937;
+  --brand-text-muted: #52616B;
   --brand-bg: #FFFFFF;
+  --brand-border: #D9E1E3;
+  --brand-surface-soft: #F7F9F8;
+  --brand-focus: #0B6174;
+
+  /* Semantic aliases for consistent component styling. */
+  --color-primary: var(--brand-primary);
+  --color-primary-hover: var(--brand-primary-hover);
+  --color-primary-strong: var(--brand-primary-deep);
+  --color-accent: var(--brand-secondary);
+  --color-accent-hover: var(--brand-secondary-hover);
+  --color-text: var(--brand-text);
+  --color-text-muted: var(--brand-text-muted);
+  --color-surface: var(--brand-bg);
+  --color-surface-warm: var(--brand-sand);
+  --color-border: var(--brand-border);
+
+  /* 8px spacing rhythm (plus a 4px micro-space for icon alignment). */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 40px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+  --space-10: 96px;
+
+  /* Content width and reading measure. */
+  --container-max: 1200px;
+  --content-max: 760px;
+  --text-measure: 68ch;
+
+  /* Type scale. Display headings are editorial; body text stays readable. */
+  --font-display: 'Poppins', 'Inter', Arial, sans-serif;
+  --font-body: 'Inter', Arial, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: clamp(1.5rem, 2.4vw, 2rem);
+  --text-3xl: clamp(1.875rem, 3.5vw, 2.75rem);
+  --text-display: clamp(2.25rem, 5vw, 4.5rem);
+  --leading-tight: 1.12;
+  --leading-heading: 1.2;
+  --leading-body: 1.65;
+
+  /* Subtle geometry: consistent cards without heavy decoration. */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --radius: var(--radius-md);
+  --shadow-sm: 0 2px 8px rgb(17 51 59 / 6%);
+  --shadow-md: 0 8px 24px rgb(17 51 59 / 9%);
+  --shadow-lg: 0 18px 48px rgb(17 51 59 / 13%);
+  --shadow-focus: 0 0 0 3px rgb(22 125 149 / 28%);
+
+  /* Motion is deliberately restrained and can be disabled globally. */
+  --motion-fast: 140ms;
+  --motion-standard: 220ms;
+  --motion-slow: 320ms;
+  --motion-ease: cubic-bezier(0.2, 0.75, 0.25, 1);
 }

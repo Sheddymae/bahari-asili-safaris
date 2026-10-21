@@ -373,3 +373,138 @@ footer.bg-foreground .text-safari-400 { color: #FFB37E; }
 .text-book {
   color: var(--brand-text) !important;
 }
+
+
+/* --------------------------------------------------------------------------
+   Phase 1 design system foundation
+   Existing logo colours remain unchanged: ocean teal + bright orange.
+   Orange is reserved for a selective accent and uses dark ink for readable
+   contrast; primary controls use teal with white text.
+   -------------------------------------------------------------------------- */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 220 23% 16%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 23% 16%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 23% 16%;
+  --primary: 191 74% 34%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 42 39% 94%;
+  --secondary-foreground: 220 23% 16%;
+  --muted: 210 20% 96%;
+  --muted-foreground: 207 13% 35%;
+  --accent: 24 100% 55%;
+  --accent-foreground: 220 23% 16%;
+  --border: 204 18% 87%;
+  --input: 204 18% 87%;
+  --ring: 191 74% 28%;
+  --container-width: var(--container-max);
+}
+
+.container-brand {
+  width: min(calc(100% - 2 * var(--space-4)), var(--container-max));
+  margin-inline: auto;
+}
+
+.section-brand {
+  padding-block: clamp(var(--space-7), 7vw, var(--space-10));
+}
+
+.eyebrow-brand {
+  margin: 0 0 var(--space-2);
+  color: var(--brand-primary-deep);
+  font: 700 var(--text-xs)/1.4 var(--font-body);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.heading-display {
+  max-width: 18ch;
+  margin: 0;
+  color: var(--brand-text);
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 700;
+  letter-spacing: -.035em;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+.body-readable {
+  max-width: var(--text-measure);
+  color: var(--brand-text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+}
+
+.surface-brand {
+  background: var(--brand-bg);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.button-brand {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font: 700 var(--text-sm)/1.2 var(--font-body);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--motion-standard) var(--motion-ease),
+    color var(--motion-standard) var(--motion-ease),
+    border-color var(--motion-standard) var(--motion-ease),
+    box-shadow var(--motion-standard) var(--motion-ease),
+    transform var(--motion-standard) var(--motion-ease);
+}
+
+.button-brand--primary {
+  color: #fff;
+  background: var(--brand-primary);
+}
+.button-brand--primary:hover { background: var(--brand-primary-hover); }
+.button-brand--secondary {
+  color: var(--brand-primary-deep);
+  background: transparent;
+  border-color: var(--brand-primary);
+}
+.button-brand--secondary:hover { background: rgb(22 125 149 / 7%); }
+.button-brand--accent {
+  color: #292018;
+  background: var(--brand-secondary);
+}
+.button-brand--accent:hover { background: var(--brand-secondary-hover); }
+.button-brand:disabled, .button-brand[aria-disabled="true"] {
+  opacity: .55;
+  cursor: not-allowed;
+}
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--brand-focus);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-focus);
+}
+:where(a, button, input, select, textarea, summary, [tabindex]):focus:not(:focus-visible) {
+  outline: none;
+}
+:where(button, input, select, textarea) { font: inherit; }
+:where(img) { height: auto; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+@media (max-width: 639px) {
+  .container-brand { width: min(calc(100% - 32px), var(--container-max)); }
+  .section-brand { padding-block: var(--space-7); }
+}
