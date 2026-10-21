@@ -6,7 +6,7 @@ import { ExternalLink, MessageSquareQuote, Star } from 'lucide-react';
 type Booking = { id: number; booking_ref: string; safari_name: string; arrival_date: string; status: string; itinerary_snapshot: any };
 type Review = { booking_id: number; booking_ref: string; safari_name: string; rating: number; review_text: string; created_at: string };
 const GOOGLE_REVIEW_URL = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL || 'https://share.google/Y27Y4iXc0YimSaHjT';
-const TRIPADVISOR_REVIEW_URL = process.env.NEXT_PUBLIC_TRIPADVISOR_REVIEW_URL || '';
+const TRIPADVISOR_REVIEW_URL = process.env.NEXT_PUBLIC_TRIPADVISOR_REVIEW_URL || 'https://www.tripadvisor.co.uk/Attraction_Review-g661279-d34694911-Reviews-Bahari_Asili_Safaris-Watamu_Coast_Province.html';
 
 export default function ReviewCenter({ bookings }: { bookings: Booking[] }) {
   const [reviews, setReviews] = useState<Review[]>([]);
