@@ -1,7 +1,6 @@
 'use client';
 
-import { Check, ArrowUpRight } from 'lucide-react';
-import Link from 'next/link';
+import { Check } from 'lucide-react';
 import { useHomeCopy } from './useHomeCopy';
 
 export default function HomeIntro() {
@@ -17,9 +16,6 @@ export default function HomeIntro() {
           </span>
           <h2 id="home-intro-title" className="mt-4 max-w-2xl font-poppins text-3xl font-bold leading-[1.12] tracking-tight text-[var(--brand-text)] sm:text-4xl lg:text-[2.7rem]">{c.intro.title}</h2>
           <p className="mt-5 max-w-xl font-inter text-base leading-7 text-[var(--brand-text-muted)] sm:text-lg sm:leading-8">{c.intro.body}</p>
-          <Link href="/about" className="mt-6 inline-flex min-h-11 items-center gap-2 font-inter text-sm font-bold text-[var(--brand-primary-deep)] underline decoration-[var(--brand-secondary)] decoration-2 underline-offset-4 hover:text-[var(--brand-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-focus)] focus-visible:ring-offset-4">
-            {c.intro.cta || c.intro.title} <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
         </div>
         <ul className="relative grid gap-3 sm:grid-cols-2 lg:gap-4">
           {c.intro.points.map((point, index) => (
