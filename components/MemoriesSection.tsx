@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function MemoriesSection({ onBook }: { onBook: () => void }) {
@@ -69,17 +69,6 @@ export default function MemoriesSection({ onBook }: { onBook: () => void }) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
 
-            <div className="absolute top-8 -left-4 sm:-left-8 bg-white rounded-2xl shadow-card-hover px-4 py-3 flex items-center gap-3 min-w-[180px] z-10">
-              <div className="w-9 h-9 rounded-full bg-safari-50 flex items-center justify-center flex-shrink-0">
-                <ShieldCheck className="w-4.5 h-4.5 text-safari-500" />
-              </div>
-              <div>
-                <div className="font-poppins font-semibold text-foreground text-xs leading-none mb-1">
-                  {t.footer.kwsLicensed}
-                </div>
-                <div className="font-inter text-xs text-muted-foreground">Kenya Wildlife Service</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

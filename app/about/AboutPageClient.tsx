@@ -31,7 +31,6 @@ const setsApart = [
 ] as const;
 
 const guideQualities = [
-  { icon: ShieldCheck, key: 'kwsLicensed' },
   { icon: HomeIcon, key: 'localRegion' },
   { icon: Languages, key: 'guideMultilingual' },
 ] as const;
@@ -118,7 +117,7 @@ export default function AboutPageClient() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 justify-center mb-4"><Users className="w-5 h-5 text-safari-500" /><h2 className="font-poppins font-bold text-2xl sm:text-3xl text-foreground">{aboutPage.guidesTitle}</h2></div>
           <p className="font-inter text-muted-foreground text-sm text-center max-w-xl mx-auto mb-10">{aboutPage.guidesIntro}</p>
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {guideQualities.map(({ icon: Icon, key }) => (
               <div key={key} className="bg-sand-50 rounded-2xl p-6 border border-sand-200 text-center"><Icon className="w-8 h-8 mx-auto text-safari-500 mb-4" /><h3 className="font-poppins font-bold text-base text-foreground mb-1.5">{aboutPage.guides[key].title}</h3><p className="font-inter text-sm text-muted-foreground">{aboutPage.guides[key].body}</p></div>
             ))}
