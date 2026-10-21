@@ -116,9 +116,9 @@ if (process.argv.includes('--changed')) {
     if (diffArgs) {
       changedPaths = new Set(
         execFileSync('git', diffArgs, { encoding: 'utf8' })
-          .split(/\\r?\\n/)
+          .split(/\r?\n/)
           .filter(Boolean)
-          .map((p) => p.replaceAll('\\\\', '/')),
+          .map((p) => p.replaceAll('\\', '/')),
       );
       console.log(`Checking customer-facing strings in ${changedPaths.size} changed app/component file(s); locale-catalogue integrity remains repository-wide.`);
     } else {
