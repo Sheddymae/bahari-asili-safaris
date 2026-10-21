@@ -67,9 +67,9 @@ export function PageHero({
         </div>
       ) : null}
       <div className={`container-brand py-14 sm:py-20 lg:py-28 ${image ? 'text-white' : ''}`}>
-        {eyebrow ? <p className={`eyebrow-brand ${image ? 'text-white' : ''}`}>{eyebrow}</p> : null}
-        <h1 className={`heading-display ${image ? 'text-white' : ''}`}>{title}</h1>
-        {description ? <p className={`body-readable mt-5 text-base sm:text-lg ${image ? 'text-white/90' : ''}`}>{description}</p> : null}
+        {eyebrow ? <p style={image ? { color: '#fff' } : undefined} className="eyebrow-brand">{eyebrow}</p> : null}
+        <h1 style={image ? { color: '#fff' } : undefined} className="heading-display">{title}</h1>
+        {description ? <p style={image ? { color: 'rgb(255 255 255 / 0.9)' } : undefined} className="body-readable mt-5 text-base sm:text-lg">{description}</p> : null}
         {children ? <div className="mt-7 flex flex-wrap items-center gap-3">{children}</div> : null}
       </div>
     </section>
