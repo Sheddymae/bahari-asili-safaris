@@ -36,13 +36,11 @@ export default function DestinationsPage() {
             />
           </div>
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#102B32]/95 via-[#12343B]/80 to-[#12343B]/35" />
-          <div className="absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full border border-white/10 sm:h-96 sm:w-96" />
-          <div className="absolute -right-8 -top-12 -z-10 h-52 w-52 rounded-full border border-white/10 sm:h-72 sm:w-72" />
 
           <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-14 pt-16 sm:px-6 sm:pb-20 sm:pt-20 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:px-8 lg:pb-24 lg:pt-24">
             <AnimateOnScroll direction="up">
               <div className="max-w-3xl">
-                <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 font-inter text-xs font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur">
+                <span className="mb-4 inline-flex items-center gap-2 border-l-2 border-[#FF7418] pl-3 py-1 font-inter text-xs font-semibold uppercase tracking-[0.18em] text-white/90">
                   <Compass className="h-4 w-4 text-[#FF9A50]" />
                   {t.destinationsPage.label}
                 </span>
@@ -64,12 +62,12 @@ export default function DestinationsPage() {
 
             <AnimateOnScroll direction="up" delay={120}>
               <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:justify-self-end lg:max-w-md">
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md sm:p-5">
+                <div className="border border-white/20 bg-[#0D2A30]/65 p-4 sm:p-5">
                   <Globe2 className="mb-4 h-5 w-5 text-[#FF9A50]" />
                   <p className="font-poppins text-3xl font-bold sm:text-4xl">{destinations.length}</p>
                   <p className="mt-1 font-inter text-xs leading-5 text-white/75 sm:text-sm">{t.destinationsPage.label}</p>
                 </div>
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md sm:p-5">
+                <div className="border border-white/20 bg-[#0D2A30]/65 p-4 sm:p-5">
                   <MapPin className="mb-4 h-5 w-5 text-[#FF9A50]" />
                   <p className="font-poppins text-xl font-bold leading-tight sm:text-2xl">{pageLabels.regionFallback}</p>
                   <p className="mt-2 font-inter text-xs leading-5 text-white/75 sm:text-sm">{t.destinationsPage.description}</p>
@@ -81,14 +79,14 @@ export default function DestinationsPage() {
 
         <section id="destination-grid" className="scroll-mt-20 py-12 sm:py-16 lg:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-8 grid min-w-0 gap-3 sm:mb-10 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] sm:items-end sm:gap-8">
               <div className="max-w-2xl">
                 <p className="font-inter text-xs font-bold uppercase tracking-[0.18em] text-ocean-700">{t.destinationsPage.label}</p>
                 <h2 className="mt-2 font-poppins text-2xl font-bold leading-tight text-foreground sm:text-3xl">
                   {t.destinationsPage.title}
                 </h2>
               </div>
-              <p className="max-w-xl font-inter text-sm leading-6 text-muted-foreground sm:text-right">
+              <p className="max-w-xl min-w-0 break-words font-inter text-sm leading-6 text-muted-foreground sm:justify-self-end sm:text-right">
                 {t.destinationsPage.description}
               </p>
             </div>
@@ -101,7 +99,7 @@ export default function DestinationsPage() {
                     <Link
                       href={`/destinations/${d.slug}`}
                       prefetch
-                      className="group block h-full overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_8px_30px_rgba(31,41,55,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(31,41,55,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600 focus-visible:ring-offset-4"
+                      className="group block h-full min-w-0 overflow-hidden border border-black/10 bg-white transition-colors duration-200 hover:border-ocean-700/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600 focus-visible:ring-offset-4"
                     >
                       <div className="relative h-56 overflow-hidden sm:h-64">
                         <Image
@@ -112,7 +110,7 @@ export default function DestinationsPage() {
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
-                        <div className="absolute left-4 top-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-full border border-white/25 bg-black/25 px-3 py-1.5 backdrop-blur-md">
+                        <div className="absolute left-4 top-4 flex max-w-[calc(100%-2rem)] items-center gap-2 bg-[#102B32]/90 px-3 py-1.5">
                           <Globe2 className="h-3.5 w-3.5 shrink-0 text-[#FF9A50]" />
                           <span className="truncate font-inter text-[11px] font-semibold uppercase tracking-wider text-white">{d.country || pageLabels.regionFallback}</span>
                         </div>
@@ -124,9 +122,9 @@ export default function DestinationsPage() {
                           <h3 className="font-poppins text-2xl font-bold leading-tight text-white sm:text-[1.7rem]">{content.name}</h3>
                         </div>
                       </div>
-                      <div className="flex min-h-[172px] flex-col p-5 sm:p-6">
+                      <div className="flex min-h-[172px] min-w-0 flex-col p-5 sm:p-6">
                         <p className="mb-5 line-clamp-3 font-inter text-sm leading-6 text-muted-foreground">{content.tagline}</p>
-                        <span className="mt-auto inline-flex min-h-10 items-center gap-2 font-inter text-sm font-bold text-ocean-700 transition-all group-hover:gap-3">
+                        <span className="mt-auto inline-flex min-h-11 min-w-0 items-center gap-2 font-inter text-sm font-bold leading-5 text-ocean-700 transition-colors group-hover:text-[#104B59]">
                           {t.destinationsPage.explore} {content.name}
                           <ArrowRight className="h-4 w-4" />
                         </span>
