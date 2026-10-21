@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { safaris } from '@/lib/safari-catalogue';
 import { getPublicSafaris } from '@/lib/public-content';
 import SafariDetailClient from '@/components/SafariDetailEnhanced';
+import SafariStructuredData from '@/components/SafariStructuredData';
 
 export function generateStaticParams() {
   return safaris.map((s) => ({ slug: s.id }));
@@ -23,9 +24,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    alternates: { canonical: `/safaris/${encodeURIComponent(safari.id)}` },
     openGraph: {
       title,
       description,
+      type: 'article',
+      url: `/safaris/${encodeURIComponent(safari.id)}`,
       images: safari.image ? [safari.image] : undefined,
     },
   };
@@ -37,5 +41,11 @@ export default async function SafariDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const managed = await getPublicSafaris('en');
   const safari = managed.find((s) => s.id === slug) || safaris.find((s) => s.id === slug);
-  return <SafariDetailClient safari={safari || null} slug={slug} />;
+  if (!safari) return <SafariDetailClient safari={null} slug={slug} />;
+  return (
+    <>
+      <SafariStructuredData safari={safari} />
+      <SafariDetailClient safari={safari} slug={slug} />
+    </>
+  );
 }
