@@ -42,11 +42,18 @@ function ToursPageInner() {
   const [managedExcursions, setManagedExcursions] = useState<typeof excursions>(excursions);
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'day' ? 'day' : searchParams.get('tab') === 'group' ? 'group' : 'private';
+  const [activeTab, setActiveTab] = useState<'group' | 'private' | 'day'>(initialTab);
   const [groupTours, setGroupTours] = useState<GroupTour[] | null>(null);
   const [selectedTour, setSelectedTour] = useState<string | null>(null);
   const [programsLoading, setProgramsLoading] = useState(true);
 
-  useEffect(() => { getGroupTours().then(setGroupTours); }, []);
+  useEffect(() => {
+    let active = true;
+    getGroupTours()
+      .then((tours) => { if (active) setGroupTours(tours); })
+      .catch(() => { if (active) setGroupTours([]); });
+    return () => { active = false; };
+  }, []);
   useEffect(() => {
     let active = true;
     fetch('/api/excursions', { cache: 'no-store' })
@@ -76,10 +83,6 @@ function ToursPageInner() {
     <PageShell>
       <section aria-labelledby="tours-heading" className="min-h-screen bg-[var(--brand-sand)] pb-16 sm:pb-20">
         <div className="relative overflow-hidden bg-[var(--brand-primary-deep)] text-white">
-          <div aria-hidden="true" className="absolute inset-0 opacity-15">
-            <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full border-[36px] border-white/30 sm:-right-10 sm:h-96 sm:w-96" />
-            <div className="absolute -bottom-24 left-1/4 h-56 w-56 rounded-full border-[24px] border-white/20" />
-          </div>
           <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
             <AnimateOnScroll direction="up">
               <div className="max-w-3xl">
@@ -90,8 +93,11 @@ function ToursPageInner() {
                 <h1 id="tours-heading" className="font-poppins text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
                   {t.tours.title} <span className="text-[var(--brand-secondary)]">{t.tours.titleHighlight}</span>
                 </h1>
+                <p className="mt-4 max-w-2xl text-sm leading-6 text-white/85 sm:text-base sm:leading-7">
+                  {t.tours.noPricesNote}
+                </p>
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                  <a href="#tour-options" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[var(--brand-secondary)] px-5 py-3 font-inter text-sm font-bold text-[var(--brand-text)] transition-colors hover:bg-[var(--brand-secondary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-primary-deep)]">
+                  <a href="#tour-options" onClick={() => setActiveTab('private')} className="inline-flex min-h-12 items-center justify-center gap-2 bg-[var(--brand-secondary)] px-5 py-3 font-inter text-sm font-bold text-[var(--brand-text)] transition-colors hover:bg-[var(--brand-secondary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-primary-deep)]">
                     {t.tours.private}
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </a>
@@ -105,7 +111,7 @@ function ToursPageInner() {
         </div>
 
         <div id="tour-options" className="mx-auto max-w-7xl scroll-mt-24 px-4 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-          <Tabs defaultValue={initialTab} className="w-full">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'group' | 'private' | 'day')} className="w-full">
             <div className="mb-7 flex flex-col gap-4 sm:mb-9 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="font-inter text-xs font-bold uppercase tracking-[0.16em] text-[var(--brand-primary-deep)]">{t.nav.tours}</p>
