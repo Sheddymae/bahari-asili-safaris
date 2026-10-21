@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 import ServicesPageClient from './ServicesPageClient';
 
 export const metadata: Metadata = {
-  title: 'Experiences — 24/7 Support, Private Transport & More',
+  title: 'Travel Services — Transfers, Car Rental & More',
   description:
-    'What travelling with Bahari Asili Safaris includes: 24/7 assistance, private air-conditioned transport, and personalised support from your first message to your last day in Kenya.',
+    'Arrange airport transfers, ask about car rental, get currency exchange guidance and SIM support, and access the official Kenya eTA portal from Bahari Asili Safaris.',
   alternates: { canonical: '/services' },
   openGraph: {
-    title: 'Experiences — Bahari Asili Safaris',
-    description: '24/7 assistance, private transport, and personalised support for your Kenya safari and coastal trip.',
+    title: 'Travel Services — Bahari Asili Safaris',
+    description: 'Airport transfers, car rental enquiries, currency exchange guidance, SIM connectivity help and direct access to official Kenya eTA services.',
     type: 'website',
     url: '/services',
   },
