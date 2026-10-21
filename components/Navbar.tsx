@@ -48,14 +48,14 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
-  // Keep navigation links consistent and ordered by the visitor's planning journey.
+  // Keep the seven main navigation links in the agreed customer journey order.
   const navLinks = useMemo(() => [
+    { label: t.nav.about, href: '/about' },
     { label: t.nav.tours, href: '/tours' },
-    { label: t.nav.destinations, href: '/destinations' },
     { label: t.nav.excursions, href: '/excursions' },
     { label: serviceHubCopy[locale].eyebrow, href: '/services' },
     { label: t.homeExtras.buildCta, href: '/build-your-safari' },
-    { label: t.nav.about, href: '/about' },
+    { label: t.nav.destinations, href: '/destinations' },
     { label: t.nav.contact, href: '/contact' },
   ], [t, locale]);
 
