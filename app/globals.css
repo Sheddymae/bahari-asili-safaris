@@ -100,9 +100,8 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
 .homepage-main section { max-width: 100%; }
 .homepage-main .max-w-7xl, .homepage-main .max-w-6xl, .homepage-main .max-w-5xl { width: 100%; }
 
-/* Traveler Essentials: compact, layered cards on small screens. The
-   negative offset creates a true card-stack feel while preserving every
-   destination as a reachable link. Desktop/tablet retain the 3-column grid. */
+/* Traveler Essentials: use clear vertical rhythm at every viewport.
+   Cards never overlap; each item retains its full content and tap target. */
 .traveler-essential-card {
   position: relative;
   z-index: 1;
@@ -127,19 +126,14 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
   .traveler-essentials { padding-top: 2.75rem; padding-bottom: 2.75rem; }
   .traveler-essentials-grid {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 1rem;
     padding: 0 .15rem .75rem;
   }
   .traveler-essentials-grid > div {
     position: relative;
-    margin-top: -18px;
+    min-width: 0;
+    margin-top: 0;
   }
-  .traveler-essentials-grid > div:first-child { margin-top: 0; }
-  .traveler-essentials-grid > div:nth-child(2) { z-index: 2; }
-  .traveler-essentials-grid > div:nth-child(3) { z-index: 3; }
-  .traveler-essentials-grid > div:nth-child(4) { z-index: 4; }
-  .traveler-essentials-grid > div:nth-child(5) { z-index: 5; }
-  .traveler-essentials-grid > div:nth-child(6) { z-index: 6; }
   .traveler-essential-card {
     min-height: 0;
     padding: 1rem 1.05rem;
@@ -151,12 +145,10 @@ button:not([data-no-glow]):active, a[role='button']:not([data-no-glow]):active {
     transform: translateY(-6px) scale(1.01);
   }
   .traveler-essential-description {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-    line-clamp: 2;
-    line-height: 1.45rem;
+    display: block;
+    overflow: visible;
+    line-height: 1.5rem;
+    overflow-wrap: anywhere;
   }
 
   /* Safari cards are critical landing-page content. GSAP may not receive a
@@ -238,6 +230,9 @@ a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow])
   .safari-editorial-card--feature { min-height: 390px; }
   .safari-editorial-card--small { min-height: 260px; }
   .why-editorial-grid { grid-template-columns: 1fr; }
+  .why-editorial-item:nth-child(2),
+  .why-editorial-item:nth-child(3) { margin-top: 0; }
+  .why-editorial-item { padding: 1.25rem 0; border-left: 0; border-top: 1px solid color-mix(in srgb, var(--brand-primary) 12%, transparent); }
   .why-editorial-item, .why-editorial-item:nth-child(2), .why-editorial-item:nth-child(3) { margin-top: 0; border-left: 0; border-top: 1px solid color-mix(in srgb, var(--brand-primary) 12%, transparent); }
 }
 
