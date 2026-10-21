@@ -81,7 +81,7 @@ export default function HeroSection({ onBook }: { onBook: (selection: HeroBookin
       <CinematicHeroVideo>
         <CinematicTextOverlay onPlan={() => onBook({ destination: location, adults: Math.min(30, Math.max(1, Number.parseInt(people, 10) || 1)), arrivalDate: date })} />
         <div className={(mounted ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0') + ' hidden sm:block absolute bottom-6 left-1/2 z-30 w-full -translate-x-1/2 px-4 transition-all duration-300 sm:bottom-8 sm:px-6'} style={{ pointerEvents: mounted ? 'auto' : 'none' }}>
-          <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-2 rounded-2xl border border-white/30 bg-white/95 p-3 shadow-2xl backdrop-blur-md sm:flex-row sm:items-center sm:p-4">
+          <div className="mx-auto flex max-w-5xl flex-col items-stretch gap-2 rounded-xl border border-[var(--brand-border)] bg-white p-3 shadow-xl sm:flex-row sm:items-center sm:p-4">
             <div className="relative min-w-0 flex-1">
               <button ref={locationButtonRef} type="button" aria-haspopup="listbox" aria-expanded={isLocOpen} onClick={() => { if (!isLocOpen) updateMenuPosition(); setIsLocOpen((open) => !open); }} className="flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left transition-colors hover:bg-sand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">
                 <MapPin className="h-4 w-4 flex-shrink-0 text-safari-500" />
