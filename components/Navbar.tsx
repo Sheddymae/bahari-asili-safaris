@@ -57,7 +57,7 @@ export default function Navbar() {
     { label: serviceHubCopy[locale].eyebrow, href: '/services' },
     { label: t.nav.about, href: '/about' },
     { label: t.nav.contact, href: '/contact' },
-  ], [t]);
+  ], [t, locale]);
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || t.nav.myAccount;
 
