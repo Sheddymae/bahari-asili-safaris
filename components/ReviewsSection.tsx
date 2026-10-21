@@ -9,7 +9,7 @@ export interface Review {
   author: string;
   rating: number;
   text: string;
-  source: 'google' | 'tripadvisor';
+  source: 'google' | 'tripadvisor' | 'website';
   date?: string;
   avatar?: string;
 }
@@ -32,7 +32,7 @@ function ReviewCard({review}:{review:Review}) {
   return <article className="rounded-xl border border-border bg-white p-5 shadow-card">
     <div className="flex items-center justify-between gap-3">
       <div><p className="font-poppins text-sm font-semibold text-foreground">{review.author}</p>{review.date&&<p className="font-inter text-xs text-muted-foreground">{review.date}</p>}</div>
-      <span className="rounded-full bg-sand-50 px-2.5 py-1 font-inter text-xs font-semibold text-ocean-700">{review.source==='google'?'Google':'TripAdvisor'}</span>
+      <span className="rounded-full bg-sand-50 px-2.5 py-1 font-inter text-xs font-semibold text-ocean-700">{review.source==='google'?'Google':review.source==='tripadvisor'?'TripAdvisor':'Guest review'}</span>
     </div>
     <Stars rating={review.rating}/>
     <p className="mt-3 font-inter text-sm leading-6 text-foreground">“{review.text}”</p>
