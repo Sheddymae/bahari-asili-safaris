@@ -121,13 +121,13 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
         <div className="bg-white rounded-[4px] border border-border shadow-none p-6">
           <dl className="space-y-2.5 font-inter text-sm">
             <Row label={t.safariBuilder.result.accommodationCost} value={pricing.accommodation_cost} currency={pricing.currency} locale={locale} />
-            <Row label={t.safariBuilder.result.parkFees} value={pricing.park_fees} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.guideCost} value={pricing.guide_cost} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.transportCost} value={pricing.transport_cost} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.mealsCost} value={pricing.meals_cost} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.otherCosts} value={pricing.other_costs} currency={pricing.currency} />
+            <Row label={t.safariBuilder.result.parkFees} value={pricing.park_fees} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.guideCost} value={pricing.guide_cost} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.transportCost} value={pricing.transport_cost} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.mealsCost} value={pricing.meals_cost} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.otherCosts} value={pricing.other_costs} currency={pricing.currency} locale={locale} />
             {pricing.discount > 0 && <Row label={t.safariBuilder.result.discount} value={-pricing.discount} currency={pricing.currency} locale={locale} highlight="green" />}
-            <Row label={t.safariBuilder.result.tax} value={pricing.tax} currency={pricing.currency} />
+            <Row label={t.safariBuilder.result.tax} value={pricing.tax} currency={pricing.currency} locale={locale} />
           </dl>
           <div className="border-t border-border mt-4 pt-4 flex items-center justify-between gap-4"><span className="font-poppins font-bold text-foreground">{t.safariBuilder.result.totalEstimate}</span><span className="font-poppins font-black text-xl text-ocean-700">{formatMoney(pricing.total_cost, pricing.currency)}</span></div>
           <p className="font-inter text-[11px] text-muted-foreground mt-3">{t.safariBuilder.result.disclaimer}</p>
