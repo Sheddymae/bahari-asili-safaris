@@ -129,7 +129,7 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
             {pricing.discount > 0 && <Row label={t.safariBuilder.result.discount} value={-pricing.discount} currency={pricing.currency} locale={locale} highlight="green" />}
             <Row label={t.safariBuilder.result.tax} value={pricing.tax} currency={pricing.currency} locale={locale} />
           </dl>
-          <div className="border-t border-border mt-4 pt-4 flex items-center justify-between gap-4"><span className="font-poppins font-bold text-foreground">{t.safariBuilder.result.totalEstimate}</span><span className="font-poppins font-black text-xl text-ocean-700">{formatMoney(pricing.total_cost, pricing.currency)}</span></div>
+          <div className="border-t border-border mt-4 pt-4 flex items-center justify-between gap-4"><span className="font-poppins font-bold text-foreground">{t.safariBuilder.result.totalEstimate}</span><span className="font-poppins font-black text-xl text-ocean-700">{formatMoney(pricing.total_cost, pricing.currency, locale)}</span></div>
           <p className="font-inter text-[11px] text-muted-foreground mt-3">{t.safariBuilder.result.disclaimer}</p>
         </div>
       </div>
