@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const roots = ['app', 'components'];
 const skip = ['components/ui', 'components/admin', 'app/auth', 'app/account', 'app/admin', 'app/api'];
@@ -100,6 +101,34 @@ function findObjectEnd(source, openBraceIndex) {
 const catalogue = collectCatalogueStrings();
 const findings = [];
 
+// In CI, audit customer-facing literals introduced by this change rather than
+// failing every PR on unrelated legacy strings. Run without --changed for the
+// full-repository audit. Locale-catalogue integrity remains repository-wide.
+let changedPaths = null;
+if (process.argv.includes('--changed')) {
+  try {
+    let diffArgs;
+    if (process.env.GITHUB_EVENT_NAME === 'pull_request' && process.env.GITHUB_BASE_REF) {
+      diffArgs = ['diff', '--name-only', `origin/${process.env.GITHUB_BASE_REF}...HEAD`, '--', 'app', 'components'];
+    } else if (process.env.GITHUB_EVENT_NAME === 'push') {
+      diffArgs = ['diff', '--name-only', 'HEAD^', 'HEAD', '--', 'app', 'components'];
+    }
+    if (diffArgs) {
+      changedPaths = new Set(
+        execFileSync('git', diffArgs, { encoding: 'utf8' })
+          .split(/\\r?\\n/)
+          .filter(Boolean)
+          .map((p) => p.replaceAll('\\\\', '/')),
+      );
+      console.log(`Checking customer-facing strings in ${changedPaths.size} changed app/component file(s); locale-catalogue integrity remains repository-wide.`);
+    } else {
+      console.warn('Could not determine a CI diff; falling back to the full customer-facing string audit.');
+    }
+  } catch {
+    console.warn('Could not determine changed files; falling back to the full customer-facing string audit.');
+  }
+}
+
 // Catch a common localization regression: a translation key accidentally
 // populated with text from another language (for example Arabic in Italian).
 for (const file of catalogueFiles) {
@@ -126,6 +155,7 @@ const literal = />\s*([A-Za-z][^<{\n]{2,160})\s*</g;
 const fallback = /(?:\|\||\?\?)\s*["'`]([A-Za-z][^"'`\n]{2,200})["'`]/g;
 for (const file of files) {
   const normalizedPath = file.replaceAll('\\', '/');
+  if (changedPaths && !changedPaths.has(normalizedPath)) continue;
   if (skip.some(s => normalizedPath.startsWith(s))) continue;
 
   const text = stripComments(fs.readFileSync(file, 'utf8'));
