@@ -40,7 +40,6 @@ export default function HomeCoast() {
               <div className="flex flex-1 flex-col p-4 sm:p-5">
                 <h3 className="font-poppins text-sm font-bold leading-snug text-foreground">{locale === 'it' ? excursion.nameIt : excursion.name}</h3>
                 <p className="mt-2 text-sm leading-5 text-muted-foreground">{excursion.duration}</p>
-                <span className="mt-4 inline-flex items-center gap-2 font-inter text-sm font-semibold text-ocean-700">{c.coast.seeAll} <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden="true" /></span>
               </div>
             </Link>
           ))}
