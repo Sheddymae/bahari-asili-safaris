@@ -33,9 +33,19 @@ const currencyLabels: Record<string, Record<BookingCurrency, string>> = {
   sw: { KES: 'Shilingi ya Kenya (KES)', USD: 'Dola ya Marekani (USD)', EUR: 'Euro (EUR)' },
 };
 
-function formatMoney(n: number, currency: BookingCurrency) {
+const intlLocales: Record<string, string> = {
+  en: 'en-KE', it: 'it-IT', fr: 'fr-FR', es: 'es-ES',
+  de: 'de-DE', ar: 'ar', zh: 'zh-CN', sw: 'sw-KE',
+};
+
+function formatMoney(n: number, currency: BookingCurrency, locale: string) {
   const fractionDigits = currency === 'KES' ? 0 : 2;
-  return new Intl.NumberFormat(undefined, { style: 'currency', currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(n);
+  return new Intl.NumberFormat(intlLocales[locale] || intlLocales.en, {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  }).format(n);
 }
 
 export default function ResultStep({ plan, planLoading, planError, requestPayload, adults, childrenCount, currency, onCurrencyChange, onSubmitted }: ResultStepProps) {
@@ -110,16 +120,16 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
         </div>
         <div className="bg-white rounded-[4px] border border-border shadow-none p-6">
           <dl className="space-y-2.5 font-inter text-sm">
-            <Row label={t.safariBuilder.result.accommodationCost} value={pricing.accommodation_cost} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.parkFees} value={pricing.park_fees} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.guideCost} value={pricing.guide_cost} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.transportCost} value={pricing.transport_cost} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.mealsCost} value={pricing.meals_cost} currency={pricing.currency} />
-            <Row label={t.safariBuilder.result.otherCosts} value={pricing.other_costs} currency={pricing.currency} />
-            {pricing.discount > 0 && <Row label={t.safariBuilder.result.discount} value={-pricing.discount} currency={pricing.currency} highlight="green" />}
-            <Row label={t.safariBuilder.result.tax} value={pricing.tax} currency={pricing.currency} />
+            <Row label={t.safariBuilder.result.accommodationCost} value={pricing.accommodation_cost} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.parkFees} value={pricing.park_fees} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.guideCost} value={pricing.guide_cost} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.transportCost} value={pricing.transport_cost} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.mealsCost} value={pricing.meals_cost} currency={pricing.currency} locale={locale} />
+            <Row label={t.safariBuilder.result.otherCosts} value={pricing.other_costs} currency={pricing.currency} locale={locale} />
+            {pricing.discount > 0 && <Row label={t.safariBuilder.result.discount} value={-pricing.discount} currency={pricing.currency} locale={locale} highlight="green" />}
+            <Row label={t.safariBuilder.result.tax} value={pricing.tax} currency={pricing.currency} locale={locale} />
           </dl>
-          <div className="border-t border-border mt-4 pt-4 flex items-center justify-between gap-4"><span className="font-poppins font-bold text-foreground">{t.safariBuilder.result.totalEstimate}</span><span className="font-poppins font-black text-xl text-ocean-700">{formatMoney(pricing.total_cost, pricing.currency)}</span></div>
+          <div className="border-t border-border mt-4 pt-4 flex items-center justify-between gap-4"><span className="font-poppins font-bold text-foreground">{t.safariBuilder.result.totalEstimate}</span><span className="font-poppins font-black text-xl text-ocean-700">{formatMoney(pricing.total_cost, pricing.currency, locale)}</span></div>
           <p className="font-inter text-[11px] text-muted-foreground mt-3">{t.safariBuilder.result.disclaimer}</p>
         </div>
       </div>
@@ -141,6 +151,6 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
   );
 }
 
-function Row({ label, value, currency, highlight }: { label: string; value: number; currency: BookingCurrency; highlight?: 'green' }) {
-  return <div className="flex items-center justify-between"><dt className="text-foreground">{label}</dt><dd className={highlight === 'green' ? 'text-primary font-medium' : 'text-foreground'}>{formatMoney(value, currency)}</dd></div>;
+function Row({ label, value, currency, locale, highlight }: { label: string; value: number; currency: BookingCurrency; locale: string; highlight?: 'green' }) {
+  return <div className="flex items-center justify-between"><dt className="text-foreground">{label}</dt><dd className={highlight === 'green' ? 'text-primary font-medium' : 'text-foreground'}>{formatMoney(value, currency, locale)}</dd></div>;
 }
