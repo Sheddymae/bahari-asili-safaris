@@ -62,18 +62,18 @@ export default function ServicesPageClient() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex min-h-14 items-center gap-2 rounded-xl border border-border bg-white px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700"
-                        aria-label="Open the official Kenya eTA website"
+                        aria-label={copy.etaAria}
                       >
                         <img
                           src="https://etakenya.go.ke/images/ke_coa.png"
-                          alt="Coat of arms displayed on the official Kenya eTA portal"
+                          alt={copy.etaLogoAlt}
                           width="40"
                           height="40"
                           loading="lazy"
                           decoding="async"
                           className="h-10 w-10 object-contain"
                         />
-                        <span className="max-w-24 font-inter text-[11px] font-semibold leading-tight text-foreground">Kenya eTA</span>
+                        <span className="max-w-24 font-inter text-[11px] font-semibold leading-tight text-foreground">{copy.etaBadge}</span>
                       </a>
                     )}
                   </div>
@@ -126,7 +126,7 @@ export default function ServicesPageClient() {
               </div>
               <div className="flex shrink-0 flex-wrap gap-3">
                 <a
-                  href={contactLinks('General service enquiry').whatsapp}
+                  href={contactLinks(copy.contactTitle).whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-ocean-700 px-5 py-3 font-inter text-sm font-semibold text-white hover:bg-ocean-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-700 focus-visible:ring-offset-2"
