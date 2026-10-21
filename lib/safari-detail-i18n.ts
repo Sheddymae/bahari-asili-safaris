@@ -7,6 +7,9 @@ export interface SafariDetailTranslation {
   home: string;
   safaris: string;
   youMightAlsoLike: string;
+  shareTitle: string;
+  shareCopied: string;
+  shareError: string;
 }
 
 export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> = {
@@ -17,6 +20,9 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: 'Home',
     safaris: 'Safaris',
     youMightAlsoLike: 'You Might Also Like',
+    shareTitle: 'Share itinerary',
+    shareCopied: 'Safari link copied.',
+    shareError: 'Could not share this safari link.',
   },
   it: {
     quoteTitle: 'Richiedi un preventivo gratuito',
@@ -25,6 +31,9 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: 'Home',
     safaris: 'Safari',
     youMightAlsoLike: 'Potrebbe piacerti anche',
+    shareTitle: 'Condividi itinerario',
+    shareCopied: 'Link del safari copiato.',
+    shareError: 'Impossibile condividere il link del safari.',
   },
   fr: {
     quoteTitle: 'Demander un devis gratuit',
@@ -33,6 +42,9 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: 'Accueil',
     safaris: 'Safaris',
     youMightAlsoLike: 'Vous aimerez peut-être aussi',
+    shareTitle: 'Partager l’itinéraire',
+    shareCopied: 'Lien du safari copié.',
+    shareError: 'Impossible de partager ce lien de safari.',
   },
   es: {
     quoteTitle: 'Solicita un presupuesto gratuito',
@@ -41,6 +53,9 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: 'Inicio',
     safaris: 'Safaris',
     youMightAlsoLike: 'También te puede gustar',
+    shareTitle: 'Compartir itinerario',
+    shareCopied: 'Enlace del safari copiado.',
+    shareError: 'No se pudo compartir el enlace del safari.',
   },
   de: {
     quoteTitle: 'Kostenloses Angebot anfragen',
@@ -49,6 +64,9 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: 'Startseite',
     safaris: 'Safaris',
     youMightAlsoLike: 'Das könnte Ihnen auch gefallen',
+    shareTitle: 'Reiseplan teilen',
+    shareCopied: 'Safari-Link kopiert.',
+    shareError: 'Der Safari-Link konnte nicht geteilt werden.',
   },
   ar: {
     quoteTitle: 'احصل على عرض مجاني',
@@ -57,6 +75,9 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: 'الرئيسية',
     safaris: 'رحلات السفاري',
     youMightAlsoLike: 'قد يعجبك أيضًا',
+    shareTitle: 'مشاركة خط الرحلة',
+    shareCopied: 'تم نسخ رابط الرحلة.',
+    shareError: 'تعذرت مشاركة رابط الرحلة.',
   },
   zh: {
     quoteTitle: '获取免费报价',
@@ -65,6 +86,9 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: '首页',
     safaris: '野生动物之旅',
     youMightAlsoLike: '你可能也喜欢',
+    shareTitle: '分享行程',
+    shareCopied: '已复制 Safari 链接。',
+    shareError: '无法分享此 Safari 链接。',
   },
   sw: {
     quoteTitle: 'Pata Nukuu ya Bure',
@@ -73,5 +97,8 @@ export const safariDetailTranslations: Record<Locale, SafariDetailTranslation> =
     home: 'Nyumbani',
     safaris: 'Safari',
     youMightAlsoLike: 'Unaweza pia kupenda',
+    shareTitle: 'Shiriki ratiba',
+    shareCopied: 'Kiungo cha safari kimenakiliwa.',
+    shareError: 'Imeshindikana kushiriki kiungo cha safari.',
   },
 };
