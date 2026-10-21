@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle, ArrowDownRight, Play, ArrowUpRight } from 'lucide-react';
+import { MessageCircle, ArrowDownRight, ArrowUpRight, Search, MapPin, CalendarDays, Users } from 'lucide-react';
 import Link from 'next/link';
 import { trackConversion } from '@/components/Analytics';
 import { whatsappHref } from '@/lib/contact-info';
@@ -42,7 +42,13 @@ export default function CinematicTextOverlay({ onPlan }: { onPlan: () => void })
             <span className="mt-3 inline-flex items-center gap-1 font-inter text-xs font-semibold text-white underline decoration-[var(--brand-secondary)] underline-offset-4">Learn more <ArrowUpRight className="h-3 w-3" aria-hidden="true" /></span>
           </Link>
         </div>
-        <p className="mx-auto mt-4 max-w-2xl font-inter text-[10px] font-semibold uppercase leading-5 tracking-[0.12em] text-white/90 drop-shadow-md sm:text-xs">{c.hero.destinations}</p>
+        <Link href="/build-your-safari" aria-label="Start a safari enquiry" className="mt-5 flex w-full max-w-4xl flex-col gap-1 rounded-2xl border border-white/70 bg-white p-2 text-left text-[var(--brand-primary-deep)] shadow-2xl sm:flex-row sm:items-center sm:rounded-full">
+          <span className="flex min-h-12 flex-1 items-center gap-3 rounded-xl px-3 sm:rounded-full"><MapPin className="h-4 w-4 shrink-0 text-[var(--brand-primary)]" aria-hidden="true" /><span><span className="block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Destination</span><span className="block text-xs font-semibold sm:text-sm">Tsavo · Amboseli · Maasai Mara · Taita Hills · Watamu</span></span></span>
+          <span className="flex min-h-12 items-center gap-3 rounded-xl border-t border-slate-100 px-3 sm:border-l sm:border-t-0 sm:rounded-full"><CalendarDays className="h-4 w-4 shrink-0 text-[var(--brand-primary)]" aria-hidden="true" /><span><span className="block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Date</span><span className="block text-xs font-semibold sm:text-sm">Discuss your dates</span></span></span>
+          <span className="flex min-h-12 items-center gap-3 rounded-xl border-t border-slate-100 px-3 sm:border-l sm:border-t-0 sm:rounded-full"><Users className="h-4 w-4 shrink-0 text-[var(--brand-primary)]" aria-hidden="true" /><span><span className="block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Travellers</span><span className="block text-xs font-semibold sm:text-sm">Choose your group size</span></span></span>
+          <span className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[var(--brand-primary)] px-5 text-sm font-bold text-white hover:bg-[var(--brand-primary-deep)]"><Search className="h-4 w-4" aria-hidden="true" /><span className="sm:hidden">Plan safari</span></span>
+        </Link>
+        <p className="mx-auto mt-3 max-w-2xl font-inter text-[10px] font-semibold uppercase leading-5 tracking-[0.12em] text-white/90 drop-shadow-md sm:text-xs">{c.hero.destinations}</p>
       </div>
     </div>
   );
