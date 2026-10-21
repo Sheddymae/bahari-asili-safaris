@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, ArrowRight } from 'lucide-react';
+import { MapPin, ArrowRight, Compass, Globe2 } from 'lucide-react';
 
 import PageShell from '@/components/PageShell';
 import AnimateOnScroll from '@/components/AnimateOnScroll';
@@ -19,47 +19,126 @@ function staggerDelay(index: number) {
 export default function DestinationsPage() {
   const { t, locale } = useLanguage();
   const pageLabels = destinationPageLabels[locale];
+  const featured = destinations[0];
 
   return (
     <PageShell>
-      <section className="py-16 lg:py-24 bg-sand-50 min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimateOnScroll direction="up">
-            <div className="text-center mb-12 lg:mb-14">
-              <span className="font-inter text-safari-500 font-semibold text-sm tracking-widest uppercase block mb-2">{t.destinationsPage.label}</span>
-              <h1 className="font-poppins font-bold text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4">{t.destinationsPage.title}</h1>
-              <p className="font-inter text-muted-foreground max-w-3xl mx-auto">{t.destinationsPage.description}</p>
-            </div>
-          </AnimateOnScroll>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
-            {destinations.map((d, i) => {
-              const content = getExpandedLocalizedDestination(getLocalizedDestination(d, locale), locale);
-              return (
-                <AnimateOnScroll key={d.slug} direction="up" delay={staggerDelay(i)}>
-                  <Link href={`/destinations/${d.slug}`} prefetch className="group relative rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-500 bg-white block hover:-translate-y-1">
-                    <div className="relative h-64 sm:h-72 w-full overflow-hidden">
-                      <Image src={d.heroImage} alt={`${content.name} ${t.destinationsPage.safariDestination}${d.country ? `, ${d.country}` : ''}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                      <div className="absolute top-4 left-4 rounded-full border border-white/25 bg-black/20 px-3 py-1 backdrop-blur-md">
-                        <span className="font-inter text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-white/90">{d.country || pageLabels.regionFallback}</span>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 p-5">
-                        <div className="flex items-center gap-1.5 text-white/80 text-xs font-inter font-medium mb-1.5"><MapPin className="w-3.5 h-3.5" />{d.region || d.country || pageLabels.regionFallback}</div>
-                        <h2 className="font-poppins font-bold text-2xl text-white leading-tight">{content.name}</h2>
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      <p className="font-inter text-sm text-muted-foreground mb-4 line-clamp-3 min-h-[4.5rem]">{content.tagline}</p>
-                      <span className="inline-flex items-center gap-1.5 font-inter text-sm font-semibold text-ocean-700 group-hover:gap-2.5 transition-all">{t.destinationsPage.explore} {content.name}<ArrowRight className="w-4 h-4" /></span>
-                    </div>
-                  </Link>
-                </AnimateOnScroll>
-              );
-            })}
+      <main className="min-h-screen bg-sand-50">
+        <section className="relative isolate overflow-hidden bg-[#12343B] text-white">
+          <div className="absolute inset-0 -z-20">
+            <Image
+              src={featured.heroImage}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover opacity-35"
+            />
           </div>
-        </div>
-      </section>
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#102B32]/95 via-[#12343B]/80 to-[#12343B]/35" />
+          <div className="absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full border border-white/10 sm:h-96 sm:w-96" />
+          <div className="absolute -right-8 -top-12 -z-10 h-52 w-52 rounded-full border border-white/10 sm:h-72 sm:w-72" />
+
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-14 pt-16 sm:px-6 sm:pb-20 sm:pt-20 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:px-8 lg:pb-24 lg:pt-24">
+            <AnimateOnScroll direction="up">
+              <div className="max-w-3xl">
+                <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 font-inter text-xs font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur">
+                  <Compass className="h-4 w-4 text-[#FF9A50]" />
+                  {t.destinationsPage.label}
+                </span>
+                <h1 className="font-poppins text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+                  {t.destinationsPage.title}
+                </h1>
+                <p className="mt-5 max-w-2xl font-inter text-base leading-7 text-white/80 sm:text-lg sm:leading-8">
+                  {t.destinationsPage.description}
+                </p>
+                <a
+                  href="#destination-grid"
+                  className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#FF7418] px-5 py-3 font-poppins text-sm font-semibold text-white shadow-lg shadow-black/15 transition hover:bg-[#E9630D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12343B]"
+                >
+                  {t.destinationsPage.explore}
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </AnimateOnScroll>
+
+            <AnimateOnScroll direction="up" delay={120}>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:justify-self-end lg:max-w-md">
+                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md sm:p-5">
+                  <Globe2 className="mb-4 h-5 w-5 text-[#FF9A50]" />
+                  <p className="font-poppins text-3xl font-bold sm:text-4xl">{destinations.length}</p>
+                  <p className="mt-1 font-inter text-xs leading-5 text-white/75 sm:text-sm">{t.destinationsPage.label}</p>
+                </div>
+                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md sm:p-5">
+                  <MapPin className="mb-4 h-5 w-5 text-[#FF9A50]" />
+                  <p className="font-poppins text-xl font-bold leading-tight sm:text-2xl">{pageLabels.regionFallback}</p>
+                  <p className="mt-2 font-inter text-xs leading-5 text-white/75 sm:text-sm">{t.destinationsPage.description}</p>
+                </div>
+              </div>
+            </AnimateOnScroll>
+          </div>
+        </section>
+
+        <section id="destination-grid" className="scroll-mt-20 py-12 sm:py-16 lg:py-20">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-2xl">
+                <p className="font-inter text-xs font-bold uppercase tracking-[0.18em] text-ocean-700">{t.destinationsPage.label}</p>
+                <h2 className="mt-2 font-poppins text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+                  {t.destinationsPage.title}
+                </h2>
+              </div>
+              <p className="max-w-xl font-inter text-sm leading-6 text-muted-foreground sm:text-right">
+                {t.destinationsPage.description}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
+              {destinations.map((d, i) => {
+                const content = getExpandedLocalizedDestination(getLocalizedDestination(d, locale), locale);
+                return (
+                  <AnimateOnScroll key={d.slug} direction="up" delay={staggerDelay(i)}>
+                    <Link
+                      href={`/destinations/${d.slug}`}
+                      prefetch
+                      className="group block h-full overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_8px_30px_rgba(31,41,55,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(31,41,55,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600 focus-visible:ring-offset-4"
+                    >
+                      <div className="relative h-56 overflow-hidden sm:h-64">
+                        <Image
+                          src={d.heroImage}
+                          alt={`${content.name} ${t.destinationsPage.safariDestination}${d.country ? `, ${d.country}` : ''}`}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+                        <div className="absolute left-4 top-4 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-full border border-white/25 bg-black/25 px-3 py-1.5 backdrop-blur-md">
+                          <Globe2 className="h-3.5 w-3.5 shrink-0 text-[#FF9A50]" />
+                          <span className="truncate font-inter text-[11px] font-semibold uppercase tracking-wider text-white">{d.country || pageLabels.regionFallback}</span>
+                        </div>
+                        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                          <div className="mb-2 flex items-center gap-1.5 font-inter text-xs font-medium text-white/80">
+                            <MapPin className="h-3.5 w-3.5 text-[#FF9A50]" />
+                            <span>{d.region || d.country || pageLabels.regionFallback}</span>
+                          </div>
+                          <h3 className="font-poppins text-2xl font-bold leading-tight text-white sm:text-[1.7rem]">{content.name}</h3>
+                        </div>
+                      </div>
+                      <div className="flex min-h-[172px] flex-col p-5 sm:p-6">
+                        <p className="mb-5 line-clamp-3 font-inter text-sm leading-6 text-muted-foreground">{content.tagline}</p>
+                        <span className="mt-auto inline-flex min-h-10 items-center gap-2 font-inter text-sm font-bold text-ocean-700 transition-all group-hover:gap-3">
+                          {t.destinationsPage.explore} {content.name}
+                          <ArrowRight className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </Link>
+                  </AnimateOnScroll>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      </main>
     </PageShell>
   );
 }
