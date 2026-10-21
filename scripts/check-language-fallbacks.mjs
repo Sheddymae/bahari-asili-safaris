@@ -16,6 +16,7 @@ const catalogueFiles = [
   'lib/excursion-content-i18n.ts',
   'lib/group-departure-i18n.ts',
   'lib/auto-translations.ts',
+  'lib/service-hub-i18n.ts',
 ];
 const files = [];
 
