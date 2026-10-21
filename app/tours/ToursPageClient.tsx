@@ -21,7 +21,7 @@ const BookingModal = dynamic(() => import('@/components/BookingModal'), { ssr: f
 function isDayTrip(duration: string): boolean {
   const d = duration.toLowerCase();
   if (d.includes('night')) return false;
-  const multiDayMatch = d.match(/(\\d+)\\s*day/);
+  const multiDayMatch = d.match(/(\d+)\s*day/);
   if (multiDayMatch && parseInt(multiDayMatch[1], 10) > 1) return false;
   return true;
 }
@@ -90,9 +90,6 @@ function ToursPageInner() {
                 <h1 id="tours-heading" className="font-poppins text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
                   {t.tours.title} <span className="text-[var(--brand-secondary)]">{t.tours.titleHighlight}</span>
                 </h1>
-                <p className="mt-4 max-w-2xl font-inter text-sm leading-7 text-white/85 sm:text-base">
-                  {t.tours.description ?? t.tours.subtitle ?? ''}
-                </p>
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                   <a href="#tour-options" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[var(--brand-secondary)] px-5 py-3 font-inter text-sm font-bold text-[var(--brand-text)] transition-colors hover:bg-[var(--brand-secondary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-primary-deep)]">
                     {t.tours.private}
