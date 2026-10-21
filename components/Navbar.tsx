@@ -51,6 +51,7 @@ export default function Navbar() {
   const navLinks = useMemo(() => [
     { label: t.nav.tours, href: '/tours' },
     { label: t.nav.destinations, href: '/destinations' },
+    { label: serviceHubCopy[locale].eyebrow, href: '/services' },
     { label: t.homeExtras.buildCta, href: '/build-your-safari' },
     { label: t.nav.excursions, href: '/excursions' },
     { label: t.nav.about, href: '/about' },
