@@ -52,6 +52,50 @@ export default function Footer() {
           </ul></div>
           <div><h4 className="font-poppins font-semibold text-white text-base mb-5">{t.footer.contact}</h4><ul className="space-y-3 mb-6"><li className="flex items-start gap-3"><MapPin className="w-4 h-4 text-safari-400 mt-0.5 flex-shrink-0" /><span className="font-inter text-sm text-muted-foreground">{t.footer.address}</span></li><li className="flex items-center gap-3"><Phone className="w-4 h-4 text-safari-400 flex-shrink-0" /><a href={`tel:${t.footer.phone}`} className="font-inter text-sm text-muted-foreground hover:text-safari-400 transition-colors">{t.footer.phone}</a></li><li className="flex items-center gap-3"><Mail className="w-4 h-4 text-safari-400 flex-shrink-0" /><a href={`mailto:${t.footer.email}`} className="font-inter text-sm text-muted-foreground hover:text-safari-400 transition-colors">{t.footer.email}</a></li></ul><p className="font-inter text-xs text-muted-foreground mb-2">{t.footer.newsletterTitle || 'Newsletter'}</p><form onSubmit={handleNewsletterSubmit} className="flex"><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.footer.newsletterPlaceholder || 'Your email'} disabled={status === 'loading' || status === 'done'} className="h-9 w-full rounded-l-full bg-white/10 px-4 text-xs text-white placeholder:text-white/40 outline-none border border-white/10 disabled:opacity-60" /><button type="submit" disabled={status === 'loading' || status === 'done'} className="h-9 px-4 shrink-0 rounded-r-full bg-book text-white text-xs font-medium hover:bg-book-600 transition-colors disabled:opacity-70 flex items-center justify-center gap-1">{status === 'loading' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : status === 'done' ? <Check className="w-3.5 h-3.5" /> : t.footer.newsletterBtn || 'Join'}</button></form><p className="mt-2 text-[10px] text-muted-foreground">{status === 'error' ? errorMsg : status === 'done' ? t.footer.newsletterSuccess || 'Karibu! You are on the list.' : t.footer.newsletterSubtext || 'One email a month, max. No spam.'}</p></div>
         </div>
+        <div className="mt-12 border-t border-white/10 pt-8">
+          <h4 className="font-poppins font-semibold text-white text-sm mb-4">Official travel resources</h4>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <a
+              href="https://tra.go.ke/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-16 items-center gap-3 rounded-xl border border-white/10 bg-white px-4 py-3 transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-safari-400"
+              aria-label="Visit the Tourism Regulatory Authority website"
+            >
+              <img
+                src="https://tourkenya.go.ke/wp-content/uploads/2024/06/tra-1.jpg"
+                alt="Tourism Regulatory Authority (TRA) logo"
+                width="76"
+                height="58"
+                loading="lazy"
+                decoding="async"
+                className="h-12 w-[76px] object-contain"
+              />
+              <span className="max-w-48 font-inter text-xs font-semibold text-slate-800">Tourism Regulatory Authority (TRA)</span>
+            </a>
+            <a
+              href="https://etakenya.go.ke/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-16 items-center gap-3 rounded-xl border border-white/10 bg-white px-4 py-3 transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-safari-400"
+              aria-label="Visit the official Kenya Electronic Travel Authorisation website"
+            >
+              <img
+                src="https://etakenya.go.ke/images/ke_coa.png"
+                alt="Kenya coat of arms used on the official eTA portal"
+                width="48"
+                height="48"
+                loading="lazy"
+                decoding="async"
+                className="h-12 w-12 object-contain"
+              />
+              <span className="max-w-48 font-inter text-xs font-semibold text-slate-800">Kenya Electronic Travel Authorisation (eTA)</span>
+            </a>
+          </div>
+          <p className="mt-3 max-w-3xl font-inter text-[11px] leading-relaxed text-muted-foreground">
+            These links lead to official government resources. Bahari Asili Safaris is not affiliated with or endorsed by these agencies. Confirm current travel requirements directly on the official eTA website.
+          </p>
+        </div>
       </div>
       <div className="border-t border-foreground"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5"><p className="font-inter text-xs text-muted-foreground text-center">© 2026 Bahari Asili Safaris, Watamu. Founded by Shadrack Safari.</p></div></div>
     </footer>
