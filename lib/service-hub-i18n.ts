@@ -1,11 +1,12 @@
 import type { Locale } from '@/lib/i18n';
 
 export const serviceHubCopy: Record<Locale, {
-  eyebrow: string; title: string; intro: string; contact: string; email: string; whatsapp: string;
+  eyebrow: string; title: string; intro: string; contact: string; email: string; whatsapp: string; etaBadge: string; etaAria: string; etaLogoAlt: string;
   cards: Record<'transfers'|'carRental'|'currency'|'sim'|'eta', { title: string; description: string; note?: string; official?: string; officialLabel?: string }>;
   note: string; contactTitle: string;
 }> = {
   en: {
+    etaBadge: "Kenya eTA", etaAria: "Open the official Kenya eTA website", etaLogoAlt: "Coat of arms displayed on the official Kenya eTA portal",
     eyebrow: 'Travel services', title: 'Practical services for your Kenya stay',
     intro: 'Arrange transport and travel essentials with our team in Watamu. For regulated services, we link you directly to the responsible official provider.',
     contact: 'Ask about this service', email: 'Email', whatsapp: 'WhatsApp',
@@ -20,6 +21,7 @@ export const serviceHubCopy: Record<Locale, {
     contactTitle: 'Need help choosing a service? Contact our team.',
   },
   it: {
+    etaBadge: "eTA Kenya", etaAria: "Apri il sito ufficiale eTA del Kenya", etaLogoAlt: "Stemma del Kenya mostrato sul portale eTA ufficiale",
     eyebrow: 'Servizi di viaggio', title: 'Servizi pratici per il tuo soggiorno in Kenya',
     intro: 'Organizza trasporti e servizi utili con il nostro team a Watamu. Per i servizi regolamentati, ti indirizziamo direttamente al fornitore ufficiale competente.',
     contact: 'Richiedi informazioni', email: 'Email', whatsapp: 'WhatsApp',
@@ -34,6 +36,7 @@ export const serviceHubCopy: Record<Locale, {
     contactTitle: 'Vuoi aiuto per scegliere un servizio? Contattaci.',
   },
   fr: {
+    etaBadge: "eTA Kenya", etaAria: "Ouvrir le site officiel eTA du Kenya", etaLogoAlt: "Armoiries affichées sur le portail eTA officiel du Kenya",
     eyebrow: 'Services de voyage', title: 'Des services pratiques pour votre séjour au Kenya',
     intro: 'Organisez vos transports et besoins pratiques avec notre équipe à Watamu. Pour les services réglementés, nous vous orientons directement vers le prestataire officiel compétent.',
     contact: 'Demander des informations', email: 'E-mail', whatsapp: 'WhatsApp',
@@ -48,6 +51,7 @@ export const serviceHubCopy: Record<Locale, {
     contactTitle: 'Besoin d’aide pour choisir un service ? Contactez-nous.',
   },
   es: {
+    etaBadge: "eTA de Kenia", etaAria: "Abrir el sitio oficial de eTA de Kenia", etaLogoAlt: "Escudo mostrado en el portal oficial de eTA de Kenia",
     eyebrow: 'Servicios de viaje', title: 'Servicios prácticos para tu estancia en Kenia',
     intro: 'Organiza transporte y servicios útiles con nuestro equipo en Watamu. Para servicios regulados, te dirigimos directamente al proveedor oficial responsable.',
     contact: 'Consultar este servicio', email: 'Correo electrónico', whatsapp: 'WhatsApp',
@@ -62,6 +66,7 @@ export const serviceHubCopy: Record<Locale, {
     contactTitle: '¿Necesitas ayuda para elegir un servicio? Contáctanos.',
   },
   de: {
+    etaBadge: "Kenia eTA", etaAria: "Offizielle eTA-Website Kenias öffnen", etaLogoAlt: "Wappen auf dem offiziellen eTA-Portal Kenias",
     eyebrow: 'Reiseservices', title: 'Praktische Services für Ihren Aufenthalt in Kenia',
     intro: 'Organisieren Sie Transport und Reisebedarf mit unserem Team in Watamu. Bei regulierten Leistungen verlinken wir direkt zum zuständigen offiziellen Anbieter.',
     contact: 'Service anfragen', email: 'E-Mail', whatsapp: 'WhatsApp',
@@ -76,6 +81,7 @@ export const serviceHubCopy: Record<Locale, {
     contactTitle: 'Sie benötigen Hilfe bei der Auswahl? Kontaktieren Sie uns.',
   },
   ar: {
+    etaBadge: "eTA كينيا", etaAria: "افتح موقع eTA الرسمي لكينيا", etaLogoAlt: "شعار النبالة المعروض على بوابة eTA الرسمية لكينيا",
     eyebrow: 'خدمات السفر', title: 'خدمات عملية لإقامتك في كينيا',
     intro: 'رتّب النقل واحتياجات السفر مع فريقنا في واتامو. بالنسبة للخدمات المنظمة، نوجّهك مباشرة إلى الجهة الرسمية المسؤولة.',
     contact: 'استفسر عن الخدمة', email: 'البريد الإلكتروني', whatsapp: 'واتساب',
@@ -90,6 +96,7 @@ export const serviceHubCopy: Record<Locale, {
     contactTitle: 'هل تحتاج مساعدة في اختيار خدمة؟ تواصل معنا.',
   },
   zh: {
+    etaBadge: "肯尼亚 eTA", etaAria: "打开肯尼亚官方 eTA 网站", etaLogoAlt: "肯尼亚官方 eTA 门户网站显示的国徽",
     eyebrow: '旅行服务', title: '让您在肯尼亚旅行更方便的服务',
     intro: '您可以联系我们在瓦塔穆的团队安排交通和旅行所需服务。涉及监管的服务，我们会直接链接到负责的官方机构或服务方。',
     contact: '咨询此服务', email: '电子邮件', whatsapp: 'WhatsApp',
@@ -104,6 +111,7 @@ export const serviceHubCopy: Record<Locale, {
     contactTitle: '需要帮助选择服务？请联系我们。',
   },
   sw: {
+    etaBadge: "eTA ya Kenya", etaAria: "Fungua tovuti rasmi ya eTA ya Kenya", etaLogoAlt: "Nembo ya taifa inayoonyeshwa kwenye tovuti rasmi ya eTA ya Kenya",
     eyebrow: 'Huduma za safari', title: 'Huduma muhimu kwa ukaaji wako Kenya',
     intro: 'Panga usafiri na mahitaji ya safari kupitia timu yetu ya Watamu. Kwa huduma zinazodhibitiwa na serikali, tunakuunganisha moja kwa moja na tovuti au mtoa huduma rasmi.',
     contact: 'Uliza kuhusu huduma hii', email: 'Barua pepe', whatsapp: 'WhatsApp',
