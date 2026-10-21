@@ -1,0 +1,120 @@
+import type { Locale } from '@/lib/i18n';
+
+export const serviceHubCopy: Record<Locale, {
+  eyebrow: string; title: string; intro: string; contact: string; email: string; whatsapp: string;
+  cards: Record<'transfers'|'carRental'|'currency'|'sim'|'eta', { title: string; description: string; note?: string; official?: string; officialLabel?: string }>;
+  note: string; contactTitle: string;
+}> = {
+  en: {
+    eyebrow: 'Travel services', title: 'Practical services for your Kenya stay',
+    intro: 'Arrange transport and travel essentials with our team in Watamu. For regulated services, we link you directly to the responsible official provider.',
+    contact: 'Ask about this service', email: 'Email', whatsapp: 'WhatsApp',
+    cards: {
+      transfers: { title: 'Airport & private transfers', description: 'Request a pick-up or drop-off from Malindi, Mombasa, Nairobi, your hotel, or another agreed location. Share your flight details, date, passenger count and luggage so we can confirm availability and a quote.' },
+      carRental: { title: 'Car rental', description: 'Ask about self-drive or chauffeur-driven vehicle options for your dates and route. Vehicle type, driver arrangements, insurance, deposit and final price must be confirmed before booking.' },
+      currency: { title: 'Currency exchange guidance', description: 'Need to change EUR, USD, GBP or another currency into Kenyan shillings—or convert KES for another destination? Contact us for help finding a licensed forex bureau. Exchange rates, fees and accepted currencies are set by the provider and must be confirmed directly.' },
+      sim: { title: 'SIM card & mobile connectivity', description: 'Get help finding a mobile operator or authorized registration outlet for a local SIM, data bundle or connectivity questions. Registration is handled by the operator or its authorized agent; bring the required original identification and never send passport or ID images through an informal chat.', official: 'https://www.ca.go.ke/', officialLabel: 'Communications Authority of Kenya' },
+      eta: { title: 'Kenya eTA — official application', description: 'Check current eligibility, exemptions, requirements and apply directly through the Government of Kenya’s official Electronic Travel Authorisation portal. Bahari Asili Safaris does not issue eTAs or guarantee approval.', official: 'https://etakenya.go.ke/', officialLabel: 'Open official eTA portal' },
+    },
+    note: 'Prices and availability for private services are confirmed individually. Government rules and third-party rates can change. Official government links open an external website; Bahari Asili Safaris is not a government authority.',
+    contactTitle: 'Need help choosing a service? Contact our team.',
+  },
+  it: {
+    eyebrow: 'Servizi di viaggio', title: 'Servizi pratici per il tuo soggiorno in Kenya',
+    intro: 'Organizza trasporti e servizi utili con il nostro team a Watamu. Per i servizi regolamentati, ti indirizziamo direttamente al fornitore ufficiale competente.',
+    contact: 'Richiedi informazioni', email: 'Email', whatsapp: 'WhatsApp',
+    cards: {
+      transfers: { title: 'Trasferimenti aeroportuali e privati', description: 'Richiedi un trasferimento da o verso Malindi, Mombasa, Nairobi, il tuo hotel o un’altra località concordata. Invia data, dettagli del volo, numero di passeggeri e bagagli per verificare disponibilità e preventivo.' },
+      carRental: { title: 'Noleggio auto', description: 'Chiedi le opzioni disponibili con o senza autista per le tue date e il tuo itinerario. Tipo di veicolo, autista, assicurazione, deposito e prezzo finale devono essere confermati prima della prenotazione.' },
+      currency: { title: 'Assistenza per il cambio valuta', description: 'Devi cambiare EUR, USD, GBP o un’altra valuta in scellini kenioti, oppure convertire KES per un’altra destinazione? Possiamo aiutarti a individuare un ufficio di cambio autorizzato. Tassi, commissioni e valute accettate vanno confermati direttamente con il fornitore.' },
+      sim: { title: 'SIM locale e connessione mobile', description: 'Ti aiutiamo a individuare un operatore mobile o un punto autorizzato per SIM locale, dati e assistenza alla connessione. La registrazione è gestita dall’operatore o da un suo agente autorizzato: porta un documento originale richiesto e non inviare foto di passaporto o carta d’identità in chat informali.', official: 'https://www.ca.go.ke/', officialLabel: 'Communications Authority of Kenya' },
+      eta: { title: 'eTA Kenya — portale ufficiale', description: 'Verifica requisiti, eventuali esenzioni e condizioni aggiornate e presenta la domanda direttamente sul portale ufficiale del Governo del Kenya. Bahari Asili Safaris non rilascia eTA e non garantisce l’approvazione.', official: 'https://etakenya.go.ke/', officialLabel: 'Apri il portale eTA ufficiale' },
+    },
+    note: 'Prezzi e disponibilità dei servizi privati vengono confermati caso per caso. Le norme ufficiali e i tassi di terzi possono cambiare. I link governativi aprono siti esterni; Bahari Asili Safaris non è un’autorità governativa.',
+    contactTitle: 'Vuoi aiuto per scegliere un servizio? Contattaci.',
+  },
+  fr: {
+    eyebrow: 'Services de voyage', title: 'Des services pratiques pour votre séjour au Kenya',
+    intro: 'Organisez vos transports et besoins pratiques avec notre équipe à Watamu. Pour les services réglementés, nous vous orientons directement vers le prestataire officiel compétent.',
+    contact: 'Demander des informations', email: 'E-mail', whatsapp: 'WhatsApp',
+    cards: {
+      transfers: { title: 'Transferts aéroport et privés', description: 'Demandez une prise en charge ou un dépôt à Malindi, Mombasa, Nairobi, à votre hôtel ou à un autre lieu convenu. Indiquez la date, le vol, le nombre de passagers et les bagages pour confirmer la disponibilité et le devis.' },
+      carRental: { title: 'Location de voiture', description: 'Renseignez-vous sur les options avec ou sans chauffeur selon vos dates et votre itinéraire. Le véhicule, le chauffeur, l’assurance, la caution et le prix final doivent être confirmés avant la réservation.' },
+      currency: { title: 'Conseils pour le change', description: 'Vous souhaitez changer des EUR, USD, GBP ou une autre devise en shillings kényans, ou convertir des KES pour une autre destination ? Nous pouvons vous aider à trouver un bureau de change agréé. Les taux, frais et devises acceptées sont à confirmer directement auprès du prestataire.' },
+      sim: { title: 'Carte SIM locale et connexion mobile', description: 'Nous pouvons vous orienter vers un opérateur mobile ou un point d’enregistrement agréé pour une SIM locale, des données ou des questions de connexion. L’enregistrement est effectué par l’opérateur ou son agent agréé ; apportez le document original requis et n’envoyez pas de photos de passeport ou de pièce d’identité dans une conversation informelle.', official: 'https://www.ca.go.ke/', officialLabel: 'Communications Authority of Kenya' },
+      eta: { title: 'eTA Kenya — portail officiel', description: 'Vérifiez les conditions d’éligibilité, les exemptions et les exigences à jour, puis faites votre demande directement sur le portail officiel du gouvernement kényan. Bahari Asili Safaris ne délivre pas d’eTA et ne garantit pas son approbation.', official: 'https://etakenya.go.ke/', officialLabel: 'Ouvrir le portail eTA officiel' },
+    },
+    note: 'Les prix et disponibilités des services privés sont confirmés individuellement. Les règles officielles et les taux des tiers peuvent changer. Les liens gouvernementaux ouvrent un site externe ; Bahari Asili Safaris n’est pas une autorité gouvernementale.',
+    contactTitle: 'Besoin d’aide pour choisir un service ? Contactez-nous.',
+  },
+  es: {
+    eyebrow: 'Servicios de viaje', title: 'Servicios prácticos para tu estancia en Kenia',
+    intro: 'Organiza transporte y servicios útiles con nuestro equipo en Watamu. Para servicios regulados, te dirigimos directamente al proveedor oficial responsable.',
+    contact: 'Consultar este servicio', email: 'Correo electrónico', whatsapp: 'WhatsApp',
+    cards: {
+      transfers: { title: 'Traslados al aeropuerto y privados', description: 'Solicita recogida o traslado desde Malindi, Mombasa, Nairobi, tu hotel u otro lugar acordado. Comparte la fecha, los datos del vuelo, el número de pasajeros y el equipaje para confirmar disponibilidad y presupuesto.' },
+      carRental: { title: 'Alquiler de coches', description: 'Consulta opciones con o sin conductor para tus fechas y ruta. El tipo de vehículo, conductor, seguro, depósito y precio final deben confirmarse antes de reservar.' },
+      currency: { title: 'Orientación para cambio de divisas', description: '¿Quieres cambiar EUR, USD, GBP u otra moneda a chelines kenianos, o convertir KES para otro destino? Podemos ayudarte a encontrar una oficina de cambio autorizada. El proveedor confirma directamente los tipos de cambio, comisiones y monedas aceptadas.' },
+      sim: { title: 'SIM local y conexión móvil', description: 'Te ayudamos a localizar un operador móvil o punto de registro autorizado para una SIM local, datos o consultas de conectividad. El registro lo realiza el operador o su agente autorizado; lleva el documento original requerido y no envíes fotos del pasaporte o documento de identidad por chats informales.', official: 'https://www.ca.go.ke/', officialLabel: 'Communications Authority of Kenya' },
+      eta: { title: 'eTA de Kenia — portal oficial', description: 'Comprueba los requisitos, las exenciones y la elegibilidad actualizados y solicita la autorización directamente en el portal oficial del Gobierno de Kenia. Bahari Asili Safaris no emite eTA ni garantiza su aprobación.', official: 'https://etakenya.go.ke/', officialLabel: 'Abrir portal oficial de eTA' },
+    },
+    note: 'Los precios y la disponibilidad de servicios privados se confirman individualmente. Las normas oficiales y los tipos de cambio de terceros pueden cambiar. Los enlaces gubernamentales abren sitios externos; Bahari Asili Safaris no es una autoridad gubernamental.',
+    contactTitle: '¿Necesitas ayuda para elegir un servicio? Contáctanos.',
+  },
+  de: {
+    eyebrow: 'Reiseservices', title: 'Praktische Services für Ihren Aufenthalt in Kenia',
+    intro: 'Organisieren Sie Transport und Reisebedarf mit unserem Team in Watamu. Bei regulierten Leistungen verlinken wir direkt zum zuständigen offiziellen Anbieter.',
+    contact: 'Service anfragen', email: 'E-Mail', whatsapp: 'WhatsApp',
+    cards: {
+      transfers: { title: 'Flughafen- und Privattransfers', description: 'Fragen Sie einen Transfer von oder nach Malindi, Mombasa, Nairobi, Ihrem Hotel oder einem vereinbarten Ort an. Teilen Sie Datum, Flugdaten, Personenzahl und Gepäck mit, damit wir Verfügbarkeit und Angebot bestätigen können.' },
+      carRental: { title: 'Mietwagen', description: 'Fragen Sie nach verfügbaren Fahrzeugen mit oder ohne Fahrer für Ihre Reisedaten und Route. Fahrzeugtyp, Fahrer, Versicherung, Kaution und Endpreis müssen vor der Buchung bestätigt werden.' },
+      currency: { title: 'Orientierung zum Geldwechsel', description: 'Möchten Sie EUR, USD, GBP oder eine andere Währung in Kenia-Schilling wechseln oder KES für ein anderes Reiseziel umtauschen? Wir helfen Ihnen, eine lizenzierte Wechselstube zu finden. Wechselkurse, Gebühren und akzeptierte Währungen bestätigt der Anbieter direkt.' },
+      sim: { title: 'Lokale SIM-Karte und Mobilfunk', description: 'Wir helfen Ihnen, einen Mobilfunkanbieter oder eine autorisierte Registrierungsstelle für lokale SIM, Datenpakete und Verbindungsfragen zu finden. Die Registrierung erfolgt durch den Anbieter oder einen autorisierten Vertreter; bringen Sie das erforderliche Originaldokument mit und senden Sie keine Pass- oder Ausweisfotos in informellen Chats.', official: 'https://www.ca.go.ke/', officialLabel: 'Communications Authority of Kenya' },
+      eta: { title: 'Kenia eTA — offizielles Portal', description: 'Prüfen Sie aktuelle Voraussetzungen, Ausnahmen und Anforderungen und beantragen Sie die Genehmigung direkt über das offizielle Portal der kenianischen Regierung. Bahari Asili Safaris stellt keine eTAs aus und garantiert keine Genehmigung.', official: 'https://etakenya.go.ke/', officialLabel: 'Offizielles eTA-Portal öffnen' },
+    },
+    note: 'Preise und Verfügbarkeit privater Services werden individuell bestätigt. Offizielle Regeln und Drittanbieter-Wechselkurse können sich ändern. Regierungslinks öffnen externe Websites; Bahari Asili Safaris ist keine Regierungsbehörde.',
+    contactTitle: 'Sie benötigen Hilfe bei der Auswahl? Kontaktieren Sie uns.',
+  },
+  ar: {
+    eyebrow: 'خدمات السفر', title: 'خدمات عملية لإقامتك في كينيا',
+    intro: 'رتّب النقل واحتياجات السفر مع فريقنا في واتامو. بالنسبة للخدمات المنظمة، نوجّهك مباشرة إلى الجهة الرسمية المسؤولة.',
+    contact: 'استفسر عن الخدمة', email: 'البريد الإلكتروني', whatsapp: 'واتساب',
+    cards: {
+      transfers: { title: 'النقل من وإلى المطار والنقل الخاص', description: 'اطلب نقلاً من ماليندي أو مومباسا أو نيروبي أو الفندق أو موقع متفق عليه. أرسل التاريخ وتفاصيل الرحلة وعدد المسافرين والأمتعة لتأكيد التوفر والسعر.' },
+      carRental: { title: 'تأجير السيارات', description: 'استفسر عن خيارات القيادة الذاتية أو السيارة مع سائق وفق تواريخك ومسارك. يجب تأكيد نوع السيارة والسائق والتأمين والوديعة والسعر النهائي قبل الحجز.' },
+      currency: { title: 'إرشادات صرف العملات', description: 'هل تريد تحويل اليورو أو الدولار أو الجنيه الإسترليني أو عملة أخرى إلى الشلن الكيني، أو تحويل الشلن لوجهة أخرى؟ يمكننا مساعدتك في العثور على مكتب صرافة مرخص. يؤكد المزود مباشرة أسعار الصرف والرسوم والعملات المقبولة.' },
+      sim: { title: 'شريحة محلية واتصال الهاتف', description: 'نساعدك في العثور على مشغل اتصالات أو نقطة تسجيل معتمدة للحصول على شريحة محلية أو بيانات أو مساعدة الاتصال. يتولى المشغل أو وكيله المعتمد التسجيل؛ أحضر وثيقة الهوية الأصلية المطلوبة ولا ترسل صور جواز السفر أو الهوية عبر محادثات غير رسمية.', official: 'https://www.ca.go.ke/', officialLabel: 'هيئة الاتصالات في كينيا' },
+      eta: { title: 'تصريح السفر الإلكتروني لكينيا — الموقع الرسمي', description: 'تحقق من الأهلية والاستثناءات والمتطلبات الحالية وقدّم الطلب مباشرة عبر بوابة حكومة كينيا الرسمية. لا تصدر Bahari Asili Safaris تصاريح eTA ولا تضمن الموافقة.', official: 'https://etakenya.go.ke/', officialLabel: 'افتح بوابة eTA الرسمية' },
+    },
+    note: 'يتم تأكيد أسعار الخدمات الخاصة وتوفرها بشكل فردي. قد تتغير القواعد الرسمية وأسعار الصرف لدى الجهات الأخرى. تفتح روابط الحكومة مواقع خارجية؛ نحن لسنا جهة حكومية.',
+    contactTitle: 'هل تحتاج مساعدة في اختيار خدمة؟ تواصل معنا.',
+  },
+  zh: {
+    eyebrow: '旅行服务', title: '让您在肯尼亚旅行更方便的服务',
+    intro: '您可以联系我们在瓦塔穆的团队安排交通和旅行所需服务。涉及监管的服务，我们会直接链接到负责的官方机构或服务方。',
+    contact: '咨询此服务', email: '电子邮件', whatsapp: 'WhatsApp',
+    cards: {
+      transfers: { title: '机场接送与私人交通', description: '可咨询马林迪、蒙巴萨、内罗毕、酒店或约定地点的接送服务。请提供日期、航班信息、乘客人数和行李情况，以便确认车辆安排和报价。' },
+      carRental: { title: '汽车租赁', description: '可咨询自驾或配司机车辆的可选方案。车型、司机安排、保险、押金和最终价格均须在预订前确认。' },
+      currency: { title: '货币兑换指引', description: '需要将欧元、美元、英镑或其他货币兑换为肯尼亚先令，或将肯尼亚先令兑换为其他货币？我们可以协助您寻找持牌外汇兑换机构。汇率、手续费和可兑换币种由服务机构直接确认。' },
+      sim: { title: '本地 SIM 卡与移动网络', description: '我们可以协助您寻找移动运营商或授权登记网点，以办理本地 SIM 卡、流量或咨询网络连接。SIM 登记由运营商或授权代理办理；请携带所需身份证件原件，不要在非正式聊天中发送护照或身份证照片。', official: 'https://www.ca.go.ke/', officialLabel: '肯尼亚通信管理局' },
+      eta: { title: '肯尼亚 eTA — 官方申请网站', description: '请在肯尼亚政府官方电子旅行授权网站查询最新资格、豁免和要求，并直接提交申请。Bahari Asili Safaris 不签发 eTA，也不保证获批。', official: 'https://etakenya.go.ke/', officialLabel: '打开官方 eTA 网站' },
+    },
+    note: '私人服务的价格和可用性需逐项确认。官方规定及第三方汇率可能变化。政府链接会打开外部网站；Bahari Asili Safaris 不是政府机构。',
+    contactTitle: '需要帮助选择服务？请联系我们。',
+  },
+  sw: {
+    eyebrow: 'Huduma za safari', title: 'Huduma muhimu kwa ukaaji wako Kenya',
+    intro: 'Panga usafiri na mahitaji ya safari kupitia timu yetu ya Watamu. Kwa huduma zinazodhibitiwa na serikali, tunakuunganisha moja kwa moja na tovuti au mtoa huduma rasmi.',
+    contact: 'Uliza kuhusu huduma hii', email: 'Barua pepe', whatsapp: 'WhatsApp',
+    cards: {
+      transfers: { title: 'Usafiri wa uwanja wa ndege na binafsi', description: 'Omba kuchukuliwa au kushushwa Malindi, Mombasa, Nairobi, hotelini au eneo lingine lililokubaliwa. Tuma tarehe, maelezo ya ndege, idadi ya wasafiri na mizigo ili kuthibitisha upatikanaji na bei.' },
+      carRental: { title: 'Ukodishaji wa gari', description: 'Uliza kuhusu gari la kujiendesha au lenye dereva kwa tarehe na njia yako. Aina ya gari, dereva, bima, amana na bei ya mwisho lazima zithibitishwe kabla ya kuweka nafasi.' },
+      currency: { title: 'Mwongozo wa kubadilisha fedha', description: 'Unataka kubadilisha EUR, USD, GBP au fedha nyingine kuwa shilingi za Kenya, au kubadilisha KES kwa nchi nyingine? Tunaweza kukusaidia kupata ofisi ya kubadilisha fedha iliyoidhinishwa. Viwango, ada na fedha zinazokubaliwa huthibitishwa moja kwa moja na mtoa huduma.' },
+      sim: { title: 'SIM ya ndani na huduma ya simu', description: 'Tunaweza kukusaidia kupata kampuni ya simu au kituo kilichoidhinishwa kwa SIM ya ndani, data au msaada wa mtandao. Usajili hufanywa na kampuni au wakala wake aliyeidhinishwa; beba kitambulisho halisi kinachohitajika na usitume picha za pasipoti au kitambulisho kwenye mazungumzo yasiyo rasmi.', official: 'https://www.ca.go.ke/', officialLabel: 'Communications Authority of Kenya' },
+      eta: { title: 'eTA ya Kenya — tovuti rasmi', description: 'Angalia masharti, misamaha na mahitaji ya sasa na utume ombi moja kwa moja kwenye tovuti rasmi ya Serikali ya Kenya. Bahari Asili Safaris haitoi eTA na haihakikishi kuidhinishwa.', official: 'https://etakenya.go.ke/', officialLabel: 'Fungua tovuti rasmi ya eTA' },
+    },
+    note: 'Bei na upatikanaji wa huduma binafsi huthibitishwa kila ombi. Kanuni rasmi na viwango vya fedha vya wahusika wengine vinaweza kubadilika. Viungo vya serikali hufungua tovuti za nje; Bahari Asili Safaris si mamlaka ya serikali.',
+    contactTitle: 'Unahitaji msaada wa kuchagua huduma? Wasiliana nasi.',
+  },
+};
