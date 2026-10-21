@@ -7,9 +7,10 @@ import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/AuthModal';
+import { serviceHubCopy } from '@/lib/service-hub-i18n';
 
 export default function Navbar() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { user, signOut, loading } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -53,6 +54,7 @@ export default function Navbar() {
     { label: t.nav.destinations, href: '/destinations' },
     { label: t.homeExtras.buildCta, href: '/build-your-safari', primary: true },
     { label: t.nav.excursions, href: '/excursions' },
+    { label: serviceHubCopy[locale].eyebrow, href: '/services' },
     { label: t.nav.about, href: '/about' },
     { label: t.nav.contact, href: '/contact' },
   ], [t]);
