@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
+import { createSupabaseServerClient } from '@/lib/supabase-server';
 
 type Review = {
   author: string;
   rating: number;
   text: string;
-  source: 'google' | 'tripadvisor';
+  source: 'google' | 'tripadvisor' | 'website';
   date?: string;
   avatar?: string;
 };
@@ -79,6 +80,31 @@ export async function GET() {
     } catch (error) {
       console.error('TripAdvisor review provider failed:', error);
     }
+  }
+
+  // Website testimonials submitted by verified customer accounts.
+  // The public RLS policy exposes published reviews only; provider reviews remain independently sourced.
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data: websiteReviews, error } = await supabase.from('customer_reviews')
+      .select('author_name,rating,review_text,created_at')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .limit(6);
+    if (error) {
+      // Migration may not have been applied in a given environment; preserve external reviews.
+      console.warn('Website testimonials are unavailable:', error.message);
+    } else {
+      result.reviews.push(...(websiteReviews || []).map((review: any) => ({
+        author: String(review.author_name || 'Guest'),
+        rating: Number(review.rating || 0),
+        text: String(review.review_text || ''),
+        source: 'website' as const,
+        date: review.created_at ? String(review.created_at) : undefined,
+      })).filter((review: Review) => review.text && review.rating >= 1 && review.rating <= 5));
+    }
+  } catch (error) {
+    console.warn('Could not load website testimonials:', error);
   }
 
   return NextResponse.json(result, {
