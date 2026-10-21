@@ -202,15 +202,27 @@ export function buildPreDepartureReminderEmailHtml(booking: Booking): string {
 
 /** Review request — sent after trip completion. */
 export function buildReviewRequestEmailHtml(booking: Booking): string {
-  const fullName = `${booking.first_name} ${booking.last_name}`;
+  const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[char] || char);
+  const fullName = escapeHtml(`${booking.first_name} ${booking.last_name}`.trim() || 'traveller');
+  const safariName = escapeHtml(booking.safari_name || 'your Kenya trip');
+  const bookingRef = escapeHtml(booking.booking_ref || '');
+  const whatsappText = encodeURIComponent(`Hello Bahari Asili Safaris, I would like to share feedback about my ${booking.safari_name || 'Kenya'} trip (booking ${booking.booking_ref || ''}).`);
+  const googleReviewUrl = 'https://share.google/Y27Y4iXc0YimSaHjT';
+  const tripAdvisorReviewUrl = 'https://www.tripadvisor.co.uk/Attraction_Review-g661279-d34694911-Reviews-Bahari_Asili_Safaris-Watamu_Coast_Province.html';
   const body = `
     <p style="font-size: 15px; margin: 0 0 16px;">Dear ${fullName},</p>
-    <p style="font-size: 14px; color: #64748b; margin: 0 0 20px;">We hope you had an unforgettable time on your <strong>${booking.safari_name}</strong>! Would you mind sharing a few words about your experience? It helps other travelers — and means a lot to our small team.</p>
-    <div style="text-align: center; margin: 24px 0;">
-      <a href="https://wa.me/254101923355?text=${encodeURIComponent(`Hi! Here's my review for my ${booking.safari_name} trip: `)}" style="background: var(--brand-primary); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">Share Your Experience →</a>
+    <p style="font-size: 14px; color: #475569; line-height: 1.7; margin: 0 0 16px;">Thank you for travelling with Bahari Asili Safaris. We hope you had an unforgettable time on your <strong>${safariName}</strong>!</p>
+    <p style="font-size: 14px; color: #475569; line-height: 1.7; margin: 0 0 20px;">If you have a moment, please share an honest review. Your feedback helps future travellers choose a local safari team with confidence and helps us improve.</p>
+    <div style="text-align: center; margin: 22px 0;">
+      <a href="${googleReviewUrl}" style="display: inline-block; margin: 5px; background: #104B59; color: #ffffff; padding: 12px 18px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 14px;">Review us on Google</a>
+      <a href="${tripAdvisorReviewUrl}" style="display: inline-block; margin: 5px; background: #ffffff; color: #104B59; border: 1px solid #104B59; padding: 11px 18px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 14px;">Review us on TripAdvisor</a>
     </div>
+    <p style="font-size: 13px; color: #64748b; line-height: 1.6; margin: 18px 0 0;">Prefer to send feedback directly? <a href="https://wa.me/254101923355?text=${whatsappText}" style="color: #104B59; font-weight: 600;">Message our team on WhatsApp</a>.</p>
+    ${bookingRef ? `<p style="font-size: 12px; color: #94a3b8; margin: 18px 0 0;">Booking reference: ${bookingRef}</p>` : ''}
   `;
-  return emailShell(body, 'How Was Your Safari?', 'var(--brand-primary)');
+  return emailShell(body, 'How Was Your Safari?', '#104B59');
 }
 
 /** Wraps an admin's free-form custom message in the branded shell. */
