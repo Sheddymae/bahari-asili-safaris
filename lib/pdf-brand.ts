@@ -2,10 +2,11 @@
  * Shared brand assets for all customer-facing PDF documents (invoice,
  * payment receipt, visa/itinerary support letter, voucher).
  *
- * Official brand colors:
- *   Teal      #107390  (16, 115, 144)  — headers, footers, primary text
- *   Orange    #F97216  (249, 114, 22)  — accents, totals, highlights
- *   Off-white #F5F1E8  (245, 241, 232) — text/backing on teal
+ * Official website palette (app/brand.css):
+ *   Teal      #167D95  — headers, footers, primary text
+ *   Orange    #FF7418  — selective accents, totals, highlights
+ *   Sand      #F5F1E8  — warm light backgrounds
+ *   Charcoal  #1F2937  — primary body text
  *
  * The logo (public/images/logo/logo-horizontal.png) is always embedded
  * unaltered and in full color — never recolored, never cropped. It ships
@@ -14,11 +15,11 @@
 
 import { LOGO_HORIZONTAL_BASE64 } from './pdf-assets/logo-base64';
 
-export const BRAND_TEAL: [number, number, number] = [16, 115, 144];
-export const BRAND_ORANGE: [number, number, number] = [249, 114, 22];
+export const BRAND_TEAL: [number, number, number] = [22, 125, 149];
+export const BRAND_ORANGE: [number, number, number] = [255, 116, 24];
 export const BRAND_OFFWHITE: [number, number, number] = [245, 241, 232];
 export const BRAND_TEXT: [number, number, number] = [31, 41, 55];
-export const BRAND_LIGHT: [number, number, number] = [100, 116, 139];
+export const BRAND_LIGHT: [number, number, number] = [82, 97, 107];
 
 export const COMPANY = {
   name: 'BAHARI ASILI SAFARIS',

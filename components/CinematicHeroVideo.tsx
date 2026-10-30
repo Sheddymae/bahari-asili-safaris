@@ -16,16 +16,38 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
   const [hasReducedMotion, setHasReducedMotion] = useState(false);
   const [videoSrc, setVideoSrc] = useState('');
 
+  // Keep the source and motion preference in sync when a device rotates,
+  // the viewport crosses the mobile breakpoint, or accessibility settings change.
   useEffect(() => {
-    const reduced = prefersReducedMotion();
-    setHasReducedMotion(reduced);
-    setVideoSrc(getVideoSourceForViewport(typeof window !== 'undefined' ? window.innerWidth : 1024));
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreferences = () => {
+      setHasReducedMotion(motionQuery.matches || prefersReducedMotion());
+      setVideoSrc(getVideoSourceForViewport(window.innerWidth));
+    };
+
+    updatePreferences();
+    window.addEventListener('resize', updatePreferences, { passive: true });
+    motionQuery.addEventListener?.('change', updatePreferences);
+
+    return () => {
+      window.removeEventListener('resize', updatePreferences);
+      motionQuery.removeEventListener?.('change', updatePreferences);
+    };
   }, []);
 
   useEffect(() => {
-    if (!videoRef.current || hasReducedMotion || !videoSrc) return;
-    const promise = videoRef.current.play();
-    promise?.catch(() => {});
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (hasReducedMotion || !videoSrc) {
+      video.pause();
+      return;
+    }
+
+    // Autoplay is intentionally muted and inline; browsers may still reject it.
+    // The poster remains visible in that case, so the hero never renders blank.
+    const playRequest = video.play();
+    playRequest?.catch(() => setVideoLoaded(false));
   }, [videoSrc, hasReducedMotion]);
 
   const handleVideoLoad = () => {
@@ -34,27 +56,54 @@ export default function CinematicHeroVideo({ onReady, children }: CinematicHeroV
   };
 
   const handleVideoError = () => {
-    console.error('[hero] Video failed to load; keeping poster fallback.');
+    setVideoLoaded(false);
+    console.warn('[hero] Video unavailable; showing the static hero poster.');
   };
 
-  if (hasReducedMotion) {
-    return (
-      <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-slate-900">
-        <Image src={heroVideoConfig.poster} alt="Bahari Asili Safaris — Kenya safari and coastal experiences" fill priority fetchPriority="high" quality={75} sizes="100vw" className="object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/70" />
-        {children}
-      </section>
-    );
-  }
-
   return (
-    <section id="home" ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-slate-900">
-      <div className="absolute inset-0 h-full w-full">
-        <video ref={videoRef} src={videoSrc} poster={heroVideoConfig.poster} onCanPlay={handleVideoLoad} onError={handleVideoError} autoPlay muted playsInline preload="metadata" className="h-full w-full select-none object-cover object-center" aria-label="Bahari Asili Safaris Kenya" />
+    <section
+      id="home"
+      ref={containerRef}
+      className="relative min-h-screen w-full isolate overflow-hidden bg-slate-950"
+    >
+      <Image
+        src={heroVideoConfig.poster}
+        alt="Bahari Asili Safaris — Kenya safari and coastal experiences"
+        fill
+        priority
+        fetchPriority="high"
+        quality={80}
+        sizes="100vw"
+        className={'absolute inset-0 z-0 object-cover object-center transition-opacity duration-700 ' + (videoLoaded && !hasReducedMotion ? 'opacity-0' : 'opacity-100')}
+      />
+
+      {!hasReducedMotion && videoSrc && (
+        <video
+          key={videoSrc}
+          ref={videoRef}
+          src={videoSrc}
+          poster={heroVideoConfig.poster}
+          onLoadedData={handleVideoLoad}
+          onCanPlay={handleVideoLoad}
+          onError={handleVideoError}
+          autoPlay
+          muted
+          playsInline
+          loop
+          preload="metadata"
+          aria-hidden="true"
+          tabIndex={-1}
+          className="absolute inset-0 z-0 h-full w-full select-none object-cover object-center"
+        />
+      )}
+
+      {/* Layered overlays preserve legible copy across bright skies and wildlife footage. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-black/65 via-black/35 to-black/70" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.34)_100%)]" />
+
+      <div className="relative z-20 min-h-screen">
+        {children}
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/70" />
-      {!videoLoaded && <Image src={heroVideoConfig.poster} alt="" fill priority fetchPriority="high" quality={75} sizes="100vw" className="absolute inset-0 object-cover object-center" />}
-      {children}
     </section>
   );
 }
