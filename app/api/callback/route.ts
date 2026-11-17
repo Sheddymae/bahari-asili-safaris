@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const RESEND_API = 'https://api.resend.com/emails';
 const OWNER_EMAIL = process.env.OWNER_NOTIFICATION_EMAIL || 'bahariasilisafaris@gmail.com';
@@ -9,6 +10,14 @@ function escapeHtml(value: string) {
 }
 
 export async function POST(req: NextRequest) {
+  const limit = checkRateLimit(`callback:${getClientIp(req)}`, 5, 15 * 60 * 1000);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Too many callback requests. Please try again later or WhatsApp us.' },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await req.json();
     const name = String(body.name || '').trim();

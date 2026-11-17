@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { getSupabaseAdmin, getDocumentQrUrl } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
 import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { sendEmail } from '@/lib/email';
@@ -12,6 +13,8 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function POST(req: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   const ip = getClientIp(req);
   const limit = checkRateLimit(`admin-resend:${ip}`, 20, 10 * 60 * 1000);
   if (!limit.allowed) {
@@ -30,9 +33,14 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ success: false, error: 'Reservation not found.' }, { status: 404 });
     }
 
+    const [invoiceQrUrl, voucherQrUrl] = await Promise.all([
+      getDocumentQrUrl(admin, booking.invoice_url),
+      getDocumentQrUrl(admin, booking.voucher_url),
+    ]);
+
     const [invoice, voucher] = await Promise.all([
-      generatePremiumInvoicePDF(booking as any, undefined, booking.invoice_url || undefined),
-      generateVoucherPDF(booking, undefined, booking.voucher_url || undefined),
+      generatePremiumInvoicePDF(booking as any, undefined, invoiceQrUrl || undefined),
+      generateVoucherPDF(booking, undefined, voucherQrUrl || undefined),
     ]);
 
     const emailSent = await sendEmail(

@@ -3,12 +3,25 @@ import { type Quotation } from '@/lib/supabase';
 import { sendQuotationEmail } from '@/lib/quotation-email';
 import { generateQuotationPDF } from '@/lib/quotation-generator';
 import { normalizeLocale } from '@/lib/locale-content';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export async function POST(req: NextRequest) {
+  // This endpoint sends a branded PDF and email from the company's Resend
+  // account. It is an admin tool, not a public form: without the session check
+  // it worked as an open relay for arbitrary quotations to arbitrary inboxes.
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
+
+  const limit = checkRateLimit(`quotation:${getClientIp(req)}`, 30, 10 * 60 * 1000);
+  if (!limit.allowed) {
+    return NextResponse.json({ success: false, error: 'Too many quotations generated. Please slow down.' }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
 

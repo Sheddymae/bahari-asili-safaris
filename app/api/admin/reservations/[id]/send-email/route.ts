@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
 import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { sendEmail } from '@/lib/email';
@@ -28,6 +29,8 @@ const SUBJECTS: Record<string, (b: Booking) => string> = {
 // GET /api/admin/reservations/[id]/send-email — email send history for this reservation
 export async function GET(_req: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  const session = await getAdminSession(_req);
+  if (!session) return unauthorizedAdminResponse();
   try {
     const admin = getSupabaseAdmin();
     const { data, error } = await admin
@@ -48,6 +51,8 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 // POST body: { type: 'confirmation'|'quote'|'payment_reminder'|'pre_departure_reminder'|'review_request'|'custom', subject?, message? }
 export async function POST(req: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   const ip = getClientIp(req);
   const limit = checkRateLimit(`admin-send-email:${ip}`, 30, 10 * 60 * 1000);
   if (!limit.allowed) {

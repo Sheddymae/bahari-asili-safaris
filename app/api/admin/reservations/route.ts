@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
 
 // GET /api/admin/reservations
 // Query params: search, status, booking_type, date_range (today|week|month), page, page_size
 export async function GET(req: NextRequest) {
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   let admin;
   try {
     admin = getSupabaseAdmin();

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { safaris } from '@/lib/tours-data';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 type Message = { role: 'user' | 'assistant'; content: string };
 const locales = ['en', 'it', 'fr', 'es', 'de', 'ar', 'zh', 'sw'] as const;
@@ -160,6 +161,19 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   let locale: Locale = 'en';
+
+  // The assistant proxies paid model calls, so cap per-visitor usage.
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    request.headers.get('x-real-ip') ||
+    'unknown';
+  const limit = checkRateLimit(`safari-assistant:${ip}`, 20, 10 * 60 * 1000);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { reply: 'You have reached the assistant limit for now. Please WhatsApp us on +254 101 923 355 and we will help you directly.' },
+      { status: 429 }
+    );
+  }
 
   try {
     const body = await request.json();

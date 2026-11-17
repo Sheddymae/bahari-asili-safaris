@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin, uploadDocumentPDF, getDocumentPublicUrl } from '@/lib/supabase-admin';
+import { getSupabaseAdmin, uploadDocumentPDF, getDocumentQrUrl } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse, forbiddenAdminResponse, isOwner } from '@/lib/admin-api';
 import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
 import { generatePaymentReceiptPDF } from '@/lib/payment-receipt-generator';
@@ -22,6 +23,8 @@ export async function GET(
   { params }: RouteContext
 ) {
   const { id } = await params;
+  const session = await getAdminSession(_req);
+  if (!session) return unauthorizedAdminResponse();
   try {
     const admin = getSupabaseAdmin();
 
@@ -76,6 +79,8 @@ export async function PATCH(
   { params }: RouteContext
 ) {
   const { id } = await params;
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   let admin;
 
   try {
@@ -149,8 +154,8 @@ export async function PATCH(
      * ============================================================
      */
     if (action === 'restore' || action === 'permanent_delete') {
-      if (req.headers.get('x-admin-role') !== 'owner') {
-        return NextResponse.json({ success: false, error: 'Only owner accounts can restore or permanently delete reservations.' }, { status: 403 });
+      if (!isOwner(session)) {
+        return forbiddenAdminResponse('Only owner accounts can restore or permanently delete reservations.');
       }
 
       const { data: deletedBooking, error: deletedFetchError } = await admin
@@ -250,16 +255,16 @@ export async function PATCH(
         ...updates,
       };
 
-      // Compute each document's eventual public URL before generating the PDF
-      // (getDocumentPublicUrl just builds the URL string — it doesn't require
-      // the file to exist yet) so the QR code embedded in each PDF points at
-      // its own real location instead of being silently skipped.
-      const invoiceQrUrl = getDocumentPublicUrl(admin, `invoices/${merged.booking_ref}.pdf`) || undefined;
-      const voucherQrUrl = getDocumentPublicUrl(admin, `vouchers/${merged.booking_ref}.pdf`) || undefined;
+      // The documents bucket is private, so the PDFs' QR codes point at signed
+      // URLs for their own object rather than public links.
+      const [invoiceQrUrl, voucherQrUrl] = await Promise.all([
+        getDocumentQrUrl(admin, `invoices/${merged.booking_ref}.pdf`),
+        getDocumentQrUrl(admin, `vouchers/${merged.booking_ref}.pdf`),
+      ]);
 
       const [invoice, voucher] = await Promise.all([
-        generatePremiumInvoicePDF(merged as any, undefined, invoiceQrUrl),
-        generateVoucherPDF(merged, undefined, voucherQrUrl),
+        generatePremiumInvoicePDF(merged as any, undefined, invoiceQrUrl ?? undefined),
+        generateVoucherPDF(merged, undefined, voucherQrUrl ?? undefined),
       ]);
 
       const [invoiceUrl, voucherUrl] = await Promise.all([
@@ -278,12 +283,14 @@ export async function PATCH(
       updates.invoice_generated = true;
       updates.voucher_generated = true;
 
+      // Persist the object path, never the signed URL: signed URLs expire and
+      // the admin opens documents through /api/admin/documents/url.
       if (invoiceUrl) {
-        updates.invoice_url = invoiceUrl;
+        updates.invoice_url = `invoices/${merged.booking_ref}.pdf`;
       }
 
       if (voucherUrl) {
-        updates.voucher_url = voucherUrl;
+        updates.voucher_url = `vouchers/${merged.booking_ref}.pdf`;
       }
 
       const { data: updated, error: updateError } = await admin
@@ -337,7 +344,8 @@ export async function PATCH(
      */
     if (action === 'resend_invoice') {
       if (!emailApiKey) return NextResponse.json({ success:false, error:'Email sending is not configured on the server.' }, {status:503});
-      const invoice = await generatePremiumInvoicePDF(booking as any, undefined, booking.invoice_url || undefined);
+      const invoiceQrUrl = (await getDocumentQrUrl(admin, booking.invoice_url)) || undefined;
+      const invoice = await generatePremiumInvoicePDF(booking as any, undefined, invoiceQrUrl);
       const sent = await sendEmail(booking.email, `Invoice ${booking.invoice_number || booking.booking_ref} — Bahari Asili Safaris`, ` <p>Dear ${booking.first_name},</p><p>Please find your invoice attached for booking <strong>${booking.booking_ref}</strong>.</p><p>Bahari Asili Safaris · +254 101 923 355</p>`, [{filename:`Invoice-${booking.booking_ref}.pdf`,content:invoice.base64}]);
       if (!sent) return NextResponse.json({success:false,error:'The invoice email could not be sent.'},{status:502});
       return NextResponse.json({success:true,emailSent:true});
@@ -470,7 +478,7 @@ export async function PATCH(
             : isItinerary
               ? `itineraries/${booking.booking_ref}.pdf`
               : `visa-itineraries/${booking.booking_ref}.pdf`;
-      const qrUrl = getDocumentPublicUrl(admin, path) || undefined;
+      const qrUrl = (await getDocumentQrUrl(admin, path)) || undefined;
 
       const generated = isInvoice
         ? await generatePremiumInvoicePDF(booking as any, undefined, qrUrl)
@@ -490,14 +498,14 @@ export async function PATCH(
       );
 
       const updates: Partial<Booking> = isInvoice
-        ? { invoice_generated: true, ...(url ? { invoice_url: url } : {}), ...(!booking.invoice_number ? { invoice_number: `INV-${booking.booking_ref}` } : {}) }
+        ? { invoice_generated: true, ...(url ? { invoice_url: path } : {}), ...(!booking.invoice_number ? { invoice_number: `INV-${booking.booking_ref}` } : {}) }
         : isVoucher
-          ? { voucher_generated: true, ...(url ? { voucher_url: url } : {}) }
+          ? { voucher_generated: true, ...(url ? { voucher_url: path } : {}) }
           : isPaymentReceipt
-            ? ({ ...(url ? { payment_receipt_url: url } : {}) } as any)
+            ? ({ ...(url ? { payment_receipt_url: path } : {}) } as any)
             : isItinerary
-              ? ({ ...(url ? { itinerary_url: url } : {}) } as any)
-              : ({ ...(url ? { visa_itinerary_url: url } : {}) } as any); 
+              ? ({ ...(url ? { itinerary_url: path } : {}) } as any)
+              : ({ ...(url ? { visa_itinerary_url: path } : {}) } as any); 
 
       const { data: updated, error: updateError } = await admin
         .from('bookings')
@@ -725,12 +733,12 @@ export async function PATCH(
       // Automatically create a payment receipt after every successful payment.
       try {
         const receiptPath = `payment-receipts/${booking.booking_ref}-${Date.now()}.pdf`;
-        const receiptQrUrl = getDocumentPublicUrl(admin, receiptPath) || undefined;
+        const receiptQrUrl = (await getDocumentQrUrl(admin, receiptPath)) || undefined;
         const receipt = await generatePaymentReceiptPDF(updated as Booking, newPaymentRecord || undefined, (paymentHistory as import('@/lib/supabase').Payment[]) || undefined, undefined, receiptQrUrl);
         const receiptUrl = await uploadDocumentPDF(admin, receiptPath, receipt.base64);
         if (receiptUrl) {
-          const { data: withReceipt } = await admin.from('bookings').update({ payment_receipt_url: receiptUrl } as any).eq('id', id).select().maybeSingle();
-          if (withReceipt) (updated as any).payment_receipt_url = receiptUrl;
+          const { data: withReceipt } = await admin.from('bookings').update({ payment_receipt_url: receiptPath } as any).eq('id', id).select().maybeSingle();
+          if (withReceipt) (updated as any).payment_receipt_url = receiptPath;
         }
       } catch (receiptError) {
         console.error('Payment receipt generation failed; payment remains saved:', receiptError);
@@ -1096,9 +1104,10 @@ export async function DELETE(
     // /api/admin/* route and forwards the caller's role in this header —
     // deletion is restricted to owners even if a staff account's cookie
     // somehow reached this far.
-    const role = req.headers.get('x-admin-role');
-    if (role !== 'owner') {
-      return NextResponse.json({ success: false, error: 'Only owner accounts can delete reservations.' }, { status: 403 });
+    const session = await getAdminSession(req);
+    if (!session) return unauthorizedAdminResponse();
+    if (!isOwner(session)) {
+      return forbiddenAdminResponse('Only owner accounts can delete reservations.');
     }
 
     const admin = getSupabaseAdmin();

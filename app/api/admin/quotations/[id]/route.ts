@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin, uploadDocumentPDF, getDocumentPublicUrl } from '@/lib/supabase-admin';
+import { getSupabaseAdmin, uploadDocumentPDF, getDocumentQrUrl } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
 import { generateQuotationPDF } from '@/lib/quotation-generator';
 import { sendQuotationEmail } from '@/lib/quotation-email';
 import type { Quotation } from '@/lib/supabase';
@@ -8,6 +9,8 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_req: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  const session = await getAdminSession(_req);
+  if (!session) return unauthorizedAdminResponse();
   const admin = getSupabaseAdmin();
   const { data, error } = await admin.from('safari_trip_requests').select('*').eq('id', id).maybeSingle();
   if (error || !data) return NextResponse.json({ success: false, error: 'Quotation not found.' }, { status: 404 });
@@ -17,6 +20,8 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 // PATCH body: { action: 'generate_pdf' | 'resend_email' | 'update_status', status?: Quotation['status'] }
 export async function PATCH(req: NextRequest, { params }: RouteContext) {
   const { id } = await params;
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   const admin = getSupabaseAdmin();
   try {
     const body = await req.json();
@@ -48,7 +53,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
 
     if (action === 'generate_pdf' || action === 'resend_email') {
       const path = `quotations/${quotation.quotation_ref}.pdf`;
-      const qrUrl = getDocumentPublicUrl(admin, path) || undefined;
+      const qrUrl = (await getDocumentQrUrl(admin, path)) || undefined;
       const generated = await generateQuotationPDF(quotation as Quotation, undefined, qrUrl);
       let url: string | null = null;
       try {

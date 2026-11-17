@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { logAdminAction } from '@/lib/audit-log';
 import { getClientIp } from '@/lib/rate-limit';
+import { getAdminSession, unauthorizedAdminResponse, isOwner } from '@/lib/admin-api';
 
 function csvEscape(value: unknown): string {
   const str = value === null || value === undefined ? '' : String(value);
@@ -10,11 +11,13 @@ function csvEscape(value: unknown): string {
 }
 
 export async function GET(req: NextRequest) {
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
+
   try {
     // Bulk PII export is owner-only, even though any authenticated admin
     // (owner or staff) can reach this far via middleware.
-    const role = req.headers.get('x-admin-role');
-    if (role !== 'owner') {
+    if (!isOwner(session)) {
       return NextResponse.json({ success: false, error: 'Only owner accounts can export reservations.' }, { status: 403 });
     }
 

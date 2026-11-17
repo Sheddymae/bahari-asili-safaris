@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
 
 // GET /api/admin/quotations
 // Query params: search, status, page, page_size
@@ -7,6 +8,8 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 // separate table from `bookings`, so this needs its own list route rather
 // than reusing /api/admin/reservations.
 export async function GET(req: NextRequest) {
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   let admin;
   try {
     admin = getSupabaseAdmin();

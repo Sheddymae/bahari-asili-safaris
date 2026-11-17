@@ -485,8 +485,10 @@ export async function POST(req: NextRequest) {
 
     const message = String(body.message || '').trim();
     const currency = ['KES', 'USD', 'EUR'].includes(String(body.currency || '').toUpperCase()) ? String(body.currency).toUpperCase() : 'USD';
-    const requestedTotal = Number(body.total);
-    const totalAmount = Number.isFinite(requestedTotal) && requestedTotal >= 0 ? requestedTotal : 0;
+    // Pricing is never accepted from the browser. The booking form submits no
+    // amount and the admin-controlled quotation is authoritative, so a crafted
+    // request cannot create a booking (or invoice) with a total it chose.
+    const totalAmount = 0;
     const submittedItinerary = body.itinerary && typeof body.itinerary === 'object' ? body.itinerary as Record<string, unknown> : null;
 
     const authHeader = req.headers.get('authorization') || '';

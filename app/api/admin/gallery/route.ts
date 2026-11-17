@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
 
 // GET /api/admin/gallery — list all gallery images (including inactive) for the admin caption editor.
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   let admin;
   try {
     admin = getSupabaseAdmin();
@@ -30,6 +33,8 @@ export async function GET() {
 // PATCH /api/admin/gallery — update one image's caption / category / active flag.
 // Body: { id: number, caption?: string, category?: string, active?: boolean }
 export async function PATCH(req: NextRequest) {
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   let admin;
   try {
     admin = getSupabaseAdmin();

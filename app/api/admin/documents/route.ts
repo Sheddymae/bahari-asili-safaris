@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { getAdminSession, unauthorizedAdminResponse } from '@/lib/admin-api';
 import { createClientDocument, createSignedDocumentUrl } from '@/lib/client-documents';
 import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import { generateVoucherPDF } from '@/lib/voucher-generator';
@@ -10,6 +11,8 @@ import { generateDetailedItineraryPDF } from '@/lib/itinerary-generator';
 type Action = 'invoice'|'voucher'|'visa_support'|'receipt'|'itinerary'|'confirm';
 
 export async function POST(req: NextRequest) {
+  const session = await getAdminSession(req);
+  if (!session) return unauthorizedAdminResponse();
   try {
     const body = await req.json();
     const bookingId = Number(body.bookingId);
