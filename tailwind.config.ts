@@ -21,6 +21,22 @@ const config: Config = {
         safari: { 50: '#FF7418', 100: '#FF7418', 200: '#FF7418', 300: '#FF7418', 400: '#FF7418', 500: '#FF7418', 600: '#FF7418', 700: '#FF7418', 800: '#FF7418', 900: '#FF7418' },
         ember: { 600: '#FF7418', 700: '#FF7418' },
         ink: { 900: '#1F2937', 600: '#475569' },
+        /* The admin dashboard and several utility components use the default
+           `cyan` ramp. Map it onto the Bahari teal so those screens share the
+           public site's brand instead of Tailwind's stock cyan. */
+        cyan: {
+          50: '#EAF6F8',
+          100: '#D2ECF1',
+          200: '#A6D9E2',
+          300: '#6FC1CF',
+          400: '#35A3B7',
+          500: '#167D95',
+          600: '#12697E',
+          700: '#0F5560',
+          800: '#0B444C',
+          900: '#08343A',
+          950: '#052227',
+        },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
