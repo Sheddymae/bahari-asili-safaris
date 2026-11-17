@@ -18,19 +18,19 @@
   --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --primary: 191 74% 34%;
+  --primary: 188 73% 22%;
   --primary-foreground: 0 0% 100%;
   --secondary: 42 39% 94%;
   --secondary-foreground: 222 47% 11%;
   --muted: 210 20% 96%;
   --muted-foreground: 215 14% 45%;
-  --accent: 24 100% 55%;
+  --accent: 25 95% 53%;
   --accent-foreground: 222 47% 11%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
   --border: 214 32% 91%;
   --input: 214 32% 91%;
-  --ring: 191 74% 34%;
+  --ring: 188 73% 22%;
 }
 
 @layer base {
@@ -243,8 +243,8 @@ a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow])
   color-scheme: light;
   --surface-ink: #1F2937;
   --surface-sand: #F5F1E8;
-  --surface-ocean: #167D95;
-  --surface-link-light: #125B6B;
+  --surface-ocean: #0F5560;
+  --surface-link-light: #0F5560;
   --surface-link-dark: #BFEAF0;
   --surface-muted-light: #475569;
   --surface-muted-dark: #D6DEE4;
@@ -268,9 +268,19 @@ a[role='button']:not([data-no-glow]):hover, a[role='button']:not([data-no-glow])
   --surface-link: #FFFFFF;
   --surface-muted: #E5F3F5;
 }
+/* Orange is a conversion accent, never a text background for white: any orange
+   surface switches to near-black so labels and icons keep WCAG AA contrast
+   (#16181A on #F97316 = 6.35:1, on the #EA580C hover = 5.0:1). Unlayered on
+   purpose so it also wins over an incidental `text-white` utility. */
+.bg-safari-500, .bg-safari-600, .bg-safari-700,
+.bg-book, .bg-book-600, .bg-book-700,
+.bg-ember-600, .bg-ember-700 {
+  color: #16181A;
+}
+
 .surface-clay {
   color: var(--surface-ink);
-  background-color: #FF7418;
+  background-color: #F97316;
   --surface-link: var(--surface-ink);
   --surface-muted: #3D3029;
 }
@@ -383,17 +393,17 @@ footer.bg-foreground .text-safari-400 { color: #FFB37E; }
   --card-foreground: 220 23% 16%;
   --popover: 0 0% 100%;
   --popover-foreground: 220 23% 16%;
-  --primary: 191 74% 34%;
+  --primary: 188 73% 22%;
   --primary-foreground: 0 0% 100%;
   --secondary: 42 39% 94%;
   --secondary-foreground: 220 23% 16%;
   --muted: 210 20% 96%;
   --muted-foreground: 207 13% 35%;
-  --accent: 24 100% 55%;
+  --accent: 25 95% 53%;
   --accent-foreground: 220 23% 16%;
   --border: 204 18% 87%;
   --input: 204 18% 87%;
-  --ring: 191 74% 28%;
+  --ring: 189 74% 15%;
   --container-width: var(--container-max);
 }
 

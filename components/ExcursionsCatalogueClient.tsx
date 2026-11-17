@@ -46,7 +46,7 @@ export default function ExcursionsCatalogueClient({ excursions }: { excursions: 
                 <p className="mt-5 max-w-2xl font-inter text-base leading-7 text-white/80 sm:text-lg sm:leading-8">
                   {t.excursions.subtitle}
                 </p>
-                <a href="#excursion-grid" className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#FF7418] px-5 py-3 font-poppins text-sm font-semibold text-white shadow-lg shadow-black/15 transition hover:bg-[#E9630D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12343B]">
+                <a href="#excursion-grid" className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#F97316] px-5 py-3 font-poppins text-sm font-semibold text-[#16181A] shadow-lg shadow-black/15 transition hover:bg-[#EA580C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12343B]">
                   {t.excursions.viewExcursion}
                   <ArrowRight className="h-4 w-4" />
                 </a>
@@ -101,7 +101,7 @@ export default function ExcursionsCatalogueClient({ excursions }: { excursions: 
                             <Clock className="h-3.5 w-3.5 text-ocean-700" />
                             <span className="font-inter text-xs font-semibold">{content.duration}</span>
                           </div>
-                          {e.popular && <div className="absolute bottom-4 left-4 rounded-full bg-[#FF7418] px-3 py-1 font-inter text-[10px] font-bold uppercase tracking-wide text-white">{t.excursions.popular}</div>}
+                          {e.popular && <div className="absolute bottom-4 left-4 rounded-full bg-[#F97316] px-3 py-1 font-inter text-[10px] font-bold uppercase tracking-wide text-[#16181A]">{t.excursions.popular}</div>}
                         </div>
                         <div className="flex flex-1 flex-col p-5 sm:p-6">
                           <h3 className="font-poppins text-xl font-bold leading-snug text-foreground">{content.name}</h3>

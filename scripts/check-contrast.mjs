@@ -1,15 +1,19 @@
+// Brand palette lock: deep teal #0F5560 + orange #F97316.
+// Orange is a conversion accent, never body text and never paired with white:
+// near-black (#16181A) is the only foreground used on an orange surface.
 const pairs = {
   'ink on sand': ['#1F2937', '#F5F1E8'],
-  'ocean link on sand': ['#125B6B', '#F5F1E8'],
+  'deep teal link on sand': ['#0F5560', '#F5F1E8'],
   'muted on sand': ['#475569', '#F5F1E8'],
   'ink on white': ['#1F2937', '#FFFFFF'],
-  'ocean link on white': ['#125B6B', '#FFFFFF'],
+  'deep teal link on white': ['#0F5560', '#FFFFFF'],
   'muted on white': ['#475569', '#FFFFFF'],
   'cream on ink': ['#F5F1E8', '#1F2937'],
-  'sea text on ocean': ['#FFFFFF', '#167D95'],
+  'white text on deep teal': ['#FFFFFF', '#0F5560'],
   'cream link on ink': ['#BFEAF0', '#1F2937'],
   'muted cream on ink': ['#D6DEE4', '#1F2937'],
-  'ink on orange button': ['#1F2937', '#FF7418'],
+  'near-black on orange button': ['#16181A', '#F97316'],
+  'near-black on orange hover': ['#16181A', '#EA580C'],
   'ink on pale orange': ['#1F2937', '#FFF0E5'],
 };
 const luminance = hex => {

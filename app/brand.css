@@ -3,12 +3,14 @@
  * default text colour. White-on-orange is not a safe text pairing.
  */
 :root {
-  /* Existing brand colours retained from the current brand lock. */
-  --brand-primary: #167D95;
-  --brand-primary-hover: #11677B;
-  --brand-primary-deep: #104B59;
-  --brand-secondary: #FF7418;
-  --brand-secondary-hover: #E85E08;
+  /* Brand lock: deep teal primary (#0F5560) and orange conversion accent
+     (#F97316). Orange is never used for body text or white-on-orange labels;
+     pair it with near-black (#16181A) instead. */
+  --brand-primary: #0F5560;
+  --brand-primary-hover: #0B424B;
+  --brand-primary-deep: #08343A;
+  --brand-secondary: #F97316;
+  --brand-secondary-hover: #EA580C;
   --brand-sand: #F5F1E8;
   --brand-sand-deep: #EAE2D2;
   --brand-text: #1F2937;
@@ -16,7 +18,7 @@
   --brand-bg: #FFFFFF;
   --brand-border: #D9E1E3;
   --brand-surface-soft: #F7F9F8;
-  --brand-focus: #0B6174;
+  --brand-focus: #0F5560;
 
   /* Semantic aliases for consistent component styling. */
   --color-primary: var(--brand-primary);
@@ -72,7 +74,7 @@
   --shadow-sm: 0 2px 8px rgb(17 51 59 / 6%);
   --shadow-md: 0 8px 24px rgb(17 51 59 / 9%);
   --shadow-lg: 0 18px 48px rgb(17 51 59 / 13%);
-  --shadow-focus: 0 0 0 3px rgb(22 125 149 / 28%);
+  --shadow-focus: 0 0 0 3px rgb(15 85 96 / 32%);
 
   /* Motion is deliberately restrained and can be disabled globally. */
   --motion-fast: 140ms;

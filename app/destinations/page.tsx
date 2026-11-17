@@ -40,7 +40,7 @@ export default function DestinationsPage() {
           <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-14 pt-16 sm:px-6 sm:pb-20 sm:pt-20 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:px-8 lg:pb-24 lg:pt-24">
             <AnimateOnScroll direction="up">
               <div className="max-w-3xl">
-                <span className="mb-4 inline-flex items-center gap-2 border-l-2 border-[#FF7418] pl-3 py-1 font-inter text-xs font-semibold uppercase tracking-[0.18em] text-white/90">
+                <span className="mb-4 inline-flex items-center gap-2 border-l-2 border-[#F97316] pl-3 py-1 font-inter text-xs font-semibold uppercase tracking-[0.18em] text-white/90">
                   <Compass className="h-4 w-4 text-[#FF9A50]" />
                   {t.destinationsPage.label}
                 </span>
@@ -52,7 +52,7 @@ export default function DestinationsPage() {
                 </p>
                 <a
                   href="#destination-grid"
-                  className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#FF7418] px-5 py-3 font-poppins text-sm font-semibold text-white shadow-lg shadow-black/15 transition hover:bg-[#E9630D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12343B]"
+                  className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#F97316] px-5 py-3 font-poppins text-sm font-semibold text-[#16181A] shadow-lg shadow-black/15 transition hover:bg-[#EA580C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12343B]"
                 >
                   {t.destinationsPage.explore}
                   <ArrowRight className="h-4 w-4" />
@@ -124,7 +124,7 @@ export default function DestinationsPage() {
                       </div>
                       <div className="flex min-h-[172px] min-w-0 flex-col p-5 sm:p-6">
                         <p className="mb-5 line-clamp-3 font-inter text-sm leading-6 text-muted-foreground">{content.tagline}</p>
-                        <span className="mt-auto inline-flex min-h-11 min-w-0 items-center gap-2 font-inter text-sm font-bold leading-5 text-ocean-700 transition-colors group-hover:text-[#104B59]">
+                        <span className="mt-auto inline-flex min-h-11 min-w-0 items-center gap-2 font-inter text-sm font-bold leading-5 text-ocean-700 transition-colors group-hover:text-[#08343A]">
                           {t.destinationsPage.explore} {content.name}
                           <ArrowRight className="h-4 w-4" />
                         </span>

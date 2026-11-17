@@ -45,7 +45,7 @@ export default function ServicesPageClient() {
               </span>
               <h1 className="font-poppins text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">{copy.title}</h1>
               <p className="mt-5 max-w-2xl font-inter text-base leading-7 text-white/80 sm:text-lg sm:leading-8">{copy.intro}</p>
-              <a href="#service-cards" className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#FF7418] px-5 py-3 font-poppins text-sm font-semibold text-white shadow-lg shadow-black/15 transition hover:bg-[#E9630D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12343B]">
+              <a href="#service-cards" className="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#F97316] px-5 py-3 font-poppins text-sm font-semibold text-[#16181A] shadow-lg shadow-black/15 transition hover:bg-[#EA580C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#12343B]">
                 {copy.contactTitle}
                 <ArrowUpRight className="h-4 w-4" />
               </a>
