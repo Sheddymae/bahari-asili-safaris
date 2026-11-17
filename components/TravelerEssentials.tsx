@@ -101,7 +101,7 @@ export default function TravelerEssentials() {
             return (
               <article
                 key={`${locale}-${index}-${title}`}
-                className={`absolute left-1/2 top-1/2 w-[82vw] max-w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-[1px] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'z-30' : 'z-20'}`}
+                className={`absolute left-1/2 top-1/2 w-[82vw] max-w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-[1px] transition-all duration-700 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] ${isActive ? 'z-30' : 'z-20'}`}
                 style={{
                   transform: `translate(calc(-50% + ${direction * offset * cardDistance}px), -50%) scale(${isActive ? 1 : 0.84})`,
                   opacity: absOffset > 1 ? 0 : isActive ? 1 : 0.68,
