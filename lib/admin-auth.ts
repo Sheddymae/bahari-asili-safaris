@@ -12,13 +12,33 @@ export type AdminRole = 'owner' | 'staff';
 export const ADMIN_IDLE_SECONDS = 30 * 60;
 export const ADMIN_ABSOLUTE_SECONDS = 8 * 60 * 60;
 
-function getSecretKey(): Uint8Array {
+// SHA-256 of a session secret that was accidentally committed to `.env.example`
+// in this repository's history. Storing only the digest lets the app refuse the
+// leaked value (fail closed) without repeating the secret in the source tree.
+// Rotate ADMIN_SESSION_SECRET; a deployment still using the old value cannot
+// sign or accept admin sessions until it does.
+const REVOKED_ADMIN_SESSION_SECRET_SHA256 =
+  '1d335e04875d9cd1b1bd31e3e6f65796fa916d5c0a1e070e0ad6dd75a4864ba4';
+
+async function getSecretKey(): Promise<Uint8Array> {
   const secret = process.env.ADMIN_SESSION_SECRET;
   if (!secret || secret.length < 16) {
     throw new Error(
       'ADMIN_SESSION_SECRET is not set (or too short). Set a long random string in your environment variables.'
     );
   }
+
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(secret));
+  const fingerprint = Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+
+  if (fingerprint === REVOKED_ADMIN_SESSION_SECRET_SHA256) {
+    throw new Error(
+      'ADMIN_SESSION_SECRET is a value that was committed to git history and must be treated as compromised. Rotate it before signing in.'
+    );
+  }
+
   return new TextEncoder().encode(secret);
 }
 
@@ -36,7 +56,7 @@ export async function signAdminSession(username: string, role: AdminRole): Promi
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(`${ADMIN_ABSOLUTE_SECONDS}s`)
-    .sign(getSecretKey());
+    .sign(await getSecretKey());
 }
 
 /**
@@ -57,7 +77,7 @@ export async function refreshAdminSession(payload: AdminSessionPayload): Promise
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(`${remainingSeconds}s`)
-    .sign(getSecretKey());
+    .sign(await getSecretKey());
 }
 
 /**
@@ -67,7 +87,7 @@ export async function refreshAdminSession(payload: AdminSessionPayload): Promise
 export async function verifyAdminSession(token: string | undefined | null): Promise<AdminSessionPayload | null> {
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, getSecretKey());
+    const { payload } = await jwtVerify(token, await getSecretKey());
     if (
       (payload.role !== 'owner' && payload.role !== 'staff') ||
       typeof payload.username !== 'string' ||
