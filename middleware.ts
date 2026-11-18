@@ -34,24 +34,10 @@ function copyCookies(from: NextResponse, to: NextResponse) {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const requestHost = (req.headers.get('x-forwarded-host') || req.headers.get('host') || '')
-    .split(',')[0]
-    .trim()
-    .toLowerCase();
-  const canonicalHost = new URL(SITE_URL).host.toLowerCase();
-  const requestProtocol = (req.headers.get('x-forwarded-proto') || req.nextUrl.protocol.replace(':', ''))
-    .split(',')[0]
-    .trim()
-    .toLowerCase();
+  // Canonical host and HTTPS redirects are configured in Vercel Domains.
+  // Do not duplicate them here: platform proxy headers can otherwise cause
+  // a redirect loop when the request already reached the canonical hostname.
 
-  // All production aliases (apex, Vercel deployment domains and old hosts)
-  // resolve to the single HTTPS canonical origin, preserving path and query.
-  if (IS_PRODUCTION_DEPLOYMENT && (requestHost !== canonicalHost || requestProtocol !== 'https')) {
-    const canonicalUrl = req.nextUrl.clone();
-    canonicalUrl.protocol = 'https:';
-    canonicalUrl.host = canonicalHost;
-    return NextResponse.redirect(canonicalUrl, 308);
-  }
 
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);
