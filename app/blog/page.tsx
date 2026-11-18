@@ -5,7 +5,6 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 export const metadata: Metadata = {
   title: 'Blog — Bahari Asili Safaris',
   description: 'Kenya travel stories, safari guides, destination advice and Bahari Asili Safaris news.',
-  alternates: { canonical: '/blog' },
 };
 
 export const dynamic = 'force-dynamic';
