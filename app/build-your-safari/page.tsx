@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   title: 'Build Your Safari',
   description:
     'Create your personalized Kenya safari itinerary with Bahari Asili Safaris — choose your dates, travellers, style, and destinations, and get an instant estimated quotation.',
-  alternates: { canonical: '/build-your-safari' },
   openGraph: {
     title: 'Build Your Safari — Bahari Asili Safaris',
     description: 'Create your personalized Kenya safari itinerary — choose your dates, travellers, style, and destinations.',
