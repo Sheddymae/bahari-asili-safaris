@@ -31,8 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title,
-    description,
-    alternates: { canonical: `/safaris/${encodeURIComponent(safari.id)}` },
+    description,` },
     openGraph: {
       title,
       description,
