@@ -5,6 +5,8 @@ import { destinations } from '@/lib/destinations-data';
 import { hubGuides } from '@/lib/guides';
 import { getPublicExcursions } from '@/lib/public-content';
 import { SITE_URL } from '@/lib/site';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { getPublicSafaris } from '@/lib/public-content';
 
 
 
@@ -29,18 +31,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/guides', '/terms', '/privacy',
   ];
 
-  // The CMS can add published excursions, so use the same public catalogue
-  // as the customer-facing page and fall back safely to the static catalogue.
+  // Keep the sitemap aligned with published CMS content while retaining the
+  // checked-in catalogue if the CMS is temporarily unavailable.
+  let publicSafaris = safaris;
   let publicExcursions = staticExcursions;
+  let publishedBlogPosts: { slug: string; updated_at?: string | null; published_at?: string | null }[] = [];
+  try {
+    const managedSafaris = await getPublicSafaris('en');
+    if (managedSafaris.length > 0) publicSafaris = managedSafaris;
+  } catch {
+    // Keep the checked-in safari catalogue available without CMS credentials.
+  }
+
   try {
     publicExcursions = await getPublicExcursions();
   } catch {
-    // Keep the sitemap available even if the CMS is temporarily unavailable.
+    // Keep the static excursion catalogue available if the CMS is unavailable.
+  }
+
+  try {
+    const admin = getSupabaseAdmin();
+    const { data, error } = await admin
+      .from('cms_content')
+      .select('slug,updated_at,published_at')
+      .eq('content_type', 'blog')
+      .eq('locale', 'en')
+      .eq('status', 'published');
+    if (!error) publishedBlogPosts = data || [];
+  } catch {
+    // Blog listing remains in the sitemap even when CMS credentials are absent.
   }
 
   const entries: MetadataRoute.Sitemap = [
     ...staticRoutes.map((path) => routeEntry(path, path === '' ? 1 : 0.7, path === '' ? 'weekly' : 'monthly')),
-    ...safaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safari.id)}`, 0.9)),
+    ...publicSafaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safari.id)}`, 0.9)),
+    ...publishedBlogPosts.map((post) =>
+      routeEntry(`/blog/${encodeURIComponent(post.slug)}`, 0.75, 'monthly', post.updated_at || post.published_at || undefined),
+    ),
     ...hubGuides.map((guide) => routeEntry(`/guides/${guide.slug}`, 0.8, 'monthly', guide.updated)),
     ...destinations.map((destination) => routeEntry(`/destinations/${encodeURIComponent(destination.slug)}`, 0.8)),
     ...publicExcursions.map((excursion) => routeEntry(`/excursions/${encodeURIComponent(excursion.id)}`, 0.8)),
