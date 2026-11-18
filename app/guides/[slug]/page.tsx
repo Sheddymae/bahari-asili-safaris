@@ -6,6 +6,8 @@ import Footer from '@/components/Footer';
 import { hubGuides, getHubGuide } from '@/lib/guides';
 import { safaris } from '@/lib/safari-catalogue';
 import { destinations } from '@/lib/destinations-data';
+import { SITE_URL } from '@/lib/site';
+
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -27,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 function GuideJsonLd({ guide }: { guide: (typeof hubGuides)[number] }) {
-  const site = (process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app').replace(/\/$/, '');
+  const site = SITE_URL;
   const url = `${site}/guides/${guide.slug}`;
   const data = {
     '@context': 'https://schema.org',
