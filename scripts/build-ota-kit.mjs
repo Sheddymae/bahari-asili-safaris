@@ -8,7 +8,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const BASE = (process.env.BASE_URL || 'http://127.0.0.1:3000').replace(/\/$/, '');
-const SITE = (process.env.SITE_URL || 'https://bahari-asili-safaris.vercel.app').replace(/\/$/, '');
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.bahariasilisafaris.co.ke').replace(/\/$/, '');
 
 const res = await fetch(`${BASE}/sitemap.xml`);
 const sitemap = await res.text();
