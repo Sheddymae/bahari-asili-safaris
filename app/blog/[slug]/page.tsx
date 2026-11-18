@@ -26,7 +26,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: post.seo_title || post.title,
     description,
-    alternates: { canonical },
     openGraph: {
       title: post.title,
       description,
