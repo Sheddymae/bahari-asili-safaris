@@ -62,7 +62,7 @@ Reviews are the strongest trust signal for AI answers, but only real, first-part
 
 ### 2-Day Tsavo East Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/experience
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/experience
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East
@@ -137,7 +137,7 @@ In practice this is one of the easier safaris for families: 2 days, 2 park trans
 
 ### 3-Day Tsavo East & Amboseli Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/inside
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/inside
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Amboseli
@@ -212,7 +212,7 @@ In practice this is one of the easier safaris for families: 3 days, 3 park trans
 
 ### 3-Day Tsavo East & Taita Hills Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/nala
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/nala
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Taita Hills
@@ -287,7 +287,7 @@ This safari is manageable for most families with school-age children: 3 days, 3 
 
 ### 4-Day Tsavo & Amboseli Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/simba-timon
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/simba-timon
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Tsavo West, Amboseli
@@ -362,7 +362,7 @@ This safari is manageable for most families with school-age children: 4 days, 3 
 
 ### 3-Day Masai Mara Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/zazu
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/zazu
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara
@@ -437,7 +437,7 @@ In practice this is one of the easier safaris for families: 3 days, 2 park trans
 
 ### 4-Day Tsavo, Taita Hills & Amboseli Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/twiga
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/twiga
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Taita Hills, Amboseli
@@ -512,7 +512,7 @@ This is a long safari — 4 days with 4 park transfers — so it suits older chi
 
 ### 5-Day Tsavo, Taita Hills & Amboseli Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/rafiki
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/rafiki
 - **Duration:** 5 days / 4 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Tsavo West, Taita Hills, Amboseli
@@ -587,7 +587,7 @@ This is a long safari — 5 days with 4 park transfers — so it suits older chi
 
 ### 4-Day Masai Mara & Lake Nakuru Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/tumbili
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/tumbili
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Lake Nakuru, Masai Mara
@@ -662,7 +662,7 @@ This safari is manageable for most families with school-age children: 4 days, 3 
 
 ### 6-Day Grand Kenya Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/tembo
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/tembo
 - **Duration:** 6 days / 5 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara, Lake Nakuru, Amboseli, Tsavo East
@@ -737,7 +737,7 @@ This is a long safari — 6 days with 5 park transfers — so it suits older chi
 
 ### 7-Day Ultimate Kenya Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/sarabi
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/sarabi
 - **Duration:** 7 days / 6 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara, Lake Nakuru, Amboseli, Tsavo East, Tsavo West
@@ -812,7 +812,7 @@ This is a long safari — 7 days with 6 park transfers — so it suits older chi
 
 ### 8-Day Complete Kenya Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/mufasa
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/mufasa
 - **Duration:** 8 days / 7 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara, Lake Nakuru, Amboseli, Taita Hills, Tsavo West, Tsavo East
@@ -887,7 +887,7 @@ This is a long safari — 8 days with 7 park transfers — so it suits older chi
 
 ### 1-Day Tsavo East Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/1-day-tsavo-east
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/1-day-tsavo-east
 - **Duration:** 1 day / 0 nights
 - **Start / finish:** Watamu → Watamu — no overnight stay.
 - **Parks:** Tsavo East
@@ -962,7 +962,7 @@ This safari is manageable for most families with school-age children: 1 days, 1 
 
 ### 2-Day Tsavo West Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/2-day-tsavo-west
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/2-day-tsavo-west
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo West
@@ -1037,7 +1037,7 @@ This safari is manageable for most families with school-age children: 2 days, 2 
 
 ### 3-Day Tsavo West & Tsavo East Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-tsavo-west-east
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-tsavo-west-east
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo West, Tsavo East
@@ -1112,7 +1112,7 @@ This safari is manageable for most families with school-age children: 3 days, 3 
 
 ### 4-Day Tsavo East & Tsavo West Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-tsavo-east-west
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-tsavo-east-west
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Tsavo West
@@ -1187,7 +1187,7 @@ This safari is manageable for most families with school-age children: 4 days, 3 
 
 ### 2-Day Amboseli Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/2-day-amboseli
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/2-day-amboseli
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Amboseli
@@ -1262,7 +1262,7 @@ In practice this is one of the easier safaris for families: 2 days, 2 park trans
 
 ### 3-Day Amboseli Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-amboseli
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-amboseli
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Amboseli
@@ -1337,7 +1337,7 @@ In practice this is one of the easier safaris for families: 3 days, 2 park trans
 
 ### 4-Day Amboseli & Tsavo Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-amboseli-tsavo
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-amboseli-tsavo
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Amboseli, Tsavo East
@@ -1412,7 +1412,7 @@ This safari is manageable for most families with school-age children: 4 days, 3 
 
 ### 2-Day Taita Hills Wildlife Sanctuary Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/2-day-taita-hills
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/2-day-taita-hills
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Taita Hills
@@ -1487,7 +1487,7 @@ This safari is manageable for most families with school-age children: 2 days, 2 
 
 ### 4-Day Taita Hills & Tsavo Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-taita-hills-tsavo
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-taita-hills-tsavo
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Taita Hills, Tsavo East, Tsavo West
@@ -1562,7 +1562,7 @@ This is a long safari — 4 days with 4 park transfers — so it suits older chi
 
 ### 4-Day Masai Mara Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-masai-mara
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-masai-mara
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara
@@ -1637,7 +1637,7 @@ This safari is manageable for most families with school-age children: 4 days, 2 
 
 ### 2-Day Lake Nakuru Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/2-day-lake-nakuru
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/2-day-lake-nakuru
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Lake Nakuru
@@ -1712,7 +1712,7 @@ In practice this is one of the easier safaris for families: 2 days, 2 park trans
 
 ### 3-Day Lake Nakuru & Masai Mara Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-lake-nakuru-mara
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-lake-nakuru-mara
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Lake Nakuru, Masai Mara
@@ -1787,7 +1787,7 @@ This safari is manageable for most families with school-age children: 3 days, 3 
 
 ### 2-Day Lake Naivasha & Hell’s Gate Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/2-day-naivasha-hells-gate
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/2-day-naivasha-hells-gate
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Lake Naivasha, Hell’s Gate National Park
@@ -1862,7 +1862,7 @@ This safari is manageable for most families with school-age children: 2 days, 2 
 
 ### 4-Day Lake Naivasha, Lake Nakuru & Masai Mara Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-naivasha-nakuru-mara
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-naivasha-nakuru-mara
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Lake Naivasha, Lake Nakuru, Masai Mara
@@ -1937,7 +1937,7 @@ This is a long safari — 4 days with 4 park transfers — so it suits older chi
 
 ### 5-Day Masai Mara, Lake Nakuru & Amboseli Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/5-day-mara-nakuru-amboseli
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/5-day-mara-nakuru-amboseli
 - **Duration:** 5 days / 4 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara, Lake Nakuru, Amboseli
@@ -2012,7 +2012,7 @@ This is a long safari — 5 days with 4 park transfers — so it suits older chi
 
 ### 2-Day Samburu Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/2-day-samburu
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/2-day-samburu
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Arrive Samburu → onward
 - **Parks:** Samburu National Reserve
@@ -2087,7 +2087,7 @@ This safari is manageable for most families with school-age children: 2 days, 1 
 
 ### 4-Day Samburu & Ol Pejeta Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-samburu-ol-pejeta
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-samburu-ol-pejeta
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Arrive Samburu → onward
 - **Parks:** Samburu National Reserve, Ol Pejeta Conservancy
@@ -2162,7 +2162,7 @@ This safari is manageable for most families with school-age children: 4 days, 2 
 
 ### 3-Day Mount Kenya Nature & Wildlife Escape
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-mount-kenya
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-mount-kenya
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Arrive Mount Kenya → onward
 - **Parks:** Mount Kenya National Park
@@ -2237,7 +2237,7 @@ This safari is manageable for most families with school-age children: 3 days, 1 
 
 ### 4-Day Mount Kenya & Samburu Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-mount-kenya-samburu
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-mount-kenya-samburu
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Mount Kenya → onward
 - **Parks:** Mount Kenya National Park, Samburu National Reserve
@@ -2312,7 +2312,7 @@ This safari is manageable for most families with school-age children: 4 days, 2 
 
 ### 3-Day Serengeti Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-serengeti
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-serengeti
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Enter Serengeti → onward
 - **Parks:** Serengeti National Park
@@ -2386,7 +2386,7 @@ This safari is manageable for most families with school-age children: 3 days, 1 
 
 ### 5-Day Serengeti & Ngorongoro Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/5-day-serengeti-ngorongoro
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/5-day-serengeti-ngorongoro
 - **Duration:** 5 days / 4 nights
 - **Start / finish:** Arusha → onward
 - **Parks:** Serengeti National Park, Ngorongoro Conservation Area
@@ -2460,7 +2460,7 @@ This is a long safari — 5 days with 3 park transfers — so it suits older chi
 
 ### 3-Day Ngorongoro Crater Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-ngorongoro
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-ngorongoro
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Arrive Ngorongoro → onward
 - **Parks:** Ngorongoro Conservation Area
@@ -2534,7 +2534,7 @@ This safari is manageable for most families with school-age children: 3 days, 1 
 
 ### 3-Day Tarangire Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-tarangire
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-tarangire
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Arusha → onward
 - **Parks:** Tarangire National Park
@@ -2608,7 +2608,7 @@ This safari is manageable for most families with school-age children: 3 days, 2 
 
 ### 5-Day Tarangire, Ngorongoro & Serengeti Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/5-day-tarangire-ngorongoro
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/5-day-tarangire-ngorongoro
 - **Duration:** 5 days / 4 nights
 - **Start / finish:** Arusha → onward
 - **Parks:** Tarangire National Park, Ngorongoro Conservation Area, Serengeti National Park
@@ -2682,7 +2682,7 @@ This is a long safari — 5 days with 4 park transfers — so it suits older chi
 
 ### 3-Day Zanzibar Island Escape
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-zanzibar
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-zanzibar
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Stone Town → Zanzibar
 - **Parks:** Zanzibar
@@ -2757,7 +2757,7 @@ In practice this is one of the easier safaris for families: 3 days, 0 park trans
 
 ### 5-Day Zanzibar Beach & Culture
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/5-day-zanzibar
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/5-day-zanzibar
 - **Duration:** 5 days / 4 nights
 - **Start / finish:** Stone Town → Departure
 - **Parks:** Zanzibar
@@ -2832,7 +2832,7 @@ This is a long safari — 5 days with 0 park transfers — so it suits older chi
 
 ### 3-Day Queen Elizabeth Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-queen-elizabeth
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-queen-elizabeth
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Arrive Queen Elizabeth → onward
 - **Parks:** Queen Elizabeth National Park
@@ -2907,7 +2907,7 @@ This safari is manageable for most families with school-age children: 3 days, 1 
 
 ### 4-Day Queen Elizabeth Wildlife Circuit
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-queen-elizabeth
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-queen-elizabeth
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Arrive Queen Elizabeth → Departure
 - **Parks:** Queen Elizabeth National Park
@@ -2982,7 +2982,7 @@ This safari is manageable for most families with school-age children: 4 days, 0 
 
 ### 3-Day Bwindi Gorilla Trekking Experience
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-bwindi
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-bwindi
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Arrive Bwindi → onward
 - **Parks:** Bwindi Impenetrable National Park
@@ -3057,7 +3057,7 @@ This safari is manageable for most families with school-age children: 3 days, 1 
 
 ### 4-Day Bwindi & Lake Bunyonyi
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-bwindi-lake-bunyonyi
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-bwindi-lake-bunyonyi
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Arrive Bunyonyi/Bwindi → Departure
 - **Parks:** Bwindi Impenetrable National Park, Lake Bunyonyi
@@ -3132,7 +3132,7 @@ This safari is manageable for most families with school-age children: 4 days, 0 
 
 ### 3-Day Murchison Falls Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-murchison-falls
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-murchison-falls
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Arrive Murchison Falls → onward
 - **Parks:** Murchison Falls National Park
@@ -3207,7 +3207,7 @@ This safari is manageable for most families with school-age children: 3 days, 1 
 
 ### 4-Day Murchison Falls Wildlife Adventure
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-murchison-falls
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-murchison-falls
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Arrive Murchison → Departure
 - **Parks:** Murchison Falls National Park
@@ -3282,7 +3282,7 @@ This safari is manageable for most families with school-age children: 4 days, 0 
 
 ### 3-Day Akagera Safari
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/3-day-akagera
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-akagera
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Arrive Akagera → Kigali
 - **Parks:** Akagera National Park
@@ -3357,7 +3357,7 @@ This safari is manageable for most families with school-age children: 3 days, 1 
 
 ### 4-Day Akagera Wildlife & Wetlands
 
-- **Canonical page:** https://bahari-asili-safaris.vercel.app/safaris/4-day-akagera
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-akagera
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Kigali → Kigali
 - **Parks:** Akagera National Park
