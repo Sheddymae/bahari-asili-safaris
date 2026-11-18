@@ -121,7 +121,7 @@ function emailShell(bodyHtml: string, headerLabel: string, headerColor: string =
       </div>
       <div style="background: #1f2937; padding: 24px; border-radius: 0 0 12px 12px; text-align: center;">
         <p style="color: #e2e8f0; font-size: 13px; margin: 0 0 4px; font-weight: 600;">Bahari Asili Safaris · Watamu, Kenya</p>
-        <p style="color: #64748b; font-size: 12px; margin: 0;">bahariasilisafaris@gmail.com · +254 101 923 355 · www.bahariasilisafaris.co.ke</p>
+        <p style="color: #64748b; font-size: 12px; margin: 0;">bahariasilisafaris@gmail.com · +254 101 923 355 · ${new URL(SITE_URL).host}</p>
       </div>
     </div>
   `;
