@@ -59,7 +59,7 @@ Legend: **Y** = cited with a link · **M** = mentioned without a link · **N** =
 
 ## Owner setup required before measurement is meaningful
 
-- [ ] Verify the domain in Google Search Console and submit `https://bahari-asili-safaris.vercel.app/sitemap.xml`.
+- [ ] Verify the domain in Google Search Console and submit `https://www.bahariasilisafaris.co.ke/sitemap.xml`.
 - [ ] Add the site to Bing Webmaster Tools and submit the same sitemap. ChatGPT's search index leans on Bing, so this matters even if Google is the bigger traffic source.
 - [ ] Claim the Google Business Profile (Pinguili, Watamu) and keep name, address, phone and website identical to the site.
 - [ ] Decide on a custom domain. A `vercel.app` subdomain works but is weaker as a brand entity and cannot be used as the canonical host once you move.
