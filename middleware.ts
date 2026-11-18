@@ -39,10 +39,14 @@ export async function middleware(req: NextRequest) {
     .trim()
     .toLowerCase();
   const canonicalHost = new URL(SITE_URL).host.toLowerCase();
+  const requestProtocol = (req.headers.get('x-forwarded-proto') || req.nextUrl.protocol.replace(':', ''))
+    .split(',')[0]
+    .trim()
+    .toLowerCase();
 
   // All production aliases (apex, Vercel deployment domains and old hosts)
   // resolve to the single HTTPS canonical origin, preserving path and query.
-  if (IS_PRODUCTION_DEPLOYMENT && requestHost !== canonicalHost) {
+  if (IS_PRODUCTION_DEPLOYMENT && (requestHost !== canonicalHost || requestProtocol !== 'https')) {
     const canonicalUrl = req.nextUrl.clone();
     canonicalUrl.protocol = 'https:';
     canonicalUrl.host = canonicalHost;
