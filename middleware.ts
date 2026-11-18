@@ -46,7 +46,7 @@ export async function middleware(req: NextRequest) {
   // This preserves current page implementations while exposing stable language URLs.
   if (isLocale(firstSegment)) {
     const unprefixedPath = '/' + pathname.split('/').slice(2).join('/');
-    const targetPath = unprefixedPath === '/' ? '/' : unprefixedPath.replace(/\\/$/, '');
+    const targetPath = unprefixedPath === '/' ? '/' : unprefixedPath.replace(/\/$/, '');
     if (firstSegment === DEFAULT_LOCALE) {
       return NextResponse.redirect(new URL(targetPath, req.url), 308);
     }
