@@ -1,8 +1,10 @@
 import type { ProgramGuide } from '@/lib/program-guide';
 import type { Safari } from '@/lib/tours-data';
+import { SITE_URL } from '@/lib/site';
+
 
 function baseUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app').replace(/\/$/, '');
+  return SITE_URL;
 }
 
 /**
