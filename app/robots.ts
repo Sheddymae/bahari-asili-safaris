@@ -3,10 +3,10 @@ import { IS_PRODUCTION_DEPLOYMENT, SITE_URL } from '@/lib/site';
 
 const PRIVATE_PATHS = [
   '/api/',
-  '/admin/',
+  '/admin',
   '/auth/',
-  '/dashboard/',
-  '/account/',
+  '/dashboard',
+  '/account',
   '/login',
   '/signup',
 ];
