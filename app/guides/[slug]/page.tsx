@@ -23,7 +23,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${guide.title} | Bahari Asili Safaris`,
     description: guide.description,
-    alternates: { canonical: url },
     openGraph: { title: guide.title, description: guide.description, type: 'article', url },
   };
 }
