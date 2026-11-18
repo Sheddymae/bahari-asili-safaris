@@ -5,6 +5,7 @@ import { destinations } from '@/lib/destinations-data';
 import { hubGuides } from '@/lib/guides';
 import { getPublicExcursions } from '@/lib/public-content';
 import { SITE_URL } from '@/lib/site';
+import { localeAlternates } from '@/lib/i18n-routing';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { getPublicSafaris } from '@/lib/public-content';
 
@@ -18,6 +19,7 @@ function routeEntry(
 ): MetadataRoute.Sitemap[number] {
   return {
     url: new URL(path, SITE_URL).toString(),
+    alternates: { languages: localeAlternates(path, SITE_URL) },
     changeFrequency,
     priority,
     ...(lastModified ? { lastModified } : {}),
