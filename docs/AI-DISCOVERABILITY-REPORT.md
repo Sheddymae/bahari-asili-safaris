@@ -25,9 +25,9 @@ The 45 safari program pages now answer cost, best time, children, older travelle
 
 ### Domain and indexing
 
-- Live host: `https://bahari-asili-safaris.vercel.app`. No custom domain in the repo. `netlify.toml` is stale (the site is on Vercel).
+- Canonical host: `https://www.bahariasilisafaris.co.ke`. The application uses `lib/site.ts` as the canonical-origin source of truth.
 - **Defect found and fixed:** `middleware.ts` treated *any* host containing `vercel.app` as a preview and sent `x-robots-tag: noindex, nofollow`. Because the production site *is* on a `vercel.app` host, **every production page was being noindexed**. The check now noindexes only non-production deployments (`VERCEL_ENV` preview/development, or a `vercel.app` host that is not the configured production host).
-- Canonicals are generated from `NEXT_PUBLIC_SITE_URL`, falling back to the `vercel.app` host. They are correct today and will follow a custom domain once that variable is set.
+- Canonicals, robots, sitemap and structured data now share the validated `SITE_URL` from `lib/site.ts`, defaulting to the production www domain.
 
 ### Crawl access
 
