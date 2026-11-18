@@ -2,15 +2,22 @@ import type { MetadataRoute } from 'next';
 import { safaris } from '@/lib/safari-catalogue';
 import { excursions as staticExcursions } from '@/lib/tours-data';
 import { destinations } from '@/lib/destinations-data';
+import { hubGuides } from '@/lib/guides';
 import { getPublicExcursions } from '@/lib/public-content';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
 
-function routeEntry(path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly'): MetadataRoute.Sitemap[number] {
+function routeEntry(
+  path: string,
+  priority: number,
+  changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly',
+  lastModified?: string,
+): MetadataRoute.Sitemap[number] {
   return {
     url: new URL(path, siteUrl).toString(),
     changeFrequency,
     priority,
+    ...(lastModified ? { lastModified } : {}),
   };
 }
 
@@ -18,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '', '/about', '/contact', '/faq', '/blog', '/partners', '/destinations',
     '/tours', '/excursions', '/build-your-safari', '/transfers', '/travel-guide',
-    '/terms', '/privacy',
+    '/guides', '/terms', '/privacy',
   ];
 
   // The CMS can add published excursions, so use the same public catalogue
@@ -33,6 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
     ...staticRoutes.map((path) => routeEntry(path, path === '' ? 1 : 0.7, path === '' ? 'weekly' : 'monthly')),
     ...safaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safari.id)}`, 0.9)),
+    ...hubGuides.map((guide) => routeEntry(`/guides/${guide.slug}`, 0.8, 'monthly', guide.updated)),
     ...destinations.map((destination) => routeEntry(`/destinations/${encodeURIComponent(destination.slug)}`, 0.8)),
     ...publicExcursions.map((excursion) => routeEntry(`/excursions/${encodeURIComponent(excursion.id)}`, 0.8)),
   ];

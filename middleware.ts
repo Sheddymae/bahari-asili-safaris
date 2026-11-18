@@ -33,7 +33,22 @@ function copyCookies(from: NextResponse, to: NextResponse) {
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const host = req.headers.get('host') || '';
-  const isPreviewHost = host.includes('vercel.app');
+  // The production site is served from a vercel.app host, so "contains
+  // vercel.app" cannot mean "preview". Only non-production deployments are
+  // noindexed; the canonical production host (and its www variant) stay
+  // indexable so search and answer engines can cite the live site.
+  const siteHost = (() => {
+    try {
+      return new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app').host;
+    } catch {
+      return 'bahari-asili-safaris.vercel.app';
+    }
+  })();
+  const productionHosts = new Set([siteHost, 'bahari-asili-safaris.vercel.app', `www.${siteHost}`]);
+  const isPreviewHost =
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.VERCEL_ENV === 'development' ||
+    (host.includes('vercel.app') && !productionHosts.has(host));
 
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);
