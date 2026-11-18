@@ -1,4 +1,6 @@
 import type { Safari } from '@/lib/tours-data';
+import { SITE_URL } from '@/lib/site';
+
 
 type Props = {
   safari: Safari;
@@ -6,7 +8,7 @@ type Props = {
 };
 
 export default function SafariStructuredData({ safari, siteUrl }: Props) {
-  const baseUrl = (siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app').replace(/\/$/, '');
+  const baseUrl = (siteUrl || SITE_URL).replace(/\/$/, '');
   const pageUrl = `${baseUrl}/safaris/${encodeURIComponent(safari.id)}`;
   const data = {
     '@context': 'https://schema.org',
