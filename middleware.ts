@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { IS_PRODUCTION_DEPLOYMENT, SITE_URL } from '@/lib/site';
 import { createServerClient } from '@supabase/ssr';
 import {
   ADMIN_COOKIE_NAME,
@@ -22,6 +23,7 @@ function applySecurityHeaders(res: NextResponse, protectedRoute = false) {
   res.headers.set('X-Frame-Options', 'SAMEORIGIN');
   res.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   if (protectedRoute) res.headers.set('Cache-Control', 'private, no-store, max-age=0, must-revalidate');
+  if (!IS_PRODUCTION_DEPLOYMENT) res.headers.set('X-Robots-Tag', 'noindex, nofollow');
   return res;
 }
 
@@ -32,23 +34,20 @@ function copyCookies(from: NextResponse, to: NextResponse) {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const host = req.headers.get('host') || '';
-  // The production site is served from a vercel.app host, so "contains
-  // vercel.app" cannot mean "preview". Only non-production deployments are
-  // noindexed; the canonical production host (and its www variant) stay
-  // indexable so search and answer engines can cite the live site.
-  const siteHost = (() => {
-    try {
-      return new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app').host;
-    } catch {
-      return 'bahari-asili-safaris.vercel.app';
-    }
-  })();
-  const productionHosts = new Set([siteHost, 'bahari-asili-safaris.vercel.app', `www.${siteHost}`]);
-  const isPreviewHost =
-    process.env.VERCEL_ENV === 'preview' ||
-    process.env.VERCEL_ENV === 'development' ||
-    (host.includes('vercel.app') && !productionHosts.has(host));
+  const requestHost = (req.headers.get('x-forwarded-host') || req.headers.get('host') || '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase();
+  const canonicalHost = new URL(SITE_URL).host.toLowerCase();
+
+  // All production aliases (apex, Vercel deployment domains and old hosts)
+  // resolve to the single HTTPS canonical origin, preserving path and query.
+  if (IS_PRODUCTION_DEPLOYMENT && requestHost !== canonicalHost) {
+    const canonicalUrl = req.nextUrl.clone();
+    canonicalUrl.protocol = 'https:';
+    canonicalUrl.host = canonicalHost;
+    return NextResponse.redirect(canonicalUrl, 308);
+  }
 
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);
@@ -74,7 +73,6 @@ export async function middleware(req: NextRequest) {
       const refreshed = await refreshAdminSession(adminSession);
       res.cookies.set(ADMIN_COOKIE_NAME, refreshed, adminCookieOptions(ADMIN_IDLE_SECONDS));
     }
-    if (isPreviewHost) res.headers.set('x-robots-tag', 'noindex, nofollow');
     return applySecurityHeaders(res, true);
   }
 
@@ -137,7 +135,6 @@ export async function middleware(req: NextRequest) {
     return applySecurityHeaders(redirect, true);
   }
 
-  if (isPreviewHost) supabaseResponse.headers.set('x-robots-tag', 'noindex, nofollow');
   return applySecurityHeaders(supabaseResponse, isCustomerRoute);
 }
 
