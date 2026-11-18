@@ -4,8 +4,9 @@ import { excursions as staticExcursions } from '@/lib/tours-data';
 import { destinations } from '@/lib/destinations-data';
 import { hubGuides } from '@/lib/guides';
 import { getPublicExcursions } from '@/lib/public-content';
+import { SITE_URL } from '@/lib/site';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
+
 
 function routeEntry(
   path: string,
@@ -14,7 +15,7 @@ function routeEntry(
   lastModified?: string,
 ): MetadataRoute.Sitemap[number] {
   return {
-    url: new URL(path, siteUrl).toString(),
+    url: new URL(path, SITE_URL).toString(),
     changeFrequency,
     priority,
     ...(lastModified ? { lastModified } : {}),
@@ -24,7 +25,7 @@ function routeEntry(
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     '', '/about', '/contact', '/faq', '/blog', '/partners', '/destinations',
-    '/tours', '/excursions', '/build-your-safari', '/transfers', '/travel-guide',
+    '/tours', '/excursions', '/build-your-safari', '/transfers', '/services', '/travel-guide',
     '/guides', '/terms', '/privacy',
   ];
 
