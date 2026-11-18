@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: SEO configuration check
+        run: npm run check:seo
+
       - name: TypeScript check
         run: npm run typecheck
 
