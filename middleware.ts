@@ -39,6 +39,8 @@ export async function middleware(req: NextRequest) {
   const privatePrefixes = ['/api', '/admin', '/auth', '/dashboard', '/account', '/login', '/signup'];
   const isPrivatePath = (path: string) => privatePrefixes.some((prefix) => path === prefix || path.startsWith(prefix + '/'));
   let shouldRewriteLocale = false;
+  let requestLocale = DEFAULT_LOCALE;
+  let canonicalPath = pathname;
 
   // Public locale URLs are rewritten internally to the existing route tree.
   // This preserves current page implementations while exposing stable language URLs.
@@ -52,27 +54,32 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL(targetPath, req.url), 308);
     }
     pathname = targetPath;
+    canonicalPath = targetPath;
+    requestLocale = firstSegment;
     req.nextUrl.pathname = targetPath;
     req.cookies.set('bahari-locale', firstSegment);
-    req.headers.set('x-bahari-locale', firstSegment);
-    req.headers.set('x-bahari-path', targetPath);
     shouldRewriteLocale = true;
   } else {
     const savedLocale = req.cookies.get('bahari-locale')?.value;
     const locale = savedLocale && isLocale(savedLocale) ? savedLocale : DEFAULT_LOCALE;
-    if (locale !== DEFAULT_LOCALE && !isPrivatePath(pathname)) {
+    requestLocale = locale;
+    if (locale !== DEFAULT_LOCALE && !isPrivatePath(pathname) && !pathname.includes('.')) {
       const localized = localizedPath(pathname, locale);
       const target = req.nextUrl.clone();
       target.pathname = localized;
       return NextResponse.redirect(target, 307);
     }
-    req.headers.set('x-bahari-locale', locale);
-    req.headers.set('x-bahari-path', pathname);
+    canonicalPath = pathname;
   }
 
-  const continueRequest = () => shouldRewriteLocale
-    ? NextResponse.rewrite(req.nextUrl, { request: { headers: req.headers } })
-    : NextResponse.next({ request: req });
+  const continueRequest = () => {
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-bahari-locale', requestLocale);
+    requestHeaders.set('x-bahari-path', canonicalPath);
+    return shouldRewriteLocale
+      ? NextResponse.rewrite(req.nextUrl, { request: { headers: requestHeaders } })
+      : NextResponse.next({ request: { headers: requestHeaders } });
+  };
 
   // Canonical host and HTTPS redirects are configured in Vercel Domains.
   // Do not duplicate them here: platform proxy headers can otherwise cause
