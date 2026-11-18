@@ -8,6 +8,8 @@ import { generatePremiumInvoicePDF } from '@/lib/invoice-generator';
 import { createClientDocument } from '@/lib/client-documents';
 import { resolveBookingPackage, addBookingDays } from '@/lib/booking-document';
 import type { Booking } from '@/lib/supabase';
+import { SITE_URL } from '@/lib/site';
+
 import { safaris, excursions } from '@/lib/tours-data';
 
 const RESEND_API = 'https://api.resend.com/emails';
@@ -262,7 +264,7 @@ function buildReviewEmailHtml(d: {
   const safariName = escapeHtml(d.safariName);
 
   const reviewLink =
-    `https://bahari-asili-safaris.vercel.app/?review=${encodeURIComponent(
+    `${SITE_URL}/?review=${encodeURIComponent(
       d.bookingRef,
     )}`;
 
