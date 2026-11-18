@@ -1,5 +1,6 @@
 import type { Booking } from './supabase';
 import { formatLocaleDate, normalizeLocale } from './locale-content';
+import { SITE_URL } from './site';
 
 /** Customer confirmation email. The booking locale is persisted at submission time. */
 export function buildConfirmationEmailHtml(booking: Booking): string {
@@ -67,7 +68,7 @@ export function buildAdminNotificationEmailHtml(booking: Booking): string {
             )
             .join('')}
         </table>
-        <p style="margin-top: 20px;"><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app'}/admin" style="background: var(--brand-primary); color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Open Admin Dashboard →</a></p>
+        <p style="margin-top: 20px;"><a href="${SITE_URL}/admin" style="background: var(--brand-primary); color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px;">Open Admin Dashboard →</a></p>
       </div>
     </div>
   `;
@@ -120,7 +121,7 @@ function emailShell(bodyHtml: string, headerLabel: string, headerColor: string =
       </div>
       <div style="background: #1f2937; padding: 24px; border-radius: 0 0 12px 12px; text-align: center;">
         <p style="color: #e2e8f0; font-size: 13px; margin: 0 0 4px; font-weight: 600;">Bahari Asili Safaris · Watamu, Kenya</p>
-        <p style="color: #64748b; font-size: 12px; margin: 0;">bahariasilisafaris@gmail.com · +254 101 923 355 · bahari-asili-safaris.vercel.app</p>
+        <p style="color: #64748b; font-size: 12px; margin: 0;">bahariasilisafaris@gmail.com · +254 101 923 355 · www.bahariasilisafaris.co.ke</p>
       </div>
     </div>
   `;
