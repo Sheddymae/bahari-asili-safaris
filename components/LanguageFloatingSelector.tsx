@@ -6,6 +6,7 @@ import { Globe } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FLAG_COMPONENTS } from '@/components/flags/SvgFlags';
 import type { Locale } from '@/lib/i18n';
+import { localizedPath } from '@/lib/i18n-routing';
 
 export const LANGUAGES: {
   code: Locale;
@@ -110,6 +111,11 @@ export default function LanguageFloatingSelector() {
 
     if (selectedTimerRef.current) clearTimeout(selectedTimerRef.current);
     selectedTimerRef.current = setTimeout(() => setJustSelected(null), 1500);
+
+    // Move to the equivalent crawlable URL instead of relying on a cookie-only
+    // language switch. The selected locale is preserved by the locale route.
+    const targetPath = localizedPath(window.location.pathname, code);
+    window.location.assign(`${targetPath}${window.location.search}${window.location.hash}`);
   };
 
   return (
