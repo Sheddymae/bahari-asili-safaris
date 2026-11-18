@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   title: 'Kenya Safari Travel Guides — Costs, Best Time, Family & Packing',
   description:
     'Practical Kenya safari guides: what a safari costs, the best months for safari and coast, travelling with children or older guests, and a complete packing list.',
-  alternates: { canonical: '/guides' },
   openGraph: {
     title: 'Kenya Safari Travel Guides — Bahari Asili Safaris',
     description: 'Costs, best time to travel, family and accessibility advice, and packing for a Kenya safari from Watamu.',
