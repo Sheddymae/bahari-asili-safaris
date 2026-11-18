@@ -51,7 +51,7 @@ export async function middleware(req: NextRequest) {
 
   const adminToken = req.cookies.get(ADMIN_COOKIE_NAME)?.value;
   const adminSession = await verifyAdminSession(adminToken);
-  if (adminSession && (pathname === '/dashboard' || pathname === '/login' || pathname === '/signup')) return NextResponse.redirect(new URL(ADMIN_PAGE_PREFIX, req.url));
+  if (adminSession && (pathname === '/dashboard' || pathname === '/login' || pathname === '/signup')) return applySecurityHeaders(NextResponse.redirect(new URL(ADMIN_PAGE_PREFIX, req.url)));
   // The login endpoint must remain public so an unauthenticated admin can obtain
   // the session cookie that protects the rest of /api/admin.
   const isAdminLoginApi = pathname === '/api/admin/login';
@@ -125,7 +125,7 @@ export async function middleware(req: NextRequest) {
   }
 
   if ((pathname === CUSTOMER_LOGIN || pathname === '/signup') && user) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+    return applySecurityHeaders(NextResponse.redirect(new URL('/dashboard', req.url)));
   }
 
   if (isCustomerRoute && !user) {
