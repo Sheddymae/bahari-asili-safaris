@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { IS_PRODUCTION_DEPLOYMENT, SITE_URL } from '@/lib/site';
+import { IS_PRODUCTION_DEPLOYMENT } from '@/lib/site';
+import { DEFAULT_LOCALE, isLocale, localizedPath } from '@/lib/i18n-routing';
 import { createServerClient } from '@supabase/ssr';
 import {
   ADMIN_COOKIE_NAME,
@@ -33,7 +34,46 @@ function copyCookies(from: NextResponse, to: NextResponse) {
 }
 
 export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  let pathname = req.nextUrl.pathname;
+  const firstSegment = pathname.split('/')[1] || '';
+  const privatePrefixes = ['/api', '/admin', '/auth', '/dashboard', '/account', '/login', '/signup'];
+  const isPrivatePath = (path: string) => privatePrefixes.some((prefix) => path === prefix || path.startsWith(prefix + '/'));
+  let shouldRewriteLocale = false;
+
+  // Public locale URLs are rewritten internally to the existing route tree.
+  // This preserves current page implementations while exposing stable language URLs.
+  if (isLocale(firstSegment)) {
+    const unprefixedPath = '/' + pathname.split('/').slice(2).join('/');
+    const targetPath = unprefixedPath === '/' ? '/' : unprefixedPath.replace(/\\/$/, '');
+    if (firstSegment === DEFAULT_LOCALE) {
+      return NextResponse.redirect(new URL(targetPath, req.url), 308);
+    }
+    if (isPrivatePath(targetPath)) {
+      return NextResponse.redirect(new URL(targetPath, req.url), 308);
+    }
+    pathname = targetPath;
+    req.nextUrl.pathname = targetPath;
+    req.cookies.set('bahari-locale', firstSegment);
+    req.headers.set('x-bahari-locale', firstSegment);
+    req.headers.set('x-bahari-path', targetPath);
+    shouldRewriteLocale = true;
+  } else {
+    const savedLocale = req.cookies.get('bahari-locale')?.value;
+    const locale = savedLocale && isLocale(savedLocale) ? savedLocale : DEFAULT_LOCALE;
+    if (locale !== DEFAULT_LOCALE && !isPrivatePath(pathname)) {
+      const localized = localizedPath(pathname, locale);
+      const target = req.nextUrl.clone();
+      target.pathname = localized;
+      return NextResponse.redirect(target, 307);
+    }
+    req.headers.set('x-bahari-locale', locale);
+    req.headers.set('x-bahari-path', pathname);
+  }
+
+  const continueRequest = () => shouldRewriteLocale
+    ? NextResponse.rewrite(req.nextUrl, { request: { headers: req.headers } })
+    : NextResponse.next({ request: req });
+
   // Canonical host and HTTPS redirects are configured in Vercel Domains.
   // Do not duplicate them here: platform proxy headers can otherwise cause
   // a redirect loop when the request already reached the canonical hostname.
@@ -66,7 +106,7 @@ export async function middleware(req: NextRequest) {
     return applySecurityHeaders(res, true);
   }
 
-  let supabaseResponse = NextResponse.next({ request: req });
+  let supabaseResponse = continueRequest();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key_for_development',
@@ -77,7 +117,7 @@ export async function middleware(req: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request: req });
+          supabaseResponse = continueRequest();
           cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
         },
       },
