@@ -1,6 +1,8 @@
 import { safaris } from '@/lib/safari-catalogue';
 import { buildProgramGuide } from '@/lib/program-guide';
 import { programMarkdown } from '@/lib/program-markdown';
+import { SITE_URL } from '@/lib/site';
+
 
 export const dynamic = 'force-static';
 
@@ -25,7 +27,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
     });
   }
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app';
+  const site = SITE_URL;
   const body = programMarkdown(safari, buildProgramGuide(safari), site);
 
   return new Response(body, {
