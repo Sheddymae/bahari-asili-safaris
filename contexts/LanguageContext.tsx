@@ -210,9 +210,19 @@ export function LanguageProvider({ children, initialLocale = 'en' }: { children:
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    // A locale-prefixed URL is authoritative. This keeps the visible page,
+    // canonical URL and document language aligned even when an older
+    // localStorage preference exists on the visitor's device.
+    const pathLocale = window.location.pathname.split('/')[1] || '';
     try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (isValidLocale(stored)) setLocaleState(stored);
+      if (isValidLocale(pathLocale)) {
+        setLocaleState(pathLocale);
+        window.localStorage.setItem(STORAGE_KEY, pathLocale);
+        document.cookie = `${STORAGE_KEY}=${encodeURIComponent(pathLocale)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+      } else {
+        const stored = window.localStorage.getItem(STORAGE_KEY);
+        if (isValidLocale(stored)) setLocaleState(stored);
+      }
     } catch {
       // Storage can be disabled; keep the locale supplied by the server.
     }
