@@ -7,7 +7,7 @@
  *   BASE_URL=http://127.0.0.1:3000 node scripts/verify-ai-content.mjs
  */
 const BASE = (process.env.BASE_URL || 'http://127.0.0.1:3000').replace(/\/$/, '');
-const UA = 'Mozilla/5.0 (compatible; BahariContentCheck/1.0; +https://bahari-asili-safaris.vercel.app)';
+const UA = 'Mozilla/5.0 (compatible; BahariContentCheck/1.0; +https://www.bahariasilisafaris.co.ke)';
 
 const REQUIRED_SECTIONS = [
   ['overview', 'Answer capsule and quick facts'],
