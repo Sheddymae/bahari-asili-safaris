@@ -11,7 +11,8 @@
     "check:i18n": "node scripts/check-language-fallbacks.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "verify:ai": "node scripts/verify-ai-content.mjs",
-    "ota:kit": "node scripts/build-ota-kit.mjs"
+    "ota:kit": "node scripts/build-ota-kit.mjs",
+    "check:seo": "node scripts/check-seo-config.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.0",
