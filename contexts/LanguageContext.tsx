@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { translations, RTL_LOCALES, type Locale, type TranslationKeys } from '@/lib/i18n';
+import { localizedPath } from '@/lib/i18n-routing';
 import { extraTranslations } from '@/lib/i18n-extra';
 import { homeEnhancementTranslations } from '@/lib/home-enhancements-i18n';
 import { safariDetailTranslations } from '@/lib/safari-detail-i18n';
@@ -221,7 +222,17 @@ export function LanguageProvider({ children, initialLocale = 'en' }: { children:
         document.cookie = `${STORAGE_KEY}=${encodeURIComponent(pathLocale)}; Path=/; Max-Age=31536000; SameSite=Lax`;
       } else {
         const stored = window.localStorage.getItem(STORAGE_KEY);
-        if (isValidLocale(stored)) setLocaleState(stored);
+        if (isValidLocale(stored)) {
+          if (stored !== 'en') {
+            document.cookie = `${STORAGE_KEY}=${encodeURIComponent(stored)}; Path=/; Max-Age=31536000; SameSite=Lax`;
+            const targetPath = localizedPath(window.location.pathname, stored);
+            if (targetPath !== window.location.pathname) {
+              window.location.replace(`${targetPath}${window.location.search}${window.location.hash}`);
+              return;
+            }
+          }
+          setLocaleState(stored);
+        }
       }
     } catch {
       // Storage can be disabled; keep the locale supplied by the server.
