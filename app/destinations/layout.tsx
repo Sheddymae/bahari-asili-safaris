@@ -4,7 +4,6 @@ export const metadata: Metadata = {
   title: 'Kenya Safari Destinations — Tsavo, Amboseli & Beyond',
   description:
     'Explore Kenya safari destinations from Watamu, including Tsavo, Amboseli and other wildlife regions. Compare landscapes, wildlife highlights and the best season to visit.',
-  alternates: { canonical: '/destinations' },
   openGraph: {
     title: 'Kenya Safari Destinations — Bahari Asili Safaris',
     description:
