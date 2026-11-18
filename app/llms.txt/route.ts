@@ -2,6 +2,8 @@ import { safaris } from '@/lib/safari-catalogue';
 import { hubGuides } from '@/lib/guides';
 import { destinations } from '@/lib/destinations-data';
 import { excursions } from '@/lib/tours-data';
+import { SITE_URL } from '@/lib/site';
+
 
 export const dynamic = 'force-static';
 
@@ -12,7 +14,7 @@ export const dynamic = 'force-static';
  * it and because it costs nothing to keep accurate.
  */
 export function GET() {
-  const site = (process.env.NEXT_PUBLIC_SITE_URL || 'https://bahari-asili-safaris.vercel.app').replace(/\/$/, '');
+  const site = SITE_URL;
   const lines: string[] = [];
 
   lines.push('# Bahari Asili Safaris');
