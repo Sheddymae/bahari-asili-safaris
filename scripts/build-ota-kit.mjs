@@ -5,7 +5,7 @@
  *
  * Usage (with a server running): BASE_URL=http://127.0.0.1:3000 node scripts/build-ota-kit.mjs
  */
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 
 const BASE = (process.env.BASE_URL || 'http://127.0.0.1:3000').replace(/\/$/, '');
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.bahariasilisafaris.co.ke').replace(/\/$/, '');
@@ -165,7 +165,8 @@ Reviews are the strongest trust signal for AI answers, but only real, first-part
 ## Program listings
 `;
 
-const body = header + '\n' + blocks.join('\n---\n\n');
+const excursionAppendix = await readFile('docs/ota-excursion-listings.md', 'utf8').catch(() => '');
+const body = header + '\n' + blocks.join('\n---\n\n') + (excursionAppendix ? `\n\n---\n\n${excursionAppendix}` : '');
 await mkdir('docs', { recursive: true });
 await writeFile('docs/ota-listing-kit.md', body);
 console.log(`Wrote docs/ota-listing-kit.md with ${blocks.length} programs.`);
