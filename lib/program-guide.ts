@@ -452,11 +452,11 @@ function childrenSection(safari: Safari, region: Region): ProgramGuide['children
   const long = safari.days >= 5 || changes >= 4;
   let capsule: string;
   if (long) {
-    capsule = `This is a long safari — ${safari.days} days with ${changes} park ${pluralize(changes, 'transfer')} — so it suits older children and teenagers better than toddlers. Families with younger children usually find a 2–4 day Tsavo or Amboseli safari easier. Minimum age is not published for this programme: confirm it with our team before booking.`;
+    capsule = `This is a long safari — ${safari.days} ${pluralize(safari.days, 'day')} with ${changes} park ${pluralize(changes, 'transfer')} — so it suits older children and teenagers better than toddlers. Families with younger children usually find a 2–4 day Tsavo or Amboseli safari easier. Minimum age is not published for this programme: confirm it with our team before booking.`;
   } else if (level <= 2) {
-    capsule = `This is a shorter itinerary by duration (${safari.days} days), with ${changes} park ${pluralize(changes, 'transfer')}. Most wildlife viewing is vehicle-based, but daily driving hours have not yet been verified, so we cannot describe it as an easy family safari. Minimum age is not published for this programme; ask our team before booking.`;
+    capsule = `This is a shorter itinerary by duration (${safari.days} ${pluralize(safari.days, 'day')}), with ${changes} park ${pluralize(changes, 'transfer')}. Most wildlife viewing is vehicle-based, but daily driving hours have not yet been verified, so we cannot describe it as an easy family safari. Minimum age is not published for this programme; ask our team before booking.`;
   } else {
-    capsule = `This safari is manageable for most families with school-age children: ${safari.days} days, ${changes} park ${pluralize(changes, 'transfer')} and a moderate pace. Younger children may find the driving days long. Minimum age is not published for this programme, so confirm it with our team before booking.`;
+    capsule = `This safari is manageable for most families with school-age children: ${safari.days} ${pluralize(safari.days, 'day')}, ${changes} park ${pluralize(changes, 'transfer')} and a moderate pace. Younger children may find the driving days long. Minimum age is not published for this programme, so confirm it with our team before booking.`;
   }
   const points = [
     `Daily rhythm: ${safari.days} ${pluralize(safari.days, 'day')}, with ${changes} park ${pluralize(changes, 'transfer')} and early starts for game drives.`,
@@ -480,7 +480,7 @@ function mobilitySection(safari: Safari): ProgramGuide['mobility'] {
   const changes = transfers(safari);
   let capsule: string;
   if (level >= 4 || changes >= 4) {
-    capsule = `Older travellers in reasonable health do this safari, but it is not a gentle itinerary: ${safari.days} days, ${changes} park transfers and long days in a 4x4. Guests with limited mobility should ask us to check each lodge for step-free access and bathroom adaptations before booking.`;
+    capsule = `Older travellers in reasonable health do this safari, but it is not a gentle itinerary: ${safari.days} ${pluralize(safari.days, 'day')}, ${changes} park transfers and long days in a 4x4. Guests with limited mobility should ask us to check each lodge for step-free access and bathroom adaptations before booking.`;
   } else {
     capsule = `This is a vehicle-based safari with relatively little walking, which suits many older travellers. The main practical questions are the height of the 4x4 step, the distance from the vehicle to the room and whether the lodge has ground-floor rooms. We check those per lodge before confirming.`;
   }
@@ -565,7 +565,7 @@ function faqsFor(safari: Safari, guide: Omit<ProgramGuide, 'faqs'>): GuideFaq[] 
     },
     {
       q: `Which parks are included in the ${safari.name}?`,
-      a: `The listed route visits ${safari.parks.join(', ')} over ${safari.days} days and ${safari.nights} nights.`,
+      a: `The listed route visits ${safari.parks.join(', ')} over ${safari.days} ${pluralize(safari.days, 'day')} and ${safari.nights} nights.`,
     },
     {
       q: `Which accommodation is listed for this safari?`,
