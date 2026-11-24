@@ -538,7 +538,7 @@ function healthSection(safari: Safari, region: Region): ProgramGuide['health'] {
   const highland = region === 'northern' || region === 'uganda-rwanda';
   const points = [
     'Malaria: the CDC advises travellers to Kenya to take prescription malaria prophylaxis for all areas below 2,500 m, including the game parks. Start and finish dates depend on the medicine your doctor chooses.',
-    'Yellow fever: NaTHNaC recommends yellow fever vaccination from 9 months of age for travellers to Tsavo East, Tsavo West, the Masai Mara and Lake Nakuru. Kenya can require proof of vaccination if you arrive from a country with yellow-fever risk, so carry your certificate.',
+    'Yellow fever: NaTHNaC recommends yellow fever vaccination from 9 months of age for travellers to Tsavo East, Tsavo West, the Masai Mara and Lake Nakuru. Kenya can require proof of vaccination if you arrive from a country with yellow-fever risk, so carry your certificate. This vaccination guidance is separate from the safari programme minimum booking age, which must be confirmed with our team.',
     'Routine vaccinations: be up to date with MMR, diphtheria-tetanus-polio and hepatitis A; hepatitis B, typhoid and rabies are worth discussing with a travel clinic for longer trips.',
     'Food and water: drink sealed or filtered water, avoid ice from unknown sources, and eat fruit you have peeled yourself.',
     'Insect protection: repellent containing 20% or more DEET, long sleeves and trousers after dusk, and a mosquito net where the lodge provides one.',
