@@ -62,4 +62,5 @@ Robots rules are crawl guidance, not access control. Keep authentication and aut
 - [ ] After those checks pass, resubmit `https://www.bahariasilisafaris.co.ke/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
 - [ ] Confirm the host/WAF does not challenge Googlebot, Bingbot, OAI-SearchBot, ChatGPT-User, PerplexityBot, or other approved search crawlers. The repository cannot verify dashboard bot-protection settings.
 
+- [ ] Review and approve the Safari Trip Builder's default destination rates and currency conversion settings. The builder labels its result as an estimate, but the fallback rates must be owner-approved or the public estimate flow should be disabled until approved.
 - [ ] Confirm the public phone and WhatsApp number. A previous business brief and the current structured-data number differ; keep the existing live contact values until the owner confirms the correct public number.
