@@ -305,11 +305,8 @@ function listMonths(months: MonthRating[], rating: SeasonRating): string {
   return `${picked.slice(0, -1).join(', ')} and ${picked[picked.length - 1]}`;
 }
 
-function paceLabel(level: number): string {
-  if (level <= 2) return 'Easy — mostly seated game drives';
-  if (level === 3) return 'Moderate — several transfers and early starts';
-  if (level === 4) return 'Active — long driving days between parks';
-  return 'Demanding — long days, many park transfers and early starts';
+function paceLabel(_level: number): string {
+  return 'Daily driving hours have not been verified — ask before booking';
 }
 
 function endpoints(safari: Safari): { start: string; end: string } {
