@@ -117,7 +117,8 @@ export default function SafariDetailEnhanced({ safari: initialSafari, slug, guid
         <a href="#itinerary" className="rounded-lg px-3 py-2 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">{tt.itinerary}</a>
         <a href="#cost" className="rounded-lg px-3 py-2 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">{tt.included}</a>
         <a href="#best-time" className="rounded-lg px-3 py-2 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">{tt.bestTimeTitle}</a>
-        <a href="#packing" className="rounded-lg px-3 py-2 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">{tt.packing}</a>
+        <a href="#prepare" className="rounded-lg px-3 py-2 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">{tt.packing}</a>
+        <a href="#who-its-for" className="rounded-lg px-3 py-2 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">Who it suits</a>
         <a href="#faq" className="rounded-lg px-3 py-2 font-inter text-sm font-semibold text-ocean-700 hover:bg-ocean-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">FAQs</a>
       </nav>
       <section id="itinerary" className="mb-10 scroll-mt-28">
