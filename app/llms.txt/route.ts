@@ -23,7 +23,7 @@ export function GET() {
     '> Kenya safari and coast travel company based in Watamu, Kenya. Private safaris from the coast to Tsavo, Amboseli, Taita Hills, the Masai Mara and the Rift Valley, plus day excursions and airport transfers. Prices are quoted per trip.',
   );
   lines.push('');
-  lines.push('Contact: +254 101 923 355 (call or WhatsApp) · bahariasilisafaris@gmail.com · Watamu, Kenya');
+  lines.push('Contact: +254 101 923 355 (call or WhatsApp) · info@bahariasilisafaris.co.ke · Watamu, Kenya');
   lines.push('');
   lines.push('Every program page below has an answer-first HTML page and a Markdown version at /programs/{slug}.');
   lines.push('');
