@@ -17,14 +17,14 @@ export interface HubGuide {
   h1: string;
   description: string;
   answerCapsule: string;
-  updated: string;
+  lastReviewedAt?: string;
+  lastReviewedBy?: string;
   intro: string[];
   sections: GuideSection[];
   /** Destination slugs used to surface relevant programs on the guide page. */
   destinationSlugs: string[];
 }
 
-const UPDATED = '2026-11-18';
 
 export const hubGuides: HubGuide[] = [
   {
@@ -35,7 +35,6 @@ export const hubGuides: HubGuide[] = [
       'How Kenya safari prices are built, what changes the number, what is normally included and how to compare quotes from Watamu, Tsavo, Amboseli and the Masai Mara.',
     answerCapsule:
       'A Kenya safari is priced per trip, not per seat. The number depends on the number of days and park fees, the lodge tier, how many travellers share the vehicle and guide, the season and children’s ages. Bahari Asili quotes each itinerary individually and sends a written breakdown before you commit.',
-    updated: UPDATED,
     intro: [
       'Kenya safari pricing looks opaque because almost every operator quotes privately. Two travellers can compare the same four-day Tsavo itinerary and see very different totals, not because one is a bargain, but because the two quotes contain different lodges, different park-fee assumptions and different vehicle arrangements.',
       'This page explains how the price is put together, so you can read a quote properly and compare like with like. It deliberately does not publish a from-price: Bahari Asili has not reviewed a fixed price list for publication, and an invented number would be worse than no number.',
@@ -95,9 +94,9 @@ export const hubGuides: HubGuide[] = [
         ],
       },
       {
-        heading: 'Owner action: what should be published next',
+        heading: 'How to get an accurate safari quote',
         paragraphs: [
-          'TODO(owner): approve and publish a reviewed from-price per program, with currency, per-person sharing basis and the date the price was last checked. Once that exists, every program page, the OTA listings and the structured data can carry the same figure. Until then this site correctly states that prices are quoted per trip, and no offer or price is emitted in structured data.',
+          'Bahari Asili quotes each itinerary individually, based on travel dates, route, accommodation and group size. Ask for a dated written quote with an itemised breakdown before you commit. The current website price basis is quoted per trip; no fixed from-price is published.',
         ],
       },
     ],
@@ -111,7 +110,6 @@ export const hubGuides: HubGuide[] = [
       'Kenya’s two rainy seasons and two dry seasons, month by month, and how they affect safari viewing in Tsavo, Amboseli and the Mara plus beach time in Watamu.',
     answerCapsule:
       'Kenya has two dry seasons and two rainy seasons. June–October and January–February are the most reliable for safari, when animals gather near water. The long rains fall around March–May and the short rains around October–December, heaviest in November. The coast is best from December to March.',
-    updated: UPDATED,
     intro: [
       'Kenya sits on the equator, so the year turns on rain rather than temperature. The Kenya Meteorological Department describes a long-rains season around March–May and a short-rains season around October–December, with dry spells from June to October and January to February.',
       'That national pattern is a starting point, not a guarantee. The coast, the highlands and the Mara each behave differently, and the rains start and stop on different dates each year.',
@@ -180,7 +178,6 @@ export const hubGuides: HubGuide[] = [
       'What to check before booking a Kenya safari with young children, teenagers, older parents or a guest with limited mobility, including driving days, vehicle access, malaria and lodge layout.',
     answerCapsule:
       'Most children over about six and most older travellers in reasonable health manage a short Kenya safari well, because game viewing happens seated in the vehicle. The real constraints are long driving days, the height of the 4x4 step, malaria precautions and lodge layout. Ask for those four things to be checked before booking.',
-    updated: UPDATED,
     intro: [
       'A safari is more accessible than it looks: you spend most of the day seated in a vehicle, and lodges are used to hosting families and older guests. The difficulties are practical, not adventurous — a long transfer, a high step into a 4x4, a room a five-minute walk from the restaurant, or a child who is bored by day three.',
       'This page sets out what actually matters, and what Bahari Asili can and cannot yet confirm. Where a policy has not been published, it says so instead of guessing.',
@@ -236,9 +233,9 @@ export const hubGuides: HubGuide[] = [
         },
       },
       {
-        heading: 'Owner action: what needs publishing',
+        heading: 'What should be confirmed before booking?',
         paragraphs: [
-          'TODO(owner): publish a minimum-age policy, child-seat policy, per-day driving times and an accessibility statement for each program and listed lodge (step height, step stool, ground-floor rooms, bathroom type). The program guides currently state that these values are not published rather than inventing them.',
+          'Before booking, ask the team to confirm the minimum age, child-seat availability, approximate driving time for each day, vehicle step height and the room access details at your selected lodge. These details are not yet published for each individual program, so they should be confirmed in writing for your dates.',
         ],
       },
     ],
@@ -252,7 +249,6 @@ export const hubGuides: HubGuide[] = [
       'A practical Kenya safari packing list by category: clothing colours and layers, footwear, sun and insect protection, documents, medication, camera gear, power adapters and what not to bring.',
     answerCapsule:
       'Pack light neutral-coloured layers for hot days and cool early mornings, closed-toe shoes, high-factor sunscreen, a DEET-based repellent, a hat, your medication, binoculars, a camera with spare batteries and an English Type G adapter. Use a soft bag rather than a hard case, and leave drones at home.',
-    updated: UPDATED,
     intro: [
       'Safari packing is simpler than most lists suggest. You need fewer clothes than you think, because lodges offer same-day laundry, and more sun and insect protection than you think, because game drives happen at the hottest and buggiest hours.',
       'This list is written for a Kenya safari from Watamu, including Tsavo, Amboseli, Taita Hills, the Rift Valley and the Masai Mara. Each program page repeats the same list, adapted to its parks and season.',
