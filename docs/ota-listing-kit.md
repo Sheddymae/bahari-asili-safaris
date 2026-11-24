@@ -3553,7 +3553,7 @@ Walk through the excavated remains of Gede, a Swahili trading town abandoned in 
 
 **50-word description**
 
-Sail along the Watamu coastline aboard a traditional East African dhow, timed to meet the sunset. The trip includes the dhow, crew, soft drinks and snacks, with views across the Indian Ocean at golden hour. Departure time shifts with the season; your host confirms pickup time nearer the date.
+Sail along the Watamu coastline aboard a traditional East African dhow, timed to meet the sunset. The trip includes the dhow, crew, soft drinks and snacks, with views across the Indian Ocean at golden hour. Departure time shifts with the season; your host confirms the exact pickup time nearer the date.
 
 **Highlights**
 - Traditional East African dhow
