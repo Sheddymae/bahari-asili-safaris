@@ -5,6 +5,7 @@ import { registerInvoiceFont } from './invoice-font';
 import { generateQrPngDataUrl } from './qr';
 import { COMPANY, loadBrandLogo, drawBrandLogo } from './pdf-brand';
 import { loadBrandStamp, drawStamp } from './pdf-stamp';
+import { durationLabel } from './format';
 
 const quotationExtra: Record<Locale, {
   title: string; ref: string; validUntil: string; issueDate: string; estimateNotice: string;
