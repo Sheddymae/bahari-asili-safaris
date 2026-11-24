@@ -7,6 +7,7 @@ import { destinations } from '@/lib/destinations-data';
 import SafariDetailClient from '@/components/SafariDetailEnhanced';
 import ProgramGuideSections from '@/components/ProgramGuideSections';
 import ProgramStructuredData from '@/components/ProgramStructuredData';
+import { cleanMetaDescription, pluralize } from '@/lib/format';
 
 export function generateStaticParams() {
   return safaris.map((s) => {
@@ -24,21 +25,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const managed = await getPublicSafaris('en');
   const safari = managed.find((s) => s.id === slug) || safaris.find((s) => s.id === slug);
-  if (!safari) return { title: 'Safari not found | Bahari Asili Safaris' };
+  if (!safari) return { title: 'Safari not found' };
 
-  const title = `${safari.name} | ${safari.days} Day Safari | Bahari Asili Safaris`;
-  const description = `${safari.tagline}. ${safari.days} days / ${safari.nights} nights visiting ${safari.parks.join(', ')}. Costs, best months, suitability for children and older travellers, packing list and health advice.`;
+  const title = `${safari.name} | ${safari.days} ${pluralize(safari.days, 'day')} Safari`;
+  const description = cleanMetaDescription(`${safari.tagline}. ${safari.days} ${pluralize(safari.days, 'day')} / ${safari.nights} ${pluralize(safari.nights, 'night')} visiting ${safari.parks.join(', ')}. Explore the itinerary, inclusions, best travel months and practical planning advice.`);
+  const image = safari.image ? [{ url: safari.image, alt: safari.name }] : undefined;
 
   return {
     title,
-    description,` },
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      url: `/safaris/${encodeURIComponent(safari.id)}`,
-      images: safari.image ? [safari.image] : undefined,
-    },
+    description,
+    openGraph: { title, description, type: 'website', url: `/safaris/${encodeURIComponent(safari.id)}`, images: image },
+    twitter: { card: 'summary_large_image', title, description, images: safari.image ? [safari.image] : undefined },
   };
 }
 
