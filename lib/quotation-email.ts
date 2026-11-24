@@ -160,7 +160,7 @@ export async function sendQuotationEmail(quotation: Quotation, createdDate: stri
     return false;
   }
   const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <booking@bahariasilisafaris.co.ke>';
-  if (sender.includes('booking@bahariasilisafaris.co.ke')) {
+  if (sender.toLowerCase().includes('@resend.dev')) {
     console.warn('sendQuotationEmail: EMAIL_SENDER is still Resend\'s sandbox address — it can only deliver to the Resend account\'s own signup email. Verify a domain at https://resend.com/domains and set EMAIL_SENDER to an address on it.');
   }
   const html = buildQuotationEmailHtml({ ...quotation, createdDate });
