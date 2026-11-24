@@ -13,8 +13,6 @@ import { DEFAULT_INCLUDED, DEFAULT_EXCLUDED, type Safari } from './tours-data';
  * the guide says so and the owner TODO is listed in the report.
  */
 
-export const GUIDE_REVIEWED = '2026-11-18';
-
 export type SeasonRating = 'Excellent' | 'Good' | 'Fair' | 'Not ideal';
 
 export interface MonthRating {
@@ -49,7 +47,6 @@ export interface ProgramGuide {
   priceBasis: string;
   priceFrom: number | null;
   currency: string;
-  priceLastReviewed: string;
   answerCapsule: string;
   quickFacts: { label: string; value: string }[];
   cost: {
@@ -75,7 +72,6 @@ export interface ProgramGuide {
     sources: { label: string; url: string }[];
   };
   faqs: GuideFaq[];
-  reviewed: string;
 }
 
 type Region =
@@ -613,7 +609,6 @@ export function buildProgramGuide(safari: Safari): ProgramGuide {
     priceBasis: 'Quoted per trip — not per seat; no published from-price',
     priceFrom: null,
     currency: 'USD',
-    priceLastReviewed: GUIDE_REVIEWED,
     answerCapsule: answerCapsule(safari, region, bestMonths),
     quickFacts: [
       { label: 'Duration', value: `${safari.days} day${safari.days === 1 ? '' : 's'} / ${safari.nights} night${safari.nights === 1 ? '' : 's'}` },
@@ -631,7 +626,6 @@ export function buildProgramGuide(safari: Safari): ProgramGuide {
     mobility,
     packing,
     health,
-    reviewed: GUIDE_REVIEWED,
   };
 
   return { ...base, faqs: faqsFor(safari, base) };
