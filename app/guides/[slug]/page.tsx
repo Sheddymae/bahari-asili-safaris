@@ -131,15 +131,13 @@ export default async function GuidePage({ params }: PageProps) {
             </section>
           ))}
 
-          <p className="mt-8 font-inter text-sm text-muted-foreground">Guide updated {guide.updated}.</p>
-
           {relatedPrograms.length > 0 && (
             <section className="mt-12 rounded-2xl border border-border bg-white p-6 shadow-card">
               <h2 className="font-poppins text-xl font-bold text-foreground">Safaris that fit this guide</h2>
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {relatedPrograms.map((program) => (
                   <li key={program.id}>
-                    <Link href={`/safaris/${program.id}`} className="font-inter text-sm font-semibold text-ocean-700 underline hover:text-ocean-800">
+                    <Link href={`/safaris/${safariRouteSlug(program)}`} className="font-inter text-sm font-semibold text-ocean-700 underline hover:text-ocean-800">
                       {program.name} — {program.days} days
                     </Link>
                   </li>
