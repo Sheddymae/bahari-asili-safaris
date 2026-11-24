@@ -14,15 +14,16 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const destination = destinations.find((d) => d.slug === slug);
-  if (!destination) return { title: 'Destination not found — Bahari Asili Safaris' };
+  if (!destination) return { title: 'Destination not found' };
 
-  const title = `${destination.name} Safaris — Bahari Asili Safaris`;
+  const title = `${destination.name} Safari Guide`;
   const description = `${destination.tagline}. Wildlife highlights, best time to visit, and safari packages to ${destination.name} from Bahari Asili Safaris.`;
 
   return {
     title,
     description,` },
     openGraph: { title, description, images: [destination.heroImage], type: 'website', url: `/destinations/${destination.slug}` },
+    twitter: { card: 'summary_large_image', title, description, images: [destination.heroImage] },
   };
 }
 
