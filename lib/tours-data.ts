@@ -685,6 +685,15 @@ export interface Excursion {
   notIncludedIt?: string[];
   goodToKnow?: string[];
   goodToKnowIt?: string[];
+  meetingPoint?: string;
+  minimumAge?: number;
+  groupSize?: string;
+  vehicleCapacity?: number;
+  cancellationPolicy?: string;
+  faqs?: { q: string; a: string }[];
+  packingText?: string;
+  lastReviewedAt?: string;
+  lastReviewedBy?: string;
   category: 'marine' | 'nature' | 'culture';
 }
 
