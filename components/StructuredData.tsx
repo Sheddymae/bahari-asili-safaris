@@ -3,7 +3,7 @@ import { SITE_URL } from '@/lib/site';
 export default function StructuredData() {
   const siteUrl = SITE_URL;
   const phone = '+254101923355';
-  const email = 'bahariasilisafaris@gmail.com';
+  const email = 'info@bahariasilisafaris.co.ke';
 
   const data = {
     '@context': 'https://schema.org',
