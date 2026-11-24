@@ -12,7 +12,7 @@ import Analytics from '@/components/Analytics';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import SessionGuard from '@/components/auth/SessionGuard';
 import { SITE_URL } from '@/lib/site';
-import { isLocale, localeAlternates } from '@/lib/i18n-routing';
+import { isLocale, localeAlternates, localizedPath } from '@/lib/i18n-routing';
 
 
 
@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const localeValue = requestHeaders.get('x-bahari-locale') || 'en';
   const locale = isLocale(localeValue) ? localeValue : 'en';
   const pathname = requestHeaders.get('x-bahari-path') || '/';
-  const canonical = new URL(pathname, SITE_URL).toString();
+  const canonical = new URL(localizedPath(pathname, locale), SITE_URL).toString();
   const openGraphLocale: Record<string, string> = {
     en: 'en_KE', it: 'it_IT', fr: 'fr_FR', es: 'es_ES',
     de: 'de_DE', ar: 'ar', zh: 'zh_CN', sw: 'sw_KE',
