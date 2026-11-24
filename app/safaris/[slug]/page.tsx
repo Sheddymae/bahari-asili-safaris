@@ -8,12 +8,13 @@ import SafariDetailClient from '@/components/SafariDetailEnhanced';
 import ProgramGuideSections from '@/components/ProgramGuideSections';
 import ProgramStructuredData from '@/components/ProgramStructuredData';
 import { cleanMetaDescription, pluralize } from '@/lib/format';
+import { findSafariByRouteSlug, safariRouteSlug } from '@/lib/safari-slugs';
 
 export function generateStaticParams() {
   return safaris.map((s) => {
     // Fails the build if any program is missing a required answer section.
     assertProgramGuide(buildProgramGuide(s));
-    return { slug: s.id };
+    return { slug: safariRouteSlug(s) };
   });
 }
 
@@ -24,9 +25,10 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const managed = await getPublicSafaris('en');
-  const safari = managed.find((s) => s.id === slug) || safaris.find((s) => s.id === slug);
+  const safari = findSafariByRouteSlug([...managed, ...safaris], slug);
   if (!safari) return { title: 'Safari not found' };
 
+  const routeSlug = safariRouteSlug(safari);
   const title = `${safari.name} | ${safari.days} ${pluralize(safari.days, 'day')} Safari`;
   const description = cleanMetaDescription(`${safari.tagline}. ${safari.days} ${pluralize(safari.days, 'day')} / ${safari.nights} ${pluralize(safari.nights, 'night')} visiting ${safari.parks.join(', ')}. Explore the itinerary, inclusions, best travel months and practical planning advice.`);
   const image = safari.image ? [{ url: safari.image, alt: safari.name }] : undefined;
@@ -34,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
-    openGraph: { title, description, type: 'website', url: `/safaris/${encodeURIComponent(safari.id)}`, images: image },
+    openGraph: { title, description, type: 'website', url: `/safaris/${encodeURIComponent(routeSlug)}`, images: image },
     twitter: { card: 'summary_large_image', title, description, images: safari.image ? [safari.image] : undefined },
   };
 }
@@ -47,7 +49,7 @@ export default async function SafariDetailPage({ params }: PageProps) {
   const safari = managed.find((s) => s.id === slug) || safaris.find((s) => s.id === slug);
   if (!safari) return <SafariDetailClient safari={null} slug={slug} />;
 
-  const guide = buildProgramGuide(safari);
+  const guide = { ...buildProgramGuide(safari), slug: safariRouteSlug(safari) };
   assertProgramGuide(guide);
 
   const mappedSlugs = getRegionalSafariDestinationSlugs(safari.id);
@@ -61,7 +63,7 @@ export default async function SafariDetailPage({ params }: PageProps) {
       <ProgramStructuredData guide={guide} safari={safari} />
       <SafariDetailClient
         safari={safari}
-        slug={slug}
+        slug={safari.id}
         guideSlot={<ProgramGuideSections guide={guide} destinationLinks={destinationLinks} />}
       />
     </>
