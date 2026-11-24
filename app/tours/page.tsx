@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import ToursPageClient from './ToursPageClient';
 import { safaris, excursions } from '@/lib/safari-catalogue';
+import { safariRouteSlug } from '@/lib/safari-slugs';
 
 export const metadata: Metadata = {
   title: 'Kenya Safaris & Day Excursions — Tsavo, Amboseli, Masai Mara',
@@ -32,7 +33,7 @@ export default function ToursPage() {
           <ul>
             {safaris.map((safari) => (
               <li key={safari.id}>
-                <Link href={`/safaris/${encodeURIComponent(safari.id)}`}>
+                <Link href={`/safaris/${encodeURIComponent(safariRouteSlug(safari))}`}>
                   {safari.name} — {safari.days} day safari
                 </Link>
               </li>
