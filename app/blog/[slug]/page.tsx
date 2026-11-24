@@ -20,14 +20,15 @@ async function getPost(slug: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) return { title: 'Article not found — Bahari Asili Safaris' };
+  if (!post) return { title: 'Article not found' };
   const description = post.seo_description || post.excerpt || undefined;
+  const pageTitle = (post.seo_title || post.title).replace(/\\s*[|—–-]\\s*Bahari Asili Safaris\\s*$/i, '').trim();
   const canonical = `/blog/${encodeURIComponent(post.slug)}`;
   return {
-    title: post.seo_title || post.title,
+    title: pageTitle,
     description,
     openGraph: {
-      title: post.title,
+      title: pageTitle,
       description,
       type: 'article',
       url: canonical,
