@@ -37,10 +37,9 @@ export interface Safari {
   priceLastReviewedAt?: string;
 }
 
-// Per-person pricing is quote-based (varies by group size and dates), so we
-// show a tier badge instead of a number. If a safari doesn't set `priceTier`
-// explicitly, we derive one from its existing `comfortLevel` (1-5) so every
-// safari gets a sensible badge with zero extra data entry.
+// Legacy comfort and price-tier fields are retained for backwards compatibility
+// with existing catalogue/admin records. Do not display inferred price tiers:
+// the public pricing basis is quoted per trip until the owner approves figures.
 export function getPriceTier(safari: Pick<Safari, 'priceTier' | 'comfortLevel'>): 'budget' | 'mid-range' | 'luxury' {
   if (safari.priceTier) return safari.priceTier;
   const c = safari.comfortLevel ?? 3;
