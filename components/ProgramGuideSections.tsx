@@ -122,6 +122,7 @@ export default function ProgramGuideSections({
         <p className="mt-3 font-inter text-xs text-muted-foreground">{bestTime.sourceNote}</p>
       </Section>
 
+      <div id="who-its-for" className="grid gap-6 md:grid-cols-2 scroll-mt-28">
       <Section id="with-children" heading={`Is the ${guide.name} suitable for children?`}>
         <Capsule>{kids.capsule}</Capsule>
         <ul className="list-disc space-y-2 pl-5">
@@ -135,7 +136,11 @@ export default function ProgramGuideSections({
           {mobility.points.map((point) => <li key={point} className="font-inter text-sm leading-relaxed text-foreground">{point}</li>)}
         </ul>
       </Section>
+      </div>
 
+      <details id="prepare" className="mb-6 rounded-2xl border border-border bg-white p-5 shadow-card scroll-mt-28">
+        <summary className="cursor-pointer font-poppins text-xl font-bold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ocean-600">Prepare: packing, health and travel insurance</summary>
+        <div className="mt-4">
       <Section id="packing" heading={`What should I pack for the ${guide.name}?`}>
         <Capsule>{packing.capsule}</Capsule>
         <div className="grid gap-5 sm:grid-cols-2">
@@ -171,6 +176,8 @@ export default function ProgramGuideSections({
           General guidance only, not medical advice. Confirm vaccinations, malaria tablets and entry requirements with a travel health professional and the official Kenya eTA portal.
         </p>
       </Section>
+        </div>
+      </details>
 
       <Section id="faq" heading={`${guide.name} — frequently asked questions`}>
         <div className="divide-y divide-border">
