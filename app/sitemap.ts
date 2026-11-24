@@ -69,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticRoutes.map((path) => routeEntry(path)),
     ...publicSafaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safariRouteSlug(safari))}`)),
     ...publishedBlogPosts.map((post) =>
-      routeEntry(`/blog/${encodeURIComponent(post.slug)}`, post.updated_at || post.published_at || undefined),
+      routeEntry(`/blog/${encodeURIComponent(post.slug)}`, post.updated_at || undefined),
     ),
     ...hubGuides.map((guide) => routeEntry(`/guides/${guide.slug}`, guide.lastReviewedAt)),
     ...destinations.map((destination) => routeEntry(`/destinations/${encodeURIComponent(destination.slug)}`)),
