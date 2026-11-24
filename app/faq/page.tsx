@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/faq',
   },
+  twitter: { card: 'summary', title: 'FAQ — Bahari Asili Safaris', description: 'Common questions about booking, safaris, families, transport, payment and cancellations.' },
 };
 
 export default function FaqPage() {
