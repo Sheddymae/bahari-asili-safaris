@@ -4,6 +4,8 @@ export default function StructuredData() {
   const siteUrl = SITE_URL;
   const phone = '+254101923355';
   const email = 'info@bahariasilisafaris.co.ke';
+  const bookingEmail = 'booking@bahariasilisafaris.co.ke';
+  const helpEmail = 'help@bahariasilisafaris.co.ke';
 
   const data = {
     '@context': 'https://schema.org',
@@ -30,13 +32,28 @@ export default function StructuredData() {
           { '@type': 'Country', name: 'Tanzania' },
         ],
         knowsLanguage: ['en', 'it', 'fr', 'es', 'de', 'ar', 'zh', 'sw'],
-        contactPoint: {
-          '@type': 'ContactPoint',
-          telephone: phone,
-          email,
-          contactType: 'customer service',
-          availableLanguage: ['English', 'Italian', 'French', 'Spanish', 'German', 'Arabic', 'Chinese', 'Swahili'],
-        },
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            telephone: phone,
+            email: bookingEmail,
+            contactType: 'reservations and quotations',
+            availableLanguage: ['English', 'Italian', 'French', 'Spanish', 'German', 'Arabic', 'Chinese', 'Swahili'],
+          },
+          {
+            '@type': 'ContactPoint',
+            telephone: phone,
+            email: helpEmail,
+            contactType: 'customer support',
+            availableLanguage: ['English', 'Italian', 'French', 'Spanish', 'German', 'Arabic', 'Chinese', 'Swahili'],
+          },
+          {
+            '@type': 'ContactPoint',
+            email,
+            contactType: 'general enquiries',
+            availableLanguage: ['English', 'Italian', 'French', 'Spanish', 'German', 'Arabic', 'Chinese', 'Swahili'],
+          },
+        ],
       },
       {
         '@type': 'WebSite',
