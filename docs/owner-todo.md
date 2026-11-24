@@ -5,7 +5,7 @@ These steps require access to production hosting and search-engine accounts. Rep
 ## Before the next production deployment
 
 - [ ] In Vercel Project → Settings → Environment Variables, set `NEXT_PUBLIC_SITE_URL` for Production to `https://www.bahariasilisafaris.co.ke`.
-- [ ] Confirm both `bahariasilisafaris.co.ke` and `www.bahariasilisafaris.co.ke` are attached to the production project. Configure apex-to-www redirect in Vercel as a platform-level backup; middleware also redirects production aliases.
+- [ ] Confirm both `bahariasilisafaris.co.ke` and `www.bahariasilisafaris.co.ke` are attached to the production project. Configure apex-to-www and HTTP-to-HTTPS redirects in Vercel Domains. Middleware intentionally does not duplicate host redirects, to avoid redirect loops.
 - [ ] Confirm the production deployment is marked as production (`VERCEL_ENV=production`). Preview and development deployments intentionally disallow all crawling and send `X-Robots-Tag: noindex, nofollow`.
 - [ ] Review Vercel Firewall, bot protection, rate limits, geo restrictions, and external WAF/CDN rules. Do not challenge or block ordinary public-page requests from Googlebot, Bingbot, Applebot, OAI-SearchBot, ChatGPT-User, Perplexity, or Claude search/user agents. Verify with real requests after deployment; repository code cannot inspect dashboard rules.
 
@@ -34,11 +34,11 @@ Robots rules are crawl guidance, not access control. Keep authentication and aut
 - [ ] Confirm minimum ages, child-seat policy, vehicle capacity, maximum group size, and actual pickup areas / meeting points.
 - [ ] Confirm the exact inclusions and exclusions for each product; shared defaults must be checked against actual supplier arrangements.
 - [ ] Confirm cancellation and deposit terms for each product and reconcile them with public terms before publishing OTA listings.
-- [ ] Confirm that the current public price basis is “quoted per trip”. If a different basis or a starting price is approved, provide the amount, currency, season dates, sharing basis and human review date.
+- [ ] Keep public safari pages on the “quoted per trip” basis until the owner approves fixed amounts. For any approved price, provide amount, currency, season dates, sharing basis and human review date.
 - [ ] Supply a genuine `lastReviewedAt` date (and reviewer if desired) for each safari, excursion and guide. No review date is currently shown on program pages because the former shared date was not verified.
 - [ ] Supply the TRA licence number if the company holds a licence. Do not display a number until supplied.
 - [ ] Confirm whether the public phone and WhatsApp number currently in the repository are correct. They differ from the WhatsApp number previously supplied in project correspondence; no number was changed in this pass.
-- [ ] Approve the proposed descriptive URL map in `docs/redirects.md`. Redirects are documented but not active; preserve existing catalogue IDs for booking records during implementation.
+- [ ] Review the descriptive URL map in `docs/redirects.md`; redirects are implemented in middleware, but live 301/no-chain verification remains pending. Preserve catalogue IDs for booking records.
 - [ ] Decide whether incomplete programme pages should remain indexable. No noindex rules were added without approval.
 
 ## Email and deliverability
@@ -63,4 +63,4 @@ Robots rules are crawl guidance, not access control. Keep authentication and aut
 - [ ] Confirm the host/WAF does not challenge Googlebot, Bingbot, OAI-SearchBot, ChatGPT-User, PerplexityBot, or other approved search crawlers. The repository cannot verify dashboard bot-protection settings.
 
 - [ ] Review and approve the Safari Trip Builder's default destination rates and currency conversion settings. The builder labels its result as an estimate, but the fallback rates must be owner-approved or the public estimate flow should be disabled until approved.
-- [ ] Confirm the public phone and WhatsApp number. A previous business brief and the current structured-data number differ; keep the existing live contact values until the owner confirms the correct public number.
+- [ ] Vercel's latest automatic build check reports `build-rate-limit`; retry the production build and complete the verification checklist after the platform limit clears. No successful deployment has been verified in this pass.
