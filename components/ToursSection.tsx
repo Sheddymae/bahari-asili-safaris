@@ -9,6 +9,7 @@ import { safaris } from '@/lib/safari-catalogue';
 import type { Safari, SafariTab } from '@/lib/tours-data';
 import { DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from '@/lib/tours-data';
 import { getLocalizedSafari, type SafariLocale } from '@/lib/safari-content-i18n';
+import { durationLabel } from '@/lib/format';
 
 type TabKey = SafariTab | 'multiday';
 type ToursVariant = 'home' | 'full';
@@ -27,7 +28,7 @@ function SafariCard({ safari, t, locale, onBook }: { safari: Safari; t: any; loc
     <article className="bg-white rounded-2xl overflow-hidden shadow-card border border-border flex flex-col h-full">
       <div className="relative h-52"><Image src={safari.image} alt={s.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" /><div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />{safari.popular && <span className="absolute top-3 left-3 bg-safari-500 text-white rounded-full px-3 py-1 font-inter font-bold text-[10px] tracking-wide uppercase">{t.popular}</span>}<div className="absolute bottom-3 left-4 right-4"><h3 className="font-poppins font-bold text-white text-lg leading-tight">{s.name}</h3><p className="font-inter text-white text-xs mt-1">{s.tagline}</p></div></div>
       <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-center justify-between gap-2 mb-4"><span className="inline-flex items-center gap-1.5 bg-sand-50 rounded-full px-3 py-1 font-inter text-xs text-ocean-700 font-semibold"><Clock className="w-3.5 h-3.5" />{safari.days} {t.days} / {safari.nights} {t.nights}</span></div>
+        <div className="flex items-center justify-between gap-2 mb-4"><span className="inline-flex items-center gap-1.5 bg-sand-50 rounded-full px-3 py-1 font-inter text-xs text-ocean-700 font-semibold"><Clock className="w-3.5 h-3.5" />{safari.days} {durationLabel(safari.days, 'day', locale)} / {safari.nights} {durationLabel(safari.nights, 'night', locale)}</span></div>
         <div className="mb-3"><div className="flex items-center gap-1.5 mb-1.5"><MapPin className="w-3.5 h-3.5 text-safari-500" /><span className="font-inter text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t.parks}</span></div><div className="flex flex-wrap gap-1.5">{s.parks.map((park, i) => <span key={i} className="bg-ocean-50 text-ocean-700 font-inter text-xs px-2.5 py-0.5 rounded-full border border-ocean-100">{park}</span>)}</div></div>
         <div className="flex flex-wrap gap-1.5 mb-4">{s.highlights.slice(0, 3).map((item, i) => <span key={i} className="bg-sand-50 text-foreground font-inter text-xs px-2 py-0.5 rounded-full">{item}</span>)}</div>
         <Link href={`/safaris/${safari.id}`} className="font-inter text-xs font-semibold text-ocean-700 hover:text-ocean-800 mb-4">{t.readMore} →</Link>
