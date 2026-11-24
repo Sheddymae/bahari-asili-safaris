@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, MapPin, Building2, Sun, Sunset, MoonStar, Check, ArrowLeft, CalendarClock, PawPrint, MessageCircle, Share2 } from 'lucide-react';
+import { Clock, MapPin, Building2, Sun, Sunset, MoonStar, Check, ArrowLeft, PawPrint, MessageCircle, Share2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CompactSafariCard from '@/components/CompactSafariCard';
@@ -90,7 +90,6 @@ export default function SafariDetailEnhanced({ safari: initialSafari, slug, guid
     if (destination.slug !== 'tsavo') return destination.wildlifeHighlights;
     return safari.parks.flatMap((park) => destination.wildlifeByPark?.[park] || []);
   })));
-  const faqs = relatedDestinations.flatMap(d => d.faqs);
     const firstPark = safari.parks[0] || '';
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi! I'm interested in the ${safari.name}`)}`;
   const shareSafari = async () => {
@@ -130,7 +129,7 @@ export default function SafariDetailEnhanced({ safari: initialSafari, slug, guid
       </section>
       {guideSlot}
       <div className="mt-10 bg-white rounded-2xl border border-border shadow-card p-5"><div className="flex items-center gap-1.5 mb-3"><Building2 className="w-4 h-4 text-ocean-700" /><h2 className="font-poppins font-bold text-lg text-foreground">{tt.accommodationTitle}</h2></div><div className="flex flex-wrap gap-1.5">{safari.lodges.map((lodge, i) => <span key={i} className="bg-sand-50 text-foreground font-inter text-sm px-3 py-1.5 rounded-lg border border-border">{lodge}</span>)}</div></div>
-      {relatedDestinations.length > 0 && <div className="mt-6 bg-white rounded-2xl border border-border shadow-card p-5"><div className="flex items-center gap-1.5 mb-3"><CalendarClock className="w-4 h-4 text-ocean-700" /><h2 className="font-poppins font-bold text-lg text-foreground">{tt.bestTimeTitle}</h2></div><div className="space-y-3">{relatedDestinations.map(d => <p key={d.slug} className="font-inter text-sm text-foreground leading-relaxed">{relatedDestinations.length > 1 && <span className="font-semibold">{d.name}: </span>}{d.bestSeason}</p>)}</div></div>}
+
       {wildlifeHighlights.length > 0 && <div className="mt-6 bg-white rounded-2xl border border-border shadow-card p-5"><div className="flex items-center gap-1.5 mb-3"><PawPrint className="w-4 h-4 text-ocean-700" /><h2 className="font-poppins font-bold text-lg text-foreground">{tt.wildlifeTitle}</h2></div><ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2">{wildlifeHighlights.map((w, i) => <li key={i} className="flex items-start gap-2"><span className="w-1.5 h-1.5 bg-safari-500 rounded-full flex-shrink-0 mt-2" /><span className="font-inter text-sm text-foreground leading-relaxed">{w}</span></li>)}</ul></div>}
       
       {relatedSafaris.length > 0 && <section className="mt-12"><div className="flex items-end justify-between gap-4 mb-5"><h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground">{detail.youMightAlsoLike}</h2><Link href="/tours" className="font-inter text-sm font-semibold text-ocean-700 hover:text-ocean-800">{tt.backToAll} →</Link></div><div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{relatedSafaris.map(item => <CompactSafariCard key={item.id} safari={item} t={tt} locale={safariLocale} />)}</div></section>}
