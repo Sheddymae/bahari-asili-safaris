@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/about',
   },
+  twitter: { card: 'summary', title: 'About Bahari Asili Safaris', description: 'A Kenyan-owned safari operator based in Watamu, running safaris to Tsavo, Amboseli, Masai Mara and Taita Hills.' },
 };
 
 export default function AboutPage() {
