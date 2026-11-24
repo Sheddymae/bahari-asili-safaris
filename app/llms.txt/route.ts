@@ -54,7 +54,6 @@ export function GET() {
   lines.push('## Day excursions');
   lines.push('');
   excursions
-    .filter((excursion) => !excursion.id.startsWith('safari-blu-'))
     .forEach((excursion) => {
       lines.push(`- [${excursion.name}](${site}/excursions/${excursion.id}): ${excursion.description}`);
     });
