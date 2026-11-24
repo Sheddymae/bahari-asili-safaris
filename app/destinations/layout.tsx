@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/destinations',
   },
+  twitter: { card: 'summary', title: 'Kenya Safari Destinations — Bahari Asili Safaris', description: 'Explore Kenya wildlife destinations from Watamu and learn about highlights, seasons and safari options.' },
 };
  
 export default function DestinationsLayout({ children }: { children: React.ReactNode }) {
