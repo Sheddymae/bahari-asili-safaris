@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Clock, MessageCircle, ArrowUpRight } from 'lucide-react';
 import { getLocalizedSafari, type SafariLocale } from '@/lib/safari-content-i18n';
 import type { Safari } from '@/lib/tours-data';
+import { durationLabel } from '@/lib/format';
 
 export default function CompactSafariCard({ safari, t, locale }: { safari: Safari; t: any; locale: SafariLocale }) {
   const s = getLocalizedSafari(safari, locale);
@@ -24,7 +25,7 @@ export default function CompactSafariCard({ safari, t, locale }: { safari: Safar
         </div>
       </Link>
       <div className="flex flex-1 flex-col p-3.5 sm:p-4">
-        <span className="inline-flex w-fit items-center gap-1.5 bg-sand-50 rounded-full px-3 py-1 font-inter text-xs text-ocean-700 font-semibold"><Clock className="w-3.5 h-3.5" />{safari.days} {t.days} / {safari.nights} {t.nights}</span>
+        <span className="inline-flex w-fit items-center gap-1.5 bg-sand-50 rounded-full px-3 py-1 font-inter text-xs text-ocean-700 font-semibold"><Clock className="w-3.5 h-3.5" />{safari.days} {durationLabel(safari.days, 'day', locale)} / {safari.nights} {durationLabel(safari.nights, 'night', locale)}</span>
         <Link href={`/safaris/${safari.id}`} className="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-ocean-700 px-4 py-2.5 font-inter text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-ocean-800">{t.readMore}<ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></Link>
         <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center justify-center gap-1.5 text-[#168f45] text-xs font-semibold py-2"><MessageCircle className="w-3.5 h-3.5" />WhatsApp</a>
       </div>
