@@ -41,15 +41,17 @@ function Capsule({ children }: { children: React.ReactNode }) {
 export default function ProgramGuideSections({
   guide,
   destinationLinks,
+  showOverview = true,
 }: {
   guide: ProgramGuide;
   destinationLinks: { slug: string; name: string }[];
+  showOverview?: boolean;
 }) {
   const { cost, bestTime, children: kids, mobility, packing, health } = guide;
 
   return (
     <div className="program-guide">
-      <section id="overview" aria-labelledby="overview-heading" className="mb-6 rounded-2xl border border-border bg-white p-5 shadow-card sm:p-6">
+      {showOverview && <section id="overview" aria-labelledby="overview-heading" className="mb-6 rounded-2xl border border-border bg-white p-5 shadow-card sm:p-6">
         <h2 id="overview-heading" className="mb-3 font-poppins text-xl font-bold text-foreground">
           {guide.name} at a glance
         </h2>
@@ -67,7 +69,7 @@ export default function ProgramGuideSections({
             </tbody>
           </table>
         </div>
-</section>
+</section>}
 
       <Section id="cost" heading={`How much does the ${guide.name} cost?`}>
         <Capsule>{cost.capsule}</Capsule>
