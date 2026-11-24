@@ -2,12 +2,13 @@ import { safaris } from '@/lib/safari-catalogue';
 import { buildProgramGuide } from '@/lib/program-guide';
 import { programMarkdown } from '@/lib/program-markdown';
 import { SITE_URL } from '@/lib/site';
+import { findSafariByRouteSlug, safariRouteSlug } from '@/lib/safari-slugs';
 
 
 export const dynamic = 'force-static';
 
 export function generateStaticParams() {
-  return safaris.map((safari) => ({ slug: safari.id }));
+  return safaris.map((safari) => ({ slug: safariRouteSlug(safari) }));
 }
 
 /**
@@ -18,7 +19,7 @@ export function generateStaticParams() {
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const id = decodeURIComponent(slug).replace(/\.md$/i, '');
-  const safari = safaris.find((item) => item.id === id);
+  const safari = findSafariByRouteSlug(safaris, id);
 
   if (!safari) {
     return new Response('Program not found', {
@@ -27,8 +28,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
     });
   }
 
+  const routeSlug = safariRouteSlug(safari);
+  if (routeSlug !== id) {
+    return Response.redirect(new URL(`/programs/${routeSlug}.md`, SITE_URL), 301);
+  }
   const site = SITE_URL;
-  const body = programMarkdown(safari, buildProgramGuide(safari), site);
+  const guide = { ...buildProgramGuide(safari), slug: routeSlug };
+  const body = programMarkdown(safari, guide, site);
 
   return new Response(body, {
     headers: {
