@@ -86,7 +86,10 @@ export default function SafariDetailEnhanced({ safari: initialSafari, slug, guid
   const mappedDestinationSlugs = getRegionalSafariDestinationSlugs(safari.id);
   const safariDestinationSlugs: string[] = mappedDestinationSlugs.length > 0 ? mappedDestinationSlugs : safari.tabs;
   const relatedDestinations = destinations.filter(d => safariDestinationSlugs.includes(d.slug)).map(d => getLocalizedSafariDestination(d, locale));
-  const wildlifeHighlights = Array.from(new Set(relatedDestinations.flatMap(d => d.wildlifeHighlights)));
+  const wildlifeHighlights = Array.from(new Set(relatedDestinations.flatMap((destination) => {
+    if (destination.slug !== 'tsavo') return destination.wildlifeHighlights;
+    return safari.parks.flatMap((park) => destination.wildlifeByPark?.[park] || []);
+  })));
   const faqs = relatedDestinations.flatMap(d => d.faqs);
     const firstPark = safari.parks[0] || '';
   const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi! I'm interested in the ${safari.name}`)}`;
