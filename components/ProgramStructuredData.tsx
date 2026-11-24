@@ -25,7 +25,6 @@ export default function ProgramStructuredData({ guide, safari }: { guide: Progra
     description: guide.answerCapsule,
     url: pageUrl,
     inLanguage: 'en',
-    dateModified: guide.reviewed,
     touristType: [
       guide.children.capsule.includes('older children') ? 'Families with older children' : 'Families',
       'Couples',
