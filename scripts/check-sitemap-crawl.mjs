@@ -15,26 +15,26 @@ function localUrl(value) {
 }
 function normalPath(value) {
   const path = new URL(value, origin).pathname;
-  return path.length > 1 ? path.replace(/\\/$/, '') : '/';
+  return path.length > 1 ? path.replace(/\/$/, '') : '/';
 }
 function isPublicPagePath(path) {
-  if (/^\\/(api|auth|admin|dashboard|account|login|signup)(\\/|$)/.test(path)) return false;
-  if (/\\.[a-z0-9]{2,6}$/i.test(path)) return false;
+  if (/^\/(api|auth|admin|dashboard|account|login|signup)(\/|$)/.test(path)) return false;
+  if (/\.[a-z0-9]{2,6}$/i.test(path)) return false;
   return true;
 }
 function wildcardDisallows(robotsText) {
   const disallows = [];
   let inWildcardGroup = false;
-  for (const raw of robotsText.split(/\\r?\\n/)) {
+  for (const raw of robotsText.split(/\r?\n/)) {
     const line = raw.split('#')[0].trim();
     if (!line) continue;
-    const agent = line.match(/^user-agent:\\s*(.+)$/i);
+    const agent = line.match(/^user-agent:\s*(.+)$/i);
     if (agent) {
       inWildcardGroup = agent[1].trim() === '*';
       continue;
     }
     if (!inWildcardGroup) continue;
-    const rule = line.match(/^disallow:\\s*(.*)$/i);
+    const rule = line.match(/^disallow:\s*(.*)$/i);
     if (rule?.[1]) disallows.push(rule[1].trim());
   }
   return disallows;
@@ -48,7 +48,7 @@ assert.ok(!blockedPrefixes.includes('/'), 'Wildcard robots rules must not block 
 const { response: sitemapResponse, text: sitemapXml } = await fetchText(new URL('/sitemap.xml', origin));
 assert.equal(sitemapResponse.status, 200, 'sitemap.xml must return 200');
 const sitemapRaw = [
-  ...[...sitemapXml.matchAll(/<loc>(.*?)<\\/loc>/g)].map((match) => decodeXml(match[1])),
+  ...[...sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => decodeXml(match[1])),
   ...[...sitemapXml.matchAll(/<xhtml:link[^>]+href="([^"]+)"/g)].map((match) => decodeXml(match[1])),
 ];
 const sitemapUrls = [...new Map(sitemapRaw.map((url) => [localUrl(url).href, localUrl(url)])).values()];
@@ -73,7 +73,7 @@ const workers = Array.from({ length: 6 }, async () => {
         continue;
       }
       const html = await response.text();
-      for (const match of html.matchAll(/<a\\b[^>]*href=["']([^"']+)["']/gi)) {
+      for (const match of html.matchAll(/<a\b[^>]*href=["']([^"']+)["']/gi)) {
         const href = match[1].replaceAll('&amp;', '&');
         if (/^(mailto:|tel:|javascript:|data:|#)/i.test(href)) continue;
         let target;
