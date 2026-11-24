@@ -96,6 +96,11 @@ export default function ProgramGuideSections({
 
       <Section id="best-time" heading={`When is the best time to do the ${guide.name}?`}>
         <Capsule>{bestTime.capsule}</Capsule>
+        <div className="mb-4 grid grid-cols-12 gap-1" role="img" aria-label="Twelve-month seasonal rating bar">
+          {bestTime.months.map((month) => (
+            <span key={month.month} title={`${month.month}: ${month.rating}`} className={`h-3 rounded-full border ${RATING_STYLE[month.rating]}`} />
+          ))}
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left font-inter text-sm">
             <caption className="sr-only">Month-by-month season guide for the {guide.name}</caption>
