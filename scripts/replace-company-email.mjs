@@ -2,11 +2,11 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const OFFICIAL = 'bahariasilisafaris@gmail.com';
+const OFFICIAL = 'info@bahariasilisafaris.co.ke';
 const replacements = new Map([
-  ['bahariasilisafaris@gmail.com', OFFICIAL],
-  ['bahariasilisafaris@gmail.com', OFFICIAL],
-  ['bahariasilisafaris@gmail.com', OFFICIAL],
+  ['info@bahariasilisafaris.co.ke', OFFICIAL],
+  ['info@bahariasilisafaris.co.ke', OFFICIAL],
+  ['info@bahariasilisafaris.co.ke', OFFICIAL],
 ]);
 
 const binaryExtensions = new Set([
