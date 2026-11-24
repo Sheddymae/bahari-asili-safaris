@@ -8,6 +8,7 @@ import { SITE_URL } from '@/lib/site';
 import { localeAlternates } from '@/lib/i18n-routing';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { getPublicSafaris } from '@/lib/public-content';
+import { safariRouteSlug } from '@/lib/safari-slugs';
 
 
 
@@ -66,7 +67,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const entries: MetadataRoute.Sitemap = [
     ...staticRoutes.map((path) => routeEntry(path)),
-    ...publicSafaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safari.id)}`)),
+    ...publicSafaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safariRouteSlug(safari))}`)),
     ...publishedBlogPosts.map((post) =>
       routeEntry(`/blog/${encodeURIComponent(post.slug)}`, post.updated_at || post.published_at || undefined),
     ),
