@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/transfers',
   },
+  twitter: { card: 'summary', title: 'Airport & Safari Transfers — Bahari Asili Safaris', description: 'Private, air-conditioned transfers from Malindi, Mombasa and Nairobi airports, plus safari road transfers.' },
 };
 
 export default function TransfersPage() {
