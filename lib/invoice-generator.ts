@@ -7,6 +7,7 @@ import { loadBrandStamp, drawStamp } from './pdf-stamp';
 import { generateQrPngDataUrl } from './qr';
 import { safaris, excursions, DEFAULT_INCLUDED, DEFAULT_EXCLUDED } from './tours-data';
 import { getLocalizedExcursion } from './excursion-content-i18n';
+import { durationLabel } from './format';
 
 export interface InvoiceData extends Booking {
   accommodation_cost?: number;
@@ -58,7 +59,7 @@ function findTourDetails(name: string, locale: Locale): TourDocumentDetails {
   if (safari) {
     return {
       description: safari.tagline,
-      duration: `${safari.days} days / ${safari.nights} nights`,
+      duration: `${safari.days} ${durationLabel(safari.days, 'day', locale)} / ${safari.nights} ${durationLabel(safari.nights, 'night', locale)}`,
       location: 'Watamu, Kenya',
       highlights: safari.highlights || [],
       itinerary: (safari.itinerary || []).map((d) => `${d.day}: ${d.title}\nMorning: ${d.morning}\nAfternoon: ${d.afternoon}\nOvernight: ${d.overnight}`),
