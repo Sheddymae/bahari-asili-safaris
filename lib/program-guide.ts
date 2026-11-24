@@ -352,10 +352,10 @@ function cleanPackingItems(tips: string[]): string[] {
   const seen = new Set<string>();
   let hasWarmLayer = false;
   for (const raw of tips) {
-    const item = raw.trim().replace(/\\s+/g, ' ');
+    const item = raw.trim().replace(/\s+/g, ' ');
     const key = item.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     if (!item || key === 'lightweight' || key === 'comfortable clothing' || key.split(' ').length < 2) continue;
-    const isWarmLayer = /\\b(fleece|warm layer|down jacket|warm jacket)\\b/i.test(item);
+    const isWarmLayer = /\b(fleece|warm layer|down jacket|warm jacket)\b/i.test(item);
     if (isWarmLayer && hasWarmLayer) continue;
     if (seen.has(key)) continue;
     seen.add(key);
