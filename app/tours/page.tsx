@@ -12,6 +12,13 @@ export const metadata: Metadata = {
     description: 'Private and group safaris from Watamu to Tsavo, Amboseli, Masai Mara and Taita Hills, plus day excursions.',
     type: 'website',
     url: '/tours',
+    images: [{ url: '/images/safaris/safari-experience-tsavo.jpg', alt: 'Tsavo East safari from Watamu' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kenya Safaris & Excursions — Bahari Asili Safaris',
+    description: 'Private and group safaris from Watamu to Tsavo, Amboseli, Masai Mara and Taita Hills, plus day excursions.',
+    images: ['/images/safaris/safari-experience-tsavo.jpg'],
   },
 };
 
