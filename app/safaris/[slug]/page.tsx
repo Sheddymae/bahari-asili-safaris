@@ -64,7 +64,8 @@ export default async function SafariDetailPage({ params }: PageProps) {
       <SafariDetailClient
         safari={safari}
         slug={safari.id}
-        guideSlot={<ProgramGuideSections guide={guide} destinationLinks={destinationLinks} />}
+        answerCapsule={guide.answerCapsule}
+        guideSlot={<ProgramGuideSections guide={guide} destinationLinks={destinationLinks} showOverview={false} />}
       />
     </>
   );
