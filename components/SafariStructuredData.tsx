@@ -1,5 +1,6 @@
 import type { Safari } from '@/lib/tours-data';
 import { SITE_URL } from '@/lib/site';
+import { safariRouteSlug } from '@/lib/safari-slugs';
 
 
 type Props = {
@@ -9,7 +10,7 @@ type Props = {
 
 export default function SafariStructuredData({ safari, siteUrl }: Props) {
   const baseUrl = (siteUrl || SITE_URL).replace(/\/$/, '');
-  const pageUrl = `${baseUrl}/safaris/${encodeURIComponent(safari.id)}`;
+  const pageUrl = `${baseUrl}/safaris/${encodeURIComponent(safariRouteSlug(safari))}`;
   const data = {
     '@context': 'https://schema.org',
     '@type': 'TouristTrip',
