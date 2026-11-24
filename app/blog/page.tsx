@@ -3,8 +3,10 @@ import BlogContentClient from '@/components/BlogContentClient';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 
 export const metadata: Metadata = {
-  title: 'Blog — Bahari Asili Safaris',
-  description: 'Kenya travel stories, safari guides, destination advice and Bahari Asili Safaris news.',
+  title: 'Kenya Safari Blog & Travel Stories',
+  description: 'Kenya travel stories, safari guides, destination advice and practical planning ideas for your East African trip.',
+  openGraph: { title: 'Kenya Safari Blog & Travel Stories', description: 'Kenya travel stories, safari guides, destination advice and practical planning ideas for your East African trip.', type: 'website', url: '/blog' },
+  twitter: { card: 'summary', title: 'Kenya Safari Blog & Travel Stories', description: 'Kenya travel stories, safari guides, destination advice and practical planning ideas for your East African trip.' },
 };
 
 export const dynamic = 'force-dynamic';
