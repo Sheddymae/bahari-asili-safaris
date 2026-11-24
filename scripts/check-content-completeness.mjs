@@ -46,5 +46,5 @@ console.table(rows.map(({ type, item, report }) => ({
 
 const complete = rows.filter((row) => row.report.complete).length;
 const incomplete = rows.length - complete;
-console.log(`\\n${complete}/${rows.length} catalogue items complete; ${incomplete} require owner-verified content.`);
+console.log(`\n${complete}/${rows.length} catalogue items complete; ${incomplete} require owner-verified content.`);
 if (process.env.STRICT_CONTENT_COMPLETENESS === '1' && incomplete > 0) process.exit(1);
