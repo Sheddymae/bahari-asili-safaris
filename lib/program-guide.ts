@@ -438,7 +438,7 @@ function childrenSection(safari: Safari, region: Region): ProgramGuide['children
   if (long) {
     capsule = `This is a long safari — ${safari.days} days with ${changes} park transfer${changes === 1 ? '' : 's'} — so it suits older children and teenagers better than toddlers. Families with younger children usually find a 2–4 day Tsavo or Amboseli safari easier. Minimum age is not published for this programme: confirm it with our team before booking.`;
   } else if (level <= 2) {
-    capsule = `In practice this is one of the easier safaris for families: ${safari.days} days, ${changes} park transfer${changes === 1 ? '' : 's'}, mostly seated game drives and lodge-based meals. School-age children generally cope well. Minimum age is not published for this programme, so confirm it with our team before booking.`;
+    capsule = `This is a shorter itinerary by duration (${safari.days} days), with ${changes} park transfer${changes === 1 ? '' : 's'}. Most wildlife viewing is vehicle-based, but daily driving hours have not yet been verified, so we cannot describe it as an easy family safari. Minimum age is not published for this programme; ask our team before booking.`;
   } else {
     capsule = `This safari is manageable for most families with school-age children: ${safari.days} days, ${changes} park transfer${changes === 1 ? '' : 's'} and a moderate pace. Younger children may find the driving days long. Minimum age is not published for this programme, so confirm it with our team before booking.`;
   }
@@ -538,45 +538,30 @@ function healthSection(safari: Safari, region: Region): ProgramGuide['health'] {
 }
 
 function faqsFor(safari: Safari, guide: Omit<ProgramGuide, 'faqs'>): GuideFaq[] {
-  const cost = guide.cost;
-  const best = guide.bestTime;
-  const children = guide.children;
-  const mobility = guide.mobility;
-  const packing = guide.packing;
   return [
     {
       q: `How much does the ${safari.name} cost?`,
-      a: `It is quoted per trip, not per seat. Your price depends on dates, lodge tier, group size and children’s ages, and Bahari Asili sends a written breakdown before you commit. High season is roughly July–October and Christmas; April–May and November are usually the lowest-priced months.`,
+      a: `The safari is quoted per trip, not per seat. The quote depends on travel dates, accommodation choice, group size and children’s ages. Ask for a written quote and itemised breakdown before confirming.`,
     },
     {
-      q: `What is included in the ${safari.name}?`,
-      a: cost.includes.length
-        ? `Included: ${cost.includes.join('; ')}. Not included: ${cost.excludes.join('; ')}.`
-        : 'Ask for the current inclusion list with your quote; it is confirmed in writing before booking.',
+      q: `Where does the ${safari.name} start and finish?`,
+      a: `The listed itinerary starts in ${guide.startPoint} and finishes in ${guide.endPoint}. Confirm your exact hotel or meeting-point pickup with the team before booking.`,
     },
     {
-      q: `What is the best time of year for the ${safari.name}?`,
-      a: `${best.headline} ${best.capsule}`,
+      q: `Which parks are included in the ${safari.name}?`,
+      a: `The listed route visits ${safari.parks.join(', ')} over ${safari.days} days and ${safari.nights} nights.`,
     },
     {
-      q: `Is the ${safari.name} suitable for children?`,
-      a: `${children.capsule} ${children.points[0]}`,
+      q: `Which accommodation is listed for this safari?`,
+      a: safari.lodges.length ? `The itinerary lists ${safari.lodges.join(', ')}. Confirm the final lodge, room category and availability in your written quote.` : 'Accommodation is confirmed in the written quote before booking.',
     },
     {
-      q: `Can older travellers or guests with limited mobility do this safari?`,
-      a: `${mobility.capsule} ${mobility.points[2]}`,
+      q: `Will I definitely see the Big Five on the ${safari.name}?`,
+      a: `No wildlife sighting can be guaranteed. Your guide will look for wildlife in the parks on the route, but sightings depend on animal movement, season and conditions.`,
     },
     {
-      q: `What should I pack for the ${safari.name}?`,
-      a: `${packing.capsule} Key items: ${packing.groups.flatMap((g) => g.items).slice(0, 8).join(', ')}.`,
-    },
-    {
-      q: `Is the ${safari.name} safe, and what health precautions do I need?`,
-      a: guide.health.capsule,
-    },
-    {
-      q: `How many days is the ${safari.name}, and where does it start and finish?`,
-      a: `It runs for ${safari.days} day${safari.days === 1 ? '' : 's'} and ${safari.nights} night${safari.nights === 1 ? '' : 's'}, starting in ${guide.startPoint} and finishing in ${guide.endPoint}. It visits ${safari.parks.join(', ')}.`,
+      q: `Is the ${safari.name} private or a group departure?`,
+      a: guide.groupType,
     },
   ];
 }
