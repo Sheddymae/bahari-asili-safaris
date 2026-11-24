@@ -24,7 +24,7 @@ export function findSafariByRouteSlug<T extends { id: string }>(items: readonly 
 }
 
 export function descriptiveSafariPath(pathname: string): string | null {
-  const match = pathname.match(/^\\/safaris\\/([^/]+)\\/?$/);
+  const match = pathname.match(/^\/safaris\/([^/]+)\/?$/);
   if (!match) return null;
   let legacyId = match[1];
   try { legacyId = decodeURIComponent(legacyId); } catch { /* keep the original segment */ }
