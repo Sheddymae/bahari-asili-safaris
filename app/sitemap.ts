@@ -3,7 +3,7 @@ import { safaris } from '@/lib/safari-catalogue';
 import { excursions as staticExcursions } from '@/lib/tours-data';
 import { destinations } from '@/lib/destinations-data';
 import { hubGuides } from '@/lib/guides';
-import { getPublicExcursions } from '@/lib/public-content';
+import { getPublicExcursions, getPublicSafariBlu } from '@/lib/public-content';
 import { SITE_URL } from '@/lib/site';
 import { localeAlternates } from '@/lib/i18n-routing';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
@@ -11,17 +11,10 @@ import { getPublicSafaris } from '@/lib/public-content';
 
 
 
-function routeEntry(
-  path: string,
-  priority: number,
-  changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly',
-  lastModified?: string,
-): MetadataRoute.Sitemap[number] {
+function routeEntry(path: string, lastModified?: string): MetadataRoute.Sitemap[number] {
   return {
     url: new URL(path, SITE_URL).toString(),
     alternates: { languages: localeAlternates(path, SITE_URL) },
-    changeFrequency,
-    priority,
     ...(lastModified ? { lastModified } : {}),
   };
 }
@@ -36,7 +29,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Keep the sitemap aligned with published CMS content while retaining the
   // checked-in catalogue if the CMS is temporarily unavailable.
   let publicSafaris = safaris;
-  let publicExcursions = staticExcursions;
+  let publicExcursions = staticExcursions.filter((item) => !item.id.startsWith('safari-blu-'));
+  let publicSafariBlu = staticExcursions.filter((item) => item.id.startsWith('safari-blu-'));
   let publishedBlogPosts: { slug: string; updated_at?: string | null; published_at?: string | null }[] = [];
   try {
     const managedSafaris = await getPublicSafaris('en');
@@ -49,6 +43,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     publicExcursions = await getPublicExcursions();
   } catch {
     // Keep the static excursion catalogue available if the CMS is unavailable.
+  }
+
+  try {
+    publicSafariBlu = await getPublicSafariBlu();
+  } catch {
+    // Keep the static Blue Safari entries available if the CMS is unavailable.
   }
 
   try {
@@ -65,14 +65,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const entries: MetadataRoute.Sitemap = [
-    ...staticRoutes.map((path) => routeEntry(path, path === '' ? 1 : 0.7, path === '' ? 'weekly' : 'monthly')),
-    ...publicSafaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safari.id)}`, 0.9)),
+    ...staticRoutes.map((path) => routeEntry(path)),
+    ...publicSafaris.map((safari) => routeEntry(`/safaris/${encodeURIComponent(safari.id)}`)),
     ...publishedBlogPosts.map((post) =>
-      routeEntry(`/blog/${encodeURIComponent(post.slug)}`, 0.75, 'monthly', post.updated_at || post.published_at || undefined),
+      routeEntry(`/blog/${encodeURIComponent(post.slug)}`, post.updated_at || post.published_at || undefined),
     ),
-    ...hubGuides.map((guide) => routeEntry(`/guides/${guide.slug}`, 0.8, 'monthly', guide.updated)),
-    ...destinations.map((destination) => routeEntry(`/destinations/${encodeURIComponent(destination.slug)}`, 0.8)),
-    ...publicExcursions.map((excursion) => routeEntry(`/excursions/${encodeURIComponent(excursion.id)}`, 0.8)),
+    ...hubGuides.map((guide) => routeEntry(`/guides/${guide.slug}`, guide.updated)),
+    ...destinations.map((destination) => routeEntry(`/destinations/${encodeURIComponent(destination.slug)}`)),
+    ...publicExcursions.map((excursion) => routeEntry(`/excursions/${encodeURIComponent(excursion.id)}`)),
+    ...publicSafariBlu.map((excursion) => routeEntry(`/excursions/${encodeURIComponent(excursion.id)}`)),
   ];
 
   // Avoid duplicate URLs if static and CMS catalogue entries overlap.
