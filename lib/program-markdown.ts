@@ -22,7 +22,6 @@ export function programMarkdown(safari: Safari, guide: ProgramGuide, siteUrl: st
   lines.push(`# ${guide.name}`, '');
   lines.push(`> ${guide.answerCapsule}`, '');
   lines.push(`Canonical page: ${url}`, '');
-  lines.push(`Last reviewed: ${guide.reviewed}`, '');
 
   lines.push('## Quick facts', '');
   lines.push(row(['Field', 'Value']));
