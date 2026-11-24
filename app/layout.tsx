@@ -33,7 +33,6 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(SITE_URL),
     title: { default: 'Bahari Asili Safaris | Kenya Safaris from Watamu', template: '%s | Bahari Asili Safaris' },
     description: 'Plan Kenya safaris from Watamu to Tsavo, Amboseli, Masai Mara and Taita Hills, plus Indian Ocean experiences, transfers and private excursions.',
-    keywords: ['Watamu safaris', 'Kenya safaris', 'Tsavo safari', 'Amboseli safari', 'Masai Mara safari', 'Taita Hills safari', 'Kenya coast', 'safari from Watamu', 'private Kenya safari'],
     alternates: {
       canonical,
       languages: localeAlternates(pathname, SITE_URL),
