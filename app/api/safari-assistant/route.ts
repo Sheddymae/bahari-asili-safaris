@@ -50,7 +50,7 @@ function getCatalog() {
     tagline: s.tagline,
     highlights: s.highlights,
     itinerary: s.itinerary,
-    priceTier: s.priceTier ?? 'quote-based',
+    pricing: 'Quoted per trip; no public fixed price is available.',
   }));
 }
 
