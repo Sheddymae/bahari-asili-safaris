@@ -238,7 +238,7 @@ function buildBookingEmailHtml(d: {
 
       <div style="background: #1f2937; padding: 20px; border-radius: 0 0 12px 12px; text-align: center;">
         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-          WhatsApp: +254101923355 · bahariasilisafaris@gmail.com
+          WhatsApp: +254101923355 · booking@bahariasilisafaris.co.ke
         </p>
 
         <p style="color: #64748b; font-size: 11px; margin: 8px 0 0;">
@@ -350,7 +350,7 @@ function buildReviewEmailHtml(d: {
       <div style="background: #1f2937; padding: 20px; border-radius: 0 0 12px 12px; text-align: center;">
 
         <p style="color: #94a3b8; font-size: 12px; margin: 0;">
-          WhatsApp: +254101923355 · bahariasilisafaris@gmail.com
+          WhatsApp: +254101923355 · booking@bahariasilisafaris.co.ke
         </p>
 
         <p style="color: #64748b; font-size: 11px; margin: 8px 0 0;">
@@ -986,11 +986,11 @@ export async function POST(req: NextRequest) {
 
     const emailSender =
       process.env.EMAIL_SENDER ||
-      'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
+      'Bahari Asili Safaris <booking@bahariasilisafaris.co.ke>';
 
     const ownerEmail =
       process.env.EMAIL_TO ||
-      'bahariasilisafaris@gmail.com';
+      'booking@bahariasilisafaris.co.ke';
 
     let ownerEmailSent = false;
     let customerEmailSent = false;
