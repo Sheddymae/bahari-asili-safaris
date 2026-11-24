@@ -1,6 +1,6 @@
 # Safari slug redirect map
 
-The old IDs below are the current public route segments and must remain valid as permanent redirects after the descriptive route implementation is completed. The catalogue IDs must remain stable for existing bookings and admin records; route slugs should be a separate field.
+The old IDs below are legacy public route segments. The catalogue IDs remain stable for existing bookings and admin records; descriptive route slugs are resolved separately.
 
 | Old path | Proposed descriptive path | Catalogue ID retained for booking records |
 | --- | --- | --- |
@@ -18,6 +18,6 @@ The old IDs below are the current public route segments and must remain valid as
 
 ## Implementation status
 
-**Documentation only — redirects are not yet active.** Before enabling these 301s, add a route-slug field and lookup that preserves the catalogue ID for booking/API operations; update every internal link, sitemap URL, canonical, JSON-LD, Markdown endpoint, WhatsApp message, PDF and related-safari card; then test that each old URL returns one 301 directly to a 200 new URL with no chain or loop.
+**Implemented in source on `main`; live verification is pending.** `lib/safari-slugs.ts` maps the legacy catalogue IDs to descriptive route slugs without changing the IDs used by booking and API records. Middleware issues one direct 301 for both unprefixed and locale-prefixed legacy safari URLs. The Markdown route also redirects legacy `.md` URLs. Internal links, sitemap entries, canonical URLs, JSON-LD, `llms.txt` and the OTA kit use the descriptive slugs.
 
-Do not simply rename the existing `id` values: historical booking records and admin references may depend on them.
+After an approved deployment, verify every old URL returns one direct 301 to a 200 destination with no chain or loop. Canonical host and HTTPS redirects remain owned by Vercel Domains; do not add a second host redirect in middleware.
