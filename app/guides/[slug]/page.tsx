@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: guide.title,
     description: guide.description,
-    openGraph: { title: guide.title, description: guide.description, type: 'article', url },
+    openGraph: { title: guide.title, description: guide.description, type: 'website', url },
     twitter: { card: 'summary', title: guide.title, description: guide.description },
   };
 }
