@@ -91,7 +91,7 @@ export function programMarkdown(safari: Safari, guide: ProgramGuide, siteUrl: st
   lines.push('## Contact', '');
   lines.push('Bahari Asili Safaris — Watamu, Kenya');
   lines.push('Telephone and WhatsApp: +254 101 923 355');
-  lines.push('Email: bahariasilisafaris@gmail.com');
+  lines.push('Email: info@bahariasilisafaris.co.ke');
   lines.push(`Website: ${site}`);
   lines.push('');
 
