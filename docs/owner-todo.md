@@ -61,3 +61,5 @@ Robots rules are crawl guidance, not access control. Keep authentication and aut
 - [ ] Verify each old safari slug returns one direct 301 to its descriptive URL and that the destination returns 200; repeat for locale-prefixed old URLs.
 - [ ] After those checks pass, resubmit `https://www.bahariasilisafaris.co.ke/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
 - [ ] Confirm the host/WAF does not challenge Googlebot, Bingbot, OAI-SearchBot, ChatGPT-User, PerplexityBot, or other approved search crawlers. The repository cannot verify dashboard bot-protection settings.
+
+- [ ] Confirm the public phone and WhatsApp number. A previous business brief and the current structured-data number differ; keep the existing live contact values until the owner confirms the correct public number.
