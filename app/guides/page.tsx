@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/guides',
   },
+  twitter: { card: 'summary', title: 'Kenya Safari Travel Guides — Bahari Asili Safaris', description: 'Costs, best time to travel, family and accessibility advice, and packing for a Kenya safari from Watamu.' },
 };
 
 export default function GuidesIndexPage() {
