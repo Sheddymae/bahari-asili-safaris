@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import ContactPageClient from './ContactPageClient';
 
 export const metadata: Metadata = {
-  title: 'Contact Us — Bahari Asili Safaris, Watamu',
+  title: 'Contact Us — Watamu',
   description:
     'Get in touch with Bahari Asili Safaris in Watamu, Kenya. WhatsApp, phone, and email — plan your safari or coastal trip with a local team.',
   openGraph: {
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/contact',
   },
+  twitter: { card: 'summary', title: 'Contact Bahari Asili Safaris', description: 'Reach our Watamu-based team by WhatsApp, phone, or email to plan your Kenya safari.' },
 };
 
 export default function ContactPage() {
