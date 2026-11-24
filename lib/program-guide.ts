@@ -350,6 +350,24 @@ const PACKING_RULES: { title: string; test: RegExp }[] = [
   { title: 'Park rules', test: /drone/i },
 ];
 
+function cleanPackingItems(tips: string[]): string[] {
+  const cleaned: string[] = [];
+  const seen = new Set<string>();
+  let hasWarmLayer = false;
+  for (const raw of tips) {
+    const item = raw.trim().replace(/\\s+/g, ' ');
+    const key = item.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (!item || key === 'lightweight' || key === 'comfortable clothing' || key.split(' ').length < 2) continue;
+    const isWarmLayer = /\\b(fleece|warm layer|down jacket|warm jacket)\\b/i.test(item);
+    if (isWarmLayer && hasWarmLayer) continue;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (isWarmLayer) hasWarmLayer = true;
+    cleaned.push(item.charAt(0).toUpperCase() + item.slice(1));
+  }
+  return cleaned;
+}
+
 function categorisePacking(tips: string[]): PackingGroup[] {
   const groups: PackingGroup[] = [];
   const push = (title: string, item: string) => {
@@ -496,7 +514,7 @@ function packingSection(safari: Safari, region: Region): ProgramGuide['packing']
         'English 3-pin plug adapter (Type G)',
       ];
   const extras = seasonExtras(region);
-  const groups = categorisePacking([...base, ...extras]);
+  const groups = categorisePacking(cleanPackingItems([...base, ...extras]));
   return {
     capsule: `Pack light, neutral-coloured layers for warm days and cool early mornings, closed-toe shoes, sun and insect protection, and your camera and binoculars. A soft bag is easier to load into a 4x4 than a hard case. Anything you forget can usually be bought in Watamu or Malindi before departure.`,
     groups,
