@@ -4,6 +4,7 @@ import { destinations } from '@/lib/destinations-data';
 import { excursions } from '@/lib/tours-data';
 import { SITE_URL } from '@/lib/site';
 import { pluralize } from '@/lib/format';
+import { safariRouteSlug } from '@/lib/safari-slugs';
 
 
 export const dynamic = 'force-static';
@@ -33,7 +34,8 @@ export function GET() {
   lines.push('');
   safaris.forEach((safari) => {
     const description = `${safari.days} ${pluralize(safari.days, 'day')} / ${safari.nights} ${pluralize(safari.nights, 'night')} from ${safari.itinerary[0]?.title.split('→')[0].trim() || 'Watamu'} to ${safari.parks.join(', ')}. Quoted per trip.`;
-    lines.push(`- [${safari.name}](${site}/safaris/${safari.id}): ${description} Markdown: ${site}/programs/${safari.id}.md`);
+    const slug = safariRouteSlug(safari);
+    lines.push(`- [${safari.name}](${site}/safaris/${slug}): ${description} Markdown: ${site}/programs/${slug}.md`);
   });
   lines.push('');
 
