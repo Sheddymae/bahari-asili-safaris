@@ -70,7 +70,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...publishedBlogPosts.map((post) =>
       routeEntry(`/blog/${encodeURIComponent(post.slug)}`, post.updated_at || post.published_at || undefined),
     ),
-    ...hubGuides.map((guide) => routeEntry(`/guides/${guide.slug}`, guide.updated)),
+    ...hubGuides.map((guide) => routeEntry(`/guides/${guide.slug}`, guide.lastReviewedAt)),
     ...destinations.map((destination) => routeEntry(`/destinations/${encodeURIComponent(destination.slug)}`)),
     ...publicExcursions.map((excursion) => routeEntry(`/excursions/${encodeURIComponent(excursion.id)}`)),
     ...publicSafariBlu.map((excursion) => routeEntry(`/excursions/${encodeURIComponent(excursion.id)}`)),
