@@ -6,6 +6,7 @@ import { resolveItinerary } from './itinerary-resolve';
 import { generateQrPngDataUrl } from './qr';
 import { loadBrandLogo, drawBrandLogo } from './pdf-brand';
 import { loadBrandStamp, drawStamp } from './pdf-stamp';
+import { durationLabel } from './format';
 
 const labels: Record<Locale, Record<string,string>> = {
   en:{title:'DETAILED SAFARI ITINERARY',guest:'Guest',booking:'Booking Reference',safari:'Safari',destinations:'Destinations',dates:'Travel Dates',duration:'Duration',notConfirmed:'Detailed itinerary to be confirmed.',notes:'Notes',overnight:'Overnight'},
