@@ -15,7 +15,6 @@ import { regionalSafaris } from '@/lib/regional-safaris';
 import { getRegionalSafariDestinationSlugs } from '@/lib/regional-safari-destinations';
 import { getActivitiesForDestination } from '@/lib/destination-activities';
 import { durationLabel } from '@/lib/format';
-import { durationLabel } from '@/lib/format';
 import { getLocalizedDestinationActivity, destinationActivitiesLabels } from '@/lib/destination-activities-i18n';
 
 export default function DestinationDetailClient({ destination }: { destination: Destination }) {
