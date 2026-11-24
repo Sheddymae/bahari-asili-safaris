@@ -1,4 +1,5 @@
 import { DEFAULT_INCLUDED, DEFAULT_EXCLUDED, type Safari } from './tours-data';
+import { pluralize } from './format';
 
 /**
  * Single source of truth for the answer-first program content shown on every
@@ -451,14 +452,14 @@ function childrenSection(safari: Safari, region: Region): ProgramGuide['children
   const long = safari.days >= 5 || changes >= 4;
   let capsule: string;
   if (long) {
-    capsule = `This is a long safari — ${safari.days} days with ${changes} park transfer${changes === 1 ? '' : 's'} — so it suits older children and teenagers better than toddlers. Families with younger children usually find a 2–4 day Tsavo or Amboseli safari easier. Minimum age is not published for this programme: confirm it with our team before booking.`;
+    capsule = `This is a long safari — ${safari.days} days with ${changes} park ${pluralize(changes, 'transfer')} — so it suits older children and teenagers better than toddlers. Families with younger children usually find a 2–4 day Tsavo or Amboseli safari easier. Minimum age is not published for this programme: confirm it with our team before booking.`;
   } else if (level <= 2) {
-    capsule = `This is a shorter itinerary by duration (${safari.days} days), with ${changes} park transfer${changes === 1 ? '' : 's'}. Most wildlife viewing is vehicle-based, but daily driving hours have not yet been verified, so we cannot describe it as an easy family safari. Minimum age is not published for this programme; ask our team before booking.`;
+    capsule = `This is a shorter itinerary by duration (${safari.days} days), with ${changes} park ${pluralize(changes, 'transfer')}. Most wildlife viewing is vehicle-based, but daily driving hours have not yet been verified, so we cannot describe it as an easy family safari. Minimum age is not published for this programme; ask our team before booking.`;
   } else {
-    capsule = `This safari is manageable for most families with school-age children: ${safari.days} days, ${changes} park transfer${changes === 1 ? '' : 's'} and a moderate pace. Younger children may find the driving days long. Minimum age is not published for this programme, so confirm it with our team before booking.`;
+    capsule = `This safari is manageable for most families with school-age children: ${safari.days} days, ${changes} park ${pluralize(changes, 'transfer')} and a moderate pace. Younger children may find the driving days long. Minimum age is not published for this programme, so confirm it with our team before booking.`;
   }
   const points = [
-    `Daily rhythm: ${safari.days} day${safari.days === 1 ? '' : 's'}, with ${changes} park transfer${changes === 1 ? '' : 's'} and early starts for game drives.`,
+    `Daily rhythm: ${safari.days} ${pluralize(safari.days, 'day')}, with ${changes} park ${pluralize(changes, 'transfer')} and early starts for game drives.`,
     'Most of the wildlife viewing is done seated in the vehicle, which suits children who are comfortable with longer drives.',
     'Child seats and booster seats are not listed as standard equipment — ask before booking if you need one.',
     region === 'coast' || region === 'zanzibar'
@@ -487,7 +488,7 @@ function mobilitySection(safari: Safari): ProgramGuide['mobility'] {
     capsule,
     points: [
       'Most viewing is seated in a 4x4 vehicle with a pop-up roof; walking is limited to lodge grounds, viewpoints and short stops.',
-      `The itinerary involves ${changes} park transfer${changes === 1 ? '' : 's'}, so there are long driving days between destinations.`,
+      `The itinerary involves ${changes} park ${pluralize(changes, 'transfer')}, so there are long driving days between destinations.`,
       'Vehicle step height and the availability of a step stool vary by vehicle — ask us to confirm for your dates.',
       'Lodge layouts differ: some rooms are a short walk from the main area, and not every camp advertises step-free access.',
       'Tell us about walking aids, oxygen, dietary needs or medication at the quote stage so lodges and the guide can plan around them.',
@@ -611,7 +612,7 @@ export function buildProgramGuide(safari: Safari): ProgramGuide {
     currency: 'USD',
     answerCapsule: answerCapsule(safari, region, bestMonths),
     quickFacts: [
-      { label: 'Duration', value: `${safari.days} day${safari.days === 1 ? '' : 's'} / ${safari.nights} night${safari.nights === 1 ? '' : 's'}` },
+      { label: 'Duration', value: `${safari.days} ${pluralize(safari.days, 'day')} / ${safari.nights} ${pluralize(safari.nights, 'night')}` },
       { label: 'Start / finish', value: `${start} → ${end}` },
       { label: 'Parks and reserves', value: safari.parks.join(', ') },
       { label: 'Price', value: 'Quoted per trip — no fixed from-price published' },
