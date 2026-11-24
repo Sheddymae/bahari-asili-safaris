@@ -44,6 +44,12 @@ function wildcardDisallows(robotsText) {
 
 const { response: robotsResponse, text: robotsText } = await fetchText(new URL('/robots.txt', origin));
 assert.equal(robotsResponse.status, 200, 'robots.txt must return 200');
+assert.doesNotMatch(robotsText, /^host:/im, 'robots.txt must not contain a Host directive');
+const sitemapDirective = robotsText.match(/^sitemap:\\s*(\\S+)/im)?.[1];
+assert.ok(sitemapDirective, 'robots.txt must declare a sitemap');
+const sitemapDirectiveUrl = new URL(sitemapDirective);
+assert.equal(sitemapDirectiveUrl.pathname, '/sitemap.xml', 'robots sitemap path must be /sitemap.xml');
+assert.equal(sitemapDirectiveUrl.hostname, canonicalHostname, 'robots sitemap host must be the canonical hostname');
 const blockedPrefixes = wildcardDisallows(robotsText);
 assert.ok(!blockedPrefixes.includes('/'), 'Wildcard robots rules must not block the entire site');
 
