@@ -314,7 +314,7 @@ export const translations = {
       contact: 'Contact Us',
       address: 'Pinguili, Watamu — behind Paparemo Restaurant, blue gate',
       phone: '+254 101 923 355',
-      email: 'bahariasilisafaris@gmail.com',
+      email: 'info@bahariasilisafaris.co.ke',
       buildYourSafari: 'Build Your Safari',
       explore: 'Explore',
       travelWithUs: 'Travel With Us',
@@ -687,7 +687,7 @@ export const translations = {
   contact: 'Contact Us',
   address: 'Pinguili, Watamu — behind Paparemo Restaurant, blue gate',
   phone: '+254 101 923 355',
-  email: 'bahariasilisafaris@gmail.com',
+  email: 'info@bahariasilisafaris.co.ke',
 
   followUs: 'Follow Us',
 
@@ -1075,7 +1075,7 @@ export const translations = {
   contact: 'Contattaci',
   address: 'Pinguili, Watamu — dietro il ristorante Paparemo, cancello blu',
   phone: '+254 101 923 355',
-  email: 'bahariasilisafaris@gmail.com',
+  email: 'info@bahariasilisafaris.co.ke',
 
   followUs: 'Seguici',
 
@@ -1462,7 +1462,7 @@ export const translations = {
   contact: 'Contáctanos',
   address: 'Pinguili, Watamu — detrás del restaurante Paparemo, puerta azul',
   phone: '+254 101 923 355',
-  email: 'bahariasilisafaris@gmail.com',
+  email: 'info@bahariasilisafaris.co.ke',
 
   followUs: 'Síguenos',
 
@@ -1850,7 +1850,7 @@ export const translations = {
   contact: 'Kontakt',
   address: 'Pinguili, Watamu — hinter dem Restaurant Paparemo, blaues Tor',
   phone: '+254 101 923 355',
-  email: 'bahariasilisafaris@gmail.com',
+  email: 'info@bahariasilisafaris.co.ke',
 
   followUs: 'Folgen Sie uns',
 
@@ -2238,7 +2238,7 @@ export const translations = {
   contact: 'اتصل بنا',
   address: 'بينغيلي، واتامو — خلف مطعم باباريمو، البوابة الزرقاء',
   phone: '+254 101 923 355',
-  email: 'bahariasilisafaris@gmail.com',
+  email: 'info@bahariasilisafaris.co.ke',
 
   followUs: 'تابعنا',
 
@@ -2626,7 +2626,7 @@ export const translations = {
   contact: '联系我们',
   address: '瓦塔穆 Pinguili — Paparemo 餐厅后方，蓝色大门',
   phone: '+254 101 923 355',
-  email: 'bahariasilisafaris@gmail.com',
+  email: 'info@bahariasilisafaris.co.ke',
 
   followUs: '关注我们',
 
@@ -3014,7 +3014,7 @@ export const translations = {
   contact: 'Wasiliana Nasi',
   address: 'Pinguili, Watamu — nyuma ya Mkahawa wa Paparemo, lango la bluu',
   phone: '+254 101 923 355',
-  email: 'bahariasilisafaris@gmail.com',
+  email: 'info@bahariasilisafaris.co.ke',
 
   followUs: 'Tufuate',
 
