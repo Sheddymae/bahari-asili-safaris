@@ -10,6 +10,7 @@ export interface Destination {
   country?: string;
   region?: string;
   wildlifeHighlights: string[];
+  wildlifeByPark?: Record<string, string[]>;
   bestSeason: string;
   faqs: { q: string; a: string }[];
 }
@@ -20,6 +21,10 @@ export const destinations: Destination[] = [
     intro: "Tsavo East and West together form one of the world's largest protected wildlife areas. It's famous for its red-earth elephants — the dust here stains their hides the colour of the soil — plus the Yatta Plateau, Mzima Springs, and rolling savannah that stretches to the horizon. It's also the closest major safari destination to the coast, making it easy to combine with a Watamu beach stay.",
     history: 'Tsavo became a protected area in the late 1940s and became globally famous during the construction of the Kenya–Uganda Railway, when two maneless lions killed railway workers in 1898. Today the park protects a huge connected wilderness and is one of the strongest conservation landscapes in Kenya.',
     wildlifeHighlights: ["Large elephant herds (Tsavo's signature red elephants)", 'Lions, including the historically maneless Tsavo lions', 'Rhino sanctuary within Tsavo West', 'Mzima Springs hippos and crocodiles, viewable from an underwater tank', "Yatta Plateau — the world's longest lava flow"],
+    wildlifeByPark: {
+      'Tsavo East': ["Large elephant herds (Tsavo's signature red elephants)", 'Lions, including the historically maneless Tsavo lions', "Yatta Plateau — the world's longest lava flow"],
+      'Tsavo West': ['Rhino sanctuary within Tsavo West', 'Mzima Springs hippos and crocodiles, viewable from an underwater tank'],
+    },
     bestSeason: 'June–October (dry season) offers the best game viewing as animals gather near rivers and waterholes. November–May is greener and quieter, with fewer vehicles on the tracks.',
     faqs: [{ q: 'How far is Tsavo from Watamu/Mombasa?', a: 'Roughly 3–4 hours by road from the coast, which is why many Tsavo safaris depart from and return to Watamu or Mombasa.' }, { q: 'Is Tsavo good for a short safari?', a: "Yes — Tsavo East in particular works well for 2–3 day safaris since it's the closest major park to the coast, without the long transfer times Masai Mara requires." }, { q: 'Will we definitely see elephants?', a: "Tsavo has one of Kenya's largest elephant populations, so sightings are very likely, especially near water sources in the dry season — though wildlife viewing is never 100% guaranteed." }],
   },
