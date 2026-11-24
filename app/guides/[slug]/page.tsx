@@ -18,10 +18,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const guide = getHubGuide(slug);
-  if (!guide) return { title: 'Guide not found | Bahari Asili Safaris' };
+  if (!guide) return { title: 'Guide not found' };
   const url = `/guides/${guide.slug}`;
   return {
-    title: `${guide.title} | Bahari Asili Safaris`,
+    title: guide.title,
     description: guide.description,
     openGraph: { title: guide.title, description: guide.description, type: 'article', url },
   };
@@ -38,7 +38,7 @@ function GuideJsonLd({ guide }: { guide: (typeof hubGuides)[number] }) {
         '@id': `${url}#article`,
         headline: guide.h1,
         description: guide.description,
-        dateModified: guide.updated,
+        dateModified: guide.lastReviewedAt,
         inLanguage: 'en',
         url,
         author: { '@type': 'Organization', name: 'Bahari Asili Safaris', url: site },
