@@ -61,7 +61,7 @@ export async function generateDetailedItineraryPDF(booking: Booking, requestedLo
   row(L.booking, booking.booking_ref);
   row(L.safari, booking.safari_name);
   row(L.dates, formatLocaleDate(booking.arrival_date, locale));
-  row(L.duration, safari ? `${safari.days} ${durationLabel(safari.days, 'day', locale)} / ${safari.nights} ${durationLabel(safari.nights, 'night', locale)}` : days.length ? `${days.length} days` : '—');
+  row(L.duration, safari ? `${safari.days} ${durationLabel(safari.days, 'day', locale)} / ${safari.nights} ${durationLabel(safari.nights, 'night', locale)}` : days.length ? `${days.length} ${durationLabel(days.length, 'day', locale)}` : '—');
   y += 6;
 
   if (days.length === 0) {
