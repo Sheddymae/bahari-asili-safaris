@@ -448,19 +448,10 @@ function costSection(safari: Safari): ProgramGuide['cost'] {
 
 function childrenSection(safari: Safari, region: Region): ProgramGuide['children'] {
   const changes = transfers(safari);
-  const level = safari.activityLevel ?? 3;
-  const long = safari.days >= 5 || changes >= 4;
-  let capsule: string;
-  if (long) {
-    capsule = `This is a long safari — ${safari.days} ${pluralize(safari.days, 'day')} with ${changes} park ${pluralize(changes, 'transfer')} — so it suits older children and teenagers better than toddlers. Families with younger children usually find a 2–4 day Tsavo or Amboseli safari easier. Minimum age is not published for this programme: confirm it with our team before booking.`;
-  } else if (level <= 2) {
-    capsule = `This is a shorter itinerary by duration (${safari.days} ${pluralize(safari.days, 'day')}), with ${changes} park ${pluralize(changes, 'transfer')}. Most wildlife viewing is vehicle-based, but daily driving hours have not yet been verified, so we cannot describe it as an easy family safari. Minimum age is not published for this programme; ask our team before booking.`;
-  } else {
-    capsule = `This safari is manageable for most families with school-age children: ${safari.days} ${pluralize(safari.days, 'day')}, ${changes} park ${pluralize(changes, 'transfer')} and a moderate pace. Younger children may find the driving days long. Minimum age is not published for this programme, so confirm it with our team before booking.`;
-  }
+  const capsule = `This programme runs for ${safari.days} ${pluralize(safari.days, 'day')} and includes ${changes} park ${pluralize(changes, 'transfer')}. The minimum booking age and daily driving hours have not yet been verified for this itinerary. Ask our team to confirm age suitability, child-seat availability, rest stops and room arrangements before booking.`;
   const points = [
     `Daily rhythm: ${safari.days} ${pluralize(safari.days, 'day')}, with ${changes} park ${pluralize(changes, 'transfer')} and early starts for game drives.`,
-    'Most of the wildlife viewing is done seated in the vehicle, which suits children who are comfortable with longer drives.',
+    'Most wildlife viewing is vehicle-based; confirm the daily driving schedule and planned rest stops with the team before booking.',
     'Child seats and booster seats are not listed as standard equipment — ask before booking if you need one.',
     region === 'coast' || region === 'zanzibar'
       ? 'Boat and water activities require supervision; life jackets should be confirmed with the skipper.'
@@ -476,19 +467,13 @@ function childrenSection(safari: Safari, region: Region): ProgramGuide['children
 }
 
 function mobilitySection(safari: Safari): ProgramGuide['mobility'] {
-  const level = safari.activityLevel ?? 3;
   const changes = transfers(safari);
-  let capsule: string;
-  if (level >= 4 || changes >= 4) {
-    capsule = `Older travellers in reasonable health do this safari, but it is not a gentle itinerary: ${safari.days} ${pluralize(safari.days, 'day')}, ${changes} park transfers and long days in a 4x4. Guests with limited mobility should ask us to check each lodge for step-free access and bathroom adaptations before booking.`;
-  } else {
-    capsule = `This is a vehicle-based safari with relatively little walking, which suits many older travellers. The main practical questions are the height of the 4x4 step, the distance from the vehicle to the room and whether the lodge has ground-floor rooms. We check those per lodge before confirming.`;
-  }
+  const capsule = `This is a vehicle-based safari with ${safari.days} ${pluralize(safari.days, 'day')} and ${changes} park ${pluralize(changes, 'transfer')}. Daily driving hours, vehicle step height and lodge access have not yet been verified for this programme. Ask us to confirm rest stops, walking distances, step-free room options and vehicle access before booking.`;
   return {
     capsule,
     points: [
       'Most viewing is seated in a 4x4 vehicle with a pop-up roof; walking is limited to lodge grounds, viewpoints and short stops.',
-      `The itinerary involves ${changes} park ${pluralize(changes, 'transfer')}, so there are long driving days between destinations.`,
+      `The itinerary involves ${changes} park ${pluralize(changes, 'transfer')}; confirm the approximate driving hours and rest-stop schedule for each day before booking.`,
       'Vehicle step height and the availability of a step stool vary by vehicle — ask us to confirm for your dates.',
       'Lodge layouts differ: some rooms are a short walk from the main area, and not every camp advertises step-free access.',
       'Tell us about walking aids, oxygen, dietary needs or medication at the quote stage so lodges and the guide can plan around them.',
