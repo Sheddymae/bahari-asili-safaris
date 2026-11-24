@@ -35,7 +35,7 @@ type Candidate = {
 
 export function contentComplete(program: Candidate, kind: 'safari' | 'excursion' = 'safari'): ContentCompleteness {
   const missing: string[] = [];
-  const validReviewDate = typeof program.lastReviewedAt === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(program.lastReviewedAt) && !Number.isNaN(Date.parse(program.lastReviewedAt));
+  const validReviewDate = typeof program.lastReviewedAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(program.lastReviewedAt) && !Number.isNaN(Date.parse(program.lastReviewedAt));
   if (!validReviewDate) missing.push('lastReviewedAt');
   if (!program.image) missing.push('real product image');
 
