@@ -25,7 +25,7 @@ BASE_URL=http://127.0.0.1:3000 node scripts/build-ota-kit.mjs
 - [ ] Add the cancellation policy (required).
 - [ ] Upload real photos with descriptive alt text; do not use stock images that imply a different lodge.
 - [ ] Add the FAQ entries as “Additional information”.
-- [ ] Set pricing basis to per person, with the group-size tiers you actually apply.
+- [ ] Keep the current quoted-per-trip basis. Do not select a per-person price model until the owner approves and publishes that basis.
 
 ### GetYourGuide
 - [ ] Same copy and meeting point as Viator.
