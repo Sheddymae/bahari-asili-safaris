@@ -14,6 +14,9 @@ const PRIVATE_PATHS = [
 const PUBLIC_CRAWLERS = [
   'Googlebot',
   'Bingbot',
+  'AdIdxBot',
+  'MicrosoftPreview',
+  'BingVideoPreview',
   'DuckDuckBot',
   'Applebot',
   'OAI-SearchBot',
@@ -37,8 +40,9 @@ export default function robots(): MetadataRoute.Robots {
       // Keep all public pages discoverable while excluding private application areas.
       { userAgent: '*', allow: '/', disallow: PRIVATE_PATHS },
 
-      // Explicit search and user-request crawlers. Repeat private exclusions because
-      // a specific user-agent group takes precedence over the wildcard group.
+      // Explicit search, Bing preview/ads, and user-request crawlers. Bing documents
+      // that a specific user-agent group takes precedence over the wildcard group,
+      // so repeat the private-path exclusions in every named crawler group.
       ...PUBLIC_CRAWLERS.map((userAgent) => ({
         userAgent,
         allow: '/',
