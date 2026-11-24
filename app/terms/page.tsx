@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description:
     'Booking terms, payment, cancellations, and client responsibilities for trips booked with Bahari Asili Safaris.',
   robots: { index: true, follow: true },
+  openGraph: { title: 'Terms & Conditions — Bahari Asili Safaris', description: 'Booking terms, payment, cancellations, and client responsibilities for trips booked with Bahari Asili Safaris.', type: 'website', url: '/terms' },
+  twitter: { card: 'summary', title: 'Terms & Conditions — Bahari Asili Safaris', description: 'Booking terms, payment, cancellations, and client responsibilities for trips booked with Bahari Asili Safaris.' },
 };
 
 export default function TermsPage() {
