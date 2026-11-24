@@ -46,7 +46,7 @@ export const dynamicParams = true;
 export default async function SafariDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const managed = await getPublicSafaris('en');
-  const safari = managed.find((s) => s.id === slug) || safaris.find((s) => s.id === slug);
+  const safari = findSafariByRouteSlug([...managed, ...safaris], slug);
   if (!safari) return <SafariDetailClient safari={null} slug={slug} />;
 
   const guide = { ...buildProgramGuide(safari), slug: safariRouteSlug(safari) };
