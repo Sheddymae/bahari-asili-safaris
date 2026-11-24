@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 const RESEND_API = 'https://api.resend.com/emails';
-const OWNER_EMAIL = process.env.OWNER_NOTIFICATION_EMAIL || 'bahariasilisafaris@gmail.com';
-const SENDER = process.env.RESEND_FROM_EMAIL || 'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
+const OWNER_EMAIL = process.env.OWNER_NOTIFICATION_EMAIL || 'help@bahariasilisafaris.co.ke';
+const SENDER = process.env.RESEND_FROM_EMAIL || 'Bahari Asili Safaris <help@bahariasilisafaris.co.ke>';
 
 function escapeHtml(value: string) {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
