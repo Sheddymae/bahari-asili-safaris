@@ -9,7 +9,7 @@ BASE_URL=http://127.0.0.1:3000 node scripts/build-ota-kit.mjs
 
 ## Rules before you list
 
-1. Use the **same trading name** everywhere: “Bahari Asili Safaris”, Watamu, Kenya, +254 101 923 355, bahariasilisafaris@gmail.com. Different names on different OTAs split the entity and weaken every AI answer.
+1. Use the **same trading name** everywhere: “Bahari Asili Safaris”, Watamu, Kenya, +254 101 923 355, info@bahariasilisafaris.co.ke. Different names on different OTAs split the entity and weaken every AI answer.
 2. Use the **50-word description and included/excluded lists exactly as written**. Do not add prices, awards, certifications, “best in Kenya” claims or review counts that the business cannot evidence.
 3. Publish a **cancellation policy** first (currently TODO). Every OTA requires one, and it must match the website.
 4. Do **not** promise wildlife sightings, migration dates or weather. The copy deliberately says “possible”, “usually” and “not guaranteed”.
