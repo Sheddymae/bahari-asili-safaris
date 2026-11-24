@@ -13,7 +13,7 @@ These steps require access to production hosting and search-engine accounts. Rep
 
 - [ ] Verify `https://www.bahariasilisafaris.co.ke/robots.txt` allows public crawling and points to `https://www.bahariasilisafaris.co.ke/sitemap.xml`.
 - [ ] Verify `https://www.bahariasilisafaris.co.ke/sitemap.xml` contains public safari programs, destinations, excursions and published blog articles, with no preview or private URLs.
-- [ ] Verify apex, HTTP, and production Vercel aliases redirect to the canonical www HTTPS host while preserving path and query string.
+- [ ] Verify apex and HTTP requests redirect to the canonical www HTTPS host while preserving path and query string; Vercel Domains owns this redirect.
 - [ ] Add and verify the canonical property in Google Search Console (DNS verification recommended), submit the sitemap, inspect key pages, and request indexing where appropriate.
 - [ ] Add the site to Bing Webmaster Tools and submit the same sitemap.
 - [ ] Re-test public pages with browser and crawler user agents; confirm ordinary 200 HTML responses and matching canonical tags.
