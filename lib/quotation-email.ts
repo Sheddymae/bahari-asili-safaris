@@ -64,7 +64,7 @@ export function buildQuotationEmailHtml(q: Quotation & { createdDate: string }):
           </tr>
           <tr style="border-bottom: 1px solid #f1f5f9;">
             <td style="padding: 12px 0; font-weight: 600; color: #64748b;">Duration</td>
-            <td style="padding: 12px 0; color: #1f2937;">${q.duration_nights} ${pluralize(q.duration_nights, 'night')}</td>
+            <td style="padding: 12px 0; color: #1f2937;">${q.duration_nights} ${pluralize(Number(q.duration_nights) || 0, 'night')}</td>
           </tr>
           <tr>
             <td style="padding: 12px 0; font-weight: 600; color: #64748b;">Activities</td>
