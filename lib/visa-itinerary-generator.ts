@@ -6,6 +6,7 @@ import { resolveItinerary } from './itinerary-resolve';
 import { generateQrPngDataUrl } from './qr';
 import { BRAND_TEAL, BRAND_OFFWHITE, COMPANY, loadBrandLogo, drawBrandLogo } from './pdf-brand';
 import { loadBrandStamp, drawStamp } from './pdf-stamp';
+import { durationLabel } from './format';
 
 const labels: Record<Locale, Record<string,string>>={
  en:{title:'TRAVEL ITINERARY & VISA SUPPORT DOCUMENT',subtitle:'Prepared for travel / visa application reference',traveler:'TRAVELER DETAILS',name:'Full Name',passport:'Passport Number',nationality:'Nationality',email:'Email',trip:'TRIP DETAILS',program:'Safari / Program',date:'Travel Date',guests:'Travellers',duration:'Duration',itinerary:'DAY-BY-DAY ITINERARY',purpose:'PURPOSE OF TRAVEL',purposeText:'Tourism and leisure travel in Kenya.',note:'This document is a travel itinerary and booking support document issued by Bahari Asili Safaris. It is not a government-issued visa or immigration approval.'},
@@ -28,7 +29,7 @@ export async function generateVisaItineraryPDF(booking: Booking, passportNumber?
  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(100,116,139);doc.text(L.subtitle,W-M,19,{align:'right',maxWidth:110});
  doc.setDrawColor(...BRAND_TEAL);doc.setLineWidth(0.5);doc.line(0,34,W,34);y=46;
  section(L.traveler);row(L.name,`${booking.first_name} ${booking.last_name}`);row(L.passport,passportNumber||'To be provided by traveller');row(L.nationality,booking.nationality||'—');row(L.email,booking.email);
- y+=4;section(L.trip);row(L.program,booking.safari_name);row(L.date,formatLocaleDate(booking.arrival_date,locale));row(L.guests,`${booking.adults} adults${booking.children?` + ${booking.children} children`:''}`);row(L.duration,safari?`${safari.days} days / ${safari.nights} nights`:'As confirmed in booking');
+ y+=4;section(L.trip);row(L.program,booking.safari_name);row(L.date,formatLocaleDate(booking.arrival_date,locale));row(L.guests,`${booking.adults} adults${booking.children?` + ${booking.children} children`:''}`);row(L.duration,safari?`${safari.days} ${durationLabel(safari.days, 'day', locale)} / ${safari.nights} ${durationLabel(safari.nights, 'night', locale)}`:'As confirmed in booking');
  y+=4;section(L.itinerary);const resolvedDays=resolveItinerary(booking);if(resolvedDays.length){for(const d of resolvedDays){if(y>255){doc.addPage();y=18;section(L.itinerary);}doc.setTextColor(...BRAND_TEAL);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(`${d.dayLabel} — ${d.title}`,M,y);y+=6;doc.setTextColor(55,65,81);doc.setFont('helvetica','normal');doc.setFontSize(7.5);for(const part of [...d.bodyLines,d.overnight].filter(Boolean) as string[]){const lines=doc.splitTextToSize(part,W-2*M-8);if(y+lines.length*4>270){doc.addPage();y=18;}doc.text(lines,M+4,y);y+=lines.length*4+2;}y+=2;}}else row(L.program,'Detailed itinerary attached / to be confirmed by operator');
  y+=4;section(L.purpose);doc.setTextColor(31,41,55);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(doc.splitTextToSize(L.purposeText,W-2*M),M,y);y+=12;doc.setFillColor(255,247,237);doc.roundedRect(M,y,W-2*M,24,3,3,'F');doc.setTextColor(154,52,18);doc.setFontSize(7.5);doc.text(doc.splitTextToSize(L.note,W-2*M-10),M+5,y+7);y+=32;
  if(y+22>279){doc.addPage();y=18;}
