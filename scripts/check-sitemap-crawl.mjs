@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 
 const base = new URL(process.env.BASE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://www.bahariasilisafaris.co.ke');
 const origin = base.origin;
+const canonicalHostname = new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.bahariasilisafaris.co.ke').hostname;
+const canonicalHosts = new Set([canonicalHostname, 'bahariasilisafaris.co.ke']);
 const fetchText = async (url) => {
   const response = await fetch(url, { redirect: 'manual' });
   return { response, text: await response.text() };
@@ -78,8 +80,8 @@ const workers = Array.from({ length: 6 }, async () => {
         if (/^(mailto:|tel:|javascript:|data:|#)/i.test(href)) continue;
         let target;
         try { target = new URL(href, url); } catch { continue; }
-        if (target.origin !== origin) continue;
-        const targetPath = normalPath(target.href);
+        if (target.origin !== origin && !canonicalHosts.has(target.hostname)) continue;
+        const targetPath = normalPath(new URL(target.pathname + target.search, origin).href);
         if (isPublicPagePath(targetPath)) discoveredLinks.add(targetPath);
       }
     } catch (error) {
