@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/services',
   },
+  twitter: { card: 'summary', title: 'Travel Services — Bahari Asili Safaris', description: 'Airport transfers, car rental enquiries, currency exchange guidance, SIM connectivity help and direct access to official Kenya eTA services.' },
 };
 
 export default function ServicesPage() {
