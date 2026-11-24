@@ -14,7 +14,7 @@ const nextConfig = {
   // recipient deterministic so a missing Vercel EMAIL_TO variable cannot
   // silently disable owner notifications.
   env: {
-    EMAIL_TO: 'bahariasilisafaris@gmail.com',
+    EMAIL_TO: 'booking@bahariasilisafaris.co.ke',
   },
   async headers() {
     return [
