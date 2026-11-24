@@ -120,7 +120,7 @@ Walk through the excavated remains of Gede, a Swahili trading town abandoned in 
 
 **50-word description**
 
-Sail along the Watamu coastline aboard a wooden East African dhow, timed to meet the sunset. The trip includes the dhow, crew, soft drinks and snacks, with views across the Indian Ocean at golden hour. Departure time shifts with the season; your host confirms the pickup time nearer the date.
+Sail along the Watamu coastline aboard a traditional East African dhow, timed to meet the sunset. The trip includes the dhow, crew, soft drinks and snacks, with views across the Indian Ocean at golden hour. Departure time shifts with the season; your host confirms pickup time nearer the date.
 
 **Highlights**
 - Traditional East African dhow
@@ -158,7 +158,7 @@ Sail along the Watamu coastline aboard a wooden East African dhow, timed to meet
 
 **50-word description**
 
-Walk marked trails through Arabuko-Sokoke Forest with a local guide, exploring Kenya’s largest remaining coastal dry forest today. The forest is known for rare endemic birds, including Sokoke Scops Owl and Clarke’s Weaver, as well as resident elephants. Early morning or late afternoon visits offer better chances of wildlife sightings.
+Join a local guide for a walk along marked trails in Arabuko-Sokoke Forest, Kenya’s largest remaining coastal dry forest. Look for rare endemic birds such as the Sokoke Scops Owl and Clarke’s Weaver, and watch for the forest’s resident elephants. Early morning or late afternoon offers better chances of sightings.
 
 **Highlights**
 - Rare endemic birds
