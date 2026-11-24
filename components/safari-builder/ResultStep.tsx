@@ -5,6 +5,7 @@ import { Calendar, MapPin, Loader2, CheckCircle2, AlertTriangle, WalletCards } f
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/supabase';
+import { durationLabel } from '@/lib/format';
 import type { SafariBuilderResult } from '@/lib/quotation-pricing';
 import type { BookingCurrency } from '@/lib/managed-safari-pricing';
 
@@ -100,7 +101,7 @@ export default function ResultStep({ plan, planLoading, planError, requestPayloa
 
   return (
     <div className="space-y-10">
-      <div><h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground mb-1">{t.safariBuilder.result.yourSafariTitle}</h2><p className="font-inter text-sm text-muted-foreground">{plan.nights} {t.safariBuilder.result.nights} · {adults} {t.safariBuilder.result.adults}{childrenCount > 0 ? ` · ${childrenCount} ${t.safariBuilder.result.children}` : ''}</p></div>
+      <div><h2 className="font-poppins font-bold text-xl sm:text-2xl text-foreground mb-1">{t.safariBuilder.result.yourSafariTitle}</h2><p className="font-inter text-sm text-muted-foreground">{plan.nights} {durationLabel(plan.nights, 'night', locale)} · {adults} {t.safariBuilder.result.adults}{childrenCount > 0 ? ` · ${childrenCount} ${t.safariBuilder.result.children}` : ''}</p></div>
 
       <div>
         <h3 className="font-poppins font-semibold text-base text-foreground mb-4 flex items-center gap-1.5"><Calendar className="w-4 h-4 text-ocean-700" /> {t.safariBuilder.result.itineraryTitle}<span className="font-inter text-xs font-normal text-muted-foreground ml-1">({t.safariBuilder.result.itineraryNotice})</span></h3>
