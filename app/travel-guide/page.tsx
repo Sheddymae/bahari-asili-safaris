@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: '/travel-guide',
   },
+  twitter: { card: 'summary', title: 'Kenya Travel Guide | Bahari Asili Safaris', description: 'Practical guidance to help you prepare for your Kenya safari and coastal holiday.' },
 };
 
 export default function TravelGuidePage() {
