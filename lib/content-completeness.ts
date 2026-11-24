@@ -11,6 +11,8 @@ type Candidate = {
   parks?: string[];
   itinerary?: unknown[];
   driveHoursPerDay?: number[];
+  itineraryVerifiedAt?: string;
+  itineraryVerifiedBy?: string;
   included?: string[];
   excluded?: string[];
   bestMonths?: string[];
@@ -25,6 +27,9 @@ type Candidate = {
   startingLocation?: string;
   meetingPoint?: string;
   minimumAge?: number;
+  minimumAgePolicy?: string;
+  notIncluded?: string[];
+  goodToKnow?: string[];
   groupSize?: string;
   vehicleCapacity?: number;
   cancellationPolicy?: string;
@@ -40,7 +45,7 @@ export function contentComplete(program: Candidate, kind: 'safari' | 'excursion'
   if (!program.image) missing.push('real product image');
 
   if (kind === 'safari') {
-    if (!program.itinerary?.length) missing.push('verified itinerary');
+    if (!program.itinerary?.length || !program.itineraryVerifiedAt) missing.push('owner-verified itinerary and verification date');
     if (!program.driveHoursPerDay || program.driveHoursPerDay.length !== program.itinerary?.length || program.driveHoursPerDay.some((hours) => !Number.isFinite(hours) || hours <= 0)) missing.push('driveHoursPerDay for every itinerary day');
     if (!program.included?.length) missing.push('program-specific inclusions');
     if (!program.excluded?.length) missing.push('program-specific exclusions');
@@ -53,14 +58,14 @@ export function contentComplete(program: Candidate, kind: 'safari' | 'excursion'
     if (!program.duration?.trim()) missing.push('verified duration');
     if (!program.description?.trim()) missing.push('unique description');
     if (!(program.meetingPoint || program.startingLocation)) missing.push('verified meetingPoint');
-    if (program.minimumAge === undefined) missing.push('minimumAge or explicit ask-us policy');
+    if (program.minimumAge === undefined && !program.minimumAgePolicy?.trim()) missing.push('minimumAge or explicit ask-us policy');
     if (!program.groupSize) missing.push('groupSize');
     if (!program.vehicleCapacity) missing.push('vehicleCapacity');
     if (!program.cancellationPolicy) missing.push('cancellationPolicy');
     if (!program.included?.length) missing.push('inclusions');
-    if (!program.excluded?.length) missing.push('exclusions');
-    if (!program.packingText && !program.whatToExpect?.length) missing.push('packing / what-to-expect details');
-    if (!program.highlights?.length) missing.push('verified highlights');
+    if (!(program.excluded?.length || program.notIncluded?.length)) missing.push('exclusions');
+    if (!program.packingText) missing.push('packingText');
+    if (!(program.highlights?.length || program.whatToExpect?.length || program.goodToKnow?.length)) missing.push('verified highlights');
     if (!program.faqs || program.faqs.length < 5 || program.faqs.some((faq) => !faq.q?.trim() || !faq.a?.trim())) missing.push('5–6 distinct FAQs');
   }
 
