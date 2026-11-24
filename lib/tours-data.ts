@@ -22,7 +22,19 @@ export interface Safari {
   excluded?: string[];
   activityLevel?: number; // 1-5
   comfortLevel?: number; // 1-5
-  priceTier?: 'budget' | 'mid-range' | 'luxury'; // optional override — derived from comfortLevel if unset
+  priceTier?: 'budget' | 'mid-range' | 'luxury';
+  driveHoursPerDay?: number[];
+  bestMonths?: string[];
+  familyNotes?: string;
+  olderTravellerNotes?: string;
+  faqs?: { q: string; a: string }[];
+  lastReviewedAt?: string;
+  lastReviewedBy?: string;
+  priceFrom?: number;
+  currency?: string;
+  priceBasis?: 'per_trip' | 'per_person';
+  seasonalPrices?: { season: string; price: number; startsAt?: string; endsAt?: string }[];
+  priceLastReviewedAt?: string;
 }
 
 // Per-person pricing is quote-based (varies by group size and dates), so we
