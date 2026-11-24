@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { IS_PRODUCTION_DEPLOYMENT } from '@/lib/site';
 import { DEFAULT_LOCALE, isLocale, localizedPath } from '@/lib/i18n-routing';
+import { descriptiveSafariPath } from '@/lib/safari-slugs';
 import { createServerClient } from '@supabase/ssr';
 import {
   ADMIN_COOKIE_NAME,
@@ -47,6 +48,12 @@ export async function middleware(req: NextRequest) {
   if (isLocale(firstSegment)) {
     const unprefixedPath = '/' + pathname.split('/').slice(2).join('/');
     const targetPath = unprefixedPath === '/' ? '/' : unprefixedPath.replace(/\/$/, '');
+    const descriptivePath = descriptiveSafariPath(targetPath);
+    if (descriptivePath) {
+      const redirectUrl = req.nextUrl.clone();
+      redirectUrl.pathname = localizedPath(descriptivePath, firstSegment);
+      return NextResponse.redirect(redirectUrl, 301);
+    }
     if (firstSegment === DEFAULT_LOCALE) {
       return NextResponse.redirect(new URL(targetPath, req.url), 308);
     }
@@ -63,6 +70,12 @@ export async function middleware(req: NextRequest) {
     const savedLocale = req.cookies.get('bahari-locale')?.value;
     const locale = savedLocale && isLocale(savedLocale) ? savedLocale : DEFAULT_LOCALE;
     requestLocale = locale;
+    const descriptivePath = descriptiveSafariPath(pathname);
+    if (descriptivePath) {
+      const redirectUrl = req.nextUrl.clone();
+      redirectUrl.pathname = localizedPath(descriptivePath, locale);
+      return NextResponse.redirect(redirectUrl, 301);
+    }
     if (locale !== DEFAULT_LOCALE && !isPrivatePath(pathname) && !pathname.includes('.')) {
       const localized = localizedPath(pathname, locale);
       const target = req.nextUrl.clone();
