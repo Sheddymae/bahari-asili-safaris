@@ -1,5 +1,6 @@
 import { type Quotation } from '@/lib/supabase';
 import { formatLocaleDate, normalizeLocale } from '@/lib/locale-content';
+import { pluralize } from '@/lib/format';
 
 const RESEND_API = 'https://api.resend.com/emails';
 
@@ -63,7 +64,7 @@ export function buildQuotationEmailHtml(q: Quotation & { createdDate: string }):
           </tr>
           <tr style="border-bottom: 1px solid #f1f5f9;">
             <td style="padding: 12px 0; font-weight: 600; color: #64748b;">Duration</td>
-            <td style="padding: 12px 0; color: #1f2937;">${q.duration_nights} nights</td>
+            <td style="padding: 12px 0; color: #1f2937;">${q.duration_nights} ${pluralize(q.duration_nights, 'night')}</td>
           </tr>
           <tr>
             <td style="padding: 12px 0; font-weight: 600; color: #64748b;">Activities</td>
