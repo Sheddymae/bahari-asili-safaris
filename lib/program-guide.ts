@@ -400,7 +400,7 @@ function seasonExtras(region: Region): string[] {
 
 function answerCapsule(safari: Safari, region: Region, best: string): string {
   const highlights = safari.highlights.slice(0, 2).join(' and ');
-  const who = (safari.activityLevel ?? 3) >= 4 ? 'travellers who are happy with long driving days' : 'couples, families and small groups';
+  const who = (safari.activityLevel ?? 3) >= 4 ? 'travellers comfortable with a more active safari programme' : 'couples, families and small groups';
   return `The ${safari.name} is a ${safari.days}-day, ${safari.nights}-night private safari from ${endpoints(safari).start} visiting ${safari.parks.join(', ')}. It suits ${who}, with ${highlights} among the highlights. Prices are quoted per trip. The most reliable months are ${best}, when ${regionLabel(region)} is usually dry.`;
 }
 
