@@ -13,7 +13,7 @@ export async function sendEmail(
   attachments?: EmailAttachment[]
 ): Promise<boolean> {
   const apiKey = process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY;
-  const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <bahariasilisafaris@gmail.com>';
+  const sender = process.env.EMAIL_SENDER || 'Bahari Asili Safaris <info@bahariasilisafaris.co.ke>';
 
   if (!apiKey) {
     console.warn('EMAIL_API_KEY not set — skipping email send to', to);
