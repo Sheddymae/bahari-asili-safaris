@@ -27,6 +27,9 @@ jobs:
       - name: SEO configuration check
         run: npm run check:seo
 
+      - name: Content completeness report
+        run: npm run check:content
+
       - name: TypeScript check
         run: npm run typecheck
 
