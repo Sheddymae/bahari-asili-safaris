@@ -52,3 +52,12 @@ Robots rules are crawl guidance, not access control. Keep authentication and aut
 - [ ] Approve real product photos and photo rights for each flagship listing. Do not use generic images that imply a lodge or activity not included.
 - [ ] Confirm the listing price model with each OTA; the website currently states “quoted per trip”, so do not publish per-person tiers without approval.
 - [ ] Collect real post-trip reviews and approve their display before adding any rating or AggregateRating markup.
+
+
+## Post-deployment verification (not yet run)
+
+- [ ] Once a production deployment is approved and available, run `BASE_URL=https://www.bahariasilisafaris.co.ke npm run check:sitemap`. This checks canonical and localized sitemap URLs, page status codes, robots blocking and internal public links.
+- [ ] Inspect source HTML for `/it/`, `/fr/`, `/es/`, `/de/`, `/ar/`, `/zh/` and `/sw/` pages. Each must have a self-language canonical plus reciprocal hreflang alternates and an `x-default` English URL.
+- [ ] Verify each old safari slug returns one direct 301 to its descriptive URL and that the destination returns 200; repeat for locale-prefixed old URLs.
+- [ ] After those checks pass, resubmit `https://www.bahariasilisafaris.co.ke/sitemap.xml` in Google Search Console and Bing Webmaster Tools.
+- [ ] Confirm the host/WAF does not challenge Googlebot, Bingbot, OAI-SearchBot, ChatGPT-User, PerplexityBot, or other approved search crawlers. The repository cannot verify dashboard bot-protection settings.
