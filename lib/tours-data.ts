@@ -30,6 +30,10 @@ export interface Safari {
   faqs?: { q: string; a: string }[];
   lastReviewedAt?: string;
   lastReviewedBy?: string;
+  itineraryVerifiedAt?: string;
+  itineraryVerifiedBy?: string;
+  minimumAge?: number;
+  minimumAgePolicy?: string;
   priceFrom?: number;
   currency?: string;
   priceBasis?: 'per_trip' | 'per_person';
@@ -686,6 +690,7 @@ export interface Excursion {
   goodToKnowIt?: string[];
   meetingPoint?: string;
   minimumAge?: number;
+  minimumAgePolicy?: string;
   groupSize?: string;
   vehicleCapacity?: number;
   cancellationPolicy?: string;
