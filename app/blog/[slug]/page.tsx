@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = await getPost(slug);
   if (!post) return { title: 'Article not found' };
   const description = post.seo_description || post.excerpt || undefined;
-  const pageTitle = (post.seo_title || post.title).replace(/\\s*[|—–-]\\s*Bahari Asili Safaris\\s*$/i, '').trim();
+  const pageTitle = (post.seo_title || post.title).replace(/\s*[|—–-]\s*Bahari Asili Safaris\s*$/i, '').trim();
   const canonical = `/blog/${encodeURIComponent(post.slug)}`;
   return {
     title: pageTitle,
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.seo_title || post.title,
+      title: pageTitle,
       description,
       images: post.image ? [post.image] : undefined,
     },
