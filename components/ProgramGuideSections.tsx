@@ -67,10 +67,7 @@ export default function ProgramGuideSections({
             </tbody>
           </table>
         </div>
-        <p className="mt-3 font-inter text-xs text-muted-foreground">
-          Program reviewed {guide.reviewed}. Wildlife sightings, seasons and lodge availability are never guaranteed.
-        </p>
-      </section>
+</section>
 
       <Section id="cost" heading={`How much does the ${guide.name} cost?`}>
         <Capsule>{cost.capsule}</Capsule>
@@ -93,8 +90,7 @@ export default function ProgramGuideSections({
           {cost.drivers.map((item) => <li key={item} className="font-inter text-sm leading-relaxed text-foreground">{item}</li>)}
         </ul>
         <p className="mt-4 font-inter text-sm leading-relaxed text-muted-foreground">{cost.highSeasonNote}</p>
-        <p className="mt-2 font-inter text-xs text-muted-foreground">Prices last reviewed {guide.priceLastReviewed}.</p>
-      </Section>
+</Section>
 
       <Section id="best-time" heading={`When is the best time to do the ${guide.name}?`}>
         <Capsule>{bestTime.capsule}</Capsule>
