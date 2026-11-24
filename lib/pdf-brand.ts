@@ -26,7 +26,7 @@ export const COMPANY = {
   address: 'Watamu, Kenya',
   phone: '+254 101 923 355',
   email: 'info@bahariasilisafaris.co.ke',
-  website: 'bahariasili.com',
+  website: 'https://www.bahariasilisafaris.co.ke',
   founded: 'Founded by Shadrack Safari',
 };
 
