@@ -62,7 +62,7 @@ Reviews are the strongest trust signal for AI answers, but only real, first-part
 
 ### 2-Day Tsavo East Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/experience
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/2-day-tsavo-east-safari
 - **Duration:** 2 days / 1 night
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East
@@ -137,7 +137,7 @@ In practice this is one of the easier safaris for families: 2 days, 2 park trans
 
 ### 3-Day Tsavo East & Amboseli Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/inside
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-tsavo-east-amboseli-safari
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Amboseli
@@ -212,7 +212,7 @@ In practice this is one of the easier safaris for families: 3 days, 3 park trans
 
 ### 3-Day Tsavo East & Taita Hills Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/nala
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-tsavo-east-taita-hills-safari
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Taita Hills
@@ -287,7 +287,7 @@ This safari is manageable for most families with school-age children: 3 days, 3 
 
 ### 4-Day Tsavo & Amboseli Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/simba-timon
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-tsavo-amboseli-safari
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Tsavo West, Amboseli
@@ -362,7 +362,7 @@ This safari is manageable for most families with school-age children: 4 days, 3 
 
 ### 3-Day Masai Mara Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/zazu
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/3-day-masai-mara-safari
 - **Duration:** 3 days / 2 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara
@@ -437,7 +437,7 @@ In practice this is one of the easier safaris for families: 3 days, 2 park trans
 
 ### 4-Day Tsavo, Taita Hills & Amboseli Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/twiga
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-tsavo-taita-hills-amboseli-safari
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Taita Hills, Amboseli
@@ -512,7 +512,7 @@ This is a long safari — 4 days with 4 park transfers — so it suits older chi
 
 ### 5-Day Tsavo, Taita Hills & Amboseli Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/rafiki
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/5-day-tsavo-taita-hills-amboseli-safari
 - **Duration:** 5 days / 4 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Tsavo East, Tsavo West, Taita Hills, Amboseli
@@ -587,7 +587,7 @@ This is a long safari — 5 days with 4 park transfers — so it suits older chi
 
 ### 4-Day Masai Mara & Lake Nakuru Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/tumbili
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/4-day-masai-mara-lake-nakuru-safari
 - **Duration:** 4 days / 3 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Lake Nakuru, Masai Mara
@@ -662,7 +662,7 @@ This safari is manageable for most families with school-age children: 4 days, 3 
 
 ### 6-Day Grand Kenya Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/tembo
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/6-day-grand-kenya-safari
 - **Duration:** 6 days / 5 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara, Lake Nakuru, Amboseli, Tsavo East
@@ -737,7 +737,7 @@ This is a long safari — 6 days with 5 park transfers — so it suits older chi
 
 ### 7-Day Ultimate Kenya Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/sarabi
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/7-day-ultimate-kenya-safari
 - **Duration:** 7 days / 6 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara, Lake Nakuru, Amboseli, Tsavo East, Tsavo West
@@ -812,7 +812,7 @@ This is a long safari — 7 days with 6 park transfers — so it suits older chi
 
 ### 8-Day Complete Kenya Safari
 
-- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/mufasa
+- **Canonical page:** https://www.bahariasilisafaris.co.ke/safaris/8-day-complete-kenya-safari
 - **Duration:** 8 days / 7 nights
 - **Start / finish:** Watamu → Watamu
 - **Parks:** Masai Mara, Lake Nakuru, Amboseli, Taita Hills, Tsavo West, Tsavo East
