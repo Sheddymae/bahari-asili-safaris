@@ -86,7 +86,7 @@ export async function generateQuotationPDF(quotation: Quotation, requestedLocale
     [L.safariTour || 'Safari / Tour', safe(quotation.destination)],
     [L.arrivalDate || 'Arrival', formatLocaleDate(quotation.arrival_date, locale)],
     [L.departureDate || 'Departure', formatLocaleDate(quotation.departure_date, locale)],
-    [L.parks || 'Duration', `${quotation.duration_nights} ${durationLabel(quotation.duration_nights, 'night', locale)}`],
+    [L.parks || 'Duration', `${quotation.duration_nights} ${durationLabel(Number(quotation.duration_nights) || 0, 'night', locale)}`],
     [Q.activities, safe(quotation.activities?.join(', '))],
     [L.accommodation || 'Accommodation', safe(quotation.accommodation_type)],
   ];
